@@ -1,0 +1,55 @@
+.section {
+  background: var(--white);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card {
+  padding: 32px 28px;
+  background: var(--gray-soft);
+  border-radius: var(--radius);
+  position: relative;
+}
+
+.quoteMark {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.quote {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--black);
+  margin-bottom: 20px;
+  font-style: normal;
+}
+
+.author {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  font-style: normal;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

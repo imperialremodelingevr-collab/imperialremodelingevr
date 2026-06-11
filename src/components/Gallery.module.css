@@ -1,0 +1,70 @@
+/* Gallery 3D carousel — React overrides */
+
+.wrap {
+  min-height: 500px;
+  position: relative;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto 30px;
+}
+
+.stage {
+  min-height: 500px;
+  height: 420px;
+  width: 100%;
+  position: relative;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  overflow: visible;
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.stage:active {
+  cursor: grabbing;
+}
+
+.track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+/* Ensure cards stay positioned in 3D space */
+.stage :global(.car-card) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 380px;
+  height: 480px;
+  margin-left: -190px;
+  margin-top: -240px;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.car-dots :global(.car-dot) {
+  appearance: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+@media (max-width: 768px) {
+  .stage {
+    min-height: 460px;
+    height: 420px;
+  }
+
+  .stage :global(.car-card) {
+    width: 280px;
+    height: 360px;
+    margin-left: -140px;
+    margin-top: -180px;
+  }
+}

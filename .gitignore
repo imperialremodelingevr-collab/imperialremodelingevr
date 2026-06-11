@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+.env.local
+.vercel
+_original*
+_sections/
+_extract*
+_gen*
+_fix*
