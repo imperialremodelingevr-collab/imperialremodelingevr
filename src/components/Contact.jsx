@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLanguage } from '../context/LanguageContext'
 import { useT } from '../hooks/useT'
 
 const EMAIL = 'velez@imperialremodelingevr.com'
@@ -15,6 +16,7 @@ const SERVICE_OPTIONS = [
 ]
 
 export default function Contact() {
+  const { lang } = useLanguage()
   const { t } = useT()
   const [status, setStatus] = useState('idle')
   const [form, setForm] = useState({ name: '', phone: '', email: '', service: '', message: '' })
@@ -29,7 +31,7 @@ export default function Contact() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, lang }),
       })
       if (!res.ok) throw new Error('fail')
       setStatus('success')
