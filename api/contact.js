@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -11,14 +13,20 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;')
 }
 
-function buildConfirmationEmail({ nombre, servicio, mensaje, lang }) {
+function buildEmailLogoHtml(logoBase64) {
+  return logoBase64
+    ? `<img src="${logoBase64}" height="70" style="display:block; margin: 0 auto;" />`
+    : `<span style="font-family: Arial; font-size: 24px; font-weight: 700; color: #FFFFFF; letter-spacing: 4px;">IMPERIAL REMODELING EVR</span>`
+}
+
+function buildConfirmationEmail({ nombre, servicio, mensaje, lang, logoHtml }) {
   if (lang === 'es') {
     return {
       subject: 'Recibimos tu mensaje — Imperial Remodeling EVR',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; color: #0D1B3D;">
           <div style="background: #B22234; padding: 20px; text-align: center;">
-            <img src="https://imperialremodelingevr.com/logo.png" height="60" />
+            ${logoHtml}
           </div>
           <div style="padding: 32px;">
             <h2 style="color: #0D1B3D;">Hola ${nombre},</h2>
@@ -58,7 +66,7 @@ function buildConfirmationEmail({ nombre, servicio, mensaje, lang }) {
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; color: #0D1B3D;">
         <div style="background: #B22234; padding: 20px; text-align: center;">
-          <img src="https://imperialremodelingevr.com/logo.png" height="60" />
+          ${logoHtml}
         </div>
         <div style="padding: 32px;">
           <h2 style="color: #0D1B3D;">Hi ${nombre},</h2>
@@ -112,12 +120,22 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing required fields' })
   }
 
+  const logoPath = path.join(process.cwd(), 'public', 'logo.png')
+  let logoBase64 = ''
+  try {
+    const logoBuffer = fs.readFileSync(logoPath)
+    logoBase64 = `data:image/png;base64,${logoBuffer.toString('base64')}`
+  } catch (e) {
+    logoBase64 = ''
+  }
+  const logoHtml = buildEmailLogoHtml(logoBase64)
+
   const nombre = escapeHtml(name)
   const correo = escapeHtml(email)
   const telefono = escapeHtml(phone)
   const servicio = escapeHtml(service)
   const mensaje = escapeHtml(message).replace(/\n/g, '<br>')
-  const confirmation = buildConfirmationEmail({ nombre, servicio, mensaje, lang })
+  const confirmation = buildConfirmationEmail({ nombre, servicio, mensaje, lang, logoHtml })
 
   try {
     await Promise.all([
