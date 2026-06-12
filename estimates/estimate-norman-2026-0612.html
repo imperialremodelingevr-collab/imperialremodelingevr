@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Estimate – Imperial Remodeling EVR</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f4f4;
+      color: #222;
+      padding: 40px 20px;
+    }
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 18px rgba(0,0,0,0.13);
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 36px 48px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .header-left h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #c9a84c;
+    }
+    .header-left p {
+      font-size: 12.5px;
+      color: #ccc;
+      margin-top: 4px;
+    }
+    .header-right {
+      text-align: right;
+      font-size: 12.5px;
+      color: #ccc;
+      line-height: 1.8;
+    }
+    .doc-type {
+      font-size: 32px;
+      font-weight: 900;
+      color: #c9a84c;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── META BAND ── */
+    .meta-band {
+      background: #c9a84c;
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 48px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── BODY ── */
+    .body { padding: 40px 48px; }
+
+    /* ── PARTIES ── */
+    .parties {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 36px;
+    }
+    .party { flex: 1; }
+    .party-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #c9a84c;
+      border-bottom: 2px solid #c9a84c;
+      padding-bottom: 4px;
+      margin-bottom: 10px;
+    }
+    .party p { font-size: 13px; line-height: 1.7; color: #333; }
+    .party strong { color: #111; font-size: 14px; }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #c9a84c;
+      border-bottom: 2px solid #c9a84c;
+      padding-bottom: 5px;
+      margin: 28px 0 16px;
+    }
+
+    /* ── SCOPE TABLE ── */
+    .scope-table { width: 100%; border-collapse: collapse; }
+    .scope-table thead tr {
+      background: #1a1a2e;
+      color: #fff;
+    }
+    .scope-table thead th {
+      padding: 10px 14px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: left;
+    }
+    .scope-table thead th:last-child { text-align: right; }
+    .scope-table tbody tr { border-bottom: 1px solid #eee; }
+    .scope-table tbody tr:nth-child(even) { background: #fafafa; }
+    .scope-table tbody td {
+      padding: 12px 14px;
+      font-size: 13px;
+      vertical-align: top;
+      line-height: 1.55;
+    }
+    .scope-table tbody td:first-child { width: 28px; font-weight: 700; color: #c9a84c; }
+    .scope-table tbody td.phase-label {
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #fff;
+      background: #2d2d4e;
+      padding: 7px 14px;
+    }
+    .scope-table tbody td.amount { text-align: right; font-weight: 700; white-space: nowrap; }
+    .sub-item { padding-left: 14px; font-size: 12.5px; color: #555; }
+    .sub-item::before { content: "• "; color: #c9a84c; font-weight: 700; }
+    .area-tag {
+      display: inline-block;
+      background: #f0e8d0;
+      color: #7a5c00;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      margin: 2px 2px 2px 0;
+    }
+
+    /* ── TOTALS ── */
+    .totals-block {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+    .totals-table { width: 320px; border-collapse: collapse; }
+    .totals-table td { padding: 7px 14px; font-size: 13px; }
+    .totals-table tr.subtotal td { border-top: 1px solid #ddd; }
+    .totals-table tr.total-row {
+      background: #1a1a2e;
+      color: #fff;
+    }
+    .totals-table tr.total-row td {
+      font-weight: 800;
+      font-size: 15px;
+      padding: 12px 14px;
+    }
+    .totals-table tr.total-row td:last-child { color: #c9a84c; text-align: right; }
+    .totals-table td:last-child { text-align: right; font-weight: 600; }
+
+    /* ── IMPORTANT NOTE ── */
+    .note-box {
+      margin-top: 32px;
+      background: #fff8e8;
+      border-left: 4px solid #c9a84c;
+      border-radius: 3px;
+      padding: 16px 20px;
+    }
+    .note-box .note-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #c9a84c;
+      margin-bottom: 7px;
+    }
+    .note-box p { font-size: 12.5px; line-height: 1.7; color: #555; }
+
+    /* ── TERMS ── */
+    .terms { margin-top: 28px; }
+    .terms ul { list-style: none; padding: 0; }
+    .terms ul li {
+      font-size: 12.5px;
+      color: #555;
+      padding: 3px 0;
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.6;
+    }
+    .terms ul li::before { content: "✓"; color: #c9a84c; position: absolute; left: 0; font-weight: 700; }
+
+    /* ── SIGNATURES ── */
+    .sig-block {
+      margin-top: 48px;
+      display: flex;
+      gap: 60px;
+    }
+    .sig { flex: 1; }
+    .sig-line { border-bottom: 1.5px solid #555; margin-bottom: 6px; height: 36px; }
+    .sig p { font-size: 11.5px; color: #777; }
+    .sig strong { font-size: 12px; color: #333; }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: #1a1a2e;
+      color: #aaa;
+      text-align: center;
+      font-size: 11px;
+      padding: 16px 48px;
+      margin-top: 48px;
+      line-height: 1.8;
+    }
+    .footer span { color: #c9a84c; }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .page { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>IMPERIAL REMODELING EVR</h1>
+      <p>Professional Residential & Commercial Remodeling</p>
+      <p style="margin-top:10px; color:#fff; font-size:13px;">📞 (214) 517-1951</p>
+      <p style="color:#fff; font-size:13px;">✉ imperialremodelingevr@gmail.com</p>
+      <p style="color:#ccc; font-size:12px;">Dallas – Fort Worth Metroplex, TX</p>
+    </div>
+    <div class="header-right">
+      <div class="doc-type">Estimate</div>
+      <p><strong style="color:#fff;">Est. No:</strong> IRE-2026-0612</p>
+      <p><strong style="color:#fff;">Date:</strong> June 12, 2026</p>
+      <p><strong style="color:#fff;">Valid For:</strong> 30 Days</p>
+    </div>
+  </div>
+
+  <!-- META BAND -->
+  <div class="meta-band">
+    <span>Cabinet Demolition &amp; Full Replacement — Residential Remodel</span>
+    <span>1928 Middle Glen Drive, Carrollton, TX</span>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- PARTIES -->
+    <div class="parties">
+      <div class="party">
+        <div class="party-label">Prepared By</div>
+        <p><strong>Imperial Remodeling EVR</strong></p>
+        <p>Dallas – Fort Worth Metroplex, TX</p>
+        <p>📞 (214) 517-1951</p>
+        <p>imperialremodelingevr@gmail.com</p>
+      </div>
+      <div class="party">
+        <div class="party-label">Client / Property Owner</div>
+        <p><strong>Norman &amp; Heidi</strong></p>
+        <p>1928 Middle Glen Drive</p>
+        <p>Carrollton, TX</p>
+        <p>📞 (469) 576-0770</p>
+        <p>normanheidi@msn.com</p>
+      </div>
+    </div>
+
+    <!-- PROJECT OVERVIEW -->
+    <div class="section-title">Project Overview</div>
+    <p style="font-size:13px; color:#444; line-height:1.7;">
+      This estimate covers the complete removal of all existing cabinetry throughout the residence, followed by the supply of labor and installation of approximately <strong>21 new high-quality cabinets</strong> across five (5) areas: full kitchen, two (2) bathrooms, laundry room, and living room. All work will be performed by skilled craftsmen to the highest industry standards.
+    </p>
+
+    <!-- SCOPE OF WORK -->
+    <div class="section-title">Scope of Work</div>
+
+    <table class="scope-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Description of Work</th>
+          <th>Area</th>
+          <th>Labor</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- PHASE 1 -->
+        <tr>
+          <td colspan="4" class="phase-label">Phase 1 — Demolition &amp; Site Preparation</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>
+            <strong>Careful removal of all existing cabinets</strong> — upper and lower units — protecting surrounding walls, flooring, plumbing connections, and appliances throughout the process.
+            <div style="margin-top:6px;">
+              <span class="area-tag">Kitchen (Full)</span>
+              <span class="area-tag">Bathroom #1</span>
+              <span class="area-tag">Bathroom #2</span>
+              <span class="area-tag">Laundry Room</span>
+              <span class="area-tag">Living Room (1 unit)</span>
+            </div>
+          </td>
+          <td style="font-size:12px; color:#777;">All 5 areas</td>
+          <td class="amount">Included</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>
+            <strong>Haul-away &amp; full disposal</strong> of all demolished cabinetry, hardware, and debris. Site will be left clean and ready for installation upon completion of this phase.
+          </td>
+          <td style="font-size:12px; color:#777;">All 5 areas</td>
+          <td class="amount">Included</td>
+        </tr>
+
+        <!-- PHASE 2 -->
+        <tr>
+          <td colspan="4" class="phase-label">Phase 2 — Cabinet Installation &amp; Custom Fitting</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>
+            <strong>Full Kitchen Cabinet Installation</strong> — supply of labor for installation of upper and lower cabinets throughout the complete kitchen layout. Includes leveling, shimming, anchoring to studs, and alignment to existing countertop openings.
+            <div style="margin-top:6px;">
+              <div class="sub-item">Upper wall cabinets (multiple units)</div>
+              <div class="sub-item">Base / lower cabinets with sink cutout accommodation</div>
+              <div class="sub-item">Dishwasher &amp; appliance panel integration</div>
+            </div>
+          </td>
+          <td style="font-size:12px; color:#777;">Kitchen</td>
+          <td class="amount">Included</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>
+            <strong>Bathroom Vanity Cabinet Installation</strong> — installation of new vanity base cabinets in two (2) bathrooms. Custom fitting to existing plumbing rough-in; modifications made as needed for proper clearance and alignment.
+            <div style="margin-top:6px;">
+              <div class="sub-item">Bathroom #1 — Vanity approx. 58"W × 34"H</div>
+              <div class="sub-item">Bathroom #2 — Vanity approx. 58"W × 31"D</div>
+            </div>
+          </td>
+          <td style="font-size:12px; color:#777;">Bath #1 &amp; #2</td>
+          <td class="amount">Included</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>
+            <strong>Laundry Room Wall Cabinet Installation</strong> — installation of upper wall-mounted storage cabinets (4-door unit). Secured to wall studs with proper anchoring for load-bearing capacity.
+          </td>
+          <td style="font-size:12px; color:#777;">Laundry Room</td>
+          <td class="amount">Included</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>
+            <strong>Living Room Cabinet Installation</strong> — installation of one (1) custom cabinet unit. Modifications and structural adaptations as required to ensure a precise, built-in fit and finish.
+          </td>
+          <td style="font-size:12px; color:#777;">Living Room</td>
+          <td class="amount">Included</td>
+        </tr>
+
+        <!-- PHASE 3 -->
+        <tr>
+          <td colspan="4" class="phase-label">Phase 3 — Custom Modifications &amp; Final Finish</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>
+            <strong>Custom reconstruction &amp; structural adaptation</strong> — where existing wall configurations, soffits, or plumbing positions require modification of cabinet units for a perfect, seamless fit. All cuts, fillers, and trim pieces will be finished to match selected cabinet style.
+            <div style="margin-top:6px;">
+              <div class="sub-item">Custom filler panels and trim as needed</div>
+              <div class="sub-item">Soffit bridging or boxing modifications</div>
+              <div class="sub-item">Hardware &amp; hinge installation (supplied with cabinets)</div>
+            </div>
+          </td>
+          <td style="font-size:12px; color:#777;">All areas</td>
+          <td class="amount">Included</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>
+            <strong>Final inspection, adjustments &amp; site cleanup</strong> — all doors and drawers leveled and adjusted, final walkthrough with homeowner, and complete cleanup of the work area.
+          </td>
+          <td style="font-size:12px; color:#777;">All areas</td>
+          <td class="amount">Included</td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <!-- TOTALS -->
+    <div class="totals-block">
+      <table class="totals-table">
+        <tr class="subtotal">
+          <td>Labor — Demolition &amp; Haul Away</td>
+          <td>TBD</td>
+        </tr>
+        <tr>
+          <td>Labor — Installation (≈21 cabinets)</td>
+          <td>TBD</td>
+        </tr>
+        <tr>
+          <td>Labor — Custom Modifications</td>
+          <td>TBD</td>
+        </tr>
+        <tr>
+          <td style="color:#888; font-size:12px;">Materials (Client Selection Pending)</td>
+          <td style="color:#888; font-size:12px;">TBD</td>
+        </tr>
+        <tr class="total-row">
+          <td>ESTIMATED TOTAL</td>
+          <td>Pending Material Selection</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- IMPORTANT NOTE -->
+    <div class="note-box">
+      <div class="note-title">⚠ Important Note — Final Pricing Condition</div>
+      <p>
+        The amount reflected in this document represents a <strong>base labor estimate</strong> for the scope of work described above. The <strong>final invoice price will be confirmed upon the client's selection</strong> of the specific cabinet model, door style, finish, and material. Once the cabinet line has been chosen and pricing confirmed with the supplier, Imperial Remodeling EVR will issue a revised and finalized estimate incorporating the total material cost. No work will commence until both parties have agreed upon and signed the final contract.
+      </p>
+    </div>
+
+    <!-- TERMS -->
+    <div class="section-title">Terms &amp; Conditions</div>
+    <div class="terms">
+      <ul>
+        <li>This estimate is valid for 30 days from the date of issue.</li>
+        <li>A signed contract and deposit (amount to be specified) are required before work begins.</li>
+        <li>Final pricing is subject to change based on the cabinet model and finish selected by the client.</li>
+        <li>Any additional work requested beyond this scope will be quoted separately and approved in writing.</li>
+        <li>Imperial Remodeling EVR is not responsible for unforeseen structural conditions discovered during demolition.</li>
+        <li>All work performed in compliance with applicable building codes and best trade practices.</li>
+      </ul>
+    </div>
+
+    <!-- SIGNATURES -->
+    <div class="sig-block">
+      <div class="sig">
+        <div class="sig-line"></div>
+        <strong>Imperial Remodeling EVR</strong>
+        <p>Contractor Signature &amp; Date</p>
+      </div>
+      <div class="sig">
+        <div class="sig-line"></div>
+        <strong>Norman &amp; Heidi — Client</strong>
+        <p>Client Signature &amp; Date — Acceptance of Estimate</p>
+      </div>
+    </div>
+
+  </div><!-- /body -->
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span>Imperial Remodeling EVR</span> — Dallas–Fort Worth Metroplex, TX &nbsp;|&nbsp;
+    📞 <span>(214) 517-1951</span> &nbsp;|&nbsp;
+    ✉ <span>imperialremodelingevr@gmail.com</span><br/>
+    Thank you for trusting us with your home. Quality craftsmanship, guaranteed satisfaction.
+  </div>
+
+</div>
+</body>
+</html>
