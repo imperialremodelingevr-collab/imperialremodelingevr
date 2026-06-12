@@ -1,5 +1,5 @@
-import { useLanguage } from '../context/LanguageContext'
-import { useT } from '../hooks/useT'
+import { useLanguage } from '../../context/LanguageContext'
+import { useT } from '../../hooks/useT'
 
 const PHONE = '214-517-1951'
 

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useLanguage } from '../context/LanguageContext'
-import { useT } from '../hooks/useT'
+import { useLanguage } from '../../context/LanguageContext'
+import { useT } from '../../hooks/useT'
 
 const EMAIL = 'velez@imperialremodelingevr.com'
 const PHONE = '214-517-1951'

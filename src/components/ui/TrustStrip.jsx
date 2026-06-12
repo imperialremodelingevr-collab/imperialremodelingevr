@@ -1,4 +1,4 @@
-import { useT } from '../hooks/useT'
+import { useT } from '../../hooks/useT'
 
 const STATS = [
   { count: 320, suffix: '+', key: 'ts1' },

@@ -1,5 +1,5 @@
-import { useT } from '../hooks/useT'
-import { img } from '../utils/images'
+import { useT } from '../../hooks/useT'
+import { img } from '../../utils/images'
 
 const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
@@ -9,7 +9,7 @@ export default function Nav() {
   return (
     <nav className="nav">
       <a href="#top" className="nav-logo">
-        <img className="logo-img-nav" src="/images/8bf2961a-6fbb-4139-8f29-55815197405d.png" alt="Imperial Remodeling EVR" />
+        <img className="logo-img-nav" src="/images/png/8bf2961a-6fbb-4139-8f29-55815197405d.png" alt="Imperial Remodeling EVR" />
       </a>
       <div className="nav-links">
         <a href="#services">{t('navServices')}</a>
