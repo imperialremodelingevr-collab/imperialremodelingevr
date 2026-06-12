@@ -1,5 +1,5 @@
-import { useT } from '../hooks/useT'
-import { img } from '../utils/images'
+import { useT } from '../../hooks/useT'
+import { img } from '../../utils/images'
 
 export default function Footer() {
   const { t } = useT()

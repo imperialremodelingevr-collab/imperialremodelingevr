@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useT } from '../hooks/useT'
+import { useT } from '../../hooks/useT'
 import styles from './Gallery.module.css'
 
 const RADIUS = 520
