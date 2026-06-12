@@ -6,5 +6,5 @@ import imageManifest from './imageManifest'
  */
 export function img(id) {
   const ext = imageManifest[id] || 'jpg'
-  return `/images/${id}.${ext}`
+  return `/images/${ext}/${id}.${ext}`
 }

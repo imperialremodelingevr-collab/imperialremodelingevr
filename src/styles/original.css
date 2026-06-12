@@ -461,7 +461,7 @@
   .contact {
     background:
       linear-gradient(135deg, rgba(13,27,61,.96) 0%, rgba(20,42,92,.96) 100%),
-      url("/images/45154164-e820-4c56-bd68-3421e4850e3b.jpg") center/cover;
+      url("/images/jpg/45154164-e820-4c56-bd68-3421e4850e3b.jpg") center/cover;
     color: #fff;
   }
   .contact .section-header h2 { color: #fff; }

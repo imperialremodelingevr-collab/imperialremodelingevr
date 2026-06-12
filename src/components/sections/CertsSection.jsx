@@ -9,7 +9,7 @@ export default function CertsSection() {
     <section className="certs" id="certified">
       <div className="certs-grid">
         <div className="certs-photo reveal in">
-          <img src="/images/0f35b49f-0059-4a63-b281-0bcc2731d862.jpg" alt="Home Depot Path to Pro certificates" />
+          <img src="/images/jpg/0f35b49f-0059-4a63-b281-0bcc2731d862.jpg" alt="Home Depot Path to Pro certificates" />
           <span className="cap">{t('certCap')}</span>
           <div className="hd-seal">
             <div>

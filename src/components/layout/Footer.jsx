@@ -8,7 +8,7 @@ export default function Footer() {
     <footer>
       <div className="fwrap-top">
         <div className="fcol fbrand">
-          <img className="logo-img-foot" src="/images/931dd399-a8bb-4c6f-a6e6-68d7c9a3eea0.png" alt="Imperial Remodeling EVR" />
+          <img className="logo-img-foot" src="/images/png/931dd399-a8bb-4c6f-a6e6-68d7c9a3eea0.png" alt="Imperial Remodeling EVR" />
           <p className="ftag">{t('ftrTag')}</p>
           <div className="fsocial">
             <span className="fsocial-lbl">{t('ftrFollow')}</span>
