@@ -179,6 +179,9 @@ const translations = {
     ftrTag:
       'Remodelación de lujo en Dallas y el Metroplex — cocinas, baños, epoxy, electricidad, plomería y pintura, todo bajo un mismo techo.',
     ftrCopy: '© 2026 Imperial Remodeling EVR LLC · Licencia #GC-04827 · Con Fianza y Seguro',
+    waLabel: 'WhatsApp — estimación gratis',
+    waText: 'WhatsApp',
+    waMessage: 'Hola, me interesa una estimación gratuita para mi proyecto de remodelación.',
   },
   en: {
     callNow: 'CALL NOW:',
@@ -360,6 +363,9 @@ const translations = {
     ftrTag:
       'Luxury remodeling across Dallas & the Metroplex — kitchens, baths, epoxy, electrical, plumbing and painting, all under one roof.',
     ftrCopy: '© 2026 Imperial Remodeling EVR LLC · License #GC-04827 · Bonded · Insured',
+    waLabel: 'WhatsApp — free estimate',
+    waText: 'WhatsApp',
+    waMessage: 'Hi, I am interested in a free estimate for my remodeling project.',
   },
 }
 

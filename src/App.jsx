@@ -10,6 +10,7 @@ import Gallery from './components/Gallery'
 import Testimonials from './components/sections/TestimonialsSection'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import WhatsAppFloat from './components/WhatsAppFloat'
 import { useReveal } from './hooks/useReveal'
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
       <Testimonials />
       <Contact />
       <Footer />
+      <WhatsAppFloat />
     </>
   )
 }
