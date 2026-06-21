@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract images from bundled index.html.html (supports gzip-compressed manifest entries)."""
+"""Extract images from bundled HTML export (supports gzip-compressed manifest entries)."""
 import base64
 import gzip
 import json
@@ -9,7 +9,6 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUNDLE_CANDIDATES = [
-    os.path.join(ROOT, "index.html.html"),
     os.path.join(ROOT, "_original_bundle.html"),
 ]
 

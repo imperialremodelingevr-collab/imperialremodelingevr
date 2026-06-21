@@ -27,9 +27,13 @@ python scripts/fix-image-urls.py
 
 Images are saved to `public/images/` and mapped in `src/utils/imageManifest.js`.
 
+## Entry point
+
+The live site is served from **`index.html`** at the project root. Vite loads React via `/src/main.jsx` into `<div id="root">`.
+
 ## Original design source
 
-The layout, colors, and typography come from `index.html.html` in git history (bundled export). Key sections:
+Layout, colors, and typography were ported from a bundled HTML export (kept in git history if needed). Key sections:
 
 - Red top bar · white navbar · cream hero with photo deck
 - Services, About, Certified, Featured, Gallery, Reviews, Contact, Footer
