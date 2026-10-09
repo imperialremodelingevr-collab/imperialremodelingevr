@@ -11,7 +11,9 @@ export default function PageTransition({ children }) {
 
   return (
     <>
-      <div key={'c' + pathname} className="page-curtain" aria-hidden="true" />
+      <div key={'c' + pathname} className="page-curtain" aria-hidden="true">
+        <img src="/images/logo-imperial-dark.png" alt="" />
+      </div>
       <main key={pathname} className="page-enter">
         {children}
       </main>

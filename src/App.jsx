@@ -4,6 +4,7 @@ import Nav from './components/Nav'
 import Footer from './components/Footer'
 import WhatsAppFloat from './components/WhatsAppFloat'
 import PageTransition from './components/PageTransition'
+import LogoWatermark from './components/LogoWatermark'
 import Home from './pages/Home'
 import ServicesPage from './pages/ServicesPage'
 import AboutPage from './pages/AboutPage'
@@ -19,6 +20,7 @@ export default function App() {
 
   return (
     <>
+      <LogoWatermark />
       <TopBar />
       <Nav />
       <PageTransition>

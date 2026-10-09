@@ -1,0 +1,196 @@
+/* =====================================================================
+   Imperial Remodeling EVR — capa de tema "Luxury" (negro + dorado)
+   Se carga DESPUES de original.css. Para volver al tema anterior basta
+   con quitar el import de este archivo en main.jsx.
+   Paleta: negro #080808 / #111, dorado #C6A15B / #E7C77B, blanco calido.
+   ===================================================================== */
+:root {
+  --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+  --lx-bg: #080808;
+  --lx-bg-2: #111111;
+  --lx-card: #141414;
+  --lx-text: #f4efe6;
+  --lx-gold: #C6A15B;
+  --lx-gold-hi: #E7C77B;
+
+  /* re-mapa de los tokens existentes */
+  --navy: #0b0b0b;
+  --navy-2: #141414;
+  --navy-3: #E7C77B;
+  --red: #C6A15B;
+  --red-2: #E7C77B;
+  --gold: #C6A15B;
+  --gold-2: #a8863f;
+  --gold-soft: #E7C77B;
+  --white: #080808;
+  --paper: #0d0d0d;
+  --gray-1: #0f0f0f;
+  --gray-2: #3a3a3a;
+  --ink: #f4efe6;
+  --mute: #b8b8b8;
+  --line: rgba(198, 161, 91, .16);
+  --line-2: rgba(198, 161, 91, .34);
+  --shadow-1: 0 24px 60px -18px rgba(0, 0, 0, .8);
+  --shadow-2: 0 40px 90px -20px rgba(0, 0, 0, .9);
+}
+
+html, body { background: var(--lx-bg); color: var(--lx-text); }
+::selection { background: var(--lx-gold); color: #080808; }
+
+/* ---------- Tipografia ---------- */
+h1, h2, h3, .hero-title, .section-header h2, .ph-title, .cta-band-in h2, .tp-body h3,
+.about-copy h2, .certs-copy h2, .feature-copy h2 {
+  font-family: var(--font-display); font-weight: 500; letter-spacing: -.01em; text-transform: none; color: var(--lx-text);
+}
+.hero-title { font-size: clamp(46px, 6.2vw, 92px); line-height: 1.02; }
+.section-header h2, .about-copy h2, .certs-copy h2, .feature-copy h2 { font-size: clamp(38px, 5vw, 74px); line-height: 1.05; }
+.hero-title .red, .section-header h2 .red, .about-copy h2 .red, .certs-copy h2 .red, .feature-copy h2 .red { color: var(--lx-gold-hi); }
+.hero-title .it, .section-header h2 .it { color: var(--lx-gold-hi); font-style: italic; font-weight: 500; }
+.ph-title { text-shadow: 0 10px 40px rgba(0,0,0,.6); }
+.tab-btn, .svc-foot h3, .svc-num, .eyebrow, .hero-eyebrow { font-weight: 600; }
+.tab-btn, .svc-foot h3 { text-transform: none; font-size: 24px; }
+.btn-primary, .btn-secondary, .nav-cta, .svc-link, .eyebrow, .hero-eyebrow { font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: .18em; }
+.lead, .about-copy .lead, .certs-copy .lead, .feature-copy .lead { color: var(--lx-text); }
+p { color: inherit; }
+
+/* ---------- Barra superior + navegacion ---------- */
+.top-bar { background: #050505; color: var(--lx-gold-hi); border-bottom: 1px solid var(--line-2); }
+.top-bar .phone strong { font-family: 'Inter', sans-serif; letter-spacing: .08em; font-size: 14px; }
+.lang-toggle { border-color: var(--line-2); }
+.lang-toggle button { color: var(--lx-text); }
+.lang-toggle button.active { background: var(--lx-gold); color: #080808; }
+
+.nav { background: rgba(8, 8, 8, .72); border-bottom: 1px solid var(--line); backdrop-filter: blur(18px) saturate(1.2); padding: 8px 32px; }
+.logo-img-nav { height: 76px; width: auto; display: block; filter: drop-shadow(0 4px 14px rgba(198,161,91,.25)); }
+.nav-links a { color: var(--lx-text); font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; font-size: 12px; }
+.nav-links a:hover, .nav-links a.active { color: var(--lx-gold-hi); }
+.nav-cta { background: transparent; color: var(--lx-gold-hi); border: 1px solid var(--lx-gold); border-radius: 0; }
+.nav-cta:hover { background: var(--lx-gold); color: #080808; }
+.nav-burger span { background: var(--lx-gold-hi); }
+.nav-drawer { background: rgba(8,8,8,.97); border-bottom: 1px solid var(--line-2); }
+.nav-drawer a { color: var(--lx-text); font-family: var(--font-display); text-transform: none; font-size: 28px; }
+.nav-drawer a.active { color: var(--lx-gold-hi); }
+
+/* ---------- Botones ---------- */
+.btn-primary { background: var(--lx-gold); color: #080808; box-shadow: 0 14px 34px -12px rgba(198,161,91,.55); border-radius: 0; font-size: 12px; }
+.btn-primary:hover { background: var(--lx-gold-hi); }
+.btn-secondary { background: transparent; color: var(--lx-text); border: 1px solid rgba(244,239,230,.4); border-radius: 0; font-size: 12px; }
+.btn-secondary:hover { background: var(--lx-text); color: #080808; border-color: var(--lx-text); }
+
+/* ---------- Hero cinematografico ---------- */
+.hero {
+  background:
+    radial-gradient(70% 55% at 85% 10%, rgba(198,161,91,.22), transparent 60%),
+    linear-gradient(90deg, rgba(8,8,8,.96) 8%, rgba(8,8,8,.7) 55%, rgba(8,8,8,.45)),
+    url('/images/1c1d1d94-e455-42f8-ac6b-1fe4c74a9b3c.jpg') center / cover no-repeat,
+    #080808;
+}
+.hero::before { display: none; }
+.hero-eyebrow { color: var(--lx-gold); }
+.hero-eyebrow .tick, .section-header .eyebrow .tick, .ph-eyebrow .tick { background: var(--lx-gold); }
+.hero-sub { color: #cfc8bb; }
+.hero-discount { background: rgba(20,20,20,.8); border: 1px solid var(--line-2); border-left: 3px solid var(--lx-gold); backdrop-filter: blur(8px); }
+.deck-card { border: 1px solid var(--line-2); box-shadow: 0 40px 90px -20px rgba(0,0,0,.9), 0 0 0 6px rgba(8,8,8,.6); }
+.deck-card .lab { background: rgba(8,8,8,.8); border: 1px solid var(--line-2); color: var(--lx-gold-hi); }
+.deck-card .badge-num, .fm-tag { background: var(--lx-gold); color: #080808; }
+.trust-badge { color: #080808; }
+.trust-badge::before { border-color: rgba(8,8,8,.45); }
+.trust-strip { background: #0b0b0b; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.trust-strip .ts-num { color: var(--lx-gold-hi); font-weight: 500; font-size: 46px; }
+.trust-strip .sep { background: var(--line-2); }
+
+/* ---------- Secciones ---------- */
+section { background-color: var(--lx-bg); }
+.services { background: var(--lx-bg-2); }
+.about, .feature { background: var(--lx-bg); }
+.certs, .testi { background: var(--lx-bg-2); }
+.gallery { background: #0b0b0b; }
+.section-header p, .about-copy p, .certs-copy p, .t-card .who .l, .feature-stats .fs-l, .about-pillars .p .d { color: var(--mute); }
+.eyebrow, .section-header .eyebrow { color: var(--lx-gold); }
+
+/* tarjetas */
+.svc { background: var(--lx-card); border: 1px solid var(--line-2); }
+.svc::after { background: linear-gradient(to top, rgba(8,8,8,.96) 0%, rgba(8,8,8,.5) 42%, rgba(8,8,8,.05) 78%); }
+.svc-icon { border-color: var(--line-2); }
+.svc-link, .svc-link .arr { color: var(--lx-gold-hi); }
+.t-card, .cred-chip { background: var(--lx-card); border: 1px solid var(--line-2); color: var(--lx-text); }
+.t-card .who .n, .about-pillars .p .t, .feature-stats .fs-n { color: var(--lx-text); }
+.about-pillars .p .ico { background: var(--lx-gold); }
+.about-pillars .p .ico svg { stroke: #080808; }
+.t-card .who .av, .t-card .who > div:first-child { background: var(--lx-gold); color: #080808; }
+.certs-photo .cap { background: rgba(8,8,8,.9); border: 1px solid var(--line-2); }
+
+/* pestanas de servicios */
+.tab-btn { background: var(--lx-card); color: var(--lx-text); border: 1px solid var(--line-2); }
+.tab-btn.on { background: var(--lx-gold); color: #080808; }
+.tab-btn.on .tab-num { color: #080808; }
+.tabs-panel { background: #0b0b0b; border: 1px solid var(--line-2); }
+.tp-shade { background: linear-gradient(to top, rgba(8,8,8,.96) 0%, rgba(8,8,8,.5) 45%, rgba(8,8,8,.05) 80%); }
+
+/* banners de pagina */
+.page-hero { background: #080808; border-bottom: 1px solid var(--line-2); }
+.ph-shade { background: linear-gradient(105deg, rgba(8,8,8,.95) 12%, rgba(8,8,8,.6) 60%, rgba(8,8,8,.3)); }
+.cta-band-sec { background: #0b0b0b; border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); }
+.cta-band-in h2 { color: var(--lx-text); }
+
+/* galeria / carrusel */
+.car-card .cc-cap, .car-card .cc-num { color: var(--lx-gold-hi); }
+.car-controls button { border-color: var(--line-2); color: var(--lx-text); }
+.car-controls button:hover { background: var(--lx-gold); border-color: var(--lx-gold); color: #080808; }
+
+/* contacto */
+.contact { background: var(--lx-bg-2); }
+.contact-form input, .contact-form select, .contact-form textarea { background: rgba(255,255,255,.04); border-color: var(--line-2); color: var(--lx-text); }
+.contact-form label { color: var(--lx-gold); }
+.contact-form select option { background: #111; color: var(--lx-text); }
+.contact-form .submit { background: var(--lx-gold); color: #080808; border-radius: 0; }
+.contact-form .submit:hover { background: var(--lx-gold-hi); }
+.contact-info .ci .ic { background: var(--lx-gold); color: #080808; }
+
+/* pie */
+footer { background: #050505; border-top: 1px solid var(--line-2); color: rgba(244,239,230,.62); }
+footer a:hover { color: var(--lx-gold-hi); }
+.logo-img-foot { height: 110px; width: auto; }
+
+/* ---------- Logo siempre presente ---------- */
+.logo-watermark {
+  position: fixed; inset: 0; z-index: 60; pointer-events: none;
+  background: url('/images/logo-imperial-dark.png') center / min(78vw, 760px) auto no-repeat;
+  opacity: .05; mix-blend-mode: screen;
+  animation: wmFloat 14s ease-in-out infinite alternate;
+}
+@keyframes wmFloat { from { transform: translateY(-1.2vh) scale(1); } to { transform: translateY(1.2vh) scale(1.03); } }
+
+/* cortina de transicion con el logo */
+.page-curtain { background: linear-gradient(90deg, #080808 0 94%, var(--lx-gold) 94% 97%, var(--lx-gold-hi) 97% 100%); display: grid; place-items: center; }
+.page-curtain img { width: min(60vw, 420px); height: auto; opacity: .95; }
+
+#imp-progress { background: linear-gradient(90deg, var(--lx-gold), var(--lx-gold-hi)); }
+.svc.imp-tilting, .tabs-panel.imp-tilting { box-shadow: 0 30px 60px -14px rgba(198,161,91,.28), 0 0 0 1px var(--line-2); }
+
+@media (max-width: 900px) {
+  .logo-img-nav { height: 58px; }
+  .logo-watermark { opacity: .06; background-size: 88vw auto; }
+}
+@media (prefers-reduced-motion: reduce) { .logo-watermark { animation: none; } }
+
+/* marcos de foto en dorado fino (antes blancos) */
+.fm-main, .fm-th, .certs-photo img { border-color: var(--lx-gold); }
+.fm-main { border-width: 1px; }
+.fm-th { border-width: 1px; }
+.certs-photo img { border-width: 1px; }
+.about-stack .ph { border: 1px solid var(--lx-gold); }
+.car-card { border-color: var(--line-2); }
+
+/* degradado organico en tonos dorados */
+.blobs .b1 { background: #C6A15B; opacity: .42; }
+.blobs .b2 { background: #E7C77B; opacity: .22; }
+.blobs .b3 { background: #6b4e17; opacity: .6; }
+
+/* etiquetas pequenas en sans-serif para que se lean bien */
+.section-header .eyebrow, .ph-eyebrow, .contact-form label, .ts-lbl, .svc-num, .tab-num, .lab, .cap, .fm-tag, .cc-cap, .tp-num,
+.footer .fcol-h, footer .fcol-h, .fbrand, footer .ftxt { font-family: 'Inter', sans-serif; }
+.section-header .eyebrow, .ph-eyebrow { font-size: 12px; letter-spacing: .26em; font-weight: 600; color: var(--lx-gold); }
+.contact-form label { font-size: 11px; letter-spacing: .2em; }
+.top-bar .phone svg { stroke: var(--lx-gold-hi); color: var(--lx-gold-hi); }
+.top-bar .phone svg * { stroke: var(--lx-gold-hi); }
