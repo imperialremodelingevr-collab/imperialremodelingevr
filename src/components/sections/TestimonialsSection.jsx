@@ -42,7 +42,7 @@ export default function TestimonialsSection() {
         <p>{t('testiLede')}</p>
       </div>
 
-      <div className="testi-grid reveal stagger in">
+      <div className="testi-grid reveal stagger">
         {TESTIMONIALS.map((item) => (
           <article key={item.quoteKey} className="t-card in">
             <div className="quote-mark">&ldquo;</div>

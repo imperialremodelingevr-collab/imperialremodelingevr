@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useT } from '../hooks/useT'
 import { img } from '../utils/images'
 
@@ -32,11 +33,11 @@ export default function Footer() {
 
         <div className="fcol flinks">
           <div className="fcol-h">{t('ftrExplore')}</div>
-          <a href="#services">{t('navServices')}</a>
-          <a href="#certified">{t('navCerts')}</a>
-          <a href="#featured">{t('ftrFeatured')}</a>
-          <a href="#gallery">{t('navGallery')}</a>
-          <a href="#testi">{t('navTesti')}</a>
+          <Link to="/services">{t('navServices')}</Link>
+          <Link to="/about">{t('navAbout')}</Link>
+          <Link to="/gallery">{t('navGallery')}</Link>
+          <Link to="/reviews">{t('navTesti')}</Link>
+          <Link to="/contact">{t('navContact')}</Link>
         </div>
 
         <div className="fcol fcontact">

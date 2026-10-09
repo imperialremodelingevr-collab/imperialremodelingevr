@@ -1,8 +1,7 @@
+import { useNavigate } from 'react-router-dom'
 import { useT } from '../hooks/useT'
 import { useHeroDeck } from '../hooks/useHeroDeck'
 import { img } from '../utils/images'
-
-const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
 const DECK = [
   { id: '11677d19-5a3a-4700-b150-c134ac6a32a8', badge: '01 · KITCHEN', labKey: 'deckLab1' },
@@ -14,6 +13,7 @@ const DECK = [
 export default function Hero() {
   const { t } = useT()
   const deckRef = useHeroDeck()
+  const navigate = useNavigate()
 
   return (
     <section className="hero" id="top">
@@ -32,10 +32,10 @@ export default function Hero() {
           </h1>
           <p className="hero-sub">{t('heroSub')}</p>
           <div className="hero-ctas">
-            <button type="button" className="btn-primary" onClick={() => scrollTo('contact')}>
+            <button type="button" className="btn-primary" onClick={() => navigate('/contact')}>
               <span>{t('ctaBook')}</span> <span>→</span>
             </button>
-            <button type="button" className="btn-secondary" onClick={() => scrollTo('services')}>
+            <button type="button" className="btn-secondary" onClick={() => navigate('/services')}>
               <span>{t('ctaWork')}</span>
             </button>
           </div>

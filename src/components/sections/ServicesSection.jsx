@@ -1,6 +1,6 @@
 import { useT } from '../../hooks/useT'
 
-const SERVICES = [
+export const SERVICES = [
   { num: '01', wide: true, img: '/images/11677d19-5a3a-4700-b150-c134ac6a32a8.jpg', titleKey: 'svcKitchen', descKey: 'svcKitchenP', icon: <path d="M4 8h16M4 8v12h16V8M4 8V4h16v4M8 12h2M14 12h2M11 16h2" /> },
   { num: '02', img: '/images/ae4f24ce-fad0-4e9b-80b0-694233d81aca.jpg', titleKey: 'svcBath', descKey: 'svcBathP', icon: <path d="M5 12h14v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6zM7 12V7a2 2 0 014 0M16 8v4" /> },
   { num: '03', epoxy: true, img: '/images/daa51c47-be2b-45b5-9d8d-54c582dc7afe.jpg', titleKey: 'svcEpoxy', descKey: 'svcEpoxyP', icon: <path d="M3 7l9-4 9 4-9 4-9-4zm0 5l9 4 9-4M3 17l9 4 9-4" /> },
@@ -9,7 +9,7 @@ const SERVICES = [
   { num: '06', wide: true, img: '/images/a4c9cacf-f7c3-4d4a-b330-a9159c6168b7.jpg', titleKey: 'svcPaint', descKey: 'svcPaintP', icon: <path d="M19 11H5a2 2 0 00-2 2v6h18v-6a2 2 0 00-2-2zM7 11V7a2 2 0 012-2h6a2 2 0 012 2v4M12 15v4" /> },
 ]
 
-export default function ServicesSection() {
+export default function ServicesSection({ rail = false }) {
   const { t } = useT()
 
   return (
@@ -26,7 +26,7 @@ export default function ServicesSection() {
         <p>{t('svcLede')}</p>
       </div>
 
-      <div className="services-grid reveal stagger in">
+      <div className={`services-grid reveal stagger${rail ? ' rail' : ''}`}>
         {SERVICES.map((svc) => (
           <article key={svc.num} className={`svc${svc.wide ? ' wide' : ''}`}>
             <div

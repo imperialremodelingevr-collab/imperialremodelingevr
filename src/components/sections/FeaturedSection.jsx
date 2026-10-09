@@ -1,6 +1,5 @@
+import { useNavigate } from 'react-router-dom'
 import { useT } from '../../hooks/useT'
-
-const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
 const STATS = [
   { n: '14', labelKey: 'featS1' },
@@ -10,6 +9,7 @@ const STATS = [
 
 export default function FeaturedSection() {
   const { t } = useT()
+  const navigate = useNavigate()
 
   return (
     <section className="feature" id="featured">
@@ -43,7 +43,7 @@ export default function FeaturedSection() {
               </div>
             ))}
           </div>
-          <button type="button" className="btn-primary magnetic" onClick={() => scrollTo('gallery')}>
+          <button type="button" className="btn-primary magnetic" onClick={() => navigate('/gallery')}>
             <span>{t('featCta')}</span> <span>→</span>
           </button>
         </div>

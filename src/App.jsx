@@ -1,34 +1,37 @@
+import { Routes, Route, Navigate } from 'react-router-dom'
 import TopBar from './components/TopBar'
 import Nav from './components/Nav'
-import Hero from './components/Hero'
-import TrustStrip from './components/TrustStrip'
-import Services from './components/sections/ServicesSection'
-import About from './components/sections/AboutSection'
-import Certified from './components/sections/CertsSection'
-import FeaturedProject from './components/sections/FeaturedSection'
-import Gallery from './components/Gallery'
-import Testimonials from './components/sections/TestimonialsSection'
-import Contact from './components/Contact'
 import Footer from './components/Footer'
 import WhatsAppFloat from './components/WhatsAppFloat'
+import PageTransition from './components/PageTransition'
+import Home from './pages/Home'
+import ServicesPage from './pages/ServicesPage'
+import AboutPage from './pages/AboutPage'
+import GalleryPage from './pages/GalleryPage'
+import ReviewsPage from './pages/ReviewsPage'
+import ContactPage from './pages/ContactPage'
 import { useReveal } from './hooks/useReveal'
+import { useFx } from './hooks/useFx'
 
 export default function App() {
   useReveal()
+  useFx()
 
   return (
     <>
       <TopBar />
       <Nav />
-      <Hero />
-      <TrustStrip />
-      <Services />
-      <About />
-      <Certified />
-      <FeaturedProject />
-      <Gallery />
-      <Testimonials />
-      <Contact />
+      <PageTransition>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/reviews" element={<ReviewsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </PageTransition>
       <Footer />
       <WhatsAppFloat />
     </>

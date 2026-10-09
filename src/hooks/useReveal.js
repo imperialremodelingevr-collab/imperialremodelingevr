@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 
 /** Mirrors original site scroll-reveal (adds .in class via IntersectionObserver). */
 export function useReveal() {
+  const { pathname } = useLocation()
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => {
@@ -30,5 +32,5 @@ export function useReveal() {
     })
 
     return () => io.disconnect()
-  }, [])
+  }, [pathname])
 }
