@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { getAttribution, track } from '../utils/analytics'
 import Mask from './Mask'
 import { useLanguage } from '../context/LanguageContext'
 import { useT } from '../hooks/useT'
@@ -32,10 +33,11 @@ export default function Contact() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, lang }),
+        body: JSON.stringify({ ...form, lang, attribution: getAttribution(), page: location.pathname }),
       })
       if (!res.ok) throw new Error('fail')
       setStatus('success')
+      track('generate_lead', { service: form.service, lang })
       setForm({ name: '', phone: '', email: '', service: '', message: '' })
     } catch {
       setStatus('error')

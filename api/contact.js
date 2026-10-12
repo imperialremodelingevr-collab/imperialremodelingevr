@@ -114,7 +114,7 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: 'Contact email addresses not configured' })
   }
 
-  const { name, email, phone, service, message, lang = 'en' } = req.body || {}
+  const { name, email, phone, service, message, lang = 'en', attribution = {}, page = '' } = req.body || {}
 
   if (!name || !email || !phone || !service || !message) {
     return res.status(400).json({ error: 'Missing required fields' })
@@ -135,6 +135,18 @@ export default async function handler(req, res) {
   const telefono = escapeHtml(phone)
   const servicio = escapeHtml(service)
   const mensaje = escapeHtml(message).replace(/\n/g, '<br>')
+  // Fuente del contacto (para saber que plataforma trae clientes)
+  const clip = (v) => escapeHtml(String(v || '').slice(0, 160))
+  let referrerHost = ''
+  try {
+    referrerHost = attribution.referrer ? new URL(attribution.referrer).hostname.replace(/^www\./, '') : ''
+  } catch (e) {
+    referrerHost = ''
+  }
+  const fuente = clip(attribution.utm_source || referrerHost || 'directo / desconocido')
+  const medio = clip(attribution.utm_medium || '')
+  const campana = clip(attribution.utm_campaign || '')
+  const entrada = clip(attribution.landing || page || '')
   const confirmation = buildConfirmationEmail({ nombre, servicio, mensaje, lang, logoHtml })
 
   try {
@@ -143,7 +155,7 @@ export default async function handler(req, res) {
         from: process.env.CONTACT_FROM_EMAIL,
         to: process.env.CONTACT_TO_EMAIL,
         replyTo: email,
-        subject: `Nuevo contacto: ${name} - ${service}`,
+        subject: `Nuevo contacto: ${name} - ${service} (${fuente})`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; color: #0D1B3D;">
             <h2 style="color: #B22234; margin-bottom: 24px;">Nuevo contacto desde el sitio web</h2>
@@ -163,6 +175,14 @@ export default async function handler(req, res) {
               <tr>
                 <td style="padding: 10px 0; font-weight: bold;">Servicio:</td>
                 <td style="padding: 10px 0;">${servicio}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; font-weight: bold;">Fuente:</td>
+                <td style="padding: 10px 0;">${fuente}${medio ? ' / ' + medio : ''}${campana ? ' / ' + campana : ''}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; font-weight: bold;">Entró por:</td>
+                <td style="padding: 10px 0;">${entrada}</td>
               </tr>
             </table>
             <h3 style="margin-top: 28px; margin-bottom: 12px;">Mensaje:</h3>

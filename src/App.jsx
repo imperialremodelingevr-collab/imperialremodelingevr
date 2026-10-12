@@ -13,10 +13,19 @@ import ReviewsPage from './pages/ReviewsPage'
 import ContactPage from './pages/ContactPage'
 import { useReveal } from './hooks/useReveal'
 import { useFx } from './hooks/useFx'
+import { useSeo } from './hooks/useSeo'
+import { useEffect } from 'react'
+import { captureAttribution, initAnalytics, installClickTracking } from './utils/analytics'
 
 export default function App() {
   useReveal()
   useFx()
+  useSeo()
+  useEffect(() => {
+    captureAttribution()
+    initAnalytics()
+    return installClickTracking()
+  }, [])
 
   return (
     <>
