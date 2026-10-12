@@ -5,14 +5,14 @@ import { img } from '../../utils/images'
 const TESTIMONIALS = [
   {
     quoteKey: 'testi1',
-    imageId: '11677d19-5a3a-4700-b150-c134ac6a32a8',
+    imageId: 'kitchen-white',
     av: 'M',
     nameKey: 'testiName1',
     locKey: 'testiLoc1',
   },
   {
     quoteKey: 'testi2',
-    imageId: 'ae4f24ce-fad0-4e9b-80b0-694233d81aca',
+    imageId: '1d35663b-cf8e-471c-b3e1-6657e58d7d05',
     av: 'D',
     nameKey: 'testiName2',
     locKey: 'testiLoc2',

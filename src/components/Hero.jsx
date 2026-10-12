@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useT } from '../hooks/useT'
+import { sound } from '../utils/sound'
 
 /**
  * Portada: time-lapse de la remodelacion de un bano. El video empieza y termina
@@ -71,6 +72,7 @@ export default function Hero() {
       if (key !== stateRef.current.ch) {
         stateRef.current.ch = key
         setChKey(key)
+        sound.play({ hvC0: 'hammer', hvC1: 'drill', hvC2: 'swipe', hvC3: 'ding' }[key])
       }
     }
     raf = requestAnimationFrame(tick)

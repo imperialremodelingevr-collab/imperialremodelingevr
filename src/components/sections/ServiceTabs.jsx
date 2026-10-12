@@ -2,7 +2,12 @@ import { useState } from 'react'
 import Mask from '../Mask'
 import { Link } from 'react-router-dom'
 import { useT } from '../../hooks/useT'
+import { sound } from '../../utils/sound'
 import { SERVICES } from './ServicesSection'
+
+// Cada servicio tiene su sonido y su animacion de entrada (orden = SERVICES)
+const FX = ['door', 'tiles', 'gloss', 'spark', 'ripple', 'wipe']
+const SND = ['knock2', 'tiles', 'gloss', 'spark', 'drip', 'swipe']
 
 /** Un solo panel interactivo en vez de una cuadricula larga. */
 export default function ServiceTabs() {
@@ -11,6 +16,7 @@ export default function ServiceTabs() {
   const [dir, setDir] = useState(1)
   const pick = (k) => {
     setDir(k >= i ? 1 : -1)
+    sound.play(SND[k])
     setI(k)
   }
   const s = SERVICES[i]
@@ -45,7 +51,14 @@ export default function ServiceTabs() {
           ))}
         </div>
 
-        <article className="tabs-panel" key={s.num} style={{ '--dir': dir }}>
+        <article className={`tabs-panel fx-${FX[i]}`} key={s.num} style={{ '--dir': dir }}>
+          {FX[i] === 'tiles' && (
+            <div className="tile-fx" aria-hidden="true">
+              {Array.from({ length: 40 }, (_, n) => (
+                <i key={n} style={{ '--d': ((n * 53) % 40) * 14 }} />
+              ))}
+            </div>
+          )}
           <div className={`tp-img${s.epoxy ? ' epoxy-art' : ''}`} style={{ backgroundImage: `url("${s.img}")` }} />
           <div className="tp-shade" />
           <div className="tp-body">

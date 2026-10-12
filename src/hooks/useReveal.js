@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { sound } from '../utils/sound'
 
 /** Mirrors original site scroll-reveal (adds .in class via IntersectionObserver). */
 export function useReveal() {
@@ -10,6 +11,7 @@ export function useReveal() {
         entries.forEach((e) => {
           if (e.isIntersecting) {
             e.target.classList.add('in')
+            if (e.target.tagName === 'SECTION') sound.section()
             io.unobserve(e.target)
           }
         })

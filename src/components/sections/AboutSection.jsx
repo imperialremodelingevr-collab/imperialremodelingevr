@@ -2,8 +2,8 @@ import { useT } from '../../hooks/useT'
 import Mask from '../Mask'
 
 const PHOTOS = [
-  { cls: 'a', img: '/images/11677d19-5a3a-4700-b150-c134ac6a32a8.jpg', capKey: 'aboutCap1' },
-  { cls: 'b', img: '/images/ae4f24ce-fad0-4e9b-80b0-694233d81aca.jpg', capKey: 'aboutCap2' },
+  { cls: 'a', img: '/images/kitchen-white.jpg', capKey: 'aboutCap1' },
+  { cls: 'b', img: '/images/1d35663b-cf8e-471c-b3e1-6657e58d7d05.jpg', capKey: 'aboutCap2' },
   { cls: 'c', img: '/images/b64ab3f5-d981-4561-9a69-b96aa9604813.jpg', capKey: 'aboutCap3' },
   { cls: 'd epoxy-art', img: '/images/1d35663b-cf8e-471c-b3e1-6657e58d7d05.jpg', capKey: 'aboutCap4' },
 ]

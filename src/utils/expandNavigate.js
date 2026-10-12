@@ -1,3 +1,5 @@
+import { sound } from './sound'
+
 /**
  * Transforma una tarjeta en la siguiente escena: la tarjeta se expande hasta
  * llenar la pantalla y entonces se cambia de pagina (la foto coincide con el
@@ -5,6 +7,7 @@
  */
 export function expandNavigate(el, bgUrl, go) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return go()
+  sound.play('slide')
   const r = el.getBoundingClientRect()
   const o = document.createElement('div')
   o.className = 'card-expand'

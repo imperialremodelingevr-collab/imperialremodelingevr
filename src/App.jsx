@@ -14,6 +14,8 @@ import ContactPage from './pages/ContactPage'
 import { useReveal } from './hooks/useReveal'
 import { useFx } from './hooks/useFx'
 import { useSeo } from './hooks/useSeo'
+import { useMotion } from './hooks/useMotion'
+import SoundToggle from './components/SoundToggle'
 import { useEffect } from 'react'
 import { captureAttribution, initAnalytics, installClickTracking } from './utils/analytics'
 
@@ -21,6 +23,7 @@ export default function App() {
   useReveal()
   useFx()
   useSeo()
+  useMotion()
   useEffect(() => {
     captureAttribution()
     initAnalytics()
@@ -45,6 +48,7 @@ export default function App() {
       </PageTransition>
       <Footer />
       <WhatsAppFloat />
+      <SoundToggle />
     </>
   )
 }

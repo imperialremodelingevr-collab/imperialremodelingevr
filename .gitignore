@@ -8,3 +8,4 @@ _sections/
 _extract*
 _gen*
 _fix*
+.env*
