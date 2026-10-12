@@ -1,33 +1,11 @@
 import { useT } from '../../hooks/useT'
 import Mask from '../Mask'
-import { img } from '../../utils/images'
+import { PROJECTS, REAL_REVIEWS } from '../../data/projects'
 
-const TESTIMONIALS = [
-  {
-    quoteKey: 'testi1',
-    imageId: 'kitchen-white',
-    av: 'M',
-    nameKey: 'testiName1',
-    locKey: 'testiLoc1',
-  },
-  {
-    quoteKey: 'testi2',
-    imageId: '1d35663b-cf8e-471c-b3e1-6657e58d7d05',
-    av: 'D',
-    nameKey: 'testiName2',
-    locKey: 'testiLoc2',
-  },
-  {
-    quoteKey: 'testi3',
-    imageId: '1d35663b-cf8e-471c-b3e1-6657e58d7d05',
-    av: 'R',
-    nameKey: 'testiName3',
-    locKey: 'testiLoc3',
-  },
-]
-
+/** Proyectos reales (fotos de obras de Imperial) + resenas verificadas cuando existan (src/data/projects.js). */
 export default function TestimonialsSection() {
-  const { t } = useT()
+  const { t, lang } = useT()
+  const L = lang === 'es' ? 'es' : 'en'
 
   return (
     <section className="testi" id="testi">
@@ -43,29 +21,35 @@ export default function TestimonialsSection() {
         <p>{t('testiLede')}</p>
       </div>
 
-      <div className="testi-grid reveal stagger">
-        {TESTIMONIALS.map((item) => (
-          <article key={item.quoteKey} className="t-card in">
-            <div className="quote-mark">&ldquo;</div>
-            <div className="stars">★★★★★</div>
-            <blockquote>{t(item.quoteKey)}</blockquote>
-            <div className="ph">
-              <img
-                src={img(item.imageId)}
-                alt={t(item.nameKey)}
-                loading="lazy"
-              />
+      <div className="pj-grid reveal stagger">
+        {PROJECTS.map((p) => (
+          <article key={p.img} className="pj-card">
+            <div className="pj-ph">
+              <img src={p.img} alt={p.alt[L]} loading="lazy" />
+              <span className="pj-tag">{p.tag[L]}</span>
+              <span className="pj-real">{t('pjReal')}</span>
             </div>
-            <div className="who">
-              <div className="av">{item.av}</div>
-              <div>
-                <div className="n">{t(item.nameKey)}</div>
-                <div className="l">{t(item.locKey)}</div>
-              </div>
+            <div className="pj-body">
+              <h3>{p.title[L]}</h3>
+              <p>{p.desc[L]}</p>
             </div>
           </article>
         ))}
       </div>
+
+      {REAL_REVIEWS.length > 0 && (
+        <div className="pj-reviews reveal stagger">
+          {REAL_REVIEWS.map((r, i) => (
+            <figure key={i} className="pj-quote">
+              <blockquote>{r.quote[L]}</blockquote>
+              <figcaption>
+                <strong>{r.name}</strong>
+                <span>{r.place}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

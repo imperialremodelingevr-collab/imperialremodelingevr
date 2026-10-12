@@ -47,12 +47,12 @@ export const ROUTES = {
   },
   '/reviews': {
     en: {
-      title: 'Client Reviews | Imperial Remodeling EVR Dallas–Fort Worth',
-      desc: 'What clients say about working with Imperial Remodeling EVR in Dallas–Fort Worth.',
+      title: 'Real Remodeling Projects | Imperial Remodeling EVR Dallas–Fort Worth',
+      desc: 'Real photos from Imperial Remodeling EVR job sites in Dallas–Fort Worth: kitchens, bathrooms, exteriors, flooring and commercial spaces.',
     },
     es: {
-      title: 'Reseñas de Clientes | Imperial Remodeling EVR Dallas–Fort Worth',
-      desc: 'Lo que dicen los clientes sobre trabajar con Imperial Remodeling EVR en Dallas–Fort Worth.',
+      title: 'Proyectos Reales de Remodelación | Imperial Remodeling EVR Dallas–Fort Worth',
+      desc: 'Fotos reales de obras de Imperial Remodeling EVR en Dallas–Fort Worth: cocinas, baños, exteriores, pisos y espacios comerciales.',
     },
   },
   '/contact': {

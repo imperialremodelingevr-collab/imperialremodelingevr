@@ -7,7 +7,7 @@ import { img } from '../../utils/images'
 const CARDS = [
   { to: '/about', n: '01', titleKey: 'navAbout', descKey: 'expAboutP', id: '1c1d1d94-e455-42f8-ac6b-1fe4c74a9b3c', wide: true },
   { to: '/gallery', n: '02', titleKey: 'navGallery', descKey: 'expGalleryP', id: '575d937b-40e8-4221-ba31-4831e235dcf5' },
-  { to: '/reviews', n: '03', titleKey: 'navTesti', descKey: 'expReviewsP', id: 'daa51c47-be2b-45b5-9d8d-54c582dc7afe' },
+  { to: '/reviews', n: '03', titleKey: 'navTesti', descKey: 'expReviewsP', id: 'proj-exterior' },
   { to: '/contact', n: '04', titleKey: 'navContact', descKey: 'expContactP', id: 'a4c9cacf-f7c3-4d4a-b330-a9159c6168b7', wide: true },
 ]
 
