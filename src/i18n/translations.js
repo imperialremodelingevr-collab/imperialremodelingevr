@@ -156,18 +156,6 @@ const translations = {
     testiH2: 'sin retoques.',
     testiLede:
       'Fotos tomadas en nuestras propias obras en Dallas–Fort Worth.',
-    testi1:
-      'Trataron nuestra cocina como un sastre trata un traje — midieron dos veces, cortaron una, y la devolvieron sin un solo hilo fuera de lugar.',
-    testi2:
-      'El mismo señor que nos dio la cotización clavó el último clavo. No hemos podido encontrar eso en ninguna otra parte del Metroplex.',
-    testi3:
-      'El piso epoxy metálico del taller atrapa la luz como agua quieta. Dos años después, impecable. No son contratistas. Son artesanos.',
-    testiName1: 'Marisol Ferrante',
-    testiLoc1: 'Highland Park · Cocina',
-    testiName2: 'David & Lena Cho',
-    testiLoc2: 'Plano · Baño Principal',
-    testiName3: 'Roberto Vega',
-    testiLoc3: 'Frisco · Piso Epoxy',
     contactEyebrow: 'Comencemos',
     contactH1: 'Cuéntenos su',
     contactH2: 'visión.',
@@ -369,18 +357,6 @@ const translations = {
     testiH2: 'no retouching.',
     testiLede:
       'Photos taken on our own job sites in Dallas–Fort Worth.',
-    testi1:
-      'They treated our kitchen the way a tailor treats a suit — measured twice, cut once, returned without a single thread out of place.',
-    testi2:
-      'The same gentleman who quoted the project drove the last nail. We have not been able to find that anywhere else in the Metroplex.',
-    testi3:
-      'The metallic epoxy floor catches the light like still water. Two years on, still flawless. They are not contractors. They are craftsmen.',
-    testiName1: 'Marisol Ferrante',
-    testiLoc1: 'Highland Park · Kitchen',
-    testiName2: 'David & Lena Cho',
-    testiLoc2: 'Plano · Master Bath',
-    testiName3: 'Roberto Vega',
-    testiLoc3: 'Frisco · Epoxy Floor',
     contactEyebrow: "Let's Begin",
     contactH1: 'Tell us your',
     contactH2: 'vision.',
