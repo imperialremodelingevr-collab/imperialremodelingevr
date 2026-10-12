@@ -1,4 +1,5 @@
 import { useT } from '../../hooks/useT'
+import Mask from '../Mask'
 import { img } from '../../utils/images'
 
 const TESTIMONIALS = [
@@ -36,7 +37,7 @@ export default function TestimonialsSection() {
             <span className="tick" /> <span>{t('testiEyebrow')}</span>
           </div>
           <h2>
-            <span>{t('testiH1')}</span> <span className="red">{t('testiH2')}</span>
+            <Mask text={t('testiH1')} /> <Mask text={t('testiH2')} className="red" after={t('testiH1')} />
           </h2>
         </div>
         <p>{t('testiLede')}</p>

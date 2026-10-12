@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import Mask from '../Mask'
 import { useT } from '../../hooks/useT'
 
 const STATS = [
@@ -32,7 +33,7 @@ export default function FeaturedSection() {
             <span className="tick" /> <span>{t('featEyebrow')}</span>
           </div>
           <h2>
-            <span>{t('featH1')}</span> <span className="red">{t('featH2')}</span>
+            <Mask text={t('featH1')} /> <Mask text={t('featH2')} className="red" after={t('featH1')} />
           </h2>
           <p className="lead">{t('featLead')}</p>
           <div className="feature-stats">

@@ -1,4 +1,5 @@
 import { useT } from '../../hooks/useT'
+import Mask from '../Mask'
 
 const PHOTOS = [
   { cls: 'a', img: '/images/11677d19-5a3a-4700-b150-c134ac6a32a8.jpg', capKey: 'aboutCap1' },
@@ -38,7 +39,7 @@ export default function AboutSection() {
             <span className="tick" /> <span>{t('aboutEyebrow')}</span>
           </div>
           <h2>
-            <span>{t('aboutH1')}</span> <span className="red">{t('aboutH2')}</span>
+            <Mask text={t('aboutH1')} /> <Mask text={t('aboutH2')} className="red" after={t('aboutH1')} />
           </h2>
           <p className="lead">{t('aboutLead')}</p>
           <p>{t('aboutP1')}</p>

@@ -1,4 +1,5 @@
 import { useT } from '../../hooks/useT'
+import Mask from '../Mask'
 
 export const SERVICES = [
   { num: '01', wide: true, img: '/images/11677d19-5a3a-4700-b150-c134ac6a32a8.jpg', titleKey: 'svcKitchen', descKey: 'svcKitchenP', icon: <path d="M4 8h16M4 8v12h16V8M4 8V4h16v4M8 12h2M14 12h2M11 16h2" /> },
@@ -20,7 +21,7 @@ export default function ServicesSection({ rail = false }) {
             <span className="tick" /> <span>{t('svcEyebrow')}</span>
           </div>
           <h2>
-            <span>{t('svcH1')}</span> <span className="red">{t('svcH2')}</span>
+            <Mask text={t('svcH1')} /> <Mask text={t('svcH2')} className="red" after={t('svcH1')} />
           </h2>
         </div>
         <p>{t('svcLede')}</p>

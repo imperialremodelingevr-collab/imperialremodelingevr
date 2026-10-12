@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { expandNavigate } from '../../utils/expandNavigate'
+import Mask from '../Mask'
 import { useT } from '../../hooks/useT'
 import { img } from '../../utils/images'
 
@@ -6,25 +8,35 @@ const CARDS = [
   { to: '/about', n: '01', titleKey: 'navAbout', descKey: 'expAboutP', id: '1c1d1d94-e455-42f8-ac6b-1fe4c74a9b3c', wide: true },
   { to: '/gallery', n: '02', titleKey: 'navGallery', descKey: 'expGalleryP', id: 'ae4f24ce-fad0-4e9b-80b0-694233d81aca' },
   { to: '/reviews', n: '03', titleKey: 'navTesti', descKey: 'expReviewsP', id: 'daa51c47-be2b-45b5-9d8d-54c582dc7afe' },
-  { to: '/contact', n: '04', titleKey: 'navContact', descKey: 'expContactP', id: '11677d19-5a3a-4700-b150-c134ac6a32a8', wide: true },
+  { to: '/contact', n: '04', titleKey: 'navContact', descKey: 'expContactP', id: 'a4c9cacf-f7c3-4d4a-b330-a9159c6168b7', wide: true },
 ]
 
 /** Entradas 3D a las demas paginas (reusa el estilo de las tarjetas de servicios). */
 export default function ExploreSection() {
   const { t } = useT()
+  const navigate = useNavigate()
   return (
     <section className="services explore" id="explore">
       <div className="section-header">
         <div>
           <div className="eyebrow"><span className="tick" /> <span>{t('expEyebrow')}</span></div>
           <h2>
-            <span>{t('expH1')}</span> <span className="red">{t('expH2')}</span>
+            <Mask text={t('expH1')} /> <Mask text={t('expH2')} className="red" after={t('expH1')} />
           </h2>
         </div>
       </div>
       <div className="services-grid reveal stagger">
         {CARDS.map((c) => (
-          <Link key={c.to} to={c.to} className={`svc${c.wide ? ' wide' : ''}`}>
+          <Link
+            key={c.to}
+            to={c.to}
+            className={`svc${c.wide ? ' wide' : ''}`}
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
+              e.preventDefault()
+              expandNavigate(e.currentTarget, img(c.id), () => navigate(c.to))
+            }}
+          >
             <div className="svc-img" style={{ backgroundImage: `url("${img(c.id)}")` }} />
             <div className="svc-body">
               <div className="svc-top"><span className="svc-num">— {c.n}</span></div>

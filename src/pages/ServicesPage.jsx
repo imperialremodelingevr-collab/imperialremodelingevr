@@ -7,7 +7,7 @@ import { img } from '../utils/images'
 export default function ServicesPage() {
   return (
     <>
-      <PageHero eyebrowKey="svcEyebrow" titleKey="navServices" subKey="pgSvcSub" image={img('11677d19-5a3a-4700-b150-c134ac6a32a8')} />
+      <PageHero eyebrowKey="svcEyebrow" titleKey="navServices" subKey="pgSvcSub" video="ban-services" image={img('11677d19-5a3a-4700-b150-c134ac6a32a8')} />
       <ServiceTabs />
       <Featured />
       <CtaBand />

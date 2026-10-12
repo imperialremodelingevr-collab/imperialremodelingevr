@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Mask from './Mask'
 import { useLanguage } from '../context/LanguageContext'
 import { useT } from '../hooks/useT'
 
@@ -58,7 +59,7 @@ export default function Contact() {
             <span className="tick" /> <span>{t('contactEyebrow')}</span>
           </div>
           <h2>
-            <span>{t('contactH1')}</span> <span className="red">{t('contactH2')}</span>
+            <Mask text={t('contactH1')} /> <Mask text={t('contactH2')} className="red" after={t('contactH1')} />
           </h2>
         </div>
         <p>{t('contactLede')}</p>

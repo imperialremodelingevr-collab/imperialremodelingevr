@@ -1,4 +1,5 @@
 import { useT } from '../../hooks/useT'
+import Mask from '../Mask'
 
 const CHIPS = ['chip1', 'chip2', 'chip3', 'chip4']
 
@@ -23,7 +24,7 @@ export default function CertsSection() {
             <span className="tick" /> <span>{t('certEyebrow')}</span>
           </div>
           <h2>
-            <span>{t('certH1')}</span> <span className="red">{t('certH2')}</span>
+            <Mask text={t('certH1')} /> <Mask text={t('certH2')} className="red" after={t('certH1')} />
           </h2>
           <p className="lead">{t('certLead')}</p>
           <p>{t('certP')}</p>

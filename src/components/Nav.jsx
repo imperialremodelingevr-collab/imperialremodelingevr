@@ -19,7 +19,7 @@ export default function Nav() {
   return (
     <nav className="nav">
       <Link to="/" className="nav-logo">
-        <img className="logo-img-nav" src="/images/logo-imperial-dark.png" alt="Imperial Remodeling EVR" />
+        <img className="logo-img-nav" src="/images/logo-imperial-light.png" alt="Imperial Remodeling EVR" />
       </Link>
       <div className="nav-links">
         {LINKS.map((l) => (

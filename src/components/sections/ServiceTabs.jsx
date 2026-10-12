@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Mask from '../Mask'
 import { Link } from 'react-router-dom'
 import { useT } from '../../hooks/useT'
 import { SERVICES } from './ServicesSection'
@@ -7,6 +8,11 @@ import { SERVICES } from './ServicesSection'
 export default function ServiceTabs() {
   const { t } = useT()
   const [i, setI] = useState(0)
+  const [dir, setDir] = useState(1)
+  const pick = (k) => {
+    setDir(k >= i ? 1 : -1)
+    setI(k)
+  }
   const s = SERVICES[i]
 
   return (
@@ -15,7 +21,7 @@ export default function ServiceTabs() {
         <div>
           <div className="eyebrow"><span className="tick" /> <span>{t('svcEyebrow')}</span></div>
           <h2>
-            <span>{t('svcH1')}</span> <span className="red">{t('svcH2')}</span>
+            <Mask text={t('svcH1')} /> <Mask text={t('svcH2')} className="red" after={t('svcH1')} />
           </h2>
         </div>
         <p>{t('svcLede')}</p>
@@ -30,8 +36,8 @@ export default function ServiceTabs() {
               role="tab"
               aria-selected={k === i}
               className={`tab-btn${k === i ? ' on' : ''}`}
-              onClick={() => setI(k)}
-              onMouseEnter={() => matchMedia('(hover:hover)').matches && setI(k)}
+              onClick={() => pick(k)}
+              onMouseEnter={() => matchMedia('(hover:hover)').matches && k !== i && pick(k)}
             >
               <span className="tab-num">{x.num}</span>
               <span>{t(x.titleKey)}</span>
@@ -39,7 +45,7 @@ export default function ServiceTabs() {
           ))}
         </div>
 
-        <article className="tabs-panel" key={s.num}>
+        <article className="tabs-panel" key={s.num} style={{ '--dir': dir }}>
           <div className={`tp-img${s.epoxy ? ' epoxy-art' : ''}`} style={{ backgroundImage: `url("${s.img}")` }} />
           <div className="tp-shade" />
           <div className="tp-body">

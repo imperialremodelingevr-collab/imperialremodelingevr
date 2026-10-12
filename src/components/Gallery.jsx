@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Mask from './Mask'
 import { useT } from '../hooks/useT'
 import styles from './Gallery.module.css'
 
@@ -133,7 +134,7 @@ export default function Gallery() {
             <span className="tick" /> <span>{t('galEyebrow')}</span>
           </div>
           <h2>
-            <span>{t('galH1')}</span> <span className="red">{t('galH2')}</span>
+            <Mask text={t('galH1')} /> <Mask text={t('galH2')} className="red" after={t('galH1')} />
           </h2>
         </div>
         <p>{t('galLede')}</p>
