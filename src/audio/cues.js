@@ -1,66 +1,43 @@
 /**
- * Mapa musical de "The Hammer and the Line" (analizado: 102.5 BPM, compas de 4 tiempos).
- * Todos los cortes caen en el primer tiempo de un compas, asi los cambios suenan musicales.
- * Para ajustar la musica NO hace falta tocar codigo: edita los segundos de este archivo.
+ * Mapa musical de "Where Life Happens" (105 BPM, compas de 4 tiempos, 3:02).
+ * REGLAS DE LA MUSICA DEL SITIO
+ *  1. En cada pagina suena SOLO su pedazo. Nunca se mezcla con el de otra pagina.
+ *  2. Al entrar a una pagina, su pedazo empieza desde el principio.
+ *  3. Si el visitante se queda, el pedazo vuelve a empezar (con un respiro corto, sin colarse nada).
+ *  4. Al cambiar de pagina el pedazo anterior se apaga primero y despues entra el nuevo (sin superponerse).
+ *
+ * Analisis: en varios cortes la voz de la parte siguiente entra ~0.5-0.7 s ANTES del compas.
+ * Por eso los pedazos que terminan ahi (Inicio, Servicios, Resenas) terminan un tiempo (0.571 s) antes.
+ * Para ajustar NO hace falta tocar codigo: edita los segundos de este archivo.
  */
-export const SONG_URL = '/audio/hammer-and-the-line.mp3'
-export const BPM = 102.5
-export const BEAT = 60 / BPM // 0.585 s
-export const DOWNBEAT = 0.441 // segundo donde cae el primer tiempo del compas 1
+export const SONG_URL = '/audio/where-life-happens.mp3'
+export const BPM = 105
+export const BEAT = 60 / BPM // 0.571 s
+export const DOWNBEAT = 0.71
 
-// Partes de la cancion (segundos)
-export const CUES = {
-  intro: { start: 0.441, end: 9.81 }, //   compases 1-4   · suave, abre la cancion
-  verse: { start: 9.81, end: 28.54 }, //   compases 5-12  · calmado, contenido
-  chorus1: { start: 28.54, end: 66.0 }, // compases 13-28 · energia alta
-  bridge: { start: 66.0, end: 84.73 }, //  compases 29-36 · respiro / puente
-  chorus2: { start: 84.73, end: 112.83 }, // compases 37-48 · el clímax
-  outro: { start: 112.83, end: 122.6 }, // compases 49-52 · cierre que se apaga
+export const FADE_OUT = 0.3 // al final de cada vuelta del pedazo (esconde cualquier resto)
+export const FADE_IN = 0.05 // al empezar cada vuelta
+export const SWITCH_OUT = 0.35 // al cambiar de pagina: el pedazo anterior se apaga en este tiempo
+export const SWITCH_GAP = 0.07 // silencio entre el pedazo que se apaga y el que entra (nunca suenan juntos)
+
+// Un pedazo por pagina: [inicio, fin] en segundos de la cancion
+export const ROUTE_CUE = {
+  // Inicio: intro + verso suave (8 compases menos 1 tiempo: la voz de la parte siguiente entra en 18.4 s)
+  '/': { key: 'home', start: 0.71, end: 18.43 },
+  // Servicios: primer estribillo, fuerte (8 compases menos 1 tiempo)
+  '/services': { key: 'services', start: 46.42, end: 64.14 },
+  // Nosotros: verso calido (12 compases; el final es limpio)
+  '/about': { key: 'about', start: 73.85, end: 101.28 },
+  // Galeria: construccion -> clímax (efecto "drop"); el final es limpio
+  '/gallery': { key: 'gallery', start: 128.71, end: 174.42 },
+  // Resenas: verso que va subiendo (12 compases menos 1 tiempo)
+  '/reviews': { key: 'reviews', start: 19.0, end: 45.85 },
+  // Contacto: ultimos compases del climax + cierre natural de la cancion
+  '/contact': { key: 'contact', start: 156.14, end: 181.9 },
 }
 
 /**
- * Que suena en cada pagina.
- *  from  = donde empieza al entrar        loop = [inicio, fin] que se repite mientras el visitante se queda
- *  (sin loop = suena hasta el final y termina)
+ * Clics: NO se usan pedazos de otras partes de la cancion (traian voces ajenas).
+ * En su lugar la MISMA musica hace un barrido breve de brillo ("accent") en las pestanas de Servicios.
  */
-export const ROUTE_CUE = {
-  '/': { key: 'home', from: CUES.intro.start, loop: [CUES.verse.start, CUES.verse.end] }, //  intro -> verso (portada)
-  '/services': { key: 'services', from: CUES.chorus1.start, loop: [CUES.chorus1.start, CUES.chorus1.end] }, // estribillo
-  '/about': { key: 'about', from: CUES.bridge.start, loop: [CUES.bridge.start, CUES.bridge.end] }, //  puente (historia)
-  '/gallery': { key: 'gallery', from: CUES.chorus2.start, loop: [CUES.chorus2.start, CUES.chorus2.end] }, // clímax
-  '/reviews': { key: 'reviews', from: CUES.verse.start, loop: [CUES.verse.start, CUES.verse.end] }, //  verso (voces de clientes)
-  '/contact': { key: 'contact', from: 103.47, loop: null }, // ultimos compases + cierre: resolucion que termina
-}
-
-/** Golpes cortos tomados de la propia cancion (primer tiempo de compases fuertes). */
-export const STINGERS = {
-  hit: { at: 28.54, dur: 0.6, vol: 0.9 }, //  entrada del estribillo: impacto (demolicion)
-  hit2: { at: 84.73, dur: 0.6, vol: 0.9 }, // entrada del climax (tarjeta que se expande)
-  b1: { at: 37.9, dur: 0.38, vol: 0.8 }, //   portada: Obra
-  b2: { at: 42.59, dur: 0.38, vol: 0.8 }, //  portada: Acabados
-  b3: { at: 47.27, dur: 0.45, vol: 0.8 }, //  portada: Resultado
-  t1: { at: 56.64, dur: 0.34, vol: 0.8 }, //  servicio 1 · Cocinas
-  t2: { at: 58.98, dur: 0.34, vol: 0.8 }, //  servicio 2 · Banos
-  t3: { at: 87.08, dur: 0.34, vol: 0.8 }, //  servicio 3 · Epoxy
-  t4: { at: 91.76, dur: 0.34, vol: 0.8 }, //  servicio 4 · Electricidad
-  t5: { at: 96.44, dur: 0.34, vol: 0.8 }, //  servicio 5 · Plomeria
-  t6: { at: 101.12, dur: 0.34, vol: 0.8 }, // servicio 6 · Pintura
-  tap: { at: 46.1, dur: 0.14, vol: 0.45 }, // clic de boton (suave)
-}
-
-/** Nombres que usa la interfaz -> golpe de la cancion (null = sin sonido) */
-export const UI_TO_STINGER = {
-  hammer: 'hit', //  portada: Demolicion
-  drill: 'b1', //    portada: Obra
-  swipe: 'b2', //    portada: Acabados (tambien Pintura se resuelve abajo)
-  ding: 'b3', //     portada: Resultado
-  knock2: 't1',
-  tiles: 't2',
-  gloss: 't3',
-  spark: 't4',
-  drip: 't5',
-  paint: 't6',
-  lock: 'tap',
-  slide: 'hit2',
-  tick: null,
-}
+export const UI_ACCENT = ['knock2', 'tiles', 'gloss', 'spark', 'drip', 'paint']
