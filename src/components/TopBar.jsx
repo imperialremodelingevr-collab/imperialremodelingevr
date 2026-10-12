@@ -11,12 +11,8 @@ export default function TopBar() {
     <div className="top-bar">
       <a href="tel:2145171951" className="phone">
         <span className="t">{t('callNow')}</span>
-        <strong>📞 {PHONE}</strong>
+        <strong>{PHONE}</strong>
       </a>
-      <div className="stars">
-        <span className="star-rating" />
-        <span>{t('topRated')}</span>
-      </div>
       <div className="lang-toggle">
         <button
           type="button"

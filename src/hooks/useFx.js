@@ -20,8 +20,11 @@ export function useFx() {
       const h = document.documentElement
       bar.style.width = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)) * 100 + '%'
       h.style.setProperty('--sy', h.scrollTop)
+      document.body.dataset.heroTop = document.querySelector('.hero-v2') && h.scrollTop < innerHeight * 0.55 ? '1' : '0'
     }
     on(window, 'scroll', onScroll, { passive: true })
+    onScroll()
+    cleanups.push(() => { delete document.body.dataset.heroTop })
 
     const fine = matchMedia('(hover:hover) and (pointer:fine)').matches
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches
