@@ -381,3 +381,6 @@ html.lenis, html.lenis body { height: auto; }
   .fx-door .tp-img, .fx-gloss .tp-img, .fx-spark .tp-img, .fx-ripple .tp-img, .fx-wipe .tp-img, .tabs-panel .tp-body { animation: none; clip-path: none; }
   .tile-fx, .fx-gloss::before, .fx-spark::before, .fx-ripple::before, .fx-wipe::before { display: none; }
 }
+
+.snd-btn.loading { opacity: .7; cursor: progress; }
+.snd-btn:disabled { pointer-events: none; }

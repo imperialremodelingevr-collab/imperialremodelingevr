@@ -48,12 +48,12 @@ export function useMotion() {
       lenis && lenis.raf(now)
 
       const y = window.scrollY
-      sound.scrollDelta(y - lastY)
       lastY = y
 
       const max = Math.max(1, root.scrollHeight - innerHeight)
       const target = clamp(y / max, 0, 1)
       curP += (target - curP) * Math.min(1, dt * 4.5)
+      sound.setIntensity(curP)
       root.style.setProperty('--hp', clamp(y / innerHeight, 0, 1).toFixed(3)) // avance dentro de la portada
       if (wm && !calm) {
         const side = clamp(innerWidth / 1200, 0.5, 1)
@@ -92,7 +92,7 @@ export function useMotion() {
   // al cambiar de pagina: volver arriba (Lenis incluido) y whoosh
   useEffect(() => {
     if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true, force: true })
-    sound.play('slide')
+    sound.setRoute(pathname)
   }, [pathname])
 }
 

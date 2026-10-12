@@ -7,7 +7,7 @@ import { SERVICES } from './ServicesSection'
 
 // Cada servicio tiene su sonido y su animacion de entrada (orden = SERVICES)
 const FX = ['door', 'tiles', 'gloss', 'spark', 'ripple', 'wipe']
-const SND = ['knock2', 'tiles', 'gloss', 'spark', 'drip', 'swipe']
+const SND = ['knock2', 'tiles', 'gloss', 'spark', 'drip', 'paint']
 
 /** Un solo panel interactivo en vez de una cuadricula larga. */
 export default function ServiceTabs() {
