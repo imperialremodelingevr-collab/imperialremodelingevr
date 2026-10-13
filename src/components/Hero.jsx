@@ -1,25 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useT } from '../hooks/useT'
-import { sound } from '../utils/sound'
 
 /**
- * Portada: time-lapse de la remodelacion de un bano. El video empieza y termina
- * en el bano terminado (ciclo perfecto). El logo aparece en esos dos momentos y
- * se retira mientras ocurre la obra. Los capitulos (Demolicion, Obra, Acabados,
- * Resultado) estan sincronizados con el video y la linea de tiempo es interactiva.
+ * Portada: recorrido REAL de una casa remodelada (video propio) siempre de fondo.
+ * El logo y los botones quedan encima; la linea de tiempo permite recorrer la casa
+ * (Exterior -> Sala -> Cocina) arrastrando.
  */
-const CHAPTERS = [
-  { at: 0, key: 'hvC3' }, // Resultado
-  { at: 1.0, key: 'hvC0' }, // Demolicion
-  { at: 2.0, key: 'hvC1' }, // Obra
-  { at: 3.6, key: 'hvC2' }, // Acabados
-  { at: 6.2, key: 'hvC3' }, // Resultado
-]
-const LOGO_END = 1.0 // el logo vive en el primer segundo...
-const LOGO_START = 6.3 // ...y vuelve al final
-const MARKS = [1.0, 2.0, 3.6, 6.2]
-const FOCUS = '62% 60%'
+const CHAPTERS = [{ at: 0, key: 'hvR2' }] // Cocina
+const MARKS = []
+const DURATION = 5.4 // segundos del video (para ubicar las marcas)
 
 const chapterAt = (t) => {
   let c = CHAPTERS[0]
@@ -31,15 +21,13 @@ export default function Hero() {
   const { t } = useT()
   const navigate = useNavigate()
   const sectionRef = useRef(null)
-  const camRef = useRef(null)
   const videoRef = useRef(null)
   const trackRef = useRef(null)
   const fillRef = useRef(null)
   const handleRef = useRef(null)
   const scrubbing = useRef(false)
-  const stateRef = useRef({ intro: true, ch: 'hvC3' })
-  const [intro, setIntro] = useState(true)
-  const [chKey, setChKey] = useState('hvC3')
+  const chRef = useRef('hvR2')
+  const [chKey, setChKey] = useState('hvR2')
 
   const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -54,26 +42,15 @@ export default function Hero() {
       if (!on || !v.duration) return
       const time = v.currentTime
       const p = time / v.duration
-
       if (fillRef.current) fillRef.current.style.width = p * 100 + '%'
       if (handleRef.current) handleRef.current.style.left = p * 100 + '%'
       if (trackRef.current) trackRef.current.setAttribute('aria-valuenow', Math.round(p * 100))
-
-      // la camara respira alrededor del punto de interes (inicio y fin quedan iguales)
-      if (camRef.current) camRef.current.style.transform = `scale(${(1 + 0.07 * Math.sin(Math.PI * p)).toFixed(4)})`
-
-      // sincronia: el logo y el capitulo cambian con lo que muestra el video
-      const i = time < LOGO_END || time > LOGO_START
-      if (i !== stateRef.current.intro) {
-        stateRef.current.intro = i
-        setIntro(i)
-      }
       const key = chapterAt(time).key
-      if (key !== stateRef.current.ch) {
-        stateRef.current.ch = key
+      if (key !== chRef.current) {
+        chRef.current = key
         setChKey(key)
-        sound.play({ hvC0: 'hammer', hvC1: 'drill', hvC2: 'swipe', hvC3: 'ding' }[key])
       }
+      v.classList.toggle('fade', p > 0.97) // fundido suave al reiniciar el recorrido
     }
     raf = requestAnimationFrame(tick)
 
@@ -128,7 +105,7 @@ export default function Hero() {
   const onKey = (e) => {
     const v = videoRef.current
     if (!v) return
-    const step = { ArrowLeft: -0.8, ArrowRight: 0.8 }[e.key]
+    const step = { ArrowLeft: -1.5, ArrowRight: 1.5 }[e.key]
     if (step !== undefined) {
       e.preventDefault()
       v.currentTime = Math.min(v.duration, Math.max(0, v.currentTime + step))
@@ -137,8 +114,8 @@ export default function Hero() {
   }
 
   return (
-    <section className="hero hero-v2" id="top" ref={sectionRef}>
-      <div className="hv-cam" ref={camRef} style={{ transformOrigin: FOCUS }}>
+    <section className="hero hero-v2 real" id="top" ref={sectionRef}>
+      <div className="hv-cam">
         <video
           ref={videoRef}
           className="hv-video"
@@ -147,18 +124,20 @@ export default function Hero() {
           autoPlay={!reduce}
           loop
           preload="auto"
-          poster="/videos/hero-bath.jpg"
+          poster="/videos/hero-kitchen.jpg"
           aria-hidden="true"
         >
-          <source src="/videos/hero-bath.mp4" type="video/mp4" />
+          <source src="/videos/hero-kitchen-m.mp4" type="video/mp4" media="(max-aspect-ratio: 1/1)" />
+          <source src="/videos/hero-kitchen.mp4" type="video/mp4" />
         </video>
       </div>
 
-      <div className={`hv-veil${intro ? ' on' : ''}`} />
+      <div className="hv-veil" />
+      <div className="hv-grain" aria-hidden="true" />
 
-      <div className={`hv-content${intro ? ' on' : ''}`}>
+      <div className="hv-content on">
         <h1 className="hv-logo-wrap">
-          <img className="hv-logo" src="/images/logo-imperial-light.png" alt="Imperial Remodeling EVR" />
+          <img className="hv-logo" src="/images/logo-imperial-dark.png" alt="Imperial Remodeling EVR" />
         </h1>
         <div className="hv-cta">
           <button type="button" className="btn-primary" onClick={() => navigate('/contact')}>
@@ -169,8 +148,6 @@ export default function Hero() {
           </button>
         </div>
       </div>
-
-      <span className="concept-tag">{t('conceptTag')}</span>
 
       <div className="hv-timeline">
         <span className="hv-lbl hv-chapter" key={chKey}>{t(chKey)}</span>
@@ -191,11 +168,11 @@ export default function Hero() {
         >
           <span className="hv-fill" ref={fillRef} />
           {MARKS.map((m) => (
-            <span key={m} className="hv-mark" style={{ left: (m / 8) * 100 + '%' }} />
+            <span key={m} className="hv-mark" style={{ left: (m / DURATION) * 100 + '%' }} />
           ))}
           <span className="hv-handle" ref={handleRef} />
         </div>
-        <span className="hv-lbl hv-r">{t('hvTL')}</span>
+        <span className="hv-lbl hv-r">{t('hvWalk')}</span>
       </div>
     </section>
   )
