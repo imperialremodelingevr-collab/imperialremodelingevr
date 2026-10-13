@@ -45,6 +45,14 @@ export default function AboutSection() {
           <p>{t('aboutP1')}</p>
           <p>{t('aboutP2')}</p>
 
+          <figure className="about-founder">
+            <img src="/images/ernesto.jpg" alt={t('founderName')} loading="lazy" />
+            <figcaption>
+              <strong>{t('founderName')}</strong>
+              <span>{t('founderRole')}</span>
+            </figcaption>
+          </figure>
+
           <div className="about-pillars">
             {PILLARS.map((p) => (
               <div key={p.titleKey} className="p">

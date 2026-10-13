@@ -13,6 +13,8 @@ const CARDS = [
   { image: '/images/e2f8d097-6671-4d63-ad56-99371088ae00.jpg', num: '04', nameKey: 'galCard6Name', metaKey: 'g6' },
   { image: '/images/b7dd19a7-8f89-48ea-adb8-a50b436e502a.jpg', num: '05', nameKey: 'galCard7Name', metaKey: 'g7' },
   { image: '/images/575d937b-40e8-4221-ba31-4831e235dcf5.jpg', num: '06', nameKey: 'galCard8Name', metaKey: 'g8' },
+  { image: '/images/real-sala.jpg', num: '07', nameKey: 'galCard9Name', metaKey: 'g9' },
+  { image: '/images/real-bar.jpg', num: '08', nameKey: 'galCard10Name', metaKey: 'g10' },
 ]
 
 function getRelativeIndex(index, activeIndex, total) {
