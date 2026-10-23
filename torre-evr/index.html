@@ -30,7 +30,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 #app { position: fixed; inset: 0; height: 100%; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) 380px; grid-template-rows: auto minmax(0, 1fr); background: var(--bg); }
-.alert { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px var(--gutter-r) 10px var(--gutter-l); background: rgba(255, 90, 95, 0.12); border-bottom: 1px solid rgba(255, 90, 95, 0.45); }
+.alert { grid-row: 1; grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px var(--gutter-r) 10px var(--gutter-l); background: rgba(255, 90, 95, 0.12); border-bottom: 1px solid rgba(255, 90, 95, 0.45); }
 .alert .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--err); animation: blink 1.1s infinite; flex: none; }
 .alert p { margin: 0; flex: 1 1 260px; min-width: 0; font-size: 13px; }
 .alert strong { font-weight: 600; }
@@ -41,7 +41,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .btn.danger { background: var(--err); border-color: var(--err); color: #1a0305; font-weight: 600; }
 .btn[disabled] { opacity: 0.5; cursor: default; }
 
-.stage { position: relative; overflow: hidden; min-width: 0; min-height: 0; background: radial-gradient(120% 90% at 50% 35%, #0a1623 0%, var(--bg) 70%); }
+.stage { grid-row: 2; grid-column: 1; position: relative; overflow: hidden; min-width: 0; min-height: 0; background: radial-gradient(120% 90% at 50% 35%, #0a1623 0%, var(--bg) 70%); }
 #gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 #labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .bubble { z-index: 5; position: absolute; left: 0; top: 0; visibility: hidden; width: max-content; max-width: 230px; padding: 9px 12px; background: rgba(8, 18, 28, 0.94); border: 1px solid var(--accent); border-radius: 4px; font-size: 12.5px; line-height: 1.4; color: #e6f4ff; will-change: transform; box-shadow: 0 0 18px rgba(92, 200, 255, 0.25); }
@@ -71,7 +71,8 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .stats .a dd.has { color: var(--err); }
 
 .tools { position: absolute; right: calc(var(--gutter-r) + 54px); bottom: 18px; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: flex-end; align-items: flex-end; gap: 8px; width: min(360px, 62%); z-index: 4; }
-.tools .btn { background: rgba(7, 13, 21, 0.8); }
+.tools { pointer-events: none; }
+.tools .btn { pointer-events: auto; background: rgba(7, 13, 21, 0.8); }
 
 .lift { position: absolute; right: var(--gutter-r); bottom: 16px; display: flex; flex-direction: column; gap: 3px; padding: 5px; background: rgba(5, 10, 16, 0.65); border: 1px solid var(--line); backdrop-filter: blur(4px); }
 .lf { width: 34px; height: 30px; border: 1px solid var(--line); background: rgba(11, 20, 31, 0.9); font: 500 11px/1 var(--mono); border-radius: 2px; position: relative; }
@@ -122,7 +123,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .chip.sel { border-color: var(--accent); }
 .nogl { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
 
-.panel { display: flex; flex-direction: column; min-height: 0; min-width: 0; background: var(--panel); border-left: 1px solid var(--line); }
+.panel { grid-row: 2; grid-column: 2; display: flex; flex-direction: column; min-height: 0; min-width: 0; background: var(--panel); border-left: 1px solid var(--line); }
 .tabs { display: flex; align-items: center; gap: 2px; padding: 8px var(--gutter-r) 0 12px; border-bottom: 1px solid var(--line); }
 .tabs .tb { position: relative; width: 36px; height: 38px; display: grid; place-items: center; padding: 0; border: 0; background: none; color: var(--muted); border-radius: 3px 3px 0 0; }
 .tabs .tb svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
@@ -273,14 +274,14 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   .roster { display: none; }
   .card { right: auto; left: var(--gutter-l); }
   #app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) minmax(0, 46%); }
-  .panel { border-left: 0; border-top: 1px solid var(--line); }
+  .panel { grid-row: 3; grid-column: 1; border-left: 0; border-top: 1px solid var(--line); }
   .tabs { padding-left: var(--gutter-l); }
   .list { padding-left: var(--gutter-l); }
   .hud { padding-top: 12px; }
   .stats { gap: 16px; }
   .stats dd { font-size: 19px; }
   .card { top: auto; bottom: 54px; }
-  .tools { width: auto; bottom: 54px; top: auto; right: var(--gutter-r); flex-direction: row; flex-wrap: wrap; justify-content: flex-end; left: var(--gutter-l); }
+  .tools { width: auto; bottom: 54px; top: auto; right: var(--gutter-r); flex-direction: row; flex-wrap: wrap; justify-content: flex-end; left: calc(var(--gutter-l) + 104px); }
   .lift { display: none; }
   .card { right: auto; }
   .brand p { display: none; }
@@ -2445,10 +2446,10 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         if (kind === 'agent') { var ag = byId(id); v.copy(ag.v.robot.position); v.y += 3.2; }
         else if (kind === 'project') { var m = projMarks[id]; if (!m) return null; v.set(m.x, 13, m.z); }
         else if (kind === 'planet') { var o = planetObjs[id]; if (!o) return null; o.g.getWorldPosition(v); }
-        else if (kind === 'meteor') { if (!meteors.length) return null; v.copy(meteors[0].g.position); }
+        else if (kind === 'meteor') { if (!meteors.length) return null; v.copy(meteors[meteors.length - 1].g.position); }
         v.project(camera); return { x: rc.left + (v.x * 0.5 + 0.5) * rc.width, y: rc.top + (-v.y * 0.5 + 0.5) * rc.height, z: v.z };
       },
-      spawnMeteorTest: function (g) { spawnMeteor(!!g); },
+      spawnMeteorTest: function (g) { spawnMeteor(!!g); var m = meteors[meteors.length - 1]; if (m) { m.sp = 0; var f = new THREE.Vector3(); camera.getWorldDirection(f); var rt = new THREE.Vector3().crossVectors(f, camera.up).normalize(); m.g.position.copy(camera.position).addScaledVector(f, 200).addScaledVector(rt, 43); } },
       stats: function () { var n = 0; scene.traverse(function () { n++; }); var i = renderer.info; return { geo: i.memory.geometries, tex: i.memory.textures, calls: i.render.calls, tris: i.render.triangles, objs: n, meteors: meteors.length, bursts: bursts.length, pick: pickables.length, tier: tier }; },
       restart: function () { ladder = 0; blankHits = 0; stalls = 0; spaceBroken = false; clearFx(); resetCam(); tier = Math.max(tier, 1); applyTier(); if (glLost && loseExt) { try { loseExt.restoreContext(); } catch (e) {} } setFlat(false); },
       setHighlight: function (ids) { hl = ids; },
