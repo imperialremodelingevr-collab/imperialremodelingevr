@@ -537,6 +537,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     { id: 'p5', name: 'Piso de madera', client: 'Residencia Oeste', stage: 'Contrato', progress: 15, next: 'Firmar contrato y anticipo', agent: 'cobros', slot: 4 }
   ];
   var PREFS = {}; try { PREFS = JSON.parse(localStorage.getItem('evr.ui') || '{}') || {}; } catch (e) { PREFS = {}; }
+  if (PREFS.v !== 2) { PREFS.bg = 'espacio'; PREFS.q = 'auto'; }
   var qualityPref = PREFS.q || 'auto', alarmPrefsLoaded = true, rosterOpen = PREFS.roster !== false, panelOpen = PREFS.panel !== false, zen = false, bgPref = PREFS.bg || 'espacio', score = +PREFS.score || 0, selectedPlanet = null;
   var ICO = {
     inbox: '<path d="M3 13l3-8h12l3 8v6H3z"/><path d="M3 13h5l1 3h6l1-3h5"/>', tasks: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.5 1.5L7.5 5M3.5 12l1.5 1.5L7.5 11M3.5 18l1.5 1.5L7.5 17"/>',
@@ -1192,7 +1193,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var el = $('#score'); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
     return score;
   }
-  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify })); } catch (e) {} }
+  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify })); } catch (e) {} }
   function applyUi() {
     var app = $('#app'); app.classList.toggle('noroster', !rosterOpen); app.classList.toggle('nopanel', !panelOpen); app.classList.toggle('zen', zen);
     $('#score').textContent = '☄ ' + score; savePrefs();
@@ -2184,7 +2185,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var bgSpace = true, hl = null;
     function applyTier() {
       var ratios = [dprMax, Math.min(dprMax, 1.25), 1, 0.75], sp = bgSpace && !spaceBroken;
-      renderer.setPixelRatio(ratios[tier]); planetGroup.visible = sp && tier < 3; belt.visible = sp && tier < 2; nebulae.visible = sp && tier < 1; mwMesh.visible = sp && tier < 2;
+      renderer.setPixelRatio(ratios[tier]); planetGroup.visible = sp; belt.visible = sp && tier < 3; nebulae.visible = sp && tier < 2; mwMesh.visible = sp;
       sunRays.visible = tier < 1; PLANETS.forEach(function (p) { planetObjs[p.id].halo.visible = tier < 2; if (planetObjs[p.id].clouds) planetObjs[p.id].clouds.visible = tier < 2; });
       canvas.dataset.tier = tier; if (layoutReady) layout();
     }
