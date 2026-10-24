@@ -7,6 +7,7 @@
 - [ ] Confirmar zona horaria para el reporte diario (hoy: Nueva York).
 
 ## Lo que sigue (trabajo mío)
+- [ ] Prueba de alertas por Telegram: ejecutar `python3 integraciones/ejemplos_alertas.py --enviar` cuando existan token, chat y red permitida (5 ejemplos listos).
 - [ ] Telegram de dos vías: `integraciones/telegram_bandeja.py` ya está (enviar avisos con botones Aprobar/Corregir/Rechazar y leer tus respuestas). Falta crear la rutina que revisa tus respuestas y las aplica a la bandeja de la torre, cuando existan el token y el chat.
 - [ ] Conectar agentes reales, uno por uno: Correo → Cotizaciones → Atención al cliente → Publicaciones.
 - [ ] Reemplazar los agentes de ejemplo por estados reales en la base de datos (colección `agents`).
