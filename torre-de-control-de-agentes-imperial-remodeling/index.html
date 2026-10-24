@@ -1651,6 +1651,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var wt = winTex();
     var bMat = new THREE.MeshStandardMaterial({ map: wt.map, emissiveMap: wt.em, emissive: 0xffffff, emissiveIntensity: 0.8, roughness: 0.45, metalness: 0.35 });
     var padMat = new THREE.MeshStandardMaterial({ color: 0x08111a, roughness: 0.9, metalness: 0.1 });
+    var BLDS = [], curGI = 0, curGJ = 0;
     var bld = new Builder(), pads = new Builder(), edgePts = [], roofPts = [], roofCols = [], redPts = [], redCols = [], treePts = [], treeCols = [];
     var red = new THREE.Color(0xff5a5f), mint = new THREE.Color(0x7fe3c5);
     function topEdge(cx, cz, w, d, y) {
@@ -1658,7 +1659,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       [[a, b], [b, c], [c, e], [e, a]].forEach(function (s) { edgePts.push(new THREE.Vector3(s[0][0], y, s[0][1]), new THREE.Vector3(s[1][0], y, s[1][1])); });
     }
     function building(cx, cz, w, d, h) {
-      if (h > 20 && rnd() < 0.55) {
+      var multi = h > 20 && rnd() < 0.55;
+      BLDS.push({ x: cx, z: cz, w: w, d: d, top: 0.14 + (multi ? h * 0.55 : h), full: h, gi: curGI, gj: curGJ });
+      if (multi) {
         var h1 = h * 0.55, h2 = h * 0.28, h3 = h * 0.17;
         bld.box(cx, cz, w, d, 0.14, h1); topEdge(cx, cz, w, d, 0.14 + h1);
         bld.box(cx, cz, w * 0.72, d * 0.72, 0.14 + h1, h2); topEdge(cx, cz, w * 0.72, d * 0.72, 0.14 + h1 + h2);
@@ -1671,7 +1674,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (h > 30) { redPts.push(new THREE.Vector3(cx, h + 1.6, cz)); redCols.push(red); }
     }
     for (var gi = -11; gi < 11; gi++) for (var gj = -11; gj < 11; gj++) {
-      var bx = (gi + 0.5) * PITCH, bz = (gj + 0.5) * PITCH, rr = Math.hypot(bx, bz);
+      var bx = (gi + 0.5) * PITCH, bz = (gj + 0.5) * PITCH, rr = Math.hypot(bx, bz); curGI = gi; curGJ = gj;
       if (rr < PLAZA + 6 || rr > LIM) continue;
       pads.box(bx, bz, BLK, BLK, 0, 0.14, true);
       if (rnd() < 0.12) {
@@ -2111,6 +2114,169 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       scene.add(dm); drones.push({ m: dm, r: 60 + d * 24, w: (0.035 + rnd() * 0.03) * (d % 2 ? -1 : 1), ph: rnd() * 6.28, alt: 48 + rnd() * 28, wob: rnd() * 6 });
     }
 
+    /* ---- Puentes futuristas y detalles nuevos de la torre ---- */
+    var skyFx = (function () {
+      var root = new THREE.Group(); scene.add(root);
+      var V3 = THREE.Vector3, ADD = THREE.AdditiveBlending, UP = new V3(0, 1, 0);
+      var deckMat = new THREE.MeshStandardMaterial({ color: 0x0c1d2c, roughness: 0.3, metalness: 0.7, emissive: 0x1b5f86, emissiveIntensity: 0.55, side: THREE.DoubleSide });
+      var glassMat = new THREE.MeshBasicMaterial({ color: 0x5cc8ff, transparent: true, opacity: 0.2, blending: ADD, depthWrite: false, side: THREE.DoubleSide });
+      var lineMat = new THREE.LineBasicMaterial({ color: 0x9fe0ff, transparent: true, opacity: 0.95 });
+      var tubeCy = new THREE.MeshBasicMaterial({ color: 0x5cc8ff, transparent: true, opacity: 0.9, blending: ADD, depthWrite: false });
+      var tubeVi = new THREE.MeshBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.85, blending: ADD, depthWrite: false });
+      var tubeWh = new THREE.MeshBasicMaterial({ color: 0xdff4ff, transparent: true, opacity: 0.8, blending: ADD, depthWrite: false });
+      var finMat = new THREE.MeshStandardMaterial({ color: 0xcfe8f7, roughness: 0.25, metalness: 0.75, emissive: 0x2a6f94, emissiveIntensity: 0.7 });
+      var bridgeGroup = new THREE.Group(), towerGroup = new THREE.Group(); root.add(bridgeGroup); root.add(towerGroup);
+      var count = { street: 0, arch: 0, ring: 0, causeway: 0, fin: 0 };
+
+      function BoxBuf() { this.p = []; }
+      BoxBuf.prototype.add = function (cx, cy, cz, sx, sy, sz) {
+        var x0 = cx - sx / 2, x1 = cx + sx / 2, y0 = cy - sy / 2, y1 = cy + sy / 2, z0 = cz - sz / 2, z1 = cz + sz / 2, p = this.p;
+        var c = [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]];
+        [[0, 1, 2, 3], [5, 4, 7, 6], [4, 0, 3, 7], [1, 5, 6, 2], [3, 2, 6, 7], [4, 5, 1, 0]].forEach(function (f) {
+          [f[0], f[1], f[2], f[0], f[2], f[3]].forEach(function (i) { p.push(c[i][0], c[i][1], c[i][2]); });
+        });
+      };
+      BoxBuf.prototype.mesh = function (mat) {
+        var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(this.p, 3)); g.computeVertexNormals(); return new THREE.Mesh(g, mat);
+      };
+      function ribbon(pts, hw) {
+        var P = [], I = [], i, t = new V3(), s = new V3();
+        for (i = 0; i < pts.length; i++) {
+          t.copy(pts[Math.min(pts.length - 1, i + 1)]).sub(pts[Math.max(0, i - 1)]); t.y = 0; if (t.lengthSq() < 1e-6) t.set(1, 0, 0); t.normalize();
+          s.crossVectors(UP, t).multiplyScalar(hw);
+          P.push(pts[i].x + s.x, pts[i].y, pts[i].z + s.z, pts[i].x - s.x, pts[i].y, pts[i].z - s.z);
+          if (i > 0) { var a = (i - 1) * 2; I.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+        }
+        var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setIndex(I); g.computeVertexNormals();
+        return new THREE.Mesh(g, deckMat);
+      }
+      function edgeLines(pts, hw, y) {
+        var L = [], R = [], i, t = new V3(), s = new V3();
+        for (i = 0; i < pts.length; i++) {
+          t.copy(pts[Math.min(pts.length - 1, i + 1)]).sub(pts[Math.max(0, i - 1)]); t.y = 0; if (t.lengthSq() < 1e-6) t.set(1, 0, 0); t.normalize();
+          s.crossVectors(UP, t).multiplyScalar(hw);
+          L.push(new V3(pts[i].x + s.x, pts[i].y + (y || 0), pts[i].z + s.z)); R.push(new V3(pts[i].x - s.x, pts[i].y + (y || 0), pts[i].z - s.z));
+        }
+        var segs = []; for (i = 0; i < pts.length - 1; i++) { segs.push(L[i], L[i + 1], R[i], R[i + 1]); }
+        return new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(segs), lineMat);
+      }
+      var pods = [];
+      function addPods(curve, n, speed, col, closed) { for (var i = 0; i < n; i++) pods.push({ c: curve, u: i / n + rnd() * 0.05, sp: speed * (0.8 + rnd() * 0.4), col: col, ping: !closed, dir: 1 }); }
+
+      /* 1) Pasarelas de cristal entre edificios vecinos */
+      var deck = new BoxBuf(), glass = new BoxBuf(), strLines = [];
+      var byBlock = {}; BLDS.forEach(function (b) { var k = b.gi + ',' + b.gj; (byBlock[k] = byBlock[k] || []).push(b); });
+      function tryPair(A, B, axis) {
+        if (count.street >= 90 || Math.min(A.top, B.top) < 10 || rnd() < 0.2) return;
+        var ax = axis === 0, a0 = ax ? A.x + A.w / 2 : A.z + A.d / 2, b0 = ax ? B.x - B.w / 2 : B.z - B.d / 2, gap = b0 - a0;
+        if (gap < 2.5 || gap > 15) return;
+        var lo = Math.max(ax ? A.z - A.d / 2 : A.x - A.w / 2, ax ? B.z - B.d / 2 : B.x - B.w / 2) + 1.3, hi = Math.min(ax ? A.z + A.d / 2 : A.x + A.w / 2, ax ? B.z + B.d / 2 : B.x + B.w / 2) - 1.3;
+        if (hi - lo < 0.2) return;
+        var o = (lo + hi) / 2, y = Math.max(8, Math.min(A.top, B.top) * (0.5 + rnd() * 0.3)), mid = (a0 + b0) / 2;
+        if (ax) { if (Math.abs(o) < 4) return; deck.add(mid, y - 1.1, o, gap + 0.6, 0.35, 2.6); glass.add(mid, y, o, gap + 0.4, 2.2, 2.6); strLines.push(new V3(a0, y + 1.1, o - 1.3), new V3(b0, y + 1.1, o - 1.3), new V3(a0, y + 1.1, o + 1.3), new V3(b0, y + 1.1, o + 1.3)); }
+        else { if (Math.abs(o) < 4) return; deck.add(o, y - 1.1, mid, 2.6, 0.35, gap + 0.6); glass.add(o, y, mid, 2.6, 2.2, gap + 0.4); strLines.push(new V3(o - 1.3, y + 1.1, a0), new V3(o - 1.3, y + 1.1, b0), new V3(o + 1.3, y + 1.1, a0), new V3(o + 1.3, y + 1.1, b0)); }
+        count.street++;
+      }
+      Object.keys(byBlock).forEach(function (k) {
+        var p = k.split(',').map(Number), L = byBlock[k];
+        [[1, 0, 0], [0, 1, 1]].forEach(function (d) {
+          var N2 = byBlock[(p[0] + d[0]) + ',' + (p[1] + d[1])]; if (!N2) return;
+          if ((d[2] === 0 && p[0] === -1) || (d[2] === 1 && p[1] === -1)) return;
+          L.forEach(function (A) { N2.forEach(function (B) { tryPair(A, B, d[2]); }); });
+        });
+      });
+      bridgeGroup.add(deck.mesh(deckMat)); bridgeGroup.add(glass.mesh(glassMat));
+      bridgeGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(strLines), lineMat));
+
+      /* 2) Arcos de luz entre azoteas altas, con cápsulas viajando */
+      var tall = BLDS.filter(function (b) { return b.top > 22; }), tries = 0;
+      while (count.arch < 16 && tall.length > 3 && tries++ < 400) {
+        var A2 = tall[Math.floor(rnd() * tall.length)], B2 = tall[Math.floor(rnd() * tall.length)];
+        var dd = Math.hypot(A2.x - B2.x, A2.z - B2.z); if (dd < 38 || dd > 120) continue;
+        var pa = new V3(A2.x, A2.top + 0.6, A2.z), pb = new V3(B2.x, B2.top + 0.6, B2.z), pm = pa.clone().add(pb).multiplyScalar(0.5); pm.y = Math.max(pa.y, pb.y) + dd * 0.17;
+        var crv = new THREE.QuadraticBezierCurve3(pa, pm, pb);
+        var tb = new THREE.Mesh(new THREE.TubeGeometry(crv, 36, 0.4, 6, false), count.arch % 3 === 0 ? tubeVi : tubeCy); bridgeGroup.add(tb);
+        var tb2 = new THREE.Mesh(new THREE.TubeGeometry(crv, 36, 0.12, 4, false), tubeWh); tb2.position.y = -1.2; bridgeGroup.add(tb2);
+        addPods(crv, 2, 0.05, count.arch % 3 === 0 ? 1 : 0, false); count.arch++;
+      }
+
+      /* 3) Anillos elevados tipo maglev con pilares */
+      var pylon = new BoxBuf();
+      [[100, 31, 3.2], [165, 20, 3.6]].forEach(function (R, ri) {
+        var pts = [], n = 120, i;
+        for (i = 0; i <= n; i++) { var a = i / n * Math.PI * 2; pts.push(new V3(Math.cos(a) * R[0], R[1], Math.sin(a) * R[0])); }
+        bridgeGroup.add(ribbon(pts, R[2] / 2)); bridgeGroup.add(edgeLines(pts, R[2] / 2, 0.15));
+        var crv = new THREE.CatmullRomCurve3(pts.slice(0, n), true);
+        bridgeGroup.add(new THREE.Mesh(new THREE.TubeGeometry(crv, 160, 0.28, 5, true), ri ? tubeVi : tubeCy));
+        for (i = 0; i < 20; i++) { var pa2 = i / 20 * Math.PI * 2; pylon.add(Math.cos(pa2) * R[0], R[1] / 2 - 0.4, Math.sin(pa2) * R[0], 0.9, R[1] - 0.8, 0.9); }
+        addPods(crv, ri ? 7 : 5, ri ? 0.012 : 0.016, ri, true); count.ring++;
+      });
+
+      /* 4) Calzadas elevadas desde la plaza hasta el anillo, una por avenida */
+      for (var sp = 0; sp < 4; sp++) {
+        var ang = sp * Math.PI / 2, pts2 = [], i2, r0 = PLAZA + 1, r1 = 100;
+        for (i2 = 0; i2 <= 44; i2++) { var u2 = i2 / 44, rr2 = r0 + (r1 - r0) * u2, yy = 5 + 26 * (u2 * u2 * (3 - 2 * u2)); pts2.push(new V3(Math.cos(ang) * rr2, yy, Math.sin(ang) * rr2)); }
+        bridgeGroup.add(ribbon(pts2, 2.1)); bridgeGroup.add(edgeLines(pts2, 2.1, 0.12));
+        var crv2 = new THREE.CatmullRomCurve3(pts2.filter(function (_, q) { return q % 2 === 0; }));
+        bridgeGroup.add(new THREE.Mesh(new THREE.TubeGeometry(crv2, 44, 0.22, 5, false), sp % 2 ? tubeVi : tubeCy));
+        for (i2 = 3; i2 < 44; i2 += 6) { pylon.add(pts2[i2].x, pts2[i2].y / 2 - 0.3, pts2[i2].z, 0.8, pts2[i2].y - 0.6, 0.8); }
+        addPods(crv2, 3, 0.035, sp % 2, false); count.causeway++;
+      }
+      bridgeGroup.add(pylon.mesh(finMat));
+
+      /* Cápsulas: un solo objeto de puntos */
+      var podGeo = new THREE.BufferGeometry(), podPos = new Float32Array(pods.length * 3), podCol = new Float32Array(pods.length * 3);
+      pods.forEach(function (p, i) { var c = p.col ? new THREE.Color(0xc7b3ff) : new THREE.Color(0xdff4ff); podCol[i * 3] = c.r; podCol[i * 3 + 1] = c.g; podCol[i * 3 + 2] = c.b; });
+      podGeo.setAttribute('position', new THREE.BufferAttribute(podPos, 3)); podGeo.setAttribute('color', new THREE.BufferAttribute(podCol, 3));
+      var podPts = new THREE.Points(podGeo, new THREE.PointsMaterial({ size: 3.2, map: GLOW, vertexColors: true, transparent: true, depthWrite: false, blending: ADD })); podPts.frustumCulled = false; bridgeGroup.add(podPts);
+
+      /* 5) Torre: aletas curvas, hélices de energía, anillos orbitales y partículas */
+      var TH = TOP + CH;
+      for (var fi = 0; fi < 6; fi++) {
+        var fa = fi * Math.PI / 3 + Math.PI / 6, c0 = new V3(Math.cos(fa) * 22, 0.2, Math.sin(fa) * 22), c1 = new V3(Math.cos(fa) * 11, 3, Math.sin(fa) * 11), c2 = new V3(Math.cos(fa) * 7.4, 24, Math.sin(fa) * 7.4);
+        var fc = new THREE.QuadraticBezierCurve3(c0, c1, c2);
+        towerGroup.add(new THREE.Mesh(new THREE.TubeGeometry(fc, 30, 0.55, 8, false), finMat));
+        towerGroup.add(new THREE.Mesh(new THREE.TubeGeometry(fc, 30, 0.12, 5, false), fi % 2 ? tubeVi : tubeCy)); count.fin++;
+      }
+      var helix = [];
+      [0, 1].forEach(function (h) {
+        var pts3 = [], n3 = 160, i3;
+        for (i3 = 0; i3 <= n3; i3++) { var t3 = i3 / n3, a3 = t3 * Math.PI * 2 * 3.2 + h * Math.PI; pts3.push(new V3(Math.cos(a3) * 11.4, Y0 + 2 + t3 * (TH - Y0 - 4), Math.sin(a3) * 11.4)); }
+        var hm = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts3), 200, 0.13, 5, false), h ? tubeVi : tubeCy); towerGroup.add(hm); helix.push(hm);
+      });
+      var orbit = [];
+      [[0.30, 14.5, 0.1, 0.4], [0.58, 16.5, -0.12, -0.3], [0.86, 13.2, 0.09, 0.5]].forEach(function (o) {
+        var g = new THREE.Group(), ring = new THREE.Mesh(new THREE.TorusGeometry(o[1], 0.07, 6, 140), tubeWh); ring.rotation.x = Math.PI / 2; g.add(ring);
+        var tk = [], tc = [], j; for (j = 0; j < 72; j++) { var ta = j / 72 * Math.PI * 2; tk.push(new V3(Math.cos(ta) * (o[1] + 0.9), 0, Math.sin(ta) * (o[1] + 0.9))); tc.push(j % 6 === 0 ? white : cyan); }
+        g.add(pointsOf(tk, tc, 1.5)); g.position.y = Y0 + (TH - Y0) * o[0]; g.rotation.z = o[2]; g.userData.sp = o[3]; towerGroup.add(g); orbit.push(g);
+      });
+      var NP = 160, ptsA = [], ptsC = [], ptsData = [], j2;
+      for (j2 = 0; j2 < NP; j2++) { var pa3 = rnd() * Math.PI * 2, pr = 8.6 + rnd() * 4.5; ptsA.push(new V3(Math.cos(pa3) * pr, rnd() * TH, Math.sin(pa3) * pr)); ptsC.push(rnd() < 0.7 ? cyan : white); ptsData.push({ sp: 2.5 + rnd() * 5 }); }
+      var rise = pointsOf(ptsA, ptsC, 1.4, 0.8); rise.frustumCulled = false; towerGroup.add(rise);
+
+      var tmp = new V3();
+      function update(dt, t, tier, active) {
+        if (!root.visible) return;
+        if (active) {
+          var pa4 = podGeo.attributes.position, i, p;
+          for (i = 0; i < pods.length; i++) {
+            p = pods[i]; p.u += p.sp * dt * p.dir;
+            if (p.ping) { if (p.u > 1) { p.u = 1; p.dir = -1; } else if (p.u < 0) { p.u = 0; p.dir = 1; } } else if (p.u > 1) p.u -= 1;
+            p.c.getPoint(p.u, tmp); pa4.setXYZ(i, tmp.x, tmp.y + 1.2, tmp.z);
+          }
+          pa4.needsUpdate = true;
+        }
+        orbit.forEach(function (g) { g.rotation.y += g.userData.sp * dt; });
+        helix.forEach(function (h, i) { h.rotation.y += (i ? -0.08 : 0.08) * dt; });
+        if (tier < 2) {
+          var ra = rise.geometry.attributes.position;
+          for (var q = 0; q < NP; q++) { var ny = ra.getY(q) + ptsData[q].sp * dt; if (ny > TH) ny = 0; ra.setY(q, ny); }
+          ra.needsUpdate = true;
+        }
+      }
+      return { root: root, bridges: bridgeGroup, update: update, count: count, pods: pods.length };
+    })();
+
     /* ---- Cámara ---- */
     var HOME = { r: 142, ty: 54 }, SHIFT = 0;
     var cam = { tx: 0, tz: 0, gtx: 0, gtz: 0, th: 0.8, ph: 1.42, gph: null, follow: null, r: HOME.r, ty: HOME.ty, gr: HOME.r, gty: HOME.ty };
@@ -2210,7 +2376,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var bgSpace = true, hl = null;
     function applyTier() {
       var ratios = [dprMax, Math.min(dprMax, 1.25), 1, 0.75], sp = bgSpace && !spaceBroken;
-      renderer.setPixelRatio(ratios[tier]); planetGroup.visible = sp; belt.visible = sp && tier < 3; nebulae.visible = sp && tier < 2; mwMesh.visible = sp;
+      renderer.setPixelRatio(ratios[tier]); if (skyFx) skyFx.root.visible = tier < 3; planetGroup.visible = sp; belt.visible = sp && tier < 3; nebulae.visible = sp && tier < 2; mwMesh.visible = sp;
       sunRays.visible = tier < 1; PLANETS.forEach(function (p) { planetObjs[p.id].halo.visible = tier < 2; if (planetObjs[p.id].clouds) planetObjs[p.id].clouds.visible = tier < 2; });
       canvas.dataset.tier = tier; if (layoutReady) layout();
     }
@@ -2464,6 +2630,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         if (sh.k === 'ring') { sh.m.scale.setScalar(1 + k * 15); sh.m.material.opacity = 0.85 * (1 - k); } else { sh.m.scale.setScalar(10 + k * 30); sh.m.material.opacity = 1 - k; }
         if (k >= 1) killShock(sh);
       });
+      if (skyFx) skyFx.update(sdt, clockT, tier, tier < 2);
       logo.rotation.y += sdt * 1.1; logoRing.rotation.y += sdt * 0.8;
       halo.rotation.z += sdt * 0.4; halo.position.y = TOP + CH + 8 + Math.sin(animT) * 0.4;
       beacon.material.opacity = 0.65 + 0.35 * Math.sin(clockT * 1.8);
@@ -2492,6 +2659,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         v.project(camera); return { x: rc.left + (v.x * 0.5 + 0.5) * rc.width, y: rc.top + (-v.y * 0.5 + 0.5) * rc.height, z: v.z };
       },
       strikeTest: function (id) { var a = AGENTS.filter(function (x) { return x.id === id; })[0]; if (a) spawnStrike(a, true); return strikes.length; },
+      fxInfo: function () { return { count: skyFx.count, pods: skyFx.pods, blds: BLDS.length }; },
       strikeCount: function () { return strikes.length + shocks.length; },
       spawnMeteorTest: function (g) { spawnMeteor(!!g); var m = meteors[meteors.length - 1]; if (m) { m.sp = 0; var f = new THREE.Vector3(); camera.getWorldDirection(f); var rt = new THREE.Vector3().crossVectors(f, camera.up).normalize(); m.g.position.copy(camera.position).addScaledVector(f, 200).addScaledVector(rt, 43); } },
       stats: function () { var n = 0; scene.traverse(function () { n++; }); var i = renderer.info; return { geo: i.memory.geometries, tex: i.memory.textures, calls: i.render.calls, tris: i.render.triangles, objs: n, meteors: meteors.length, bursts: bursts.length, pick: pickables.length, tier: tier }; },

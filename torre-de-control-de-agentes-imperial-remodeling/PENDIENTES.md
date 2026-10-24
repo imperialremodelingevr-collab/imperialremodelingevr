@@ -19,4 +19,5 @@
 - [x] Alarmas en página + vigilante cada hora + reporte diario.
 - [x] Cielo con espacio y planetas siempre visibles.
 - [x] Meteoritos de alerta: caen sobre el piso del agente en rojo (falla) o ámbar (lento) con onda de choque.
+- [x] Ciudad con puentes futuristas (pasarelas de cristal, arcos de luz, anillos maglev, calzadas elevadas con cápsulas) y torre rediseñada (aletas, hélices de energía, anillos orbitales, partículas).
 - [x] 90/90 pruebas de botones y clics 3D + móvil.
