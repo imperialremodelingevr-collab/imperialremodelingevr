@@ -23,7 +23,7 @@ const init = `
   function N(t,o){ window.__notifs.push(t+'|'+(o&&o.body)); this.close=function(){}; } N.permission='default'; N.requestPermission=function(cb){ N.permission='granted'; if(cb) cb('granted'); return Promise.resolve('granted'); }; window.Notification=N;
   window.claude={ use:function(name){ return Promise.resolve(name==='db'?db:name==='sample'?sample:name==='room'?room:null); } };
   window.__errs=[]; window.addEventListener('error',function(e){ window.__errs.push('ERR '+e.message); }); window.addEventListener('unhandledrejection',function(e){ window.__errs.push('REJ '+(e.reason&&e.reason.message||e.reason)); });
-  try{ localStorage.setItem('evr.ui', JSON.stringify({q:'alta'})); }catch(e){}
+  try{ localStorage.setItem('evr.ui', JSON.stringify({v:2,q:'alta'})); }catch(e){}
 })();`;
 const results=[]; 
 (async () => {
@@ -74,7 +74,7 @@ const results=[];
   await t('teclado: flecha abajo', async()=>{ await p.keyboard.press('ArrowDown'); await W(300); return /COTIZACIONES/.test(await txtU('#card h2')); });
   await t('teclado: Escape cierra', async()=>{ await p.keyboard.press('Escape'); await W(300); return !(await vis('#card')); });
   // ---- tarjeta de agente
-  await t('tarjeta: Pausar y Reanudar', async()=>{ await click('.rrow[data-id=correo]'); await W(500); console.log('pausa-estado-previo', await ev(()=>document.querySelector('.rrow[data-id=correo]').dataset.s), await txt('#card [data-cpause]')); await click('#card [data-cpause]'); await W(300); const s1=await ev(()=>document.querySelector('.rrow[data-id=correo]').dataset.s); await click('#card [data-cpause]'); await W(300); const s2=await ev(()=>document.querySelector('.rrow[data-id=correo]').dataset.s); return s1==='idle' && s2==='working'; });
+  await t('tarjeta: Pausar y Reanudar', async()=>{ await click('.rrow[data-id=correo]'); await W(500); const g=()=>ev(()=>document.querySelector('.rrow[data-id=correo]').dataset.s); const s0=await g(); await click('#card [data-cpause]'); await W(300); const s1=await g(); await click('#card [data-cpause]'); await W(300); const s2=await g(); return s1!==s0 && s2===s0 && (s1==='idle'||s1==='working'); });
   await t('tarjeta: Asignar tarea abre el formulario', async()=>{ await click('#card [data-cadd]'); await W(300); return (await vis('#taskForm')) && (await ev(()=>document.querySelector('#tfAgent').value))==='correo'; });
   await t('tarjeta Publicaciones: botones Publicaciones y Tokens', async()=>{ await click('.rrow[data-id=publica]'); await W(400); await click('#card [data-copen=posts]'); await W(300); const a=await vis('#posts'); await click('.rrow[data-id=publica]'); await click('#card [data-copen=tokens]'); await W(300); return a && await vis('#tokens'); });
   // ---- tareas

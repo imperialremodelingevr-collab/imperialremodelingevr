@@ -18,4 +18,5 @@
 - [x] Pantalla negra corregida, calidad adaptable, vista de respaldo.
 - [x] Alarmas en página + vigilante cada hora + reporte diario.
 - [x] Cielo con espacio y planetas siempre visibles.
+- [x] Meteoritos de alerta: caen sobre el piso del agente en rojo (falla) o ámbar (lento) con onda de choque.
 - [x] 90/90 pruebas de botones y clics 3D + móvil.

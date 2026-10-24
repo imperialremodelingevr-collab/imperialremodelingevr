@@ -1939,11 +1939,36 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       m.dead = true; scene.remove(m.g); var ix = pickables.indexOf(m.hb); if (ix > -1) pickables.splice(ix, 1); ix = meteors.indexOf(m); if (ix > -1) meteors.splice(ix, 1);
       m.g.traverse(function (o) { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
     }
-    function burstAt(pos, gold) {
-      var n = 46, pp = new Float32Array(n * 3), vel = [], i;
+
+    /* Meteoritos de alerta: caen sobre el piso del agente que falla (rojo) o va lento (ámbar) */
+    var strikes = [], shocks = [], strikeT = 3, STRIKE_COL = { error: 0xff4a3a, warning: 0xffb23a };
+    function disposeObj(g) { g.traverse(function (o) { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); }); }
+    function spawnStrike(a, force) {
+      var col = STRIKE_COL[a.status] || (force ? 0xff4a3a : 0); if (!col) return;
+      var tgt = new THREE.Vector3(), az = rnd() * Math.PI * 2, ta = rnd() * Math.PI * 2;
+      tgt.set(Math.sin(ta) * (BAL * 0.85), a.floorY, Math.cos(ta) * (BAL * 0.85));
+      var start = tgt.clone().add(new THREE.Vector3(Math.cos(az) * 230, 110 + rnd() * 90, Math.sin(az) * 230));
+      var dir = tgt.clone().sub(start).normalize(), g = new THREE.Group();
+      var rock = new THREE.Mesh(new THREE.IcosahedronGeometry(2.4, 0), new THREE.MeshStandardMaterial({ color: 0x3a2a28, roughness: 0.9, flatShading: true, emissive: col, emissiveIntensity: 0.9 }));
+      var gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: col, transparent: true, opacity: 0.95, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); gl.scale.set(34, 34, 1);
+      var tail = new THREE.Mesh(new THREE.ConeGeometry(2.1, 70, 10, 1, true), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+      tail.position.copy(dir).multiplyScalar(-35); tail.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().negate());
+      g.add(rock); g.add(gl); g.add(tail); g.position.copy(start); scene.add(g);
+      strikes.push({ g: g, rock: rock, dir: dir, tgt: tgt, col: col, sp: 150 + rnd() * 40, age: 0 });
+    }
+    function killStrike(m) { scene.remove(m.g); disposeObj(m.g); var ix = strikes.indexOf(m); if (ix > -1) strikes.splice(ix, 1); }
+    function impactAt(tgt, col) {
+      burstAt(tgt, false, col, 34);
+      var ring = new THREE.Mesh(new THREE.RingGeometry(1, 1.35, 48), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
+      ring.rotation.x = -Math.PI / 2; ring.position.copy(tgt); scene.add(ring); shocks.push({ m: ring, t: 0, max: 1.0, k: 'ring' });
+      var fl = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: col, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); fl.position.copy(tgt); fl.scale.set(10, 10, 1); scene.add(fl); shocks.push({ m: fl, t: 0, max: 0.6, k: 'flash' });
+    }
+    function killShock(sh) { scene.remove(sh.m); if (sh.m.geometry) sh.m.geometry.dispose(); sh.m.material.dispose(); var ix = shocks.indexOf(sh); if (ix > -1) shocks.splice(ix, 1); }
+    function burstAt(pos, gold, colOv, nOv) {
+      var n = nOv || 46, pp = new Float32Array(n * 3), vel = [], i;
       for (i = 0; i < n; i++) { pp[i * 3] = pos.x; pp[i * 3 + 1] = pos.y; pp[i * 3 + 2] = pos.z; var v = new THREE.Vector3(rnd() - 0.5, rnd() - 0.5, rnd() - 0.5).normalize().multiplyScalar(30 + rnd() * 50); vel.push(v); }
       var geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pp, 3));
-      var pts = new THREE.Points(geo, new THREE.PointsMaterial({ size: 9, map: GLOW, color: gold ? 0xffd27a : 0x9fe0ff, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
+      var pts = new THREE.Points(geo, new THREE.PointsMaterial({ size: 9, map: GLOW, color: colOv || (gold ? 0xffd27a : 0x9fe0ff), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
       scene.add(pts); bursts.push({ pts: pts, vel: vel, life: 1.3, geo: geo });
     }
     function captureMeteor(m) {
@@ -2245,7 +2270,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         return nb;
       } catch (e) { return 9; }
     }
-    function clearFx() { meteors.slice().forEach(killMeteor); bursts.slice().forEach(function (b) { scene.remove(b.pts); b.geo.dispose(); b.pts.material.dispose(); }); bursts.length = 0; }
+    function clearFx() { strikes.slice().forEach(killStrike); shocks.slice().forEach(killShock); meteors.slice().forEach(killMeteor); bursts.slice().forEach(function (b) { scene.remove(b.pts); b.geo.dispose(); b.pts.material.dispose(); }); bursts.length = 0; }
     function recover(why) {
       blankHits = 0; stalls = 0; ladder++;
       if (window.console) console.warn('3D recover step', ladder, why);
@@ -2423,6 +2448,22 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         pa.needsUpdate = true; b.pts.material.opacity = Math.max(0, b.life / 1.3);
         if (b.life <= 0) { scene.remove(b.pts); b.geo.dispose(); b.pts.material.dispose(); bursts.splice(bursts.indexOf(b), 1); }
       });
+      if (tier < 3 && !reduce) {
+        strikeT -= dt;
+        if (strikeT <= 0) {
+          var bad = []; AGENTS.forEach(function (a) { if (a.status === 'error') { bad.push(a); bad.push(a); } else if (a.status === 'warning') bad.push(a); });
+          if (bad.length && strikes.length < 3) { var pickA = bad[Math.floor(rnd() * bad.length)]; spawnStrike(pickA); strikeT = (pickA.status === 'error' ? 2.2 : 5) + rnd() * 3; } else strikeT = 2;
+        }
+      }
+      strikes.slice().forEach(function (m) {
+        m.age += dt; m.g.position.addScaledVector(m.dir, m.sp * dt); m.rock.rotation.x += dt * 3; m.rock.rotation.y += dt * 2;
+        if (m.g.position.distanceTo(m.tgt) < m.sp * dt * 1.5 || m.age > 6) { impactAt(m.tgt, m.col); killStrike(m); }
+      });
+      shocks.slice().forEach(function (sh) {
+        sh.t += dt; var k = Math.min(1, sh.t / sh.max);
+        if (sh.k === 'ring') { sh.m.scale.setScalar(1 + k * 15); sh.m.material.opacity = 0.85 * (1 - k); } else { sh.m.scale.setScalar(10 + k * 30); sh.m.material.opacity = 1 - k; }
+        if (k >= 1) killShock(sh);
+      });
       logo.rotation.y += sdt * 1.1; logoRing.rotation.y += sdt * 0.8;
       halo.rotation.z += sdt * 0.4; halo.position.y = TOP + CH + 8 + Math.sin(animT) * 0.4;
       beacon.material.opacity = 0.65 + 0.35 * Math.sin(clockT * 1.8);
@@ -2450,6 +2491,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         else if (kind === 'meteor') { if (!meteors.length) return null; v.copy(meteors[meteors.length - 1].g.position); }
         v.project(camera); return { x: rc.left + (v.x * 0.5 + 0.5) * rc.width, y: rc.top + (-v.y * 0.5 + 0.5) * rc.height, z: v.z };
       },
+      strikeTest: function (id) { var a = AGENTS.filter(function (x) { return x.id === id; })[0]; if (a) spawnStrike(a, true); return strikes.length; },
+      strikeCount: function () { return strikes.length + shocks.length; },
       spawnMeteorTest: function (g) { spawnMeteor(!!g); var m = meteors[meteors.length - 1]; if (m) { m.sp = 0; var f = new THREE.Vector3(); camera.getWorldDirection(f); var rt = new THREE.Vector3().crossVectors(f, camera.up).normalize(); m.g.position.copy(camera.position).addScaledVector(f, 200).addScaledVector(rt, 43); } },
       stats: function () { var n = 0; scene.traverse(function () { n++; }); var i = renderer.info; return { geo: i.memory.geometries, tex: i.memory.textures, calls: i.render.calls, tris: i.render.triangles, objs: n, meteors: meteors.length, bursts: bursts.length, pick: pickables.length, tier: tier }; },
       restart: function () { ladder = 0; blankHits = 0; stalls = 0; spaceBroken = false; clearFx(); resetCam(); tier = Math.max(tier, 1); applyTier(); if (glLost && loseExt) { try { loseExt.restoreContext(); } catch (e) {} } setFlat(false); },
