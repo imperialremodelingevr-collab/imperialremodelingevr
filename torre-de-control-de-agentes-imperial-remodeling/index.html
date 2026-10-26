@@ -572,6 +572,10 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
   function fail(e) { toast(e && e.code === 'invalid_argument' ? 'Tu acceso es de solo lectura: no se pudo guardar.' : 'No se pudo guardar: ' + ((e && e.message) || e)); }
   function mins(ms) { return Math.max(1, Math.round(ms / 60000)); }
+  /* seguridad: todo dato que viene de la base de datos se trata como no confiable */
+  function pctSafe(v) { v = Number(v); return isFinite(v) ? Math.max(0, Math.min(100, Math.round(v))) : 0; }
+  function numv(v) { v = Number(v); return isFinite(v) ? v : 0; }
+  function cssColor(c, d) { return /^#[0-9a-fA-F]{3,8}$/.test(String(c || '')) ? String(c) : (d || '#8fa6b8'); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function clock(ts) { return new Date(ts).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit', hour12: false }); }
   function dayLabel(ts) {
@@ -580,7 +584,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (d.toDateString() === tm.toDateString()) return 'mañana';
     return d.toLocaleDateString('es', { day: '2-digit', month: 'short' });
   }
-  function everyText(m) { return !m ? 'una vez' : m >= 10080 ? 'cada semana' : m >= 1440 ? 'cada día' : m >= 60 ? 'cada ' + (m / 60) + ' h' : 'cada ' + m + ' min'; }
+  function everyText(m) { m = numv(m); return !m ? 'una vez' : m >= 10080 ? 'cada semana' : m >= 1440 ? 'cada día' : m >= 60 ? 'cada ' + (m / 60) + ' h' : 'cada ' + m + ' min'; }
   function eta(ms) {
     var s = Math.round(ms / 1000);
     if (s <= 0) return 'ahora';
@@ -649,7 +653,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (!flatOn) return;
     setHtml($('#flatList'), AGENTS.slice().reverse().map(function (a) {
       var g = groupOf(a.id);
-      return '<li><button data-id="' + a.id + '" type="button"' + (g ? ' style="--gc:' + esc(g.color) + '"' : '') + '><span class="n">' + String(a.i + 1).padStart(2, '0') + '</span><i class="dot" data-s="' + a.status + '"></i><span><b>' + esc(a.name) + '</b><em>' + esc(a.status === 'error' ? 'Sin respuesta hace ' + mins(Date.now() - (a.errorAt || Date.now())) + ' min' : a.act) + '</em></span></button></li>';
+      return '<li><button data-id="' + a.id + '" type="button"' + (g ? ' style="--gc:' + esc(cssColor(g.color)) + '"' : '') + '><span class="n">' + String(a.i + 1).padStart(2, '0') + '</span><i class="dot" data-s="' + a.status + '"></i><span><b>' + esc(a.name) + '</b><em>' + esc(a.status === 'error' ? 'Sin respuesta hace ' + mins(Date.now() - (a.errorAt || Date.now())) + ' min' : a.act) + '</em></span></button></li>';
     }).join(''));
   }
   $('#flatList').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) select(b.dataset.id); });
@@ -893,7 +897,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     else main = '<button class="btn" data-cpause type="button">' + (a.status === 'idle' ? 'Reanudar agente' : 'Pausar agente') + '</button>';
     var mine = openTasks().filter(function (t) { return t.agent === a.id; }).sort(function (x, y) { return x.at - y.at; }).slice(0, 3);
     setHtml(c, '<header><h2>' + esc(a.name) + '</h2><button class="x" data-cx aria-label="Cerrar" type="button">×</button></header>' +
-      '<p class="role">' + esc(a.role) + '</p>' + (groupOf(a.id) ? '<p class="role" style="margin-top:-6px"><span class="swatch" style="--gc:' + esc(groupOf(a.id).color) + '"></span>Grupo: ' + esc(groupOf(a.id).name) + '</p>' : '') +
+      '<p class="role">' + esc(a.role) + '</p>' + (groupOf(a.id) ? '<p class="role" style="margin-top:-6px"><span class="swatch" style="--gc:' + esc(cssColor(groupOf(a.id).color)) + '"></span>Grupo: ' + esc(groupOf(a.id).name) + '</p>' : '') +
       '<span class="pill" style="color:' + CSSC[a.status] + '"><i class="dot" data-s="' + a.status + '"></i>' + LBL[a.status] + (a.live ? ' · conectado' : '') + '</span>' +
       '<div class="now"><small>Ahora</small><span data-dyn="act"></span></div>' +
       '<dl class="nums"><div><dt>Tareas hoy</dt><dd>' + a.done + '</dd></div><div><dt>Última señal</dt><dd data-dyn="sig"></dd></div></dl>' +
@@ -979,7 +983,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   /* ---------- Obras en la ciudad ---------- */
   function projSlot(p) { return SLOTS[(p.slot || 0) % SLOTS.length]; }
   function freeSlot() { var used = {}; PROJECTS.forEach(function (p) { used[p.slot] = 1; }); for (var i = 0; i < SLOTS.length; i++) if (!used[i]) return i; return PROJECTS.length % SLOTS.length; }
-  function syncScene() { if (scene3d) scene3d.setProjects(PROJECTS.map(function (p) { var sl = projSlot(p); return { id: p.id, x: sl[0], z: sl[1], stage: p.stage, pct: p.progress || 0, name: p.name }; })); }
+  function syncScene() { if (scene3d) scene3d.setProjects(PROJECTS.map(function (p) { var sl = projSlot(p); return { id: p.id, x: sl[0], z: sl[1], stage: p.stage, pct: pctSafe(p.progress), name: p.name }; })); }
   function addProject(rec) {
     rec.slot = freeSlot(); rec.progress = STAGE_PCT[rec.stage] || 0; rec.createdAt = Date.now();
     logEvent('Nueva obra: ' + rec.name, rec.agent, 'proj');
@@ -1001,8 +1005,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     $('#bProj').textContent = PROJECTS.length;
     setHtml($('#projList'), PROJECTS.length ? PROJECTS.map(function (p) {
       var a = byId(p.agent);
-      return '<article class="row proj" data-p="' + esc(p.id) + '"><div class="meta"><span class="stg">' + esc(p.stage) + ' · ' + (p.progress || 0) + '%</span></div><h3>' + esc(p.name) + '</h3>' +
-        '<p class="pc">' + esc(p.client || '') + (a ? ' · ' + esc(a.name) : '') + '</p><div class="bar"><i style="width:' + (p.progress || 0) + '%"></i></div>' +
+      return '<article class="row proj" data-p="' + esc(p.id) + '"><div class="meta"><span class="stg">' + esc(p.stage) + ' · ' + pctSafe(p.progress) + '%</span></div><h3>' + esc(p.name) + '</h3>' +
+        '<p class="pc">' + esc(p.client || '') + (a ? ' · ' + esc(a.name) : '') + '</p><div class="bar"><i style="width:' + pctSafe(p.progress) + '%"></i></div>' +
         '<p class="nx">Próximo: ' + esc(p.next || 'sin definir') + '</p>' +
         '<div class="acts"><button class="btn" data-pa="see" type="button">Ver en la ciudad</button><button class="btn" data-pa="adv" type="button">Avanzar etapa</button><button class="btn" data-pa="task" type="button">Asignar tarea</button><button class="btn" data-pa="del" type="button">Eliminar</button></div></article>';
     }).join('') : '<div class="empty">Aún no hay obras. Agrega la primera con “Nueva obra” y aparecerá en la ciudad.</div>');
@@ -1012,7 +1016,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (!p) { c.hidden = true; return; }
     c.hidden = false; var a = byId(p.agent);
     setHtml(c, '<header><h2>' + esc(p.name) + '</h2><button class="x" data-cx aria-label="Cerrar" type="button">×</button></header><p class="role">' + esc(p.client || '') + '</p>' +
-      '<span class="stg">' + esc(p.stage) + ' · ' + (p.progress || 0) + '%</span><div class="bar"><i style="width:' + (p.progress || 0) + '%"></i></div>' +
+      '<span class="stg">' + esc(p.stage) + ' · ' + pctSafe(p.progress) + '%</span><div class="bar"><i style="width:' + pctSafe(p.progress) + '%"></i></div>' +
       '<div class="now"><small>Próximo paso</small>' + esc(p.next || 'Sin definir') + '</div>' +
       '<dl class="nums"><div><dt>Agente a cargo</dt><dd>' + (a ? esc(a.name) : '—') + '</dd></div></dl>' +
       '<div class="btns"><button class="btn primary" data-pc="adv" type="button">Avanzar etapa</button><button class="btn" data-pc="task" type="button">Asignar tarea</button>' + (a ? '<button class="btn" data-pc="agent" type="button">Ver agente</button>' : '') + '</div>');
@@ -1071,7 +1075,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     L.push('TAREAS'); L.push('- Ejecutadas hoy: ' + ran); L.push('- Pendientes: ' + open.length);
     open.slice(0, 3).forEach(function (t) { L.push('  · ' + clock(t.at) + ' ' + t.title + ' (' + (byId(t.agent) ? byId(t.agent).name : '') + ')'); }); L.push('');
     L.push('BANDEJA'); L.push('- ' + INBOX.length + ' por revisar'); INBOX.slice(0, 3).forEach(function (r) { L.push('  · ' + r.title); }); L.push('');
-    L.push('OBRAS'); PROJECTS.forEach(function (p) { L.push('- ' + p.name + ': ' + p.stage + ' ' + (p.progress || 0) + '%' + (p.next ? ' · ' + p.next : '')); }); L.push('');
+    L.push('OBRAS'); PROJECTS.forEach(function (p) { L.push('- ' + p.name + ': ' + p.stage + ' ' + pctSafe(p.progress) + '%' + (p.next ? ' · ' + p.next : '')); }); L.push('');
     L.push('ACTIVIDAD'); if (ev.length) ev.slice(0, 6).forEach(function (e) { L.push('- ' + clock(e.ts) + ' ' + e.text); }); else L.push('- Sin actividad registrada todavía');
     return L.join('\n');
   }
@@ -1227,7 +1231,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function est(t) { return Math.ceil(String(t == null ? '' : t).length / 4); }
   function dayTotals(day) {
     var d = USAGE[day], r = { tin: 0, tout: 0, calls: 0, tokens: 0 };
-    if (d && d.agents) Object.keys(d.agents).forEach(function (k) { var a = d.agents[k]; r.tin += a.tin || 0; r.tout += a.tout || 0; r.calls += a.calls || 0; });
+    if (d && d.agents) Object.keys(d.agents).forEach(function (k) { var a = d.agents[k]; r.tin += numv(a.tin); r.tout += numv(a.tout); r.calls += numv(a.calls); });
     r.tokens = r.tin + r.tout; return r;
   }
   function tokenState() {
@@ -1249,7 +1253,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     setHtml($('#tkMetrics'), '<div><dt>Tokens hoy</dt><dd>' + fmt(t.tokens) + '</dd></div><div><dt>Costo hoy</dt><dd>' + usd(cost(t.tin, t.tout)) + '</dd></div><div><dt>Tokens del mes</dt><dd>' + fmt(mon.tin + mon.tout) + '</dd></div><div><dt>Costo del mes</dt><dd>' + usd(cost(mon.tin, mon.tout)) + '</dd></div>');
     $('#tkBar').style.width = Math.min(100, st.pct) + '%'; $('#tkBarBox').className = 'bar big ' + (st.level === 'over' ? 'over' : st.level === 'warn' ? 'warn' : '');
     $('#tkBudget').textContent = st.pct + '% del presupuesto diario de ' + fmt(SETTINGS.budget) + ' tokens';
-    var rows = AGENTS.map(function (a) { var x = (USAGE[today] && USAGE[today].agents && USAGE[today].agents[a.id]) || { tin: 0, tout: 0, calls: 0 }; return { a: a, tok: (x.tin || 0) + (x.tout || 0), c: cost(x.tin || 0, x.tout || 0), calls: x.calls || 0 }; }).sort(function (x, y) { return y.tok - x.tok; });
+    var rows = AGENTS.map(function (a) { var x = (USAGE[today] && USAGE[today].agents && USAGE[today].agents[a.id]) || { tin: 0, tout: 0, calls: 0 }; return { a: a, tok: numv(x.tin) + numv(x.tout), c: cost(numv(x.tin), numv(x.tout)), calls: numv(x.calls) }; }).sort(function (x, y) { return y.tok - x.tok; });
     var mx = Math.max(1, rows[0].tok);
     setHtml($('#tkAgents'), rows.map(function (r) { return '<div class="arow"><b style="font-weight:500">' + esc(r.a.name) + '</b><span>' + fmt(r.tok) + ' · ' + usd(r.c) + ' · ' + r.calls + (r.calls === 1 ? ' llamada' : ' llamadas') + '</span><div class="bar"><i style="width:' + Math.round(r.tok / mx * 100) + '%"></i></div></div>'; }).join(''));
     var days = []; for (var i = 6; i >= 0; i--) days.push(dayKey(Date.now() - i * 86400000));
@@ -1416,7 +1420,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     }
     var html = sortedGroups().map(function (g) {
       var ags = (g.agents || []).map(byId).filter(Boolean), ww = ags.filter(function (a) { return a.status === 'working'; }).length, al = ags.filter(function (a) { return a.status === 'error' || a.status === 'warning'; }).length;
-      return '<article class="row grp" data-g="' + esc(g.id) + '" style="--gc:' + esc(g.color || '#8fa6b8') + '"><div class="meta"><span class="chipk">' + ags.length + (ags.length === 1 ? ' agente' : ' agentes') + '</span><span>' + ww + ' trabajando' + (al ? ' · ' + al + ' con alerta' : '') + '</span></div>' +
+      return '<article class="row grp" data-g="' + esc(g.id) + '" style="--gc:' + esc(cssColor(g.color)) + '"><div class="meta"><span class="chipk">' + ags.length + (ags.length === 1 ? ' agente' : ' agentes') + '</span><span>' + ww + ' trabajando' + (al ? ' · ' + al + ' con alerta' : '') + '</span></div>' +
         '<h3>' + esc(g.name) + '</h3>' + (g.desc ? '<p class="gd">' + esc(g.desc) + '</p>' : '') + ags.map(function (a) { return agentRow(a, g); }).join('') +
         '<div class="acts" style="margin-top:8px"><button class="btn" data-gs="hl" type="button">' + (hlGroup === g.id ? 'Quitar resaltado' : 'Resaltar en la torre') + '</button><button class="btn" data-gs="edit" type="button">Editar</button><button class="btn" data-gs="del" type="button">Eliminar</button></div></article>';
     }).join('');
