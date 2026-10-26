@@ -22,4 +22,5 @@
 - [x] Meteoritos de alerta: caen sobre el piso del agente en rojo (falla) o ámbar (lento) con onda de choque.
 - [x] Ciudad con puentes futuristas (pasarelas de cristal, arcos de luz, anillos maglev, calzadas elevadas con cápsulas) y torre rediseñada (aletas, hélices de energía, anillos orbitales, partículas).
 - [x] Auditoría de seguridad (26-oct): arreglada inyección de código desde datos de la base; protocolo de verificación en SEGURIDAD.md.
+- [x] Agentes humanoides (cabeza amable, ropa de color, piernas que caminan), naves voladoras grandes, ascensores de cristal interactivos, planetas con texturas y bordes uniformes.
 - [x] 90/90 pruebas de botones y clics 3D + móvil.
