@@ -24,4 +24,5 @@
 - [x] Auditoría de seguridad (26-oct): arreglada inyección de código desde datos de la base; protocolo de verificación en SEGURIDAD.md.
 - [x] Agentes humanoides (cabeza amable, ropa de color, piernas que caminan), naves voladoras grandes, ascensores de cristal interactivos, planetas con texturas y bordes uniformes.
 - [x] Vista interior: al acercarse (o con el botón) los agentes se sientan en escritorios futuristas con pantallas holográficas; alta definición (más detalle en robots, naves, planetas, ventanas, pisos).
+- [x] Uniformes con logo EVR (gorra, pecho, espalda, cinturón de herramientas), mensajeros en los ascensores que entregan recados reales (alertas y bandeja), escritorios con placa de nombre y café.
 - [x] 90/90 pruebas de botones y clics 3D + móvil.

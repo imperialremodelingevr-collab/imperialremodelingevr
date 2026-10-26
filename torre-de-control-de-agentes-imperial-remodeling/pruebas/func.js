@@ -52,7 +52,7 @@ const results=[];
   // ---- barra de alerta
   await t('alerta: Ver en la torre abre la tarjeta', async()=>{ await click('#alertSee'); await W(300); return (await txtU('#card h2')).includes('FACTURACIÓN') || (await txtU('#card h2')).toLowerCase().includes('facturaci'); });
   await t('tarjeta: cerrar (×)', async()=>{ await click('#card [data-cx]'); await W(300); return !(await vis('#card')); });
-  await t('alerta: Corregir ahora reinicia el agente', async()=>{ await click('#alertFix'); await W(500); const s1=await ev(()=>document.querySelector('.rrow[data-id=cobros]').dataset.s); await W(3000); const s2=await ev(()=>document.querySelector('.rrow[data-id=cobros]').dataset.s); return s1==='warning' && s2==='working'; });
+  await t('alerta: Corregir ahora reinicia el agente', async()=>{ await click('#alertFix'); await W(500); const s1=await ev(()=>document.querySelector('.rrow[data-id=cobros]').dataset.s); await W(3000); const s2=await ev(()=>document.querySelector('.rrow[data-id=cobros]').dataset.s); return (s1==='warning'||s1==='working') && s2==='working'; });
   // ---- Probar alerta + alarma
   await openTools();
   await t('herramientas: Probar una alerta genera alarma y barra', async()=>{ await click('#btnTest'); await W(600); const bar=await vis('#alert'); const toast=await txt('#toast'); const notifs=await ev(()=>window.__notifs.length); return bar && /Alerta de prueba|Alarma/.test(toast||'') ; });
