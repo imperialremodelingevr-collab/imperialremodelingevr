@@ -20,5 +20,5 @@ module.exports = function(REAL){ return `
   function N(t,o){ window.__notifs.push(t+'|'+(o&&o.body)); this.close=function(){}; } N.permission='default'; N.requestPermission=function(cb){ N.permission='granted'; if(cb) cb('granted'); return Promise.resolve('granted'); }; window.Notification=N;
   window.claude={ use:function(name){ return Promise.resolve(name==='db'?db:name==='sample'?sample:name==='room'?room:null); } };
   window.__errs=[]; window.addEventListener('error',function(e){ window.__errs.push('ERR '+e.message); }); window.addEventListener('unhandledrejection',function(e){ window.__errs.push('REJ '+(e.reason&&e.reason.message||e.reason)); });
-  try{ localStorage.setItem('evr.ui', JSON.stringify({q:'alta'})); }catch(e){}
+  try{ localStorage.setItem('evr.ui', JSON.stringify({v:2,q:'media'})); }catch(e){}
 })();`; };
