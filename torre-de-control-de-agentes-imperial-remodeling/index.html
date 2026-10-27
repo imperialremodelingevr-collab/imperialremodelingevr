@@ -203,6 +203,12 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .zenbtn { position: absolute; left: var(--gutter-l); bottom: 16px; }
 .score { position: absolute; left: calc(var(--gutter-l) + 46px); bottom: 16px; height: 36px; display: flex; align-items: center; padding: 0 12px; font: 500 12px/1 var(--mono); letter-spacing: 0.04em; color: #ffd98a; border: 1px solid var(--line); background: rgba(7, 13, 21, 0.82); border-radius: 3px; font-variant-numeric: tabular-nums; }
 .score.pop { animation: pop 0.5s; }
+.voice { position: absolute; left: calc(var(--gutter-l) + 112px); bottom: 16px; display: flex; align-items: center; gap: 8px; z-index: 5; max-width: min(560px, 46%); }
+.voice .btn { background: rgba(7, 13, 21, 0.82); white-space: nowrap; }
+.voice .btn.on { border-color: var(--accent); color: var(--accent); }
+.voice .btn.rec { border-color: var(--err); color: var(--err); animation: blink 1s infinite; }
+#voLine { display: none; font: 12px/1.35 var(--mono); color: var(--fg); background: rgba(7, 13, 21, 0.86); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; max-width: 340px; }
+#voLine.show { display: block; }
 @keyframes pop { 30% { transform: scale(1.18); border-color: #ffd98a; } }
 #app.nopanel { grid-template-columns: minmax(0, 1fr); }
 #app.nopanel .panel, #app.noroster .roster { display: none; }
@@ -269,6 +275,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   #app.nopanel { grid-template-rows: auto minmax(0, 1fr); }
   #app.zen { grid-template-rows: 0 minmax(0, 1fr); }
   .zenbtn, .score { bottom: 58px; }
+  .voice { left: var(--gutter-l); bottom: 104px; max-width: calc(100% - 2 * var(--gutter-l)); flex-wrap: wrap; }
+  #voLine { order: -1; flex: 1 0 100%; max-width: none; font-size: 11px; display: none; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  #voLine.show { display: -webkit-box; }
   .tabs { gap: 11px; }
   .tabs button { letter-spacing: 0.03em; }
   .roster { display: none; }
@@ -345,6 +354,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     <nav class="dock" id="dock" aria-label="Paneles ocultos"></nav>
     <button class="ico rdock" id="rosterDock" type="button" aria-label="Mostrar el directorio de pisos"></button>
     <button class="ico zenbtn" id="zenBtn" type="button" aria-label="Modo inmersivo (tecla H)" title="Modo inmersivo (H)"></button>
+    <div class="voice" id="voiceBox"><button class="btn" id="voTalk" type="button" title="Los agentes te hablan">Voz: no</button><button class="btn" id="voMic" type="button" title="Háblale a la torre">Hablar</button><span id="voLine" role="status" aria-live="polite"></span></div>
     <div class="score" id="score" title="Meteoritos capturados. Toca los que cruzan el cielo.">☄ 0</div>
     <div class="nogl" id="nogl" hidden>Tu navegador no pudo iniciar la vista 3D. La bandeja y las tareas siguen funcionando a la derecha.</div>
   </main>
@@ -604,6 +614,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
 
   /* ---------- Alarmas: sonido, aviso del navegador y registro para avisos externos ---------- */
+  var VOICE = { on: PREFS.voice === true, micOk: PREFS.mic === true, listening: false, rec: null, awaiting: null, welcomed: false, lt: 0 };
   var ALARM = { sound: PREFS.sound !== false, notify: PREFS.notify === true, audio: null, last: {} }, flatOn = false;
   function unlockAudio() { try { if (!ALARM.audio) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) ALARM.audio = new AC(); } if (ALARM.audio && ALARM.audio.state === 'suspended') ALARM.audio.resume(); } catch (e) {} }
   document.addEventListener('pointerdown', unlockAudio, { passive: true }); document.addEventListener('keydown', unlockAudio, { passive: true });
@@ -620,6 +631,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var msg = a.name + ' dejó de funcionar' + (a.msg ? ': ' + a.msg : '');
     ALARM.last[a.id] = Date.now(); a.acked = false;
     toast('Alarma: ' + msg); beep(); desktopNotify('Torre EVR: alarma', msg); flashStage();
+    if (test) voiceSay(null, 'Prueba de voz. Así te avisarán los agentes.'); else voiceHelp(a);
     try { if (navigator.vibrate) navigator.vibrate([220, 100, 220]); } catch (e) {}
     if (test) return;
     logEvent('Alarma: ' + a.name + ' dejó de funcionar', a.id, 'alarm');
@@ -644,6 +656,95 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var n = Date.now();
     AGENTS.forEach(function (a) { if (a.status === 'error' && !a.acked && n - (ALARM.last[a.id] || 0) > 5 * 60000) { ALARM.last[a.id] = n; beep(); desktopNotify('Torre EVR: sigue sin funcionar', a.name + ' lleva ' + mins(n - (a.errorAt || n)) + ' min caído'); } });
   }, 30000);
+
+  /* ---------- Voz: los agentes hablan y escuchan (el reconocimiento lo hace el navegador) ---------- */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition, TTS = window.speechSynthesis || null;
+  function normV(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); }
+  var VKEYS = { cotiz: ['cotizacion', 'cotizaciones'], cliente: ['cliente', 'atencion'], correo: ['correo', 'correos'], proyectos: ['proyectos', 'proyecto'], leads: ['prospectos', 'prospecto'], citas: ['calendario', 'citas', 'agenda'], social: ['comunidad', 'redes'], cobros: ['cobros', 'facturacion', 'factura', 'facturas'], resenas: ['resenas', 'resena'], reportes: ['reportes'], publica: ['publicaciones', 'publicacion'] };
+  function findAgentV(n) { var pad = ' ' + n + ' ', hit = null; AGENTS.forEach(function (a) { (VKEYS[a.id] || []).forEach(function (w) { if (!hit && pad.indexOf(' ' + w + ' ') > -1) hit = a; }); }); return hit; }
+  var voLineT = 0;
+  function voiceLine(txt, who) { var el = $('#voLine'); if (!el) return; el.textContent = (who ? who + ': ' : '') + txt; el.classList.add('show'); clearTimeout(voLineT); voLineT = setTimeout(function () { el.classList.remove('show'); }, 9000); }
+  function renderVoice() {
+    var t = $('#voTalk'), m = $('#voMic'); if (!t || !m) return;
+    t.textContent = 'Voz: ' + (VOICE.on ? 'sí' : 'no'); t.classList.toggle('on', VOICE.on);
+    m.textContent = VOICE.listening ? 'Escuchando…' : 'Hablar'; m.classList.toggle('rec', VOICE.listening);
+  }
+  function pickVoice(a) { try { var vs = (TTS && TTS.getVoices()) || [], es = vs.filter(function (v) { return /^es/i.test(v.lang); }); if (!es.length) return null; var us = es.filter(function (v) { return /^es[-_](US|MX)/i.test(v.lang); }); var pool = us.length ? us : es; return pool[(a ? a.i : 0) % pool.length]; } catch (e) { return null; } }
+  function voiceSay(a, text, done, low) {
+    text = String(text || ''); var who = a ? a.name : 'Torre';
+    if (VOICE.on || VOICE.listening) voiceLine(text, who);
+    if (!VOICE.on || !TTS) { if (done) done(); return; }
+    try {
+      if (low && (TTS.speaking || TTS.pending)) { if (done) done(); return; }
+      var u = new SpeechSynthesisUtterance(text.replace(/[✉🔊]/g, '')); u.lang = 'es-US'; var vo = pickVoice(a); if (vo) { u.voice = vo; u.lang = vo.lang; }
+      u.rate = 1.0; u.pitch = a ? 0.8 + (a.i % 6) * 0.1 : 1; u.volume = 1;
+      var fin = function () { if (done) { var d = done; done = null; d(); } }; u.onend = fin; u.onerror = fin;
+      TTS.speak(u);
+    } catch (e) { if (done) done(); }
+  }
+  function briefingText(welcome) {
+    var al = alerts(), work = AGENTS.filter(function (a) { return a.status === 'working'; }).length, pend = (TASKS || []).filter(function (t) { return !t.done; }).length, bi = (INBOX || []).length;
+    var t = (welcome ? 'Bienvenido, jefe. Torre de control de Imperial Remodeling en línea. ' : '') + work + ' agentes trabajando. ';
+    t += al.length ? (al.length === 1 ? 'Un agente necesita ayuda: ' : al.length + ' agentes necesitan ayuda: ') + al.map(function (a) { return a.name; }).join(', ') + '. ' : 'Sin alertas. ';
+    return t + 'Tienes ' + pend + ' tareas pendientes y ' + bi + ' elementos en la bandeja.';
+  }
+  function voiceHelp(a) {
+    if (!a) return;
+    VOICE.awaiting = { agent: a, yes: function () { fixAgent(a); voiceSay(a, 'Listo. Reiniciando ' + a.name + '.'); }, no: function () { a.acked = true; voiceSay(a, 'Entendido. No lo reinicio.'); } };
+    voiceSay(a, a.name + ' necesita ayuda. ' + (a.msg ? a.msg + ' ' : '') + '¿Quieres que lo reinicie?', function () { if (VOICE.on && VOICE.micOk && SR) startListen(8000); });
+  }
+  var VTABS = [['bandeja', 'inbox'], ['tareas', 'tasks'], ['obras', 'projects'], ['tokens', 'tokens'], ['gastos', 'tokens'], ['memoria', 'mem'], ['estructura', 'struct'], ['grupos', 'struct'], ['asistente', 'asst']];
+  function voiceCommand(n) {
+    var aw = VOICE.awaiting;
+    if (aw) {
+      if (/\b(si|dale|claro|hazlo|adelante|reinicia|reiniciala|reinicialo|corrige|corrigelo|ok|okey|de acuerdo|por favor)\b/.test(n)) { VOICE.awaiting = null; aw.yes(); return ''; }
+      if (/\b(no|despues|luego|ignora|espera|cancela|silencia|nada)\b/.test(n)) { VOICE.awaiting = null; aw.no(); return ''; }
+    }
+    if (/\b(ayuda|comandos|que puedo decir)\b/.test(n)) return 'Puedes decir: estado, reinicia o corrige seguido del agente, pausa o reanuda un agente, abre la bandeja, tareas, obras o tokens, ver un agente, vista interior, torre completa, y silencia.';
+    if (/\b(estado|resumen|que pasa|como va|informe|novedades)\b/.test(n)) return briefingText(false);
+    if (/\b(reinicia|reiniciar|corrige|corregir|arregla|arreglar|soluciona|solucionar)\b/.test(n)) {
+      var ag = findAgentV(n), tg = ag ? [ag] : alerts().filter(function (x) { return x.status === 'error'; });
+      tg = tg.filter(function (x) { return x.status === 'error' || x.status === 'warning'; });
+      if (!tg.length) return ag ? ag.name + ' ya está trabajando bien.' : 'No hay agentes con fallas.';
+      tg.forEach(function (x) { fixAgent(x); }); return 'Reiniciando ' + tg.map(function (x) { return x.name; }).join(' y ') + '.';
+    }
+    if (/\b(pausa|pausar|deten|detener)\b/.test(n)) { var ap = findAgentV(n); if (!ap) return '¿A cuál agente pauso?'; if (ap.status !== 'idle') togglePause(ap); return ap.name + ' en pausa.'; }
+    if (/\b(reanuda|reanudar|continua)\b/.test(n)) { var ar = findAgentV(n); if (!ar) return '¿A cuál agente reanudo?'; if (ar.status === 'idle') togglePause(ar); return ar.name + ' reanudado.'; }
+    if (/\b(silencia|silencio|callate|calla)\b/.test(n)) { alerts().forEach(function (x) { x.acked = true; }); return 'Alarmas silenciadas.'; }
+    if (/\b(aprueba|aprobar|acepta|aceptar)\b/.test(n)) { tab('inbox'); return 'Abrí la bandeja. Confirma con el botón de cada elemento; no envío nada sin tu toque.'; }
+    if (/\b(vista interior|adentro|escritorios)\b/.test(n)) { $('#btnInside').click(); return 'Vista interior.'; }
+    if (/\b(torre completa|inicio|vista general)\b/.test(n)) { $('#btnHome').click(); return 'Torre completa.'; }
+    if (/\b(abre|abrir|muestra|mostrar|ver|ir a|llevame)\b/.test(n)) {
+      var hit = null; VTABS.forEach(function (p) { if (!hit && (' ' + n + ' ').indexOf(' ' + p[0] + ' ') > -1) hit = p; });
+      if (!hit && /\bpublicaciones\b/.test(n) && /\b(abre|abrir)\b/.test(n)) hit = ['publicaciones', 'posts'];
+      if (hit) { tab(hit[1]); return 'Abriendo ' + hit[0] + '.'; }
+      var av = findAgentV(n); if (av) { select(av.id); return 'Aquí está ' + av.name + '.'; }
+    }
+    return 'No entendí. Di ayuda para ver lo que puedo hacer.';
+  }
+  function heard(txt) { voiceLine(txt, 'Tú'); var r = voiceCommand(normV(txt)); if (r) voiceSay(null, r); }
+  function startListen(ms) {
+    if (!SR) { voiceLine('Este navegador no permite escuchar por voz. Usa Chrome, Edge o Safari.', 'Voz'); return false; }
+    if (VOICE.rec) return true;
+    var r = new SR(); r.lang = 'es-US'; r.interimResults = false; r.maxAlternatives = 3; r.continuous = false;
+    r.onstart = function () { VOICE.listening = true; renderVoice(); };
+    r.onresult = function (e) { var txt = e.results[0][0].transcript; VOICE.micOk = true; savePrefs(); heard(txt); };
+    r.onerror = function (e) { var m = { 'not-allowed': 'El micrófono está bloqueado. Permítelo en el candado de la barra de direcciones, o abre la torre en una pestaña propia.', 'service-not-allowed': 'El micrófono no está permitido en este marco. Abre la torre en una pestaña propia.', 'no-speech': 'No te escuché. Inténtalo de nuevo.', 'audio-capture': 'No encuentro un micrófono.', 'network': 'Sin conexión para reconocer la voz.' }[e.error]; if (m) voiceLine(m, 'Voz'); };
+    r.onend = function () { VOICE.rec = null; VOICE.listening = false; clearTimeout(VOICE.lt); renderVoice(); };
+    try { r.start(); VOICE.rec = r; VOICE.lt = setTimeout(function () { try { r.stop(); } catch (e) {} }, ms || 9000); return true; } catch (e) { voiceLine('No pude abrir el micrófono.', 'Voz'); return false; }
+  }
+  function stopListen() { try { if (VOICE.rec) VOICE.rec.stop(); } catch (e) {} }
+  $('#voTalk').onclick = function () {
+    unlockAudio(); VOICE.on = !VOICE.on; savePrefs(); renderVoice();
+    if (VOICE.on) { VOICE.welcomed = true; voiceSay(null, 'Voz activada. ' + briefingText(false) + ' Toca Hablar y di ayuda para ver los comandos.'); } else { try { if (TTS) TTS.cancel(); } catch (e) {} voiceLine('Voz apagada.', 'Torre'); }
+  };
+  $('#voMic').onclick = function () { unlockAudio(); if (VOICE.listening) { stopListen(); return; } if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } startListen(9000); };
+  function voiceWelcome() { if (VOICE.welcomed) return; VOICE.welcomed = true; if (VOICE.on) { var al = alerts(); voiceSay(null, briefingText(true), al.length ? function () { voiceHelp(al[0]); } : null); } }
+  document.addEventListener('pointerdown', voiceWelcome, { once: true, passive: true }); document.addEventListener('keydown', voiceWelcome, { once: true });
+  setTimeout(function () { if (!VOICE.on && !VOICE.welcomed) voiceLine('Toca «Voz» para que los agentes te hablen y «Hablar» para darles órdenes con tu voz.', 'Torre'); }, 4500);
+  if (TTS && TTS.addEventListener) TTS.addEventListener('voiceschanged', function () {});
+  renderVoice();
+  if (window.__EVR_TEST__) window.__voiceTest = { cmd: function (t) { return voiceCommand(normV(t)); }, heard: heard, help: voiceHelp, agent: findAgentV, state: function () { return { on: VOICE.on, aw: !!VOICE.awaiting }; } };
 
   /* ---------- Vista simplificada: respaldo si el 3D no puede mantenerse ---------- */
   function setFlat(on, why) {
@@ -1199,7 +1300,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var el = $('#score'); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
     return score;
   }
-  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify })); } catch (e) {} }
+  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify })); } catch (e) {} }
   function applyUi() {
     var app = $('#app'); app.classList.toggle('noroster', !rosterOpen); app.classList.toggle('nopanel', !panelOpen); app.classList.toggle('zen', zen);
     $('#score').textContent = '☄ ' + score; savePrefs();
@@ -1832,29 +1933,57 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       g.font = '700 58px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('E·V·R', 128, 188);
       var t = new THREE.CanvasTexture(c); t.anisotropy = 8; return new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
     })();
+    var HAIR = [0x1b1b1f, 0x4a2f1f, 0x8a5a2b, 0xc8a15a, 0x2b2b3a, 0x6b6b72, 0x3a2418, 0x0f0f12];
     var OUTFIT = [0x4cc9f0, 0xa78bfa, 0x34d399, 0xfbbf24, 0xf472b6, 0x60a5fa, 0xfb923c, 0x2dd4bf, 0xc084fc, 0xf87171, 0xa3e635];
     function buildHumanoid(v, C, outHex, opts) {
       var g = new THREE.Group(), T = THREE, cour = !!(opts && opts.courier);
       v.eyeMat = new T.MeshBasicMaterial({ color: C });
-      var outM = new T.MeshStandardMaterial({ color: outHex, roughness: 0.42, metalness: 0.2 }), hatM = cour ? goldM : capM, legM = cour ? pantsDark : pantsM;
+      var outM = new T.MeshStandardMaterial({ color: outHex, roughness: 0.42, metalness: 0.2 }), hatM = cour ? goldM : capM, legM = cour ? pantsDark : pantsM, style = (opts && opts.style) || 0;
+      var lapelM = new T.MeshStandardMaterial({ color: new T.Color(outHex).multiplyScalar(0.6), roughness: 0.45, metalness: 0.2 });
+      var tieM = style === 2 ? new T.MeshStandardMaterial({ color: 0x8b1e2d, roughness: 0.4, metalness: 0.2 }) : goldM;
       function geo(k, a1, a2, a3, a4, a5) { return k === 'c' ? new T.CylinderGeometry(a1, a2, a3, Math.max(a4 || 24, 28)) : k === 's' ? new T.SphereGeometry(a1, Math.max(a2 || 24, 28), Math.max(a3 || 18, 20)) : k === 'b' ? new T.BoxGeometry(a1, a2, a3) : k === 't' ? new T.TorusGeometry(a1, a2, 8, a3 || 32, a4 || Math.PI * 2) : new T.CircleGeometry(a1, 20); }
       function put(parts, mat, par, dy) { var m = new T.Mesh(mergeParts(parts, dy), mat); par.add(m); return m; }
       /* torso (pivote en la cadera: respira) */
       v.body = new T.Group(); v.body.position.y = 0.95; g.add(v.body);
       put([{ g: geo('c', 0.27, 0.21, 0.56, 28), y: 1.27 }, { g: geo('s', 0.115, 18, 14), x: -0.33, y: 1.5 }, { g: geo('s', 0.115, 18, 14), x: 0.33, y: 1.5 }, { g: geo('s', 0.22, 22, 14), y: 1.0, sy: 0.7 }], outM, v.body, 0.95);
-      put([{ g: geo('c', 0.215, 0.215, 0.07, 28), y: 0.86 }, { g: geo('c', 0.075, 0.085, 0.16, 16), y: 1.63 }, { g: geo('b', 0.3, 0.2, 0.05), y: 1.28, z: 0.235 }, { g: geo('b', 0.13, 0.11, 0.08), x: -0.2, y: 0.94, z: 0.14 }, { g: geo('b', 0.13, 0.11, 0.08), x: 0.2, y: 0.94, z: 0.14 }, { g: geo('b', 0.2, 0.11, 0.07), y: 0.94, z: -0.22 }], darkM, v.body, 0.95);
-      put([{ g: geo('t', 0.222, 0.018, 36), y: 0.9, rx: Math.PI / 2 }, { g: geo('t', 0.268, 0.016, 36), y: 1.54, rx: Math.PI / 2 }, { g: geo('t', 0.236, 0.011, 36), y: 1.13, rx: Math.PI / 2 }, { g: geo('t', 0.239, 0.011, 36), y: 1.17, rx: Math.PI / 2 }, { g: geo('b', 0.07, 0.055, 0.03), y: 0.9, z: 0.226 }, { g: geo('t', 0.085, 0.012, 28), x: -0.33, y: 1.5, rx: Math.PI / 2 }, { g: geo('t', 0.085, 0.012, 28), x: 0.33, y: 1.5, rx: Math.PI / 2 }], goldM, v.body, 0.95);
-      put([{ g: geo('t', 0.034, 0.008, 20), x: -0.12, y: 1.46, z: 0.262 }, { g: geo('d', 0.018), x: -0.12, y: 1.46, z: 0.26 }], v.eyeMat, v.body, 0.95);
-      var lgF = new T.Mesh(new T.PlaneGeometry(0.2, 0.2), logoDecal); lgF.position.set(0, 0.35, 0.266); v.body.add(lgF);
-      var lgB = new T.Mesh(new T.PlaneGeometry(0.3, 0.3), logoDecal); lgB.position.set(0, 0.35, -0.247); lgB.rotation.y = Math.PI; v.body.add(lgB); v.detail2 = [lgF, lgB];
+      var dkP = [{ g: geo('c', 0.215, 0.215, 0.07, 28), y: 0.86 }, { g: geo('c', 0.075, 0.085, 0.16, 16), y: 1.63 }];
+      if (cour) dkP.push({ g: geo('b', 0.3, 0.2, 0.05), y: 1.28, z: 0.235 }, { g: geo('b', 0.13, 0.11, 0.08), x: -0.2, y: 0.94, z: 0.14 }, { g: geo('b', 0.13, 0.11, 0.08), x: 0.2, y: 0.94, z: 0.14 }, { g: geo('b', 0.2, 0.11, 0.07), y: 0.94, z: -0.22 });
+      put(dkP, darkM, v.body, 0.95);
+      if (cour) {
+        put([{ g: geo('t', 0.222, 0.018, 36), y: 0.9, rx: Math.PI / 2 }, { g: geo('t', 0.268, 0.016, 36), y: 1.54, rx: Math.PI / 2 }, { g: geo('t', 0.236, 0.011, 36), y: 1.13, rx: Math.PI / 2 }, { g: geo('t', 0.239, 0.011, 36), y: 1.17, rx: Math.PI / 2 }, { g: geo('b', 0.07, 0.055, 0.03), y: 0.9, z: 0.226 }, { g: geo('t', 0.085, 0.012, 28), x: -0.33, y: 1.5, rx: Math.PI / 2 }, { g: geo('t', 0.085, 0.012, 28), x: 0.33, y: 1.5, rx: Math.PI / 2 }], goldM, v.body, 0.95);
+        var lgF = new T.Mesh(new T.PlaneGeometry(0.2, 0.2), logoDecal); lgF.position.set(0, 0.35, 0.266); v.body.add(lgF);
+        var lgB = new T.Mesh(new T.PlaneGeometry(0.3, 0.3), logoDecal); lgB.position.set(0, 0.35, -0.247); lgB.rotation.y = Math.PI; v.body.add(lgB); v.detail2 = [lgF, lgB];
+      } else {
+        /* ropa de oficina: saco, camisa, corbata o collar, gafete con el logo */
+        put([{ g: geo('b', 0.13, 0.42, 0.02), y: 1.31, z: 0.252 }, { g: geo('b', 0.09, 0.05, 0.02), x: -0.05, y: 1.6, z: 0.19, rz: 0.7 }, { g: geo('b', 0.09, 0.05, 0.02), x: 0.05, y: 1.6, z: 0.19, rz: -0.7 }, { g: geo('b', 0.055, 0.045, 0.012), x: 0.115, y: 1.39, z: 0.262 }], skinM, v.body, 0.95);
+        put([{ g: geo('b', 0.085, 0.38, 0.03), x: -0.075, y: 1.34, z: 0.256, rz: 0.2 }, { g: geo('b', 0.085, 0.38, 0.03), x: 0.075, y: 1.34, z: 0.256, rz: -0.2 }], lapelM, v.body, 0.95);
+        var gp = [{ g: geo('b', 0.07, 0.055, 0.03), y: 0.9, z: 0.226 }, { g: geo('s', 0.013, 8, 6), y: 1.08, z: 0.228 }, { g: geo('s', 0.013, 8, 6), y: 0.99, z: 0.226 }, { g: geo('b', 0.012, 0.3, 0.008), x: -0.075, y: 1.38, z: 0.27, rz: -0.26 }];
+        if (style === 1) gp.push({ g: geo('s', 0.026, 12, 10), y: 1.33, z: 0.268 }, { g: geo('t', 0.07, 0.006, 20, Math.PI), y: 1.4, z: 0.262, rz: Math.PI }); else gp.push({ g: geo('b', 0.07, 0.05, 0.028), y: 1.47, z: 0.268 });
+        put(gp, goldM, v.body, 0.95);
+        if (style !== 1) put([{ g: geo('b', 0.055, 0.34, 0.014), y: 1.27, z: 0.268, rz: 0 }], tieM, v.body, 0.95);
+        var bdg = new T.Mesh(new T.PlaneGeometry(0.085, 0.105), logoDecal); bdg.position.set(-0.115, 0.31, 0.272); v.body.add(bdg); v.detail2 = [bdg];
+      }
+      put([{ g: geo('t', 0.034, 0.008, 20), x: 0.14, y: 1.5, z: 0.255 }, { g: geo('d', 0.018), x: 0.14, y: 1.5, z: 0.253 }], v.eyeMat, v.body, 0.95);
       put([{ g: geo('c', 0.24, 0.24, 0.05, 28), y: 1.0 }], whiteM, v.body, 0.95);
       /* cabeza amable: casco blanco, visor oscuro, ojos redondos y sonrisa */
       v.head = new T.Group(); v.head.position.set(0, 1.84, 0); g.add(v.head);
       put([{ g: geo('s', 0.27, 36, 26), sy: 1.08 }, { g: geo('s', 0.045, 12, 10), x: -0.27, y: -0.01 }, { g: geo('s', 0.045, 12, 10), x: 0.27, y: -0.01 }], skinM, v.head);
       put([{ g: geo('s', 0.2, 30, 20), z: 0.215, sx: 1.0, sy: 0.72, sz: 0.5 }, { g: geo('c', 0.06, 0.06, 0.05, 18), x: -0.285, rz: Math.PI / 2 }, { g: geo('c', 0.06, 0.06, 0.05, 18), x: 0.285, rz: Math.PI / 2 }], darkM, v.head);
-      put([{ g: new T.SphereGeometry(0.288, 36, 14, 0, Math.PI * 2, 0, Math.PI / 2), y: 0.06, sy: 1.1 }, { g: geo('b', 0.5, 0.03, 0.22), y: 0.1, z: 0.29, rx: 0.16 }], hatM, v.head);
-      put([{ g: geo('t', 0.287, 0.017, 40), y: 0.062, rx: Math.PI / 2 }], goldM, v.head);
-      var lgC = new T.Mesh(new T.PlaneGeometry(0.1, 0.1), logoDecal); lgC.position.set(0, 0.2, 0.272); lgC.rotation.x = -0.52; v.head.add(lgC); v.detail = [lgC];
+      if (cour) {
+        put([{ g: new T.SphereGeometry(0.288, 36, 14, 0, Math.PI * 2, 0, Math.PI / 2), y: 0.06, sy: 1.1 }, { g: geo('b', 0.5, 0.03, 0.22), y: 0.1, z: 0.29, rx: 0.16 }], hatM, v.head);
+        put([{ g: geo('t', 0.287, 0.017, 40), y: 0.062, rx: Math.PI / 2 }], goldM, v.head);
+        var lgC = new T.Mesh(new T.PlaneGeometry(0.1, 0.1), logoDecal); lgC.position.set(0, 0.2, 0.272); lgC.rotation.x = -0.52; v.head.add(lgC); v.detail = [lgC];
+      } else {
+        var hairM = new T.MeshStandardMaterial({ color: (opts && opts.hair) || 0x1b1b1f, roughness: 0.6, metalness: 0.05 });
+        var hp = [{ g: new T.SphereGeometry(0.286, 36, 16, 0, Math.PI * 2, 0, Math.PI * 0.46), y: 0.03, sy: 1.1 }, { g: geo('s', 0.27, 30, 20), y: -0.01, z: -0.07, sz: 0.86 }];
+        if (style === 0) hp.push({ g: geo('s', 0.11, 16, 12), y: 0.3, z: 0.09, sz: 1.5, sy: 0.5 });
+        else if (style === 1) hp.push({ g: geo('s', 0.1, 16, 12), y: 0.3, z: -0.19 });
+        else hp.push({ g: geo('s', 0.2, 20, 14), y: -0.2, z: -0.17, sy: 1.8, sz: 0.7 });
+        put(hp, hairM, v.head);
+        if (opts && opts.glasses) {
+          var gl2 = new T.Mesh(mergeParts([{ g: geo('t', 0.062, 0.008, 22), x: -0.09, y: 0.04, z: 0.343 }, { g: geo('t', 0.062, 0.008, 22), x: 0.09, y: 0.04, z: 0.343 }, { g: geo('b', 0.05, 0.01, 0.01), y: 0.05, z: 0.343 }, { g: geo('b', 0.008, 0.008, 0.28), x: -0.152, y: 0.05, z: 0.2 }, { g: geo('b', 0.008, 0.008, 0.28), x: 0.152, y: 0.05, z: 0.2 }]), darkM); v.head.add(gl2); v.detail2 = (v.detail2 || []).concat([gl2]);
+        }
+      }
       put([{ g: geo('d', 0.022), x: -0.312, ry: -Math.PI / 2 }, { g: geo('d', 0.022), x: 0.312, ry: Math.PI / 2 }], v.eyeMat, v.head);
       v.eye = new T.Group(); v.eye.position.set(0, 0.04, 0); v.head.add(v.eye);
       [-1, 1].forEach(function (s2) { var e = new T.Mesh(new T.CircleGeometry(0.05, 22), v.eyeMat); e.position.set(s2 * 0.09, 0, 0.336); v.eye.add(e); });
@@ -1862,11 +1991,12 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       /* brazos: manga de color, codo, antebrazo y mano */
       v.arms = [-1, 1].map(function (s2) {
         var p = new T.Group(); p.position.set(s2 * 0.36, 1.5, 0);
-        put([{ g: geo('c', 0.078, 0.068, 0.3, 18), y: -0.17 }], outM, p);
+        put([{ g: geo('c', 0.078, 0.068, 0.3, 18), y: -0.17 }], (!cour && style === 2) ? skinM : outM, p);
         put([{ g: geo('c', 0.064, 0.054, 0.3, 18), y: -0.5 }, { g: geo('s', 0.078, 18, 14), y: -0.69 }, { g: geo('s', 0.035, 10, 8), x: s2 * -0.07, y: -0.66, z: 0.04 }], skinM, p);
         put([{ g: geo('s', 0.07, 16, 12), y: -0.33 }], darkM, p);
         put([{ g: geo('t', 0.062, 0.012, 20), y: -0.62, rx: Math.PI / 2 }], accentM, p);
-        put([{ g: geo('t', 0.075, 0.016, 24), y: -0.3, rx: Math.PI / 2 }], goldM, p);
+        if (cour) put([{ g: geo('t', 0.075, 0.016, 24), y: -0.3, rx: Math.PI / 2 }], goldM, p);
+        else put([{ g: geo('c', 0.066, 0.066, 0.06, 18), y: -0.34 }], skinM, p), put([{ g: geo('s', 0.014, 8, 6), x: s2 * 0.06, y: -0.34, z: 0.02 }], goldM, p);
         g.add(p); p.userData.s = s2; return p;
       });
       /* piernas con rodilla: caminan y se sientan */
@@ -1874,10 +2004,11 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       [-1, 1].forEach(function (s2) {
         var p = new T.Group(); p.position.set(s2 * 0.13, 0.95, 0);
         put([{ g: geo('c', 0.1, 0.082, 0.44, 24), y: -0.23 }, { g: geo('s', 0.088, 18, 14), y: -0.46 }], legM, p);
-        put([{ g: geo('b', 0.02, 0.4, 0.02), x: s2 * 0.09, y: -0.23 }], goldM, p);
+        if (cour) put([{ g: geo('b', 0.02, 0.4, 0.02), x: s2 * 0.09, y: -0.23 }], goldM, p);
         var k = new T.Group(); k.position.set(0, -0.46, 0); p.add(k);
         put([{ g: geo('c', 0.076, 0.062, 0.38, 22), y: -0.21 }], skinM, k);
-        put([{ g: geo('b', 0.16, 0.09, 0.29), y: -0.43, z: 0.05 }], darkM, k);
+        if (cour) put([{ g: geo('b', 0.16, 0.09, 0.29), y: -0.43, z: 0.05 }], darkM, k);
+        else put([{ g: geo('b', 0.15, 0.07, 0.2), y: -0.445, z: 0.0 }, { g: geo('s', 0.076, 18, 12), y: -0.445, z: 0.12, sy: 0.62, sz: 1.35 }, { g: geo('b', 0.14, 0.03, 0.07), y: -0.47, z: -0.09 }], darkM, k);
         put([{ g: geo('b', 0.165, 0.014, 0.3), y: -0.48, z: 0.05 }], v.eyeMat, k);
         g.add(p); v.legs.push(p); v.knees.push(k);
       });
@@ -1891,7 +2022,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       return g;
     }
     function makeRobot(a) {
-      var v = a.v, C = COL[a.status], g = buildHumanoid(v, C, OUTFIT[a.i % OUTFIT.length], {});
+      var v = a.v, C = COL[a.status], g = buildHumanoid(v, C, OUTFIT[a.i % OUTFIT.length], { style: a.i % 3, hair: HAIR[a.i % HAIR.length], glasses: a.i % 3 === 0 || a.i === 7 });
       v.glowMat = new THREE.SpriteMaterial({ map: GLOW, color: C, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false });
       var gl = new THREE.Sprite(v.glowMat); gl.scale.set(2.6, 2.6, 1); gl.position.y = 0.1; g.add(gl);
       v.iconMat = new THREE.SpriteMaterial({ map: iconTex(a.id), color: C, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false });
@@ -2513,7 +2644,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         var spr = new T.Sprite(new T.SpriteMaterial({ map: envTex[kind] || envTex.info, transparent: true, depthWrite: false, fog: false })); spr.scale.set(1.5, 1.12, 1); spr.position.copy(base); spr.position.y += 1.2; tower.add(spr);
         notes.push({ env: env, spr: spr, t: 0, life: 18, y0: spr.position.y });
         pulse(a.y + 0.2, kind === 'alert' ? 0xff5a5f : 0xc9a84c, 3.5, 9, 1.2);
-        a.v.sayText = (kind === 'alert' ? '¡Urgente! ' : '') + 'Recibí un recado del mensajero. ✉'; a.v.sayUntil = clockT + 5; a.v.greetEnd = clockT + 4.5; a.v.lastGreet = clockT;
+        a.v.sayText = (kind === 'alert' ? '¡Urgente! ' : '') + 'Recibí un recado del mensajero. ✉'; a.v.sayUntil = clockT + 5; a.v.greetEnd = clockT + 4.5; a.v.lastGreet = clockT; voiceSay(a, a.v.sayText, null, true);
       }
       function killNote(nt) { tower.remove(nt.env); tower.remove(nt.spr); nt.env.traverse(function (o) { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); }); nt.spr.material.dispose(); var ix = notes.indexOf(nt); if (ix > -1) notes.splice(ix, 1); }
       var tmp = new V3();
@@ -2708,6 +2839,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       else if (st === 'working') { v.sayText = hi + ' Soy ' + a.name + '. Ahora estoy ' + (act.indexOf('ando') > -1 || act.indexOf('iendo') > -1 ? act : 'con: ' + act) + '.'; }
       else v.sayText = hi + ' Soy ' + a.name + '. No tengo pendientes, avísame si me necesitas.';
       v.sayUntil = clockT + 5; if (st !== 'error') v.greetEnd = clockT + 4.5;
+      if (st !== 'error') voiceSay(a, v.sayText, null, true);
     }
 
     /* ---- Bucle ---- */
