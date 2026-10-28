@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Agente «Oportunidades» (piso 12 de la torre): busca casas para remodelar en McKinney, Plano y Frisco.
 
+RUTA SIN LLAVES (la que ya está activa): una tarea programada de Claude Code («Oportunidades: casas para
+remodelar (DFW)», lunes a sábado 11:23 hora de Chicago) busca con WebSearch/WebFetch, y deja cada propiedad
+como propuesta en la bandeja de la torre (inbox/op01…). No necesita ninguna llave. Este archivo es solo la
+alternativa si algún día quieres un navegador robot propio.
+
 Basado en el ejemplo de browser-use que pasó Ernesto. Cambios importantes frente al original:
   * Ningún token ni llave dentro del archivo: todo sale de variables de entorno.
   * Solo LEE y propone. Guarda `oportunidades.json`; nada se envía ni se compra sin tu «sí».
