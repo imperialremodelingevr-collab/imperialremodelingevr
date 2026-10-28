@@ -203,6 +203,7 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .zenbtn { position: absolute; left: var(--gutter-l); bottom: 16px; }
 .score { position: absolute; left: calc(var(--gutter-l) + 46px); bottom: 16px; height: 36px; display: flex; align-items: center; padding: 0 12px; font: 500 12px/1 var(--mono); letter-spacing: 0.04em; color: #ffd98a; border: 1px solid var(--line); background: rgba(7, 13, 21, 0.82); border-radius: 3px; font-variant-numeric: tabular-nums; }
 .score.pop { animation: pop 0.5s; }
+.stage::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(ellipse at 50% 46%, transparent 52%, rgba(0, 3, 8, 0.38) 100%); }
 .voice { position: absolute; left: calc(var(--gutter-l) + 112px); bottom: 16px; display: flex; align-items: center; gap: 8px; z-index: 5; max-width: min(560px, 46%); }
 .voice .btn { background: rgba(7, 13, 21, 0.82); white-space: nowrap; }
 .voice .btn.on { border-color: var(--accent); color: var(--accent); }
@@ -359,6 +360,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <button class="btn extra" id="btnCity" type="button">Ciudad: completa</button>
       <button class="btn" id="btnBg" type="button">Fondo: Espacio</button>
       <button class="btn extra" id="btnSpeed" type="button">Velocidad: lenta</button>
+      <button class="btn extra" id="btnCine" type="button">Efectos cine: sí</button>
       <button class="btn extra" id="btnTest" type="button">Probar una alerta</button>
     </div>
     <section class="flat" id="flat" hidden aria-label="Vista simplificada de la torre"><header><div><b>Vista simplificada</b><p id="flatWhy"></p></div><button class="btn primary" id="flatRetry" type="button">Reintentar 3D</button></header><ol id="flatList"></ol></section>
@@ -499,7 +501,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   var LBL = { working: 'Trabajando', idle: 'En espera', warning: 'Atención', error: 'Con falla' };
   var CSSC = { working: '#5cc8ff', idle: '#5d7389', warning: '#ffc857', error: '#ff5a5f' };
 
-  /* ---------- Los 10 pisos de la torre. Cada agente real se enlaza por su id (ver agents/<id> en la base de datos) ---------- */
+  /* ---------- Los pisos de la torre. Cada agente real se enlaza por su id (ver agents/<id> en la base de datos) ---------- */
   var AGENTS = [
     { id: 'cotiz', name: 'Cotizaciones', role: 'Calcula materiales y mano de obra, arma y envía cotizaciones.', status: 'working',
       acts: ['Calculando materiales para una cocina de 14 m²', 'Armando el PDF con 3 opciones de acabado', 'Comparando precios de cuarzo y granito', 'Enviando la cotización al cliente por correo'] },
@@ -524,7 +526,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     { id: 'reportes', name: 'Reportes', role: 'Prepara el resumen diario y semanal de tu negocio.', status: 'idle',
       acts: ['Preparando el resumen diario', 'Calculando margen por proyecto', 'Armando el reporte semanal'] },
     { id: 'publica', name: 'Publicaciones', role: 'Planea, redacta y publica cada post, y vigila cuántos tokens gasta cada publicación.', status: 'working',
-      acts: ['Redactando el texto de un post de Instagram', 'Programando la publicación de mañana', 'Eligiendo la mejor hora para publicar', 'Calculando los tokens gastados por post'] }
+      acts: ['Redactando el texto de un post de Instagram', 'Programando la publicación de mañana', 'Eligiendo la mejor hora para publicar', 'Calculando los tokens gastados por post'] },
+    { id: 'oport', name: 'Oportunidades', role: 'Busca casas para remodelar (fixer-upper) en McKinney, Plano y Frisco y calcula si convienen. Solo propone: tú decides.', status: 'working',
+      acts: ['Revisando listados de McKinney', 'Calculando costo de remodelación y margen de una casa', 'Comparando precio por pie cuadrado en Plano', 'Preparando la ficha de una propiedad candidata', 'Buscando casas que necesiten remodelación integral en Frisco'] }
   ];
   var t0 = Date.now(), N = AGENTS.length;
   AGENTS.forEach(function (a, i) {
@@ -545,7 +549,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     { id: 'l5', title: 'Seguimiento a cotizaciones sin respuesta', agent: 'cotiz', every: 1440, at: t0 + 29 * 60000, done: false },
     { id: 'l6', title: 'Recordatorios de pago a clientes', agent: 'cobros', every: 1440, at: t0 + 41 * 60000, done: false },
     { id: 'l7', title: 'Publicación programada de redes', agent: 'social', every: 1440, at: t0 + 58 * 60000, done: false },
-    { id: 'l8', title: 'Resumen diario de proyectos', agent: 'reportes', every: 1440, at: t0 + 95 * 60000, done: false }
+    { id: 'l8', title: 'Resumen diario de proyectos', agent: 'reportes', every: 1440, at: t0 + 95 * 60000, done: false },
+    { id: 'l9', title: 'Buscar casas fixer-upper en McKinney, Plano y Frisco', agent: 'oport', every: 1440, at: t0 + 75 * 60000, done: false }
   ];
   var INBOX = [
     { id: 'i1', agent: 'cotiz', title: 'Cotización de cocina: margen bajo', body: 'Cotizaciones propone $18,450 con gabinetes a medida. El margen quedó en 14%, por debajo de tu mínimo de 20%.', ok: 'Aprobar así', ask: 'Ajustar precio', hint: 'Qué debe cambiar (ej. subir 6% mano de obra)' },
@@ -676,7 +681,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   /* ---------- Voz: los agentes hablan y escuchan (el reconocimiento lo hace el navegador) ---------- */
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition, TTS = window.speechSynthesis || null;
   function normV(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); }
-  var VKEYS = { cotiz: ['cotizacion', 'cotizaciones'], cliente: ['cliente', 'atencion'], correo: ['correo', 'correos'], proyectos: ['proyectos', 'proyecto'], leads: ['prospectos', 'prospecto'], citas: ['calendario', 'citas', 'agenda'], social: ['comunidad', 'redes'], cobros: ['cobros', 'facturacion', 'factura', 'facturas'], resenas: ['resenas', 'resena'], reportes: ['reportes'], publica: ['publicaciones', 'publicacion'] };
+  var VKEYS = { cotiz: ['cotizacion', 'cotizaciones'], cliente: ['cliente', 'atencion'], correo: ['correo', 'correos'], proyectos: ['proyectos', 'proyecto'], leads: ['prospectos', 'prospecto'], citas: ['calendario', 'citas', 'agenda'], social: ['comunidad', 'redes'], cobros: ['cobros', 'facturacion', 'factura', 'facturas'], resenas: ['resenas', 'resena'], reportes: ['reportes'], publica: ['publicaciones', 'publicacion'], oport: ['oportunidades', 'oportunidad', 'propiedades', 'casas'] };
   function findAgentV(n) { var pad = ' ' + n + ' ', hit = null; AGENTS.forEach(function (a) { (VKEYS[a.id] || []).forEach(function (w) { if (!hit && pad.indexOf(' ' + w + ' ') > -1) hit = a; }); }); return hit; }
   var voLineT = 0;
   function voiceLine(txt, who) { var el = $('#voLine'); if (!el) return; el.textContent = (who ? who + ': ' : '') + txt; el.classList.add('show'); clearTimeout(voLineT); voLineT = setTimeout(function () { el.classList.remove('show'); }, 9000); }
@@ -1160,6 +1165,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function selectPlanet(id) { stopTour(); selected = null; selectedProject = null; selectedPlanet = id; if (scene3d) scene3d.focusPlanet(id); refresh(); }
   $('#btnHome').onclick = deselect;
   $('#btnTest').onclick = breakAgent;
+  $('#btnCine').onclick = function () { if (!scene3d) return; var on = scene3d.toggleCine(); PREFS.cine = on; savePrefs(); $('#btnCine').textContent = 'Efectos cine: ' + (on ? 'sí' : 'no'); toast(on ? 'Efectos de cine activados' : 'Efectos de cine apagados'); };
   $('#btnSpeed').onclick = function () { if (scene3d) $('#btnSpeed').textContent = 'Velocidad: ' + scene3d.toggleSpeed(); };
   $('#btnInside').onclick = function () { stopTour(); var ag = (selected && byId(selected)) || byId('cotiz'); select(ag.id); setTimeout(function () { if (scene3d) scene3d.zoomIn(24); }, 700); toast('Vista interior: los agentes trabajan en sus escritorios'); };
   $('#btnSky').onclick = function () { stopTour(); selected = null; selectedProject = null; selectedPlanet = null; refresh(); if (scene3d) scene3d.skyView(); };
@@ -1394,7 +1400,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var el = $('#score'); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
     return score;
   }
-  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify })); } catch (e) {} }
+  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify, jarvis: PREFS.jarvis !== false, cine: PREFS.cine !== false })); } catch (e) {} }
   function applyUi() {
     var app = $('#app'); app.classList.toggle('noroster', !rosterOpen); app.classList.toggle('nopanel', !panelOpen); app.classList.toggle('zen', zen);
     $('#score').textContent = '☄ ' + score; savePrefs();
@@ -1593,7 +1599,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   var GROUP_COLORS = { Cian: '#5cc8ff', Menta: '#7fe3c5', 'Ámbar': '#ffc857', Lavanda: '#b4a0ff', Rosa: '#ff8fb0', Gris: '#8fa6b8' };
   var GROUPS_DEFAULT = [
     { name: 'Atención al cliente', desc: 'Primer contacto con clientes y prospectos', color: '#5cc8ff', order: 1, agents: ['cliente', 'correo', 'citas'] },
-    { name: 'Ventas y cobros', desc: 'Del prospecto a la cotización y el pago', color: '#7fe3c5', order: 2, agents: ['leads', 'cotiz', 'cobros'] },
+    { name: 'Ventas y cobros', desc: 'Del prospecto a la cotización y el pago', color: '#7fe3c5', order: 2, agents: ['leads', 'cotiz', 'cobros', 'oport'] },
     { name: 'Operaciones de obra', desc: 'Seguimiento de obras, permisos y materiales', color: '#ffc857', order: 3, agents: ['proyectos'] },
     { name: 'Marketing y marca', desc: 'Publicaciones, comunidad y reputación', color: '#b4a0ff', order: 4, agents: ['publica', 'social', 'resenas'] },
     { name: 'Dirección', desc: 'Resúmenes y reportes para el dueño', color: '#8fa6b8', order: 5, agents: ['reportes'] }
@@ -1770,6 +1776,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: 'high-performance' });
     var dprMax = Math.min(Math.max(window.devicePixelRatio || 1, 1.5), 2), tier = 0, layoutReady = false, glLost = false, frameErrs = 0, spaceBroken = false;
     renderer.setPixelRatio(dprMax);
+    var CINE = { on: false, ok: false, composer: null, grade: null, want: PREFS.cine !== false && !reduce, loading: false, coarse: !!(window.matchMedia && matchMedia('(pointer: coarse)').matches), t: 0 };
+    var CINE_LIBS = [['shaders/CopyShader.js', 'sha384-nhO9toQuMo5osCuA0l+YFpSqscZWxDu251Bnho2gD3kSPv1neEwHg0LyEmrA+mPj'], ['shaders/LuminosityHighPassShader.js', 'sha384-mY+ii969jnDCI2HjRHftH2NZVkIO5ZGUkcnGCg3oVJ3kVstWQXwerYWBg+nbUG4R'], ['postprocessing/Pass.js', 'sha384-HUR8WVDx2FD1OlSm1nohJJ2a3aIfeClGjv/oVFdTHd3skt+4i7/z0dl/ux4nd2ti'], ['postprocessing/EffectComposer.js', 'sha384-GkidzTYmQg24v13sa3xhBBbvOLbVLO1QxfyKLdOWweQqNqS/iWwUst2T1fER2Xrg'], ['postprocessing/RenderPass.js', 'sha384-2EpLreWSFuZsk4hcSplXLhlHd/wzvDNF907bTGIXSXM0SlhJNzy4YK0DhBFvkFEs'], ['postprocessing/ShaderPass.js', 'sha384-I3lsvPeDJYFrEAzn/TA0yhc/SCYKwpyfyq8lKzHYKohu43H9f7xc/Q9ZWgSVUDl3'], ['postprocessing/UnrealBloomPass.js', 'sha384-aVQ2QnWkoxhOefDB0YZB64OPVzujvccydpcC7UqMDJUK0ChwA382zOHmrWHGDRRa']];
     var scene = new THREE.Scene();
     var BG = 0x04070c;
     scene.background = new THREE.Color(BG);
@@ -2028,7 +2036,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       var t = new THREE.CanvasTexture(c); t.anisotropy = 8; return new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
     })();
     var HAIR = [0x1b1b1f, 0x4a2f1f, 0x8a5a2b, 0xc8a15a, 0x2b2b3a, 0x6b6b72, 0x3a2418, 0x0f0f12];
-    var OUTFIT = [0x4cc9f0, 0xa78bfa, 0x34d399, 0xfbbf24, 0xf472b6, 0x60a5fa, 0xfb923c, 0x2dd4bf, 0xc084fc, 0xf87171, 0xa3e635];
+    var OUTFIT = [0x4cc9f0, 0xa78bfa, 0x34d399, 0xfbbf24, 0xf472b6, 0x60a5fa, 0xfb923c, 0x2dd4bf, 0xc084fc, 0xf87171, 0xa3e635, 0xfde047];
     function buildHumanoid(v, C, outHex, opts) {
       var g = new THREE.Group(), T = THREE, cour = !!(opts && opts.courier);
       v.eyeMat = new T.MeshBasicMaterial({ color: C });
@@ -2430,6 +2438,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var spire = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.4, 14, 8), new THREE.MeshBasicMaterial({ color: 0xdff4ff })); spire.position.y = TOP + CH + 7; tower.add(spire);
     var beacon = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0x9fe0ff, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
     beacon.scale.set(9, 9, 1); beacon.position.y = TOP + CH + 14; tower.add(beacon);
+    var streakH = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0x7fd4ff, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); streakH.scale.set(64, 1.6, 1); streakH.position.copy(beacon.position); tower.add(streakH);
+    var streakV = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0xbfeaff, transparent: true, opacity: 0.35, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); streakV.scale.set(2.2, 40, 1); streakV.position.copy(beacon.position); tower.add(streakV);
+    var rim = new THREE.DirectionalLight(0xffa860, 0.34); rim.position.set(-90, 40, -70); scene.add(rim);
     var halo = new THREE.Mesh(new THREE.TorusGeometry(8.6, 0.05, 6, 120), new THREE.MeshBasicMaterial({ color: 0x9fe0ff, transparent: true, opacity: 0.7 }));
     halo.rotation.x = Math.PI / 2; halo.position.y = TOP + CH + 8; tower.add(halo);
     var logoImg = new Image(), logoTex = new THREE.Texture(logoImg);
@@ -2796,14 +2807,51 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (Math.abs(SHIFT) > 0.5) camera.setViewOffset(w, h, -SHIFT, 0, w, h); else camera.clearViewOffset();
       camera.updateProjectionMatrix();
     }
+
+    /* ---------- Efectos de cine: bloom, gradación de color, viñeta y grano. Solo en calidad alta y sin pantalla táctil; si algo falla, la escena se ve como antes ---------- */
+    function cineLoad(done) {
+      if (CINE.loading || CINE.ok) return; CINE.loading = true; var i = 0;
+      (function next() {
+        if (i >= CINE_LIBS.length) { done(true); return; }
+        var sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/' + CINE_LIBS[i][0]; sc.integrity = CINE_LIBS[i][1]; sc.crossOrigin = 'anonymous'; sc.async = false;
+        sc.onload = function () { i++; next(); }; sc.onerror = function () { CINE.loading = false; done(false); };
+        document.head.appendChild(sc);
+      })();
+    }
+    function cineBuild() {
+      try {
+        if (!THREE.EffectComposer || !THREE.UnrealBloomPass || !THREE.ShaderPass || !THREE.RenderPass) return false;
+        var w = Math.max(2, stage.clientWidth), h = Math.max(2, stage.clientHeight), pr = renderer.getPixelRatio(), gl2 = renderer.capabilities.isWebGL2;
+        var rt = gl2 && THREE.WebGLMultisampleRenderTarget ? new THREE.WebGLMultisampleRenderTarget(w * pr, h * pr, { format: THREE.RGBAFormat }) : new THREE.WebGLRenderTarget(w * pr, h * pr, { format: THREE.RGBAFormat });
+        var comp = new THREE.EffectComposer(renderer, rt); comp.setPixelRatio(pr); comp.setSize(w, h);
+        comp.addPass(new THREE.RenderPass(scene, camera));
+        var bloom = new THREE.UnrealBloomPass(new THREE.Vector2(w, h), 0.62, 0.7, 0.62); comp.addPass(bloom);
+        var grade = new THREE.ShaderPass({
+          uniforms: { tDiffuse: { value: null }, time: { value: 0 }, vig: { value: 0.5 }, grain: { value: 0.035 } },
+          vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+          fragmentShader: 'uniform sampler2D tDiffuse; uniform float time, vig, grain; varying vec2 vUv; void main(){ vec2 d = vUv - 0.5; float r = dot(d, d); vec3 c; c.r = texture2D(tDiffuse, vUv + d * r * 0.006).r; c.g = texture2D(tDiffuse, vUv).g; c.b = texture2D(tDiffuse, vUv - d * r * 0.006).b; float l = dot(c, vec3(0.299, 0.587, 0.114)); c = c * mix(vec3(0.93, 0.99, 1.07), vec3(1.06, 1.0, 0.93), smoothstep(0.15, 0.85, l)); c = mix(c, c * c * (3.0 - 2.0 * c), 0.45); c *= 1.0 - vig * smoothstep(0.18, 0.78, length(d)); float g = fract(sin(dot(vUv * vec2(1731.0, 911.0) + time, vec2(12.9898, 78.233))) * 43758.5453); c += (g - 0.5) * grain; gl_FragColor = vec4(c, 1.0); }'
+        });
+        grade.renderToScreen = true; comp.addPass(grade);
+        CINE.composer = comp; CINE.grade = grade; CINE.bloom = bloom; return true;
+      } catch (e) { CINE.composer = null; return false; }
+    }
+    function cineUpdate() {
+      var want = CINE.want && tier === 0 && !CINE.coarse && !glLost;
+      if (want && !CINE.composer) {
+        if (!CINE.ok) { cineLoad(function (ok) { CINE.ok = ok; CINE.loading = false; if (ok) cineUpdate(); }); want = false; }
+        else if (!cineBuild()) { CINE.want = false; want = false; }
+      }
+      CINE.on = !!(want && CINE.composer);
+      canvas.dataset.cine = CINE.on ? '1' : '0';
+    }
     function layout() {
       var w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
-      renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = w / h < 0.8 ? 60 : 40;
+      renderer.setSize(w, h, false); if (CINE.composer) { CINE.composer.setPixelRatio(renderer.getPixelRatio()); CINE.composer.setSize(w, h); } camera.aspect = w / h; camera.fov = w / h < 0.8 ? 60 : 40;
       applyShift(true);
       HOME.r = w / h < 0.8 ? 142 : 168; HOME.ty = w / h < 0.8 ? 58 : 62;
       if (!selected) { cam.gr = HOME.r; cam.gty = HOME.ty; }
     }
-    new ResizeObserver(layout).observe(stage); layout(); layoutReady = true; cam.r = cam.gr; cam.ty = cam.gty;
+    new ResizeObserver(layout).observe(stage); layout(); layoutReady = true; setTimeout(cineUpdate, 2500); cam.r = cam.gr; cam.ty = cam.gty;
 
     var drag = null, ptrs = {}, pinch = 0;
     canvas.addEventListener('pointerdown', function (e) {
@@ -2893,7 +2941,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       renderer.setPixelRatio(ratios[tier]); if (skyFx) skyFx.root.visible = tier < 3; planetGroup.visible = sp; belt.visible = sp && tier < 3; nebulae.visible = sp && tier < 2; mwMesh.visible = sp;
       sunRays.visible = tier < 1; PLANETS.forEach(function (p) { planetObjs[p.id].halo.visible = tier < 2; if (planetObjs[p.id].clouds) planetObjs[p.id].clouds.visible = tier < 2; });
       AGENTS.forEach(function (a) { var d = tier < 2; (a.v.detail || []).concat(a.v.detail2 || [], a.v.dDetail || []).forEach(function (m) { m.visible = d; }); });
-      canvas.dataset.tier = tier; if (layoutReady) layout();
+      canvas.dataset.tier = tier; if (layoutReady) { layout(); cineUpdate(); }
     }
     setBg(bgPref);
     tier = { alta: 0, media: 1, baja: 3, auto: 0 }[qualityPref] || 0; applyTier();
@@ -3173,9 +3221,10 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (hoverA && hoverA.v && hoverA.v.ghost > 0.45) { hoverRing.visible = true; hoverRing.position.y = hoverA.floorY - FH / 2 + 0.25; hoverRing.material.opacity = 0.45 + 0.3 * Math.sin(clockT * 5); } else hoverRing.visible = false;
       logo.rotation.y += sdt * 1.1; logoRing.rotation.y += sdt * 0.8;
       halo.rotation.z += sdt * 0.4; halo.position.y = TOP + CH + 8 + Math.sin(animT) * 0.4;
-      beacon.material.opacity = 0.65 + 0.35 * Math.sin(clockT * 1.8);
+      beacon.material.opacity = 0.65 + 0.35 * Math.sin(clockT * 1.8); streakH.material.opacity = 0.4 + 0.2 * Math.sin(clockT * 1.8 + 1); streakH.visible = streakV.visible = tier < 2;
       core.intensity = 1.4 + 0.25 * Math.sin(clockT * 1.1);
       if (window.__evrTest && window.__evrTest.blank) { renderer.setClearColor(0x000000, 1); renderer.clear(); }
+      else if (CINE.on) { try { CINE.t += dt; CINE.grade.uniforms.time.value = CINE.t % 100; CINE.composer.render(); } catch (e) { CINE.on = false; CINE.want = false; CINE.composer = null; renderer.render(scene, camera); } }
       else renderer.render(scene, camera);
       if (now - lastCheck > 3000 && now - tStart > 2500) {
         lastCheck = now;
@@ -3220,6 +3269,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       cityView: function () { cam.follow = null; cam.gtx = 0; cam.gtz = 0; cam.gty = 10; cam.gph = 0.95; cam.gr = window.innerWidth > 860 ? 400 : 440; },
       toggleCity: function () { setCity(!cityFull); return cityFull ? 'completa' : 'tenue'; },
       setQuality: function (q) { qualityPref = q; tier = { alta: 0, media: 1, baja: 3, auto: 0 }[q] || 0; fFrames = 0; fWinStart = performance.now(); tStart = performance.now(); applyTier(); return q; },
+      toggleCine: function () { CINE.want = !CINE.want; if (!CINE.want) CINE.on = false; cineUpdate(); layout(); return CINE.want; },
+      cineOn: function () { return CINE.on; },
       toggleSpeed: function () { speedMul = reduce ? 0.3 : (speedMul < 0.8 ? 1 : 0.55); return speedMul < 0.8 ? 'lenta' : 'normal'; }
     };
   }
