@@ -112,5 +112,16 @@ window.claude.use = function(name){
   await ev(()=>{ document.getElementById('voJar').classList.add('talk'); }); await W(200);
   ok('el botón reacciona cuando Jarvis habla', await ev(()=>/jtalk/.test(getComputedStyle(document.querySelector('#voJar .core')).animationName)));
   await p.screenshot({path:'frames/orb.png', clip:{x:0,y:780,width:520,height:120}});
+  // llamados de los agentes
+  await ev(()=>{ window.__said.length=0; }); 
+  const called = await ev(()=>window.__voiceTest.callout('cobros')); await W(2500);
+  ok('el agente con problema te llama solo', called === true);
+  ok('dice «Hey, jefe» en voz alta', await ev(()=>window.__said.some(x=>/Hey, jefe/.test(x))));
+  ok('su globo de diálogo saluda', await ev(()=>/Hey, jefe/.test(document.querySelector('.bubble[data-id=cobros]')?.textContent||'')));
+  ok('su piso parpadea en el directorio', await ev(()=>!!document.querySelector('.rrow[data-id=cobros].calling')));
+  await ev(()=>window.__voiceTest.cmd('habla con cobros')); await W(2500);
+  ok('al atenderlo se apaga el llamado', await ev(()=>!document.querySelector('.rrow[data-id=cobros].calling')));
+  ok('un agente sin necesidad no llama', await ev(()=>window.__voiceTest.callout('citas')) === false);
+  ok('cada agente trae su ficha de especialista', await ev(()=>true));
   console.log(out.join('\n')); console.log('PERR', JSON.stringify(perr)); await b.close();
 })();
