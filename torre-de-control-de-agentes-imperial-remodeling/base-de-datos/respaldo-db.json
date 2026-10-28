@@ -1,1 +1,1912 @@
-{"tasks": {"t06": {"agent": "cobros", "at": 1792720800000, "createdAt": 1792709400000, "done": false, "every": 1440, "title": "Recordatorios de pago a clientes"}, "t08": {"agent": "reportes", "at": 1792731600000, "createdAt": 1792709400000, "done": false, "every": 1440, "title": "Resumen diario de proyectos"}, "t01": {"agent": "correo", "at": 1792713304077, "createdAt": 1792709400000, "done": false, "every": 60, "last": 1792709704077, "title": "Revisar correos nuevos"}, "t07": {"agent": "social", "at": 1792724400000, "createdAt": 1792709400000, "done": false, "every": 1440, "title": "Publicaci\u00f3n programada de redes"}, "t04": {"agent": "citas", "at": 1792713600000, "createdAt": 1792709400000, "done": false, "every": 1440, "title": "Recordatorios de visitas de ma\u00f1ana"}, "t09": {"agent": "resenas", "at": 1792740000000, "createdAt": 1792709400000, "done": false, "every": 10080, "title": "Pedir rese\u00f1as de obras terminadas"}, "t02": {"agent": "cliente", "at": 1792713604085, "createdAt": 1792709400000, "done": false, "every": 60, "last": 1792710004085, "title": "Responder mensajes sin contestar"}, "t03": {"agent": "proyectos", "at": 1792798202204, "createdAt": 1792709400000, "done": false, "every": 1440, "last": 1792711802204, "title": "Revisar cronograma de obras"}, "t05": {"agent": "cotiz", "at": 1792717200000, "createdAt": 1792709400000, "done": false, "every": 1440, "title": "Seguimiento a cotizaciones sin respuesta"}}, "inbox": {"i01": {"agent": "cotiz", "ask": "Ajustar precio", "body": "Cotizaciones propone $18,450 con gabinetes a medida. El margen qued\u00f3 en 14%, por debajo de tu m\u00ednimo de 20%.", "createdAt": 1792709400001, "hint": "Qu\u00e9 debe cambiar (ej. subir 6% mano de obra)", "ok": "Aprobar as\u00ed", "resolved": false, "title": "Cotizaci\u00f3n de cocina: margen bajo"}, "i03": {"agent": "correo", "ask": "Pedir acci\u00f3n", "body": "Lleg\u00f3 un aviso de cambio de precios de un proveedor de pisos. Puede afectar 2 cotizaciones abiertas.", "createdAt": 1792709400003, "hint": "Qu\u00e9 debe hacer el agente con este correo", "ok": "Marcar como revisado", "resolved": false, "title": "Correo de proveedor sin clasificar"}, "i02": {"agent": "cliente", "ask": "Corregir texto", "body": "Un cliente pregunta si pueden empezar el ba\u00f1o antes del d\u00eda 15. No hay fecha confirmada de materiales para decir que s\u00ed.", "createdAt": 1792709400002, "hint": "C\u00f3mo quieres que responda", "ok": "Enviar respuesta", "resolved": false, "title": "Respuesta pendiente de tu visto bueno"}}, "projects": {"p04": {"agent": "cotiz", "client": "Estimado en curso", "createdAt": 1792709400000, "name": "Cocina con isla", "next": "Enviar cotizaci\u00f3n", "progress": 5, "slot": 3, "stage": "Estimado"}, "p01": {"agent": "proyectos", "client": "Residencia Norte", "createdAt": 1792709400000, "name": "Cocina y sala abierta", "next": "Instalar gabinetes el jueves", "progress": 60, "slot": 0, "stage": "Obra"}, "p05": {"agent": "cobros", "client": "Residencia Oeste", "createdAt": 1792709400000, "name": "Piso de madera", "next": "Firmar contrato y anticipo", "progress": 15, "slot": 4, "stage": "Contrato"}, "p03": {"agent": "proyectos", "client": "Residencia Sur", "createdAt": 1792709400000, "name": "Sala y bar", "next": "Pintura final y limpieza", "progress": 85, "slot": 2, "stage": "Acabados"}, "p02": {"agent": "proyectos", "client": "Residencia Este", "createdAt": 1792709400000, "name": "Ba\u00f1o principal", "next": "Esperando inspecci\u00f3n de plomer\u00eda", "progress": 30, "slot": 1, "stage": "Permisos"}}, "posts": {"o04": {"at": 1792690000000, "caption": "", "createdAt": 1792711800000, "network": "Google", "publishedAt": 1792690000000, "status": "Publicado", "title": "Rese\u00f1a destacada de un cliente", "tokens": 900}, "o01": {"at": 1792724400000, "caption": "", "createdAt": 1792711800000, "network": "Instagram", "status": "Programado", "title": "Antes y despu\u00e9s: cocina con isla", "tokens": 1800}, "o02": {"at": 1792800000000, "caption": "Borrador: tres claves para elegir cuarzo sin equivocarte.", "createdAt": 1792711800000, "network": "Facebook", "status": "Borrador", "title": "C\u00f3mo elegir cuarzo para tu cocina", "tokens": 2400}, "o03": {"at": 0, "caption": "", "createdAt": 1792711800000, "network": "TikTok", "status": "Idea", "title": "Recorrido de obra: sala y bar", "tokens": 0}}, "memory": {"m02": {"body": "Estimado, Contrato, Permisos, Obra, Acabados y Entrega. Cada etapa fija el avance m\u00ednimo: 5, 15, 30, 60, 85 y 100 por ciento.", "createdAt": 1792711800000, "kind": "Regla", "pinned": true, "source": "claude", "tags": ["obras"], "title": "Etapas de una obra", "updatedAt": 1792711799000}, "m03": {"body": "Se arma a las 6 pm con tareas ejecutadas, alertas, bandeja, obras y gasto de tokens. Se guarda en la torre y se puede redactar con Claude.", "createdAt": 1792711800000, "kind": "Proceso", "pinned": false, "source": "claude", "tags": ["reportes"], "title": "Reporte diario", "updatedAt": 1792711798000}, "m05": {"body": "El piso 11 (Publicaciones) vigila el gasto. Los tokens se estiman a 1 token por cada 4 caracteres. El presupuesto diario y los precios por mill\u00f3n se ajustan en la pesta\u00f1a Tokens. Con 80% del presupuesto aparece un aviso en la bandeja y el Sol se pone naranja.", "createdAt": 1792711800000, "kind": "Regla", "pinned": false, "source": "claude", "tags": ["tokens", "presupuesto"], "title": "Gasto de tokens", "updatedAt": 1792711796000}, "m01": {"body": "Cada piso lee su estado en agents/<id> de la base de datos de la torre. Un agente, o una tarea programada de Claude Code, escribe status (working, idle, warning o error), act, msg, fix y since. La torre lo muestra como conectado. Los ids son cotiz, cliente, correo, proyectos, leads, citas, social, cobros, resenas, reportes y publica.", "createdAt": 1792711800000, "kind": "Proceso", "pinned": true, "source": "claude", "tags": ["torre", "agentes"], "title": "C\u00f3mo conectar un agente real a la torre", "updatedAt": 1792711800000}, "m04": {"body": "Claude Code escribe una nota nueva en la colecci\u00f3n memory de esta torre con los campos title, body, kind (Regla, Proceso, Cliente, Decisi\u00f3n, Preferencia o Nota), tags, pinned y updatedAt. La torre la muestra al instante en la pesta\u00f1a Memoria y el asistente la usa como contexto.", "createdAt": 1792711800000, "kind": "Proceso", "pinned": true, "source": "claude", "tags": ["torre", "memoria"], "title": "C\u00f3mo guardar memoria desde Claude Code", "updatedAt": 1792711797000}}, "usage": {"2026-10-17": {"agents": {"cliente": {"calls": 8, "tin": 9000, "tout": 5500}, "correo": {"calls": 10, "tin": 12000, "tout": 4800}, "cotiz": {"calls": 5, "tin": 8000, "tout": 3800}, "publica": {"calls": 9, "tin": 17000, "tout": 14000}}, "day": "2026-10-17", "demo": true}, "2026-10-21": {"agents": {"cliente": {"calls": 10, "tin": 12000, "tout": 7200}, "correo": {"calls": 15, "tin": 17000, "tout": 7000}, "cotiz": {"calls": 9, "tin": 13500, "tout": 6000}, "proyectos": {"calls": 4, "tin": 5000, "tout": 2200}, "publica": {"calls": 15, "tin": 28000, "tout": 22000}, "reportes": {"calls": 2, "tin": 7200, "tout": 3000}}, "day": "2026-10-21", "demo": true}, "2026-10-18": {"agents": {"cliente": {"calls": 5, "tin": 6000, "tout": 3500}, "correo": {"calls": 6, "tin": 7000, "tout": 3000}, "cotiz": {"calls": 3, "tin": 5000, "tout": 2200}, "publica": {"calls": 16, "tin": 30000, "tout": 24000}}, "day": "2026-10-18", "demo": true}, "2026-10-16": {"agents": {"cliente": {"calls": 10, "tin": 12500, "tout": 7000}, "correo": {"calls": 13, "tin": 15000, "tout": 6000}, "cotiz": {"calls": 7, "tin": 11000, "tout": 5000}, "publica": {"calls": 13, "tin": 24000, "tout": 19000}, "reportes": {"calls": 2, "tin": 6500, "tout": 2600}}, "day": "2026-10-16", "demo": true}, "2026-10-20": {"agents": {"cliente": {"calls": 10, "tin": 11500, "tout": 6800}, "correo": {"calls": 12, "tin": 14500, "tout": 5900}, "cotiz": {"calls": 7, "tin": 10500, "tout": 4900}, "publica": {"calls": 12, "tin": 23000, "tout": 18500}, "reportes": {"calls": 2, "tin": 6800, "tout": 2700}}, "day": "2026-10-20", "demo": true}, "2026-10-15": {"agents": {"cliente": {"calls": 9, "tin": 10000, "tout": 6500}, "correo": {"calls": 12, "tin": 14000, "tout": 5500}, "cotiz": {"calls": 6, "tin": 9000, "tout": 4200}, "publica": {"calls": 11, "tin": 21000, "tout": 17000}, "reportes": {"calls": 2, "tin": 6000, "tout": 2500}}, "day": "2026-10-15", "demo": true}, "2026-10-19": {"agents": {"cliente": {"calls": 11, "tin": 13000, "tout": 7500}, "correo": {"calls": 14, "tin": 16500, "tout": 6800}, "cotiz": {"calls": 8, "tin": 12000, "tout": 5600}, "proyectos": {"calls": 3, "tin": 4000, "tout": 1800}, "publica": {"calls": 14, "tin": 26000, "tout": 20000}, "reportes": {"calls": 2, "tin": 7000, "tout": 2900}}, "day": "2026-10-19", "demo": true}, "2026-10-22": {"agents": {"cliente": {"calls": 8, "tin": 10500, "tout": 6200}, "correo": {"calls": 11, "tin": 13000, "tout": 5200}, "cotiz": {"calls": 6, "tin": 9500, "tout": 4300}, "publica": {"calls": 11, "tin": 22000, "tout": 17500}}, "day": "2026-10-22", "demo": true}}, "logs": {"2026-10-22": {"events": [{"agent": "proyectos", "text": "Se ejecut\u00f3 Revisar cronograma de obras", "ts": 1792711802204, "type": "run"}, {"agent": "cobros", "text": "Reinici\u00f3 Facturaci\u00f3n y cobros", "ts": 1792711732906, "type": "fix"}, {"agent": "cobros", "text": "Reinici\u00f3 Facturaci\u00f3n y cobros", "ts": 1792710922892, "type": "fix"}, {"agent": "resenas", "text": "Reinici\u00f3 Rese\u00f1as", "ts": 1792710140928, "type": "fix"}, {"agent": "cobros", "text": "Reinici\u00f3 Facturaci\u00f3n y cobros", "ts": 1792710105312, "type": "fix"}]}}}
+{
+ "agents": {
+  "correo": {
+   "act": "Reinicio pedido desde la torre",
+   "fix": "",
+   "msg": "",
+   "paused": false,
+   "restartRequestedAt": 1793040852800,
+   "since": 1792001400000,
+   "status": "working",
+   "updatedAt": 1792955518000
+  },
+  "oport": {
+   "act": "Busqué McKinney, Plano y Frisco; 2 propiedades nuevas en McKinney (2605 FM 546, 1018 N College St); Plano y Frisco sin novedades",
+   "fix": "",
+   "msg": "",
+   "status": "working",
+   "updatedAt": 1793205800000
+  }
+ },
+ "alerts": {
+  "correo_1792001400000": {
+   "ack": true,
+   "agent": "correo",
+   "createdAt": 1793040800205,
+   "level": "error",
+   "msg": "Gmail desconectado desde el 14 de octubre (needs_reconnect). No puede leer ni clasificar correos.",
+   "name": "Correo",
+   "notified": false,
+   "resolvedAt": 1793040852794,
+   "since": 1792001400000
+  },
+  "correo_1792728652854": {
+   "ack": true,
+   "agent": "correo",
+   "createdAt": 1792728652857,
+   "level": "error",
+   "msg": "No respondió en 5 minutos. Se detuvo a mitad de una tarea.",
+   "name": "Correo",
+   "notified": true,
+   "resolvedAt": 1792728693523,
+   "since": 1792728652854
+  },
+  "proyectos_1792727973448": {
+   "ack": true,
+   "agent": "proyectos",
+   "createdAt": 1792727973450,
+   "level": "error",
+   "msg": "No respondió en 5 minutos. Se detuvo a mitad de una tarea.",
+   "name": "Proyectos",
+   "notified": true,
+   "resolvedAt": 1792728015921,
+   "since": 1792727973448
+  },
+  "reportes_1792728029678": {
+   "ack": true,
+   "agent": "reportes",
+   "createdAt": 1792728029679,
+   "level": "error",
+   "msg": "No respondió en 5 minutos. Se detuvo a mitad de una tarea.",
+   "name": "Reportes",
+   "notified": true,
+   "resolvedAt": 1792728039063,
+   "since": 1792728029678
+  }
+ },
+ "groups": {
+  "g01": {
+   "agents": [
+    "cliente",
+    "correo",
+    "citas"
+   ],
+   "color": "#5cc8ff",
+   "desc": "Primer contacto con clientes y prospectos",
+   "name": "Atención al cliente",
+   "order": 1
+  },
+  "g02": {
+   "agents": [
+    "leads",
+    "cotiz",
+    "cobros"
+   ],
+   "color": "#7fe3c5",
+   "desc": "Del prospecto a la cotización y el pago",
+   "name": "Ventas y cobros",
+   "order": 2
+  },
+  "g03": {
+   "agents": [
+    "proyectos"
+   ],
+   "color": "#ffc857",
+   "desc": "Seguimiento de obras, permisos y materiales",
+   "name": "Operaciones de obra",
+   "order": 3
+  },
+  "g04": {
+   "agents": [
+    "publica",
+    "social",
+    "resenas"
+   ],
+   "color": "#b4a0ff",
+   "desc": "Publicaciones, comunidad y reputación",
+   "name": "Marketing y marca",
+   "order": 4
+  },
+  "g05": {
+   "agents": [
+    "reportes"
+   ],
+   "color": "#8fa6b8",
+   "desc": "Resúmenes y reportes para el dueño",
+   "name": "Dirección",
+   "order": 5
+  }
+ },
+ "improvements": {
+  "im01": {
+   "createdAt": 1793221800000,
+   "detail": "Solo lectura y borradores; nada se envía sin tu sí.",
+   "section": "Conexiones",
+   "source": "torre",
+   "status": "Idea",
+   "title": "Conectar Gmail real al agente Correo"
+  },
+  "im02": {
+   "createdAt": 1793221800001,
+   "detail": "Falta el token nuevo (tras revocar el anterior) y tu chat; guardarlos solo como variables de entorno.",
+   "section": "Conexiones",
+   "source": "torre",
+   "status": "Idea",
+   "title": "Alertas al teléfono por Telegram"
+  },
+  "im03": {
+   "createdAt": 1793221800002,
+   "detail": "Cada agente escribe su estado en agents/<id>; empezar con Correo, Calendario y Cotizaciones.",
+   "section": "Agentes",
+   "source": "torre",
+   "status": "Idea",
+   "title": "Reemplazar agentes de ejemplo por estados reales"
+  },
+  "im04": {
+   "createdAt": 1793221800003,
+   "detail": "Publicar la torre en una página propia donde el navegador permita el micrófono.",
+   "section": "Jarvis y voz",
+   "source": "torre",
+   "status": "Idea",
+   "title": "Micrófono directo sin bloqueo"
+  },
+  "im05": {
+   "createdAt": 1793221800004,
+   "detail": "Con esos filtros la búsqueda diaria de casas para remodelar sería más precisa.",
+   "section": "Agentes",
+   "source": "torre",
+   "status": "Idea",
+   "title": "Oportunidades: presupuesto máximo y zonas favoritas"
+  },
+  "im06": {
+   "createdAt": 1793221800005,
+   "detail": "Una rutina que guarde la base de datos en el repositorio cada semana.",
+   "section": "Sistema",
+   "source": "torre",
+   "status": "Idea",
+   "title": "Respaldo semanal automático"
+  },
+  "im07": {
+   "createdAt": 1793221800006,
+   "detail": "Mostrar en cada oficina el texto real de los correos y mensajes del agente.",
+   "section": "Torre 3D",
+   "source": "torre",
+   "status": "Idea",
+   "title": "Pantallas de recados con datos reales"
+  },
+  "im08": {
+   "createdAt": 1793221800007,
+   "detail": "Ya puede enfocar agentes, reiniciarlos, crear tareas y anotar mejoras.",
+   "section": "Jarvis y voz",
+   "source": "torre",
+   "status": "Hecho",
+   "title": "Jarvis conversacional con herramientas"
+  },
+  "im09": {
+   "createdAt": 1793221800008,
+   "detail": "Pestaña Sistema con verificación, respaldo y reparación.",
+   "section": "Sistema",
+   "source": "torre",
+   "status": "Hecho",
+   "title": "Panel de salud y reparación de datos"
+  }
+ },
+ "inbox": {
+  "i01": {
+   "agent": "cotiz",
+   "ask": "Ajustar precio",
+   "body": "Cotizaciones propone $18,450 con gabinetes a medida. El margen quedó en 14%, por debajo de tu mínimo de 20%.",
+   "createdAt": 1792709400001,
+   "hint": "Qué debe cambiar (ej. subir 6% mano de obra)",
+   "ok": "Aprobar así",
+   "resolution": "ok",
+   "resolved": true,
+   "resolvedAt": 1792767556572,
+   "title": "Cotización de cocina: margen bajo"
+  },
+  "i02": {
+   "agent": "cliente",
+   "ask": "Corregir texto",
+   "body": "Un cliente pregunta si pueden empezar el baño antes del día 15. No hay fecha confirmada de materiales para decir que sí.",
+   "createdAt": 1792709400002,
+   "hint": "Cómo quieres que responda",
+   "ok": "Enviar respuesta",
+   "resolution": "ok",
+   "resolved": true,
+   "resolvedAt": 1793198366702,
+   "title": "Respuesta pendiente de tu visto bueno"
+  },
+  "i03": {
+   "agent": "correo",
+   "ask": "Pedir acción",
+   "body": "Llegó un aviso de cambio de precios de un proveedor de pisos. Puede afectar 2 cotizaciones abiertas.",
+   "createdAt": 1792709400003,
+   "hint": "Qué debe hacer el agente con este correo",
+   "ok": "Marcar como revisado",
+   "resolution": "ok",
+   "resolved": true,
+   "resolvedAt": 1793198394202,
+   "title": "Correo de proveedor sin clasificar"
+  },
+  "i04": {
+   "agent": "leads",
+   "ask": "Responder",
+   "body": "Hola, soy el agente de Prospectos. Llegaron 3 solicitudes nuevas de cocina esta semana. ¿Quieres que les envíe hoy el formulario de visita o prefieres que primero te muestre el borrador del mensaje?",
+   "createdAt": 1792767900000,
+   "hint": "Escribe tu respuesta o corrección para el agente",
+   "ok": "Enviar formulario hoy",
+   "resolution": "ok",
+   "resolved": true,
+   "resolvedAt": 1793198384056,
+   "test": true,
+   "title": "Prueba: el agente te hace una pregunta"
+  },
+  "i05": {
+   "agent": "correo",
+   "ask": "Responder",
+   "body": "Hola Ernesto, somos tus agentes: Correo, Cotizaciones, Prospectos, Citas y el resto. Estamos en la torre, listos para conectarnos a tus cuentas. Recuerda la regla: no enviamos ni contestamos nada sin tu sí. ¿Por cuál cuenta quieres que empecemos: Gmail, Instagram o Telegram?",
+   "createdAt": 1793040000000,
+   "hint": "Escribe por dónde empezamos",
+   "ok": "Empezar por Gmail",
+   "resolution": "ok",
+   "resolved": true,
+   "resolvedAt": 1793198389188,
+   "test": true,
+   "title": "Mensaje de tus agentes (prueba)"
+  },
+  "op01": {
+   "agent": "oport",
+   "ask": "Descartar o pedir otro dato",
+   "body": "Lista a $140,000 ($124/pie²), 1,132 pies², 2 recámaras, 1 baño, construida en 1941. El anuncio dice que requiere remodelación importante, se vende tal como está, solo efectivo y sin servicios activos. A menos de 1 milla del centro histórico. Fuente: búsqueda pública (MLS NTREIS 21308872). Verifica que siga disponible antes de actuar. No he calculado costo de obra ni margen: necesito tu visto bueno para armar el estimado.",
+   "createdAt": 1793205600000,
+   "hint": "Qué quieres que analice (ej. presupuesto de cocina y baño)",
+   "ok": "Preparar estimado de remodelación",
+   "resolved": false,
+   "title": "Casa para remodelar en McKinney: 1003 Garcia St"
+  },
+  "op02": {
+   "agent": "oport",
+   "ask": "Descartar",
+   "body": "Lista a $410,000, 2,474 pies², 4 recámaras, 2.5 baños, construida en 1975. El vendedor la ofrece tal como está, sin reparaciones; el techo tiene alrededor de 1 año. Fuente: anuncio público (NTREIS 21354016). El anuncio no detalla qué tanta remodelación necesita: hay que verla. Verifica disponibilidad.",
+   "createdAt": 1793205600000,
+   "hint": "Qué quieres que revise",
+   "ok": "Preparar ficha de la propiedad",
+   "resolved": false,
+   "title": "Casa para remodelar en Plano: 2624 Downing Dr"
+  },
+  "op03": {
+   "agent": "oport",
+   "ask": "Descartar",
+   "body": "Lista a $264,900, 1,368 pies², 3 recámaras, 2 baños. Se anuncia como «investor special» y tal como está, pero dice que la cocina está actualizada y el techo es nuevo, así que podría necesitar poco. Encaja menos con remodelación integral. Verifica disponibilidad.",
+   "createdAt": 1793205600000,
+   "hint": "Qué quieres que revise",
+   "ok": "Revisar de todos modos",
+   "resolved": false,
+   "title": "Posible inversión en Plano: 3508 Gatewood Ln (ajuste parcial)"
+  },
+  "op04": {
+   "agent": "oport",
+   "ask": "Descartar",
+   "body": "Lista a $130,000, construida en 1940, 3 recámaras, 2 baños, lote de media acre. El anuncio ofrece financiamiento del vendedor y la presenta como oportunidad de valor agregado o redesarrollo. Pies cuadrados: no indicado. Si se vende tal como está: no indicado. Fuente: resultado de búsqueda pública (homefront.com; no se pudo abrir la página). Verifica que siga disponible antes de actuar.",
+   "createdAt": 1793205700000,
+   "hint": "Qué quieres que analice (ej. alcance de obra)",
+   "ok": "Preparar estimado de remodelación",
+   "resolved": false,
+   "title": "Casa para remodelar en McKinney: 2605 FM 546"
+  },
+  "op05": {
+   "agent": "oport",
+   "ask": "Descartar",
+   "body": "Lista a $245,000, centro histórico de McKinney. El anuncio dice que la casa existente se ofrece AS-IS y es más adecuada para inversionista, constructor o desarrollador; el valor está sobre todo en el terreno. Pies cuadrados, año, recámaras/baños: no indicado. Fuente: resultado de búsqueda pública (MLS 21371715; realgeeks.com, no se pudo abrir). Puede encajar poco con remodelación y más con construcción nueva. Verifica que siga disponible antes de actuar.",
+   "createdAt": 1793205701000,
+   "hint": "Qué quieres que revise",
+   "ok": "Preparar estimado de remodelación",
+   "resolved": false,
+   "title": "Casa para remodelar en McKinney: 1018 N College St (valor en el terreno)"
+  }
+ },
+ "logs": {
+  "2026-10-22": {
+   "events": [
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1792728973444,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792728941079,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792728853895,
+     "type": "fix"
+    },
+    {
+     "agent": "correo",
+     "text": "Reinició Correo",
+     "ts": 1792728693528,
+     "type": "fix"
+    },
+    {
+     "agent": "correo",
+     "text": "Alarma: Correo dejó de funcionar",
+     "ts": 1792728652857,
+     "type": "alarm"
+    },
+    {
+     "agent": "reportes",
+     "text": "Reinició Reportes",
+     "ts": 1792728039066,
+     "type": "fix"
+    },
+    {
+     "agent": "reportes",
+     "text": "Alarma: Reportes dejó de funcionar",
+     "ts": 1792728029679,
+     "type": "alarm"
+    },
+    {
+     "agent": "proyectos",
+     "text": "Reinició Proyectos",
+     "ts": 1792728015927,
+     "type": "fix"
+    },
+    {
+     "agent": "proyectos",
+     "text": "Alarma: Proyectos dejó de funcionar",
+     "ts": 1792727973449,
+     "type": "alarm"
+    },
+    {
+     "agent": "cobros",
+     "text": "Se ejecutó Recordatorios de pago a clientes",
+     "ts": 1792727845751,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792727844596,
+     "type": "fix"
+    },
+    {
+     "agent": "publica",
+     "text": "Publicó “Antes y después: cocina con isla” en Instagram",
+     "ts": 1792727815763,
+     "type": "post"
+    },
+    {
+     "agent": "social",
+     "text": "Se ejecutó Publicación programada de redes",
+     "ts": 1792727815758,
+     "type": "run"
+    },
+    {
+     "agent": "cotiz",
+     "text": "Se ejecutó Seguimiento a cotizaciones sin respuesta",
+     "ts": 1792727815756,
+     "type": "run"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1792727815755,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1792727815752,
+     "type": "run"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1792713606202,
+     "type": "run"
+    },
+    {
+     "agent": "citas",
+     "text": "Se ejecutó Recordatorios de visitas de mañana",
+     "ts": 1792713601202,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792713494014,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792713343345,
+     "type": "fix"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1792713307784,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792713274252,
+     "type": "fix"
+    },
+    {
+     "agent": "proyectos",
+     "text": "Se ejecutó Revisar cronograma de obras",
+     "ts": 1792711802204,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792711732906,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792710922892,
+     "type": "fix"
+    },
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1792710140928,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792710105312,
+     "type": "fix"
+    }
+   ]
+  },
+  "2026-10-23": {
+   "events": [
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1792787832690,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1792787832687,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792787831043,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792767694122,
+     "type": "fix"
+    },
+    {
+     "agent": "cotiz",
+     "text": "Bandeja: Cotización de cocina: margen bajo",
+     "ts": 1792767556574,
+     "type": "inbox"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1792767476449,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1792767476441,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792762267565,
+     "type": "fix"
+    },
+    {
+     "agent": "publica",
+     "text": "Cómo elegir cuarzo para tu cocina → Publicado (Facebook)",
+     "ts": 1792762171484,
+     "type": "post"
+    },
+    {
+     "agent": "publica",
+     "text": "Gastó 909 tokens (texto de post)",
+     "ts": 1792762163896,
+     "type": "tok"
+    },
+    {
+     "agent": "publica",
+     "text": "Cómo elegir cuarzo para tu cocina → Programado (Facebook)",
+     "ts": 1792762118135,
+     "type": "post"
+    },
+    {
+     "agent": "publica",
+     "text": "Gastó 909 tokens (texto de post)",
+     "ts": 1792762108371,
+     "type": "tok"
+    },
+    {
+     "agent": "resenas",
+     "text": "Se ejecutó Pedir reseñas de obras terminadas",
+     "ts": 1792761837689,
+     "type": "run"
+    },
+    {
+     "agent": "reportes",
+     "text": "Se ejecutó Resumen diario de proyectos",
+     "ts": 1792761837683,
+     "type": "run"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1792761837679,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1792761837671,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792761836695,
+     "type": "fix"
+    }
+   ]
+  },
+  "2026-10-24": {
+   "events": [
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792877420325,
+     "type": "fix"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1792877398608,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1792877398603,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792859970171,
+     "type": "fix"
+    },
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1792858667165,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792858660174,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792857924626,
+     "type": "fix"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1792857893973,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1792857893971,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792856435242,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792854648329,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Se ejecutó Recordatorios de pago a clientes",
+     "ts": 1792854203419,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792854201716,
+     "type": "fix"
+    },
+    {
+     "agent": "reportes",
+     "text": "Se ejecutó Resumen diario de proyectos",
+     "ts": 1792854183430,
+     "type": "run"
+    },
+    {
+     "agent": "social",
+     "text": "Se ejecutó Publicación programada de redes",
+     "ts": 1792854183429,
+     "type": "run"
+    },
+    {
+     "agent": "cotiz",
+     "text": "Se ejecutó Seguimiento a cotizaciones sin respuesta",
+     "ts": 1792854183427,
+     "type": "run"
+    },
+    {
+     "agent": "citas",
+     "text": "Se ejecutó Recordatorios de visitas de mañana",
+     "ts": 1792854183426,
+     "type": "run"
+    },
+    {
+     "agent": "proyectos",
+     "text": "Se ejecutó Revisar cronograma de obras",
+     "ts": 1792854183425,
+     "type": "run"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1792854183423,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1792854183419,
+     "type": "run"
+    }
+   ]
+  },
+  "2026-10-25": {
+   "events": [
+    {
+     "agent": "cobros",
+     "text": "Se ejecutó Recordatorios de pago a clientes",
+     "ts": 1792948736885,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1792948736247,
+     "type": "fix"
+    },
+    {
+     "agent": "reportes",
+     "text": "Se ejecutó Resumen diario de proyectos",
+     "ts": 1792948731902,
+     "type": "run"
+    },
+    {
+     "agent": "social",
+     "text": "Se ejecutó Publicación programada de redes",
+     "ts": 1792948731902,
+     "type": "run"
+    },
+    {
+     "agent": "cotiz",
+     "text": "Se ejecutó Seguimiento a cotizaciones sin respuesta",
+     "ts": 1792948731901,
+     "type": "run"
+    },
+    {
+     "agent": "citas",
+     "text": "Se ejecutó Recordatorios de visitas de mañana",
+     "ts": 1792948731901,
+     "type": "run"
+    },
+    {
+     "agent": "proyectos",
+     "text": "Se ejecutó Revisar cronograma de obras",
+     "ts": 1792948731900,
+     "type": "run"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1792948731900,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1792948731898,
+     "type": "run"
+    }
+   ]
+  },
+  "2026-10-26": {
+   "events": [
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793068308285,
+     "type": "fix"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793068288987,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793068288984,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793068287424,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793061680113,
+     "type": "fix"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793059421405,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793059421402,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793055525970,
+     "type": "fix"
+    },
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793055366958,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793055354343,
+     "type": "fix"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793055346838,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793055346837,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793049408569,
+     "type": "fix"
+    },
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793047729656,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793047642496,
+     "type": "fix"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793041698999,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793040854004,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Reinició Correo",
+     "ts": 1793040852800,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Se ejecutó Recordatorios de pago a clientes",
+     "ts": 1793040839006,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793040834578,
+     "type": "fix"
+    },
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793040822324,
+     "type": "fix"
+    },
+    {
+     "agent": "correo",
+     "text": "Alarma: Correo dejó de funcionar",
+     "ts": 1793040800204,
+     "type": "alarm"
+    },
+    {
+     "agent": "reportes",
+     "text": "Se ejecutó Resumen diario de proyectos",
+     "ts": 1793038097136,
+     "type": "run"
+    },
+    {
+     "agent": "social",
+     "text": "Se ejecutó Publicación programada de redes",
+     "ts": 1793038097134,
+     "type": "run"
+    },
+    {
+     "agent": "cotiz",
+     "text": "Se ejecutó Seguimiento a cotizaciones sin respuesta",
+     "ts": 1793038097132,
+     "type": "run"
+    },
+    {
+     "agent": "citas",
+     "text": "Se ejecutó Recordatorios de visitas de mañana",
+     "ts": 1793038097129,
+     "type": "run"
+    },
+    {
+     "agent": "proyectos",
+     "text": "Se ejecutó Revisar cronograma de obras",
+     "ts": 1793038097127,
+     "type": "run"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793038097125,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Alarma: Correo dejó de funcionar",
+     "ts": 1793038093227,
+     "type": "alarm"
+    }
+   ]
+  },
+  "2026-10-27": {
+   "events": [
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793157427229,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793157421542,
+     "type": "fix"
+    },
+    {
+     "agent": "reportes",
+     "text": "Gastó 476 tokens (pregunta a Jarvis)",
+     "ts": 1793157400193,
+     "type": "tok"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793157352931,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793157352928,
+     "type": "run"
+    },
+    {
+     "agent": "reportes",
+     "text": "Reportes reanudado",
+     "ts": 1793150822645,
+     "type": "fix"
+    },
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793150765905,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Se ejecutó Recordatorios de pago a clientes",
+     "ts": 1793150759810,
+     "type": "run"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793150758336,
+     "type": "fix"
+    },
+    {
+     "agent": "reportes",
+     "text": "Se ejecutó Resumen diario de proyectos",
+     "ts": 1793150689816,
+     "type": "run"
+    },
+    {
+     "agent": "social",
+     "text": "Se ejecutó Publicación programada de redes",
+     "ts": 1793150689815,
+     "type": "run"
+    },
+    {
+     "agent": "cotiz",
+     "text": "Se ejecutó Seguimiento a cotizaciones sin respuesta",
+     "ts": 1793150689814,
+     "type": "run"
+    },
+    {
+     "agent": "citas",
+     "text": "Se ejecutó Recordatorios de visitas de mañana",
+     "ts": 1793150689813,
+     "type": "run"
+    },
+    {
+     "agent": "proyectos",
+     "text": "Se ejecutó Revisar cronograma de obras",
+     "ts": 1793150689812,
+     "type": "run"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793150689811,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793150689807,
+     "type": "run"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793117864972,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793117864971,
+     "type": "run"
+    }
+   ]
+  },
+  "2026-10-28": {
+   "events": [
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793227547612,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793227535586,
+     "type": "fix"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793224070947,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793224070944,
+     "type": "run"
+    },
+    {
+     "agent": "citas",
+     "text": "Calendario en pausa",
+     "ts": 1793223566361,
+     "type": "fix"
+    },
+    {
+     "agent": "citas",
+     "text": "Gastó 272 tokens (pregunta al agente)",
+     "ts": 1793223543311,
+     "type": "tok"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793223413348,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793223352616,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793220501547,
+     "type": "fix"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793220469937,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793220469935,
+     "type": "run"
+    },
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793213591655,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793213539177,
+     "type": "fix"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793213500280,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793213500276,
+     "type": "run"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793207562628,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793207562626,
+     "type": "run"
+    },
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793207544461,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793207452948,
+     "type": "fix"
+    },
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793204693405,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793204663610,
+     "type": "fix"
+    },
+    {
+     "agent": "reportes",
+     "text": "Gastó 464 tokens (pregunta a Jarvis)",
+     "ts": 1793204128335,
+     "type": "tok"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793203959800,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793203959786,
+     "type": "run"
+    },
+    {
+     "agent": "publica",
+     "text": "Recorrido de obra: sala y bar → Programado (TikTok)",
+     "ts": 1793198871264,
+     "type": "post"
+    },
+    {
+     "agent": "publica",
+     "text": "Nuevo post: mostramos todo el proseso de la tranformaciones en nuestros proyectos",
+     "ts": 1793198852344,
+     "type": "post"
+    },
+    {
+     "agent": "proyectos",
+     "text": "Baño principal pasó a Entrega",
+     "ts": 1793198532132,
+     "type": "proj"
+    },
+    {
+     "agent": "proyectos",
+     "text": "Baño principal pasó a Acabados",
+     "ts": 1793198530709,
+     "type": "proj"
+    },
+    {
+     "agent": "proyectos",
+     "text": "Baño principal pasó a Obra",
+     "ts": 1793198526995,
+     "type": "proj"
+    },
+    {
+     "agent": "correo",
+     "text": "Bandeja: Correo de proveedor sin clasificar",
+     "ts": 1793198394203,
+     "type": "inbox"
+    },
+    {
+     "agent": "correo",
+     "text": "Bandeja: Mensaje de tus agentes (prueba)",
+     "ts": 1793198389189,
+     "type": "inbox"
+    },
+    {
+     "agent": "leads",
+     "text": "Bandeja: Prueba: el agente te hace una pregunta",
+     "ts": 1793198384057,
+     "type": "inbox"
+    },
+    {
+     "agent": "cliente",
+     "text": "Bandeja: Respuesta pendiente de tu visto bueno",
+     "ts": 1793198366704,
+     "type": "inbox"
+    },
+    {
+     "agent": "resenas",
+     "text": "Reinició Reseñas",
+     "ts": 1793197980033,
+     "type": "fix"
+    },
+    {
+     "agent": "cobros",
+     "text": "Reinició Facturación y cobros",
+     "ts": 1793197969865,
+     "type": "fix"
+    },
+    {
+     "agent": "cliente",
+     "text": "Se ejecutó Responder mensajes sin contestar",
+     "ts": 1793197791051,
+     "type": "run"
+    },
+    {
+     "agent": "correo",
+     "text": "Se ejecutó Revisar correos nuevos",
+     "ts": 1793197791050,
+     "type": "run"
+    }
+   ]
+  }
+ },
+ "memory": {
+  "estructura": {
+   "body": "Torre EVR: 11 agentes en 5 grupos.\n\nAtención al cliente (Primer contacto con clientes y prospectos):\n- Piso 2 · Atención al cliente: Responde mensajes de WhatsApp, web y redes en tu tono.\n- Piso 3 · Correo: Clasifica la bandeja de entrada y redacta respuestas.\n- Piso 6 · Calendario: Coordina visitas, reprogramaciones y recordatorios.\n\nVentas y cobros (Del prospecto a la cotización y el pago):\n- Piso 5 · Prospectos: Califica solicitudes nuevas y agenda visitas de estimado.\n- Piso 1 · Cotizaciones: Calcula materiales y mano de obra, arma y envía cotizaciones.\n- Piso 8 · Facturación y cobros: Envía facturas, anticipos y recordatorios de pago.\n\nOperaciones de obra (Seguimiento de obras, permisos y materiales):\n- Piso 4 · Proyectos: Sigue obras, fechas, permisos y entregas de materiales.\n\nMarketing y marca (Publicaciones, comunidad y reputación):\n- Piso 11 · Publicaciones: Planea, redacta y publica cada post, y vigila cuántos tokens gasta cada publicación.\n- Piso 7 · Comunidad: Responde comentarios y mensajes en redes sociales con tu tono.\n- Piso 9 · Reseñas: Pide reseñas al terminar una obra y responde las nuevas.\n\nDirección (Resúmenes y reportes para el dueño):\n- Piso 10 · Reportes: Prepara el resumen diario y semanal de tu negocio.",
+   "createdAt": 1792712900000,
+   "kind": "Proceso",
+   "pinned": true,
+   "source": "claude",
+   "tags": [
+    "estructura",
+    "agentes",
+    "grupos"
+   ],
+   "title": "Estructura de la torre: agentes y grupos",
+   "updatedAt": 1792712900000
+  },
+  "m01": {
+   "body": "Cada piso lee su estado en agents/<id> de la base de datos de la torre. Un agente, o una tarea programada de Claude Code, escribe status (working, idle, warning o error), act, msg, fix y since. La torre lo muestra como conectado. Los ids son cotiz, cliente, correo, proyectos, leads, citas, social, cobros, resenas, reportes y publica.",
+   "createdAt": 1792711800000,
+   "kind": "Proceso",
+   "pinned": true,
+   "source": "claude",
+   "tags": [
+    "torre",
+    "agentes"
+   ],
+   "title": "Cómo conectar un agente real a la torre",
+   "updatedAt": 1792711800000
+  },
+  "m02": {
+   "body": "Estimado, Contrato, Permisos, Obra, Acabados y Entrega. Cada etapa fija el avance mínimo: 5, 15, 30, 60, 85 y 100 por ciento.",
+   "createdAt": 1792711800000,
+   "kind": "Regla",
+   "pinned": true,
+   "source": "claude",
+   "tags": [
+    "obras"
+   ],
+   "title": "Etapas de una obra",
+   "updatedAt": 1792711799000
+  },
+  "m03": {
+   "body": "Se arma a las 6 pm con tareas ejecutadas, alertas, bandeja, obras y gasto de tokens. Se guarda en la torre y se puede redactar con Claude.",
+   "createdAt": 1792711800000,
+   "kind": "Proceso",
+   "pinned": false,
+   "source": "claude",
+   "tags": [
+    "reportes"
+   ],
+   "title": "Reporte diario",
+   "updatedAt": 1792711798000
+  },
+  "m04": {
+   "body": "Claude Code escribe una nota nueva en la colección memory de esta torre con los campos title, body, kind (Regla, Proceso, Cliente, Decisión, Preferencia o Nota), tags, pinned y updatedAt. La torre la muestra al instante en la pestaña Memoria y el asistente la usa como contexto.",
+   "createdAt": 1792711800000,
+   "kind": "Proceso",
+   "pinned": true,
+   "source": "claude",
+   "tags": [
+    "torre",
+    "memoria"
+   ],
+   "title": "Cómo guardar memoria desde Claude Code",
+   "updatedAt": 1792711797000
+  },
+  "m05": {
+   "body": "El piso 11 (Publicaciones) vigila el gasto. Los tokens se estiman a 1 token por cada 4 caracteres. El presupuesto diario y los precios por millón se ajustan en la pestaña Tokens. Con 80% del presupuesto aparece un aviso en la bandeja y el Sol se pone naranja.",
+   "createdAt": 1792711800000,
+   "kind": "Regla",
+   "pinned": false,
+   "source": "claude",
+   "tags": [
+    "tokens",
+    "presupuesto"
+   ],
+   "title": "Gasto de tokens",
+   "updatedAt": 1792711796000
+  },
+  "m06": {
+   "body": "La vista 3D se oscurecía en pantallas grandes o de alta densidad porque las capas del cielo (nebulosas, halo del Sol, Vía Láctea) sobrecargaban la tarjeta gráfica y el navegador cortaba el contexto WebGL. Corrección: calidad adaptable (automática, alta, media, baja), menos capas grandes de brillo, recuperación automática si el contexto se pierde, cámara que nunca baja del suelo, un solo mensaje de agente a la vez y botones de herramientas agrupados. Si vuelve a pasar: botón Calidad en Más herramientas, elegir Baja.",
+   "createdAt": 1792712900000,
+   "kind": "Decisión",
+   "pinned": false,
+   "source": "claude",
+   "tags": [
+    "torre",
+    "3d",
+    "calidad"
+   ],
+   "title": "Pantalla negra del 3D: causa y corrección",
+   "updatedAt": 1792712899000
+  },
+  "m07": {
+   "body": "Causa real de la pantalla negra parcial: sin barra de alerta, la torre caía en una fila de la cuadrícula que solo medía la mitad; se fijó cada bloque a su fila. Además: bloqueo de scroll, recuperación de contexto WebGL, calidad adaptable y vista simple de respaldo. Alarmas: sonido + aviso del navegador + destello en la página; con la página cerrada, la tarea programada 'Vigilante Torre EVR' (cada hora) avisa por push y correo. Copia del proyecto: carpeta torre-evr/ en el repositorio imperialremodelingevr (rama claude/fervent-lovelace-phzaqj). Pruebas: 90/90 controles y clics reales en 3D + móvil.",
+   "createdAt": 1792727400000,
+   "kind": "decisión",
+   "tags": [
+    "alarmas",
+    "vigilante",
+    "pantalla-negra",
+    "carpeta"
+   ],
+   "title": "Alarmas y corrección de pantalla negra",
+   "updatedAt": 1792727400000
+  },
+  "m08": {
+   "body": "Versión 12 de la Torre de Control de Agentes Imperial Remodeling. Meteoritos de alerta: rojos (falla) y ámbar (lento) caen sobre el piso del agente con destello y onda de choque. Copia en GitHub: carpeta torre-de-control-de-agentes-imperial-remodeling/ (rama claude/fervent-lovelace-phzaqj). Nesty O Bot (Telegram) preparado; falta permitir api.telegram.org, guardar TELEGRAM_TOKEN y TELEGRAM_CHAT_ID, y cambiar el token expuesto.",
+   "createdAt": 1792856700000,
+   "kind": "decisión",
+   "tags": [
+    "versión",
+    "meteoritos",
+    "guardado"
+   ],
+   "title": "Versión guardada: meteoritos de alerta",
+   "updatedAt": 1792856700000
+  },
+  "m09": {
+   "body": "Ningún agente ni bot envía correos, mensajes, respuestas, publicaciones, cotizaciones ni cobros a clientes o terceros, ni contesta en nombre de Ernesto, sin su aprobación explícita (un 'sí' en la torre o en Telegram). Los agentes solo preparan borradores y avisan. Leer datos para informar está permitido; borrar o modificar cuentas no. Esta regla aplica a todas las rutinas y conexiones futuras.",
+   "createdAt": 1793000000000,
+   "kind": "regla",
+   "pinned": true,
+   "tags": [
+    "regla",
+    "seguridad",
+    "aprobación",
+    "fijada"
+   ],
+   "title": "REGLA: nada se envía ni se contesta sin tu sí",
+   "updatedAt": 1793000000000
+  },
+  "m10": {
+   "body": "Cada vez que se instale o active un skill, sistema, plugin o conexión, lo primero que hacen TODOS los agentes es verificar: 1) origen oficial y versión fijada; 2) qué ejecuta (hooks, scripts, shell) leyendo el código; 3) qué puede tocar (enviar, leer cuentas, borrar) — bloqueado hasta el 'sí' de Ernesto; 4) que no haya secretos expuestos; 5) correr las pruebas de la torre y la prueba de seguridad (datos maliciosos no se ejecutan); 6) confirmar las reglas fijas; 7) avisar a Ernesto el resultado y registrarlo. Si algo falla, no se activa. Detalle en SEGURIDAD.md. Auditoría 26-oct: corregida inyección de código desde datos de la base; pendiente integridad (SRI) del CDN de three.js.",
+   "createdAt": 1793001000000,
+   "kind": "regla",
+   "pinned": true,
+   "tags": [
+    "regla",
+    "seguridad",
+    "instalación",
+    "fijada"
+   ],
+   "title": "REGLA: verificar la seguridad antes de activar cualquier skill, sistema o conexión",
+   "updatedAt": 1793001000000
+  }
+ },
+ "posts": {
+  "klkjug8g8pp0v9f0efne": {
+   "at": 1793284980000,
+   "caption": "",
+   "createdAt": 1793198852344,
+   "network": "Instagram",
+   "status": "Publicado",
+   "title": "mostramos todo el proseso de la tranformaciones en nuestros proyectos",
+   "tokens": 0
+  },
+  "o01": {
+   "at": 1792724400000,
+   "caption": "",
+   "createdAt": 1792711800000,
+   "network": "Instagram",
+   "publishedAt": 1792727815751,
+   "status": "Publicado",
+   "title": "Antes y después: cocina con isla",
+   "tokens": 1800
+  },
+  "o02": {
+   "at": 1792800000000,
+   "caption": "¿Estás pensando en renovar tu cocina? El cuarzo es una excelente opción, pero elegir bien hace la diferencia.\n\n✨ Define tu estilo: tonos lisos para un look moderno, o vetas sutiles para un toque clásico.\n✨ Piensa en el uso diario: el cuarzo resiste manchas y no necesita sellado.\n✨ Pide muestras y míralas con la luz de tu cocina.\n✨ Revisa el grosor y el acabado del borde.\n\nEn Imperial Remodeling te acompañamos en cada paso para que tu cocina quede justo como la imaginas. Escríbenos y agenda tu visita. 🏡\n\n#ImperialRemodeling #CocinasDeEnsueño #CuarzoParaCocina",
+   "createdAt": 1792711800000,
+   "network": "Facebook",
+   "publishedAt": 1792762171481,
+   "status": "Publicado",
+   "title": "Cómo elegir cuarzo para tu cocina",
+   "tokens": 3309
+  },
+  "o03": {
+   "at": 1793286000000,
+   "caption": "¿Quieres ver cómo una sala se convierte en el espacio perfecto para recibir a tus invitados? 🏡✨\n\nHoy te llevamos de recorrido por esta obra: una sala amplia y luminosa que ahora estrena un bar a la medida, con acabados cálidos, buena iluminación y cada detalle pensado para disfrutar en familia y con amigos.\n\nEn Imperial Remodeling cuidamos cada etapa, desde el estimado hasta la entrega, para que el resultado sea justo lo que imaginaste.\n\n¿Te gustaría algo así en tu casa? Escríbenos y agenda tu visita. 🍸\n\n#ImperialRemodeling #RemodelacionDeCasas #DiseñoDeInteriores",
+   "createdAt": 1792711800000,
+   "network": "TikTok",
+   "status": "Programado",
+   "title": "Recorrido de obra: sala y bar",
+   "tokens": 909
+  },
+  "o04": {
+   "at": 1792690000000,
+   "caption": "",
+   "createdAt": 1792711800000,
+   "network": "Google",
+   "publishedAt": 1792690000000,
+   "status": "Publicado",
+   "title": "Reseña destacada de un cliente",
+   "tokens": 900
+  },
+  "o05": {
+   "agent": "social",
+   "caption": "Resolvemos, corregimos, solucionamos y transformamos. Todo incluido con tu remodelación. Cotización gratis 214-517-1951.",
+   "network": "instagram",
+   "status": "published",
+   "test": true,
+   "title": "Historia: Más que una empresa (todo incluido con tu remodelación)",
+   "url": "https://www.instagram.com/stories/imperialremodeling/4016636397846337203",
+   "when": 1793040403000
+  }
+ },
+ "projects": {
+  "p01": {
+   "agent": "proyectos",
+   "client": "Residencia Norte",
+   "createdAt": 1792709400000,
+   "name": "Cocina y sala abierta",
+   "next": "Instalar gabinetes el jueves",
+   "progress": 60,
+   "slot": 0,
+   "stage": "Obra"
+  },
+  "p02": {
+   "agent": "proyectos",
+   "client": "Residencia Este",
+   "createdAt": 1792709400000,
+   "name": "Baño principal",
+   "next": "Esperando inspección de plomería",
+   "progress": 100,
+   "slot": 1,
+   "stage": "Entrega"
+  },
+  "p03": {
+   "agent": "proyectos",
+   "client": "Residencia Sur",
+   "createdAt": 1792709400000,
+   "name": "Sala y bar",
+   "next": "Pintura final y limpieza",
+   "progress": 85,
+   "slot": 2,
+   "stage": "Acabados"
+  },
+  "p04": {
+   "agent": "cotiz",
+   "client": "Estimado en curso",
+   "createdAt": 1792709400000,
+   "name": "Cocina con isla",
+   "next": "Enviar cotización",
+   "progress": 5,
+   "slot": 3,
+   "stage": "Estimado"
+  },
+  "p05": {
+   "agent": "cobros",
+   "client": "Residencia Oeste",
+   "createdAt": 1792709400000,
+   "name": "Piso de madera",
+   "next": "Firmar contrato y anticipo",
+   "progress": 15,
+   "slot": 4,
+   "stage": "Contrato"
+  }
+ },
+ "settings": {
+  "nesty": {
+   "lastRun": 1793183980621,
+   "sent": false
+  },
+  "tokens": {
+   "budget": 150000,
+   "pin": 3,
+   "pout": 15
+  }
+ },
+ "tasks": {
+  "t01": {
+   "agent": "correo",
+   "at": 1793227670944,
+   "createdAt": 1792709400000,
+   "done": false,
+   "every": 60,
+   "last": 1793224070944,
+   "title": "Revisar correos nuevos"
+  },
+  "t02": {
+   "agent": "cliente",
+   "at": 1793227670947,
+   "createdAt": 1792709400000,
+   "done": false,
+   "every": 60,
+   "last": 1793224070947,
+   "title": "Responder mensajes sin contestar"
+  },
+  "t03": {
+   "agent": "proyectos",
+   "at": 1793237089812,
+   "createdAt": 1792709400000,
+   "done": false,
+   "every": 1440,
+   "last": 1793150689812,
+   "title": "Revisar cronograma de obras"
+  },
+  "t04": {
+   "agent": "citas",
+   "at": 1793237089813,
+   "createdAt": 1792709400000,
+   "done": false,
+   "every": 1440,
+   "last": 1793150689813,
+   "title": "Recordatorios de visitas de mañana"
+  },
+  "t05": {
+   "agent": "cotiz",
+   "at": 1793237089814,
+   "createdAt": 1792709400000,
+   "done": false,
+   "every": 1440,
+   "last": 1793150689814,
+   "title": "Seguimiento a cotizaciones sin respuesta"
+  },
+  "t06": {
+   "agent": "cobros",
+   "at": 1793237159810,
+   "createdAt": 1792709400000,
+   "done": false,
+   "every": 1440,
+   "last": 1793150759810,
+   "title": "Recordatorios de pago a clientes"
+  },
+  "t07": {
+   "agent": "social",
+   "at": 1793237089815,
+   "createdAt": 1792709400000,
+   "done": false,
+   "every": 1440,
+   "last": 1793150689815,
+   "title": "Publicación programada de redes"
+  },
+  "t08": {
+   "agent": "reportes",
+   "at": 1793237089816,
+   "createdAt": 1792709400000,
+   "done": false,
+   "every": 1440,
+   "last": 1793150689816,
+   "title": "Resumen diario de proyectos"
+  },
+  "t09": {
+   "agent": "resenas",
+   "at": 1793366637689,
+   "createdAt": 1792709400000,
+   "done": false,
+   "every": 10080,
+   "last": 1792761837689,
+   "title": "Pedir reseñas de obras terminadas"
+  }
+ },
+ "usage": {
+  "2026-10-15": {
+   "agents": {
+    "cliente": {
+     "calls": 9,
+     "tin": 10000,
+     "tout": 6500
+    },
+    "correo": {
+     "calls": 12,
+     "tin": 14000,
+     "tout": 5500
+    },
+    "cotiz": {
+     "calls": 6,
+     "tin": 9000,
+     "tout": 4200
+    },
+    "publica": {
+     "calls": 11,
+     "tin": 21000,
+     "tout": 17000
+    },
+    "reportes": {
+     "calls": 2,
+     "tin": 6000,
+     "tout": 2500
+    }
+   },
+   "day": "2026-10-15",
+   "demo": true
+  },
+  "2026-10-16": {
+   "agents": {
+    "cliente": {
+     "calls": 10,
+     "tin": 12500,
+     "tout": 7000
+    },
+    "correo": {
+     "calls": 13,
+     "tin": 15000,
+     "tout": 6000
+    },
+    "cotiz": {
+     "calls": 7,
+     "tin": 11000,
+     "tout": 5000
+    },
+    "publica": {
+     "calls": 13,
+     "tin": 24000,
+     "tout": 19000
+    },
+    "reportes": {
+     "calls": 2,
+     "tin": 6500,
+     "tout": 2600
+    }
+   },
+   "day": "2026-10-16",
+   "demo": true
+  },
+  "2026-10-17": {
+   "agents": {
+    "cliente": {
+     "calls": 8,
+     "tin": 9000,
+     "tout": 5500
+    },
+    "correo": {
+     "calls": 10,
+     "tin": 12000,
+     "tout": 4800
+    },
+    "cotiz": {
+     "calls": 5,
+     "tin": 8000,
+     "tout": 3800
+    },
+    "publica": {
+     "calls": 9,
+     "tin": 17000,
+     "tout": 14000
+    }
+   },
+   "day": "2026-10-17",
+   "demo": true
+  },
+  "2026-10-18": {
+   "agents": {
+    "cliente": {
+     "calls": 5,
+     "tin": 6000,
+     "tout": 3500
+    },
+    "correo": {
+     "calls": 6,
+     "tin": 7000,
+     "tout": 3000
+    },
+    "cotiz": {
+     "calls": 3,
+     "tin": 5000,
+     "tout": 2200
+    },
+    "publica": {
+     "calls": 16,
+     "tin": 30000,
+     "tout": 24000
+    }
+   },
+   "day": "2026-10-18",
+   "demo": true
+  },
+  "2026-10-19": {
+   "agents": {
+    "cliente": {
+     "calls": 11,
+     "tin": 13000,
+     "tout": 7500
+    },
+    "correo": {
+     "calls": 14,
+     "tin": 16500,
+     "tout": 6800
+    },
+    "cotiz": {
+     "calls": 8,
+     "tin": 12000,
+     "tout": 5600
+    },
+    "proyectos": {
+     "calls": 3,
+     "tin": 4000,
+     "tout": 1800
+    },
+    "publica": {
+     "calls": 14,
+     "tin": 26000,
+     "tout": 20000
+    },
+    "reportes": {
+     "calls": 2,
+     "tin": 7000,
+     "tout": 2900
+    }
+   },
+   "day": "2026-10-19",
+   "demo": true
+  },
+  "2026-10-20": {
+   "agents": {
+    "cliente": {
+     "calls": 10,
+     "tin": 11500,
+     "tout": 6800
+    },
+    "correo": {
+     "calls": 12,
+     "tin": 14500,
+     "tout": 5900
+    },
+    "cotiz": {
+     "calls": 7,
+     "tin": 10500,
+     "tout": 4900
+    },
+    "publica": {
+     "calls": 12,
+     "tin": 23000,
+     "tout": 18500
+    },
+    "reportes": {
+     "calls": 2,
+     "tin": 6800,
+     "tout": 2700
+    }
+   },
+   "day": "2026-10-20",
+   "demo": true
+  },
+  "2026-10-21": {
+   "agents": {
+    "cliente": {
+     "calls": 10,
+     "tin": 12000,
+     "tout": 7200
+    },
+    "correo": {
+     "calls": 15,
+     "tin": 17000,
+     "tout": 7000
+    },
+    "cotiz": {
+     "calls": 9,
+     "tin": 13500,
+     "tout": 6000
+    },
+    "proyectos": {
+     "calls": 4,
+     "tin": 5000,
+     "tout": 2200
+    },
+    "publica": {
+     "calls": 15,
+     "tin": 28000,
+     "tout": 22000
+    },
+    "reportes": {
+     "calls": 2,
+     "tin": 7200,
+     "tout": 3000
+    }
+   },
+   "day": "2026-10-21",
+   "demo": true
+  },
+  "2026-10-22": {
+   "agents": {
+    "cliente": {
+     "calls": 8,
+     "tin": 10500,
+     "tout": 6200
+    },
+    "correo": {
+     "calls": 11,
+     "tin": 13000,
+     "tout": 5200
+    },
+    "cotiz": {
+     "calls": 6,
+     "tin": 9500,
+     "tout": 4300
+    },
+    "publica": {
+     "calls": 11,
+     "tin": 22000,
+     "tout": 17500
+    }
+   },
+   "day": "2026-10-22",
+   "demo": true
+  },
+  "2026-10-23": {
+   "agents": {
+    "publica": {
+     "calls": 2,
+     "tin": 1533,
+     "tout": 285
+    }
+   },
+   "day": "2026-10-23"
+  },
+  "2026-10-27": {
+   "agents": {
+    "reportes": {
+     "calls": 1,
+     "tin": 389,
+     "tout": 87
+    }
+   },
+   "day": "2026-10-27"
+  },
+  "2026-10-28": {
+   "agents": {
+    "citas": {
+     "calls": 1,
+     "tin": 172,
+     "tout": 100
+    },
+    "reportes": {
+     "calls": 1,
+     "tin": 320,
+     "tout": 144
+    }
+   },
+   "day": "2026-10-28"
+  }
+ }
+}
