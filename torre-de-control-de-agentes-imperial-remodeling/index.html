@@ -210,8 +210,12 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .voice .btn.rec { border-color: var(--err); color: var(--err); animation: blink 1s infinite; }
 #voLine { display: none; font: 12px/1.35 var(--mono); color: var(--fg); background: rgba(7, 13, 21, 0.86); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; max-width: 340px; }
 #voLine.show { display: block; }
-.jarvis { position: absolute; left: 50%; top: 96px; transform: translateX(-50%); width: min(520px, calc(100% - 32px)); max-height: calc(100% - 190px); display: flex; flex-direction: column; background: rgba(5, 10, 16, 0.94); backdrop-filter: blur(8px); border: 1px solid rgba(92, 200, 255, 0.4); box-shadow: 0 0 40px rgba(92, 200, 255, 0.16); z-index: 7; }
+.jarvis { position: absolute; left: var(--gutter-l); top: 92px; bottom: 64px; width: 340px; display: flex; flex-direction: column; background: rgba(5, 10, 16, 0.94); backdrop-filter: blur(8px); border: 1px solid rgba(92, 200, 255, 0.4); box-shadow: 0 0 40px rgba(92, 200, 255, 0.16); z-index: 7; }
 .jarvis[hidden] { display: none; }
+#app.jaopen .roster { visibility: hidden; }
+.jabody li { cursor: default; } .jabody li.on { background: rgba(92, 200, 255, 0.12); box-shadow: inset 2px 0 0 var(--accent); }
+.jabody .jab { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; } .jabody .jab button { padding: 3px 9px; font-size: 11px; }
+.brief { margin: 4px 0 10px; } .brief small { display: block; font: 500 10px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 8px; } .brief p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; } .brief ul { margin: 3px 0 0; padding-left: 16px; font-size: 12.5px; line-height: 1.45; }
 .jarvis header { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
 .jarvis header div { flex: 1; min-width: 0; } .jarvis header b { font: 500 13px/1.2 var(--display); letter-spacing: 0.14em; text-transform: uppercase; } .jarvis header p { margin: 2px 0 0; font: 11px/1.3 var(--mono); color: var(--muted); }
 .jarvis .orb { width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0, var(--accent) 35%, #0a4a73 100%); box-shadow: 0 0 16px var(--accent); animation: orb 2.4s ease-in-out infinite; flex: none; }
@@ -291,6 +295,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   #app.zen { grid-template-rows: 0 minmax(0, 1fr); }
   .zenbtn, .score { bottom: 58px; }
   .jarvis { position: fixed; left: 8px; right: 8px; top: 8px; bottom: 8px; width: auto; max-height: none; transform: none; z-index: 30; }
+  #app.jaopen .roster { visibility: visible; }
   .voice { left: var(--gutter-l); bottom: 104px; max-width: calc(100% - 2 * var(--gutter-l)); flex-wrap: wrap; }
   #voLine { order: -1; flex: 1 0 100%; max-width: none; font-size: 11px; display: none; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   #voLine.show { display: -webkit-box; }
@@ -372,7 +377,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     <button class="ico rdock" id="rosterDock" type="button" aria-label="Mostrar el directorio de pisos"></button>
     <button class="ico zenbtn" id="zenBtn" type="button" aria-label="Modo inmersivo (tecla H)" title="Modo inmersivo (H)"></button>
     <div class="voice" id="voiceBox"><button class="btn" id="voTalk" type="button" title="Los agentes te hablan">Voz: no</button><button class="btn" id="voMic" type="button" title="Háblale a la torre">Hablar</button><button class="btn" id="voJar" type="button" title="Informe de Jarvis, el agente principal">Jarvis</button><span id="voLine" role="status" aria-live="polite"></span></div>
-    <section class="jarvis" id="jarvis" hidden role="dialog" aria-label="Informe de Jarvis"><header><i class="orb" aria-hidden="true"></i><div><b>Jarvis</b><p>Agente principal · piso Reportes</p></div><button class="btn" id="jaClose" type="button" aria-label="Cerrar informe">×</button></header><div class="jabody" id="jaBody"></div><form class="jaform" id="jaForm" autocomplete="off"><input id="jaIn" type="text" maxlength="200" placeholder="Escríbele o dicta: estado, reinicia facturación…" aria-label="Orden para Jarvis"><button class="btn primary" type="submit">Enviar</button></form><div class="jaans" id="jaAns" role="status" aria-live="polite" hidden></div><footer><button class="btn" id="jaSpeak" type="button">Leer en voz alta</button><button class="btn" id="jaSee" type="button">Ver a Jarvis</button><button class="btn" id="jaRef" type="button">Actualizar</button><label class="jachk"><input type="checkbox" id="jaAuto"> Abrir al entrar</label></footer></section>
+    <section class="jarvis" id="jarvis" hidden role="dialog" aria-label="Informe de Jarvis"><header><i class="orb" aria-hidden="true"></i><div><b>Jarvis</b><p>Agente principal · piso Reportes</p></div><button class="btn" id="jaClose" type="button" aria-label="Cerrar informe">×</button></header><div class="jabody" id="jaBody"></div><form class="jaform" id="jaForm" autocomplete="off"><input id="jaIn" type="text" maxlength="200" placeholder="Escríbele o dicta: estado, reinicia facturación…" aria-label="Orden para Jarvis"><button class="btn primary" type="submit">Enviar</button></form><div class="jaans" id="jaAns" role="status" aria-live="polite" hidden></div><footer><button class="btn primary" id="jaTour" type="button">Recorrer problemas</button><button class="btn" id="jaSpeak" type="button">Leer en voz alta</button><button class="btn" id="jaSee" type="button">Ver a Jarvis</button><button class="btn" id="jaRef" type="button">Actualizar</button><label class="jachk"><input type="checkbox" id="jaAuto"> Abrir al entrar</label></footer></section>
     <div class="score" id="score" title="Meteoritos capturados. Toca los que cruzan el cielo.">☄ 0</div>
     <div class="nogl" id="nogl" hidden>Tu navegador no pudo iniciar la vista 3D. La bandeja y las tareas siguen funcionando a la derecha.</div>
   </main>
@@ -635,7 +640,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
 
   /* ---------- Alarmas: sonido, aviso del navegador y registro para avisos externos ---------- */
-  var VOICE = { on: PREFS.voice === true, micOk: PREFS.mic === true, micBlocked: false, listening: false, rec: null, awaiting: null, welcomed: false, lt: 0 };
+  var VOICE = { on: PREFS.voice !== false, heard: false, briefed: false, micOk: PREFS.mic === true, micBlocked: false, listening: false, rec: null, awaiting: null, welcomed: false, lt: 0 };
   var ALARM = { sound: PREFS.sound !== false, notify: PREFS.notify === true, audio: null, last: {} }, flatOn = false;
   function unlockAudio() { try { if (!ALARM.audio) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) ALARM.audio = new AC(); } if (ALARM.audio && ALARM.audio.state === 'suspended') ALARM.audio.resume(); } catch (e) {} }
   document.addEventListener('pointerdown', unlockAudio, { passive: true }); document.addEventListener('keydown', unlockAudio, { passive: true });
@@ -699,7 +704,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (low && (TTS.speaking || TTS.pending)) { if (done) done(); return; }
       var u = new SpeechSynthesisUtterance(text.replace(/[✉🔊]/g, '')); u.lang = 'es-US'; var vo = pickVoice(a); if (vo) { u.voice = vo; u.lang = vo.lang; }
       u.rate = 1.0; u.pitch = a ? 0.8 + (a.i % 6) * 0.1 : 1; u.volume = 1;
-      var fin = function () { if (done) { var d = done; done = null; d(); } }; u.onend = fin; u.onerror = fin;
+      var fin = function () { if (done) { var d = done; done = null; d(); } }; u.onstart = function () { VOICE.heard = true; }; u.onend = fin; u.onerror = function (ev) { if (ev && ev.error === 'not-allowed' && !VOICE.heard) voiceLine('Toca la pantalla una vez para que Jarvis te hable.', 'Jarvis'); fin(); };
       TTS.speak(u);
     } catch (e) { if (done) done(); }
   }
@@ -721,6 +726,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (/\b(si|dale|claro|hazlo|adelante|reinicia|reiniciala|reinicialo|corrige|corrigelo|ok|okey|de acuerdo|por favor)\b/.test(n)) { VOICE.awaiting = null; aw.yes(); return ''; }
       if (/\b(no|despues|luego|ignora|espera|cancela|silencia|nada)\b/.test(n)) { VOICE.awaiting = null; aw.no(); return ''; }
     }
+    if (/\b(que haces|que hace|como mejoras|como mejorar|como mejoro|cuentame|como vas)\b/.test(n)) { var qa = findAgentV(n); if (qa) { select(qa.id); return agentBrief(qa).speech; } }
     if (/\b(informe|reporte del dia|jarvis|que mejoro|que falta|que debo mejorar|dime todo|que hay de nuevo)\b/.test(n)) { var jr = jarvisOpen(false); return jarvisSpeech(jr); }
     if (/\b(ayuda|comandos|que puedo decir)\b/.test(n)) return 'Puedes decir: estado, reinicia o corrige seguido del agente, pausa o reanuda un agente, abre la bandeja, tareas, obras o tokens, ver un agente, vista interior, torre completa, y silencia.';
     if (/\b(estado|resumen|que pasa|como va|informe|novedades)\b/.test(n)) return briefingText(false);
@@ -751,20 +757,20 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var al = alerts(), work = AGENTS.filter(function (a) { return a.status === 'working'; }).length, idle = AGENTS.filter(function (a) { return a.status === 'idle'; });
     good.push(work + ' de ' + N + ' agentes están trabajando.');
     if (!al.length) good.push('No hay alertas activas.');
-    al.forEach(function (a) { watch.push({ b: a.status === 'error', t: a.name + (a.status === 'error' ? ' dejó de funcionar' : ' va lento') + (a.msg ? ': ' + a.msg.replace(/[.\s]+$/, '') : '') + '. Di «reinicia ' + a.name.toLowerCase() + '».' }); });
-    if (idle.length) watch.push({ t: idle.length + ' en pausa: ' + idle.map(function (a) { return a.name; }).join(', ') + '.' });
+    al.forEach(function (a) { watch.push({ b: a.status === 'error', ag: a.id, t: a.name + (a.status === 'error' ? ' dejó de funcionar' : ' va lento') + (a.msg ? ': ' + a.msg.replace(/[.\s]+$/, '') : '') + '. Di «reinicia ' + a.name.toLowerCase() + '».', acts: [{ l: 'Corregir', k: 'fix', id: a.id }, { l: 'Ver en la torre', k: 'see', id: a.id }] }); });
+    if (idle.length) watch.push({ ag: idle[0].id, t: idle.length + ' en pausa: ' + idle.map(function (a) { return a.name; }).join(', ') + '.', acts: [{ l: 'Ver ' + idle[0].name, k: 'see', id: idle[0].id }] });
     var tk = TASKS || [], over = tk.filter(function (t) { return !t.done && t.at && t.at < now - 5 * 60000; }), dn = tk.filter(function (t) { return t.done; }).length;
-    if (over.length) watch.push({ t: over.length + (over.length === 1 ? ' tarea atrasada: ' : ' tareas atrasadas: ') + over.slice(0, 2).map(function (t) { return t.title; }).join('; ') + '.' }); else good.push('Ninguna tarea atrasada' + (dn ? ' y ' + dn + ' completadas.' : '.'));
+    if (over.length) watch.push({ ag: over[0].agent, t: over.length + (over.length === 1 ? ' tarea atrasada: ' : ' tareas atrasadas: ') + over.slice(0, 2).map(function (t) { return t.title; }).join('; ') + '.', acts: [{ l: 'Ver tareas', k: 'tab', id: 'tasks' }, { l: 'Ver agente', k: 'see', id: over[0].agent }] }); else good.push('Ninguna tarea atrasada' + (dn ? ' y ' + dn + ' completadas.' : '.'));
     var ib = INBOX || [];
-    if (ib.length) watch.push({ t: ib.length + ' en la bandeja esperan tu decisión: ' + ib.slice(0, 3).map(function (x) { return x.title; }).join('; ') + '.' }); else good.push('Bandeja al día.');
+    if (ib.length) watch.push({ ag: ib[0].agent, t: ib.length + ' en la bandeja esperan tu decisión: ' + ib.slice(0, 3).map(function (x) { return x.title; }).join('; ') + '.', acts: [{ l: 'Abrir bandeja', k: 'tab', id: 'inbox' }, { l: 'Ver agente', k: 'see', id: ib[0].agent }] }); else good.push('Bandeja al día.');
     var pr = PROJECTS || [], wait = pr.filter(function (p) { return /esperando|firmar|pendiente/i.test(p.next || ''); });
     if (pr.length) good.push(pr.length + ' obras en curso; la más avanzada: ' + pr.slice().sort(function (a, b) { return b.progress - a.progress; })[0].name + ' al ' + pr.slice().sort(function (a, b) { return b.progress - a.progress; })[0].progress + '%.');
-    wait.forEach(function (p) { watch.push({ t: 'Obra «' + p.name + '» depende de algo externo: ' + p.next + '.' }); });
+    wait.forEach(function (p) { watch.push({ ag: p.agent, t: 'Obra «' + p.name + '» depende de algo externo: ' + p.next + '.', acts: [{ l: 'Ver obras', k: 'tab', id: 'projects' }] }); });
     var po = POSTS || [], sch = po.filter(function (p) { return p.status === 'Programado'; }), dr = po.filter(function (p) { return p.status === 'Borrador' || p.status === 'Idea'; });
     if (sch.length) good.push(sch.length + ' publicación(es) programada(s).');
-    if (dr.length) improve.push(dr.length + ' publicaciones siguen en borrador o idea: ponles fecha para que salgan.');
+    if (dr.length) improve.push({ t: dr.length + ' publicaciones siguen en borrador o idea: ponles fecha para que salgan.', acts: [{ l: 'Ver publicaciones', k: 'tab', id: 'posts' }] });
     var ts = tokenState();
-    if (ts.level !== 'ok') watch.push({ b: ts.level === 'over', t: 'El gasto de tokens va al ' + ts.pct + '% del presupuesto diario.' }); else good.push('Gasto de tokens al ' + ts.pct + '% del presupuesto diario.');
+    if (ts.level !== 'ok') watch.push({ b: ts.level === 'over', t: 'El gasto de tokens va al ' + ts.pct + '% del presupuesto diario.', acts: [{ l: 'Ver gasto', k: 'tab', id: 'tokens' }] }); else good.push('Gasto de tokens al ' + ts.pct + '% del presupuesto diario.');
     var live = AGENTS.filter(function (a) { return a.live; }).length;
     if (live < N) improve.push(live ? live + ' de ' + N + ' agentes están conectados a datos reales; conecta el resto.' : 'Los ' + N + ' agentes son de ejemplo: conéctalos a tus plataformas reales, uno por uno (Correo, Calendario, Prospectos, Cobros, Comunidad).');
     improve.push('Alertas al teléfono por Telegram: pendiente de configurar el token y tu chat (ver PENDIENTES).');
@@ -775,23 +781,24 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     return { good: good, watch: watch, improve: improve, live: live, N: N };
   }
   function jarvisHtml(r) {
-    function ul(cls, items) { return '<ul class="' + cls + '">' + items.map(function (x) { var t = typeof x === 'string' ? x : x.t, c = typeof x === 'string' ? '' : (x.b ? 'b' : ''); return '<li class="' + c + '">' + esc(t) + '</li>'; }).join('') + '</ul>'; }
-    var h = '<h3>Todo bien</h3>' + ul('', r.good);
-    h += '<h3>Requiere tu atención</h3>' + (r.watch.length ? ul('w', r.watch) : '<ul class="m"><li>Nada urgente en este momento.</li></ul>');
-    h += '<h3>Por mejorar</h3>' + ul('m', r.improve);
+    function ul(cls, items, ofs) { return '<ul class="' + cls + '">' + items.map(function (x, i) { var o = typeof x === 'string' ? { t: x } : x, c = o.b ? 'b' : '', bt = (o.acts || []).map(function (b) { return '<button class="btn" type="button" data-k="' + esc(b.k) + '" data-id="' + esc(b.id) + '">' + esc(b.l) + '</button>'; }).join(''); return '<li class="' + c + '" data-i="' + (ofs + i) + '">' + esc(o.t) + (bt ? '<div class="jab">' + bt + '</div>' : '') + '</li>'; }).join('') + '</ul>'; }
+    var h = '<h3>Todo bien</h3>' + ul('', r.good, 100);
+    h += '<h3>Requiere tu atención</h3>' + (r.watch.length ? ul('w', r.watch, 0) : '<ul class="m"><li>Nada urgente en este momento.</li></ul>');
+    h += '<h3>Por mejorar</h3>' + ul('m', r.improve, 200);
     return h;
   }
   function jarvisSpeech(r) {
     var t = 'Informe de Jarvis. ';
+    function tx(x) { return typeof x === 'string' ? x : x.t; }
     t += r.good.slice(0, 2).join(' ') + ' ';
     t += r.watch.length ? 'Requiere tu atención: ' + r.watch.slice(0, 3).map(function (x) { return x.t; }).join(' ') + ' ' : 'No hay nada urgente. ';
-    t += 'Por mejorar: ' + r.improve.slice(0, 2).join(' ');
+    t += 'Por mejorar: ' + r.improve.slice(0, 2).map(tx).join(' ');
     return t;
   }
   var JA = { shown: false };
   function jarvisRender() { var r = jarvisReport(); setHtml($('#jaBody'), jarvisHtml(r)); $('#jaAuto').checked = PREFS.jarvis !== false; return r; }
   function jarvisOpen(speak) {
-    var r = jarvisRender(); $('#jarvis').hidden = false; JA.shown = true;
+    var r = jarvisRender(); $('#jarvis').hidden = false; $('#app').classList.add('jaopen'); JA.shown = true;
     if (speak) voiceSay(null, jarvisSpeech(r), function () { if (VOICE.on && VOICE.micOk && SR && !VOICE.micBlocked) startListen(8000); });
     return r;
   }
@@ -803,9 +810,55 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     out.textContent = 'Jarvis está pensando…';
     SAMPLE(prompt, { onText: function (o) { out.textContent = o.text; } }).then(function (res) { var t = (res && res.text) || out.textContent; out.textContent = t; addUsage('reportes', est(prompt), est(t), 'pregunta a Jarvis'); voiceSay(null, t); }).catch(function () { out.textContent = 'No pude consultar a Claude ahora. Inténtalo otra vez.'; });
   }
-  $('#voJar').onclick = function () { unlockAudio(); if (!$('#jarvis').hidden) { $('#jarvis').hidden = true; return; } jarvisOpen(true); };
-  $('#jaClose').onclick = function () { $('#jarvis').hidden = true; try { if (TTS) TTS.cancel(); } catch (e) {} };
-  $('#jaSpeak').onclick = function () { unlockAudio(); var r = jarvisRender(); if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } voiceSay(null, jarvisSpeech(r)); };
+  var JT = { on: false, i: 0, timer: 0 };
+  function jarvisClose() { jarvisTour(false); $('#jarvis').hidden = true; $('#app').classList.remove('jaopen'); try { if (TTS) TTS.cancel(); } catch (e) {} }
+  function jaMark(i) { var els = $('#jaBody').querySelectorAll('li'); Array.prototype.forEach.call(els, function (el) { el.classList.toggle('on', +el.dataset.i === i); }); }
+  function jarvisTour(start) {
+    if (!start) { JT.on = false; clearTimeout(JT.timer); try { if (TTS) TTS.cancel(); } catch (e) {} jaMark(-1); var tb = $('#jaTour'); if (tb) tb.textContent = 'Recorrer problemas'; return; }
+    var r = jarvisRender(), steps = []; r.watch.forEach(function (x, i) { if (x.ag) steps.push({ i: i, x: x }); });
+    if (!steps.length) { voiceSay(null, 'No hay problemas que recorrer. Todo está en orden.'); var an = $('#jaAns'); an.hidden = false; an.textContent = 'Jarvis: No hay problemas que recorrer. Todo está en orden.'; return; }
+    JT.on = true; JT.i = 0; $('#jaTour').textContent = 'Detener recorrido';
+    (function next() {
+      if (!JT.on) return;
+      if (JT.i >= steps.length) { jarvisTour(false); voiceSay(null, 'Eso es todo. Toca Corregir en el que quieras, o dime qué corrijo.'); return; }
+      var st = steps[JT.i++]; jaMark(st.i); select(st.x.ag, true);
+      var li = $('#jaBody').querySelector('li[data-i="' + st.i + '"]'); if (li && li.scrollIntoView) li.scrollIntoView({ block: 'nearest' });
+      voiceSay(null, st.x.t, function () { if (!JT.on) return; JT.timer = setTimeout(next, VOICE.on ? 700 : 7000); });
+    })();
+  }
+
+  function sinceText() {
+    var snap = PREFS.snap, ls = PREFS.lastSeen || 0, parts = [], ib = (INBOX || []).map(function (x) { return x.id; }), work = AGENTS.filter(function (a) { return a.status === 'working'; }).length, al = alerts().length;
+    if (!snap || !ls) return { text: 'Es tu primera visita con Jarvis, así que desde hoy te contaré lo que cambie.', snap: { inbox: ib, work: work, alerts: al } };
+    var nuevos = (INBOX || []).filter(function (x) { return snap.inbox.indexOf(x.id) < 0; }), resueltos = snap.inbox.filter(function (id) { return ib.indexOf(id) < 0; }).length;
+    if (nuevos.length) parts.push(nuevos.length + (nuevos.length === 1 ? ' recado nuevo en la bandeja' : ' recados nuevos en la bandeja') + ': ' + nuevos[0].title);
+    if (resueltos) parts.push(resueltos + (resueltos === 1 ? ' recado resuelto' : ' recados resueltos'));
+    if (al !== snap.alerts) parts.push(al > snap.alerts ? 'hay ' + (al - snap.alerts) + ' alerta' + (al - snap.alerts === 1 ? '' : 's') + ' más que antes' : (snap.alerts - al) + (snap.alerts - al === 1 ? ' alerta se resolvió' : ' alertas se resolvieron'));
+    if (work !== snap.work) parts.push(work > snap.work ? work - snap.work + ' agentes más trabajando' : work + ' trabajando, antes eran ' + snap.work);
+    var ev = (LOG || []).filter(function (e) { return e.ts > ls && e.type !== 'voice'; }); if (ev.length) parts.push(ev.length + (ev.length === 1 ? ' evento nuevo' : ' eventos nuevos') + ' en el registro: ' + ev[0].text);
+    var hrs = Math.max(1, Math.round((Date.now() - ls) / 3600000));
+    return { text: parts.length ? 'Desde tu última visita, hace ' + (hrs >= 48 ? Math.round(hrs / 24) + ' días' : hrs + (hrs === 1 ? ' hora' : ' horas')) + ': ' + parts.join('; ') + '.' : 'Sin cambios desde tu última visita.', snap: { inbox: ib, work: work, alerts: al } };
+  }
+  function jarvisBrief(auto) {
+    var quiet = PREFS.jarvis === false && auto, r = quiet ? jarvisReport() : jarvisOpen(false), sn = sinceText(), N = AGENTS.length, work = AGENTS.filter(function (a) { return a.status === 'working'; }).length;
+    VOICE.briefed = true;
+    var txt = 'Bienvenido, jefe. ' + work + ' de ' + N + ' agentes están trabajando. ' + sn.text + ' ' + (r.watch.length ? 'Tienes ' + r.watch.length + (r.watch.length === 1 ? ' asunto' : ' asuntos') + ' que requieren atención; te los muestro en la torre.' : 'No hay nada urgente.');
+    PREFS.snap = sn.snap; PREFS.lastSeen = Date.now(); savePrefs();
+    var an = $('#jaAns'); if (an && !quiet) { an.hidden = false; an.textContent = 'Jarvis: ' + txt; }
+    voiceSay(null, txt, function () { if (r.watch.length && !quiet && !$('#jarvis').hidden) jarvisTour(true); });
+  }
+  $('#voJar').onclick = function () { unlockAudio(); if (!$('#jarvis').hidden) { jarvisClose(); return; } jarvisOpen(false); };
+  $('#jaClose').onclick = jarvisClose;
+  $('#jaTour').onclick = function () { unlockAudio(); if (JT.on) jarvisTour(false); else jarvisTour(true); };
+  $('#jaSpeak').onclick = function () { unlockAudio(); if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } jarvisTour(false); jarvisBrief(); };
+  $('#jaBody').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b || !b.dataset.k) return; var k = b.dataset.k, id = b.dataset.id, a = byId(id);
+    jarvisTour(false);
+    if (k === 'fix' && a) { fixAgent(a); toast('Corrigiendo ' + a.name); setTimeout(jarvisRender, 900); }
+    else if (k === 'see' && a) select(id);
+    else if (k === 'tab') { panelOpen = true; zen = false; applyUi(); tab(id); }
+    if (window.innerWidth <= 860) { $('#jarvis').hidden = true; $('#app').classList.remove('jaopen'); }
+  });
   $('#jaSee').onclick = function () { select('reportes'); };
   $('#jaRef').onclick = function () { jarvisRender(); toast('Informe actualizado'); };
   $('#jaAuto').onchange = function () { PREFS.jarvis = this.checked; savePrefs(); };
@@ -816,8 +869,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (r === '__ask') { jarvisAsk(t); return; }
     if (r) { $('#jaAns').textContent = 'Jarvis: ' + r; voiceSay(null, r); }
   });
-  setTimeout(function () { if (PREFS.jarvis !== false && !JA.shown) { var r = jarvisOpen(false); if (VOICE.on) voiceSay(null, jarvisSpeech(r)); } }, 3500);
-  setInterval(function () { if (!$('#jarvis').hidden) jarvisRender(); }, 20000);
+  setTimeout(function () { if (VOICE.on) jarvisBrief(true); else if (PREFS.jarvis !== false && !JA.shown) jarvisOpen(false); }, 3800);
+  setInterval(function () { if (!$('#jarvis').hidden && !JT.on) jarvisRender(); }, 20000);
   function heard(txt) { voiceLine(txt, 'Tú'); var r = voiceCommand(normV(txt)); if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; } if (r) { voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } }
   function micPolicyBlocked() { try { var pp = document.permissionsPolicy || document.featurePolicy; return !!(pp && pp.allowsFeature && !pp.allowsFeature('microphone')); } catch (e) { return false; } }
   function micFallback() { var el = $('#jaAns'); if (!el) return; el.hidden = false; el.textContent = 'El micrófono está bloqueado aquí (el navegador o el marco de Claude no lo permite). Escribe tu orden en el cuadro de arriba. En el celular o en la computadora puedes dictar con el micrófono del teclado (celular) o con Windows+H / Fn Fn (Mac). Si quieres usar el micrófono directo, permítelo en el candado de la barra de direcciones y recarga.'; var i = $('#jaIn'); if (i) { try { i.focus(); } catch (e) {} } }
@@ -838,7 +891,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (VOICE.on) { VOICE.welcomed = true; voiceSay(null, 'Voz activada. ' + briefingText(false) + ' Toca Hablar o escribe en el cuadro de Jarvis. Di ayuda para ver los comandos.'); } else { try { if (TTS) TTS.cancel(); } catch (e) {} voiceLine('Voz apagada.', 'Torre'); }
   };
   $('#voMic').onclick = function () { unlockAudio(); if (VOICE.listening) { stopListen(); return; } if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } startListen(9000); };
-  function voiceWelcome() { if (VOICE.welcomed) return; VOICE.welcomed = true; if (VOICE.on) { var al = alerts(); voiceSay(null, 'Bienvenido, jefe. ' + jarvisSpeech(jarvisReport()), al.length ? function () { voiceHelp(al[0]); } : null); } }
+  function voiceWelcome() { if (VOICE.welcomed) return; VOICE.welcomed = true; if (VOICE.on && !VOICE.heard) { VOICE.briefed = false; jarvisBrief(false); } }
   document.addEventListener('pointerdown', voiceWelcome, { once: true, passive: true }); document.addEventListener('keydown', voiceWelcome, { once: true });
   setTimeout(function () { if (!VOICE.on && !VOICE.welcomed) voiceLine('Toca «Voz» para que los agentes te hablen y «Hablar» para darles órdenes con tu voz.', 'Torre'); }, 4500);
   if (TTS && TTS.addEventListener) TTS.addEventListener('voiceschanged', function () {});
@@ -1084,6 +1137,36 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     else if (e.key === 'Escape' && (selected || selectedProject || selectedPlanet)) deselect();
   });
 
+
+  var BRIEF_UP = {
+    cotiz: ['Conéctame a QuickBooks y a tus precios reales de materiales para que el margen sea exacto.', 'Ya uso tus datos reales; dime tu margen mínimo para marcar las cotizaciones flojas.'],
+    cliente: ['Conéctame a WhatsApp Business y al chat de tu página para responder con mensajes reales.', 'Ya estoy conectado; dime qué preguntas repetidas quieres que conteste solo con tu aprobación.'],
+    correo: ['Conéctame a tu Gmail (solo lectura y borradores) para clasificar tu bandeja de verdad.', 'Ya estoy conectado; dime qué correos quieres que priorice.'],
+    proyectos: ['Cárgame tus obras reales con fechas y permisos para avisarte de retrasos.', 'Ya tengo tus obras; dime qué permisos vigilar primero.'],
+    leads: ['Conéctame a HubSpot para calificar prospectos reales y agendar visitas.', 'Ya estoy conectado; dime tu criterio para un buen prospecto.'],
+    citas: ['Conéctame a tu Google Calendar para ver tus citas reales y mandar recordatorios, siempre con tu visto bueno.', 'Ya veo tu calendario; dime qué horas protegemos para estimados.'],
+    social: ['Instagram ya está conectado; falta que apruebes un tono y un calendario fijo de respuestas.', 'Ya respondo con tu tono; dime qué comentarios prefieres atender tú.'],
+    cobros: ['Reautoriza QuickBooks y activa los recordatorios de pago con tu aprobación.', 'Ya estoy conectado; dime a partir de cuántos días recuerdo un pago.'],
+    resenas: ['Conéctame a Google Business para pedir y contestar reseñas reales.', 'Ya estoy conectado; dime qué obras ya pueden pedir reseña.'],
+    reportes: ['Aliméntame con datos reales de correo, calendario y cobros para el reporte diario.', 'Ya uso datos reales; dime qué números quieres ver primero.'],
+    publica: ['Conéctame a Metricool para programar y medir las publicaciones.', 'Ya estoy conectado; dime qué días y horas prefieres publicar.'],
+    oport: ['Dame tu presupuesto máximo y tus zonas favoritas para filtrar mejor las casas.', 'Ya busco solo cada día; dime tu presupuesto máximo y zonas favoritas para afinar.']
+  };
+  function agentBrief(a) {
+    var mine = openTasks().filter(function (t) { return t.agent === a.id; }).length, rec = (INBOX || []).filter(function (x) { return x.agent === a.id; }).length, doing;
+    if (a.status === 'error') doing = 'Estoy detenido. ' + (a.msg || 'No respondo.');
+    else if (a.status === 'warning') doing = 'Sigo trabajando, pero lento. ' + (a.msg || '');
+    else if (a.status === 'idle') doing = 'Estoy en espera, sin nada en curso.';
+    else doing = 'Ahora estoy ' + String(a.act || 'trabajando').replace(/^./, function (c) { return c.toLowerCase(); }).replace(/[.\s]+$/, '') + '. Voy al ' + Math.max(5, Math.min(95, Math.round((a.v && a.v.prog || 0.35) * 100))) + ' por ciento de esta tarea.';
+    if (a.done) doing += ' Hoy he completado ' + a.done + (a.done === 1 ? ' tarea.' : ' tareas.');
+    doing += mine ? ' Tengo ' + mine + (mine === 1 ? ' tarea pendiente.' : ' tareas pendientes.') : ' No tengo tareas pendientes.';
+    if (rec) doing += ' Hay ' + rec + (rec === 1 ? ' recado mío' : ' recados míos') + ' esperando tu decisión.';
+    var imp = [];
+    if (a.status === 'error' || a.status === 'warning') imp.push(a.fix || 'Reiníciame para reintentar.');
+    if (rec) imp.push('Revisa mis recados en la bandeja para que pueda avanzar.');
+    if (BRIEF_UP[a.id]) imp.push(BRIEF_UP[a.id][a.live ? 1 : 0]);
+    return { doing: doing, improve: imp, speech: doing + ' Para mejorar: ' + imp.join(' ') };
+  }
   /* ---------- Tarjeta del agente ---------- */
   function renderCard() {
     var c = $('#card');
@@ -1101,9 +1184,11 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       '<p class="role">' + esc(a.role) + '</p>' + (groupOf(a.id) ? '<p class="role" style="margin-top:-6px"><span class="swatch" style="--gc:' + esc(cssColor(groupOf(a.id).color)) + '"></span>Grupo: ' + esc(groupOf(a.id).name) + '</p>' : '') +
       '<span class="pill" style="color:' + CSSC[a.status] + '"><i class="dot" data-s="' + a.status + '"></i>' + LBL[a.status] + (a.live ? ' · conectado' : '') + '</span>' +
       '<div class="now"><small>Ahora</small><span data-dyn="act"></span></div>' +
+      '<div class="brief"><small>Qué estoy haciendo</small><p data-dyn="bdo"></p><small>Cómo puedo mejorar</small><ul data-dyn="bimp"></ul></div>' +
       '<dl class="nums"><div><dt>Tareas hoy</dt><dd>' + a.done + '</dd></div><div><dt>Última señal</dt><dd data-dyn="sig"></dd></div></dl>' +
       '<div class="mine"><small>Próximas tareas</small>' + (mine.length ? '<ul>' + mine.map(function (t) { return '<li><time>' + clock(t.at) + '</time><span>' + esc(t.title) + '</span></li>'; }).join('') + '</ul>' : '<p>Sin tareas programadas.</p>') + '</div>' +
       '<div class="btns">' + main + '<button class="btn" data-cadd type="button">Asignar tarea</button>' + (a.id === 'publica' ? '<button class="btn" data-copen="posts" type="button">Publicaciones</button><button class="btn" data-copen="tokens" type="button">Tokens</button>' : '') + '</div>');
+    var br = agentBrief(a), bd = c.querySelector('[data-dyn="bdo"]'), bi = c.querySelector('[data-dyn="bimp"]'); if (bd) bd.textContent = br.doing; if (bi) bi.innerHTML = br.improve.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
     var dA = c.querySelector('[data-dyn="act"]'); if (dA) dA.textContent = a.act; var dS = c.querySelector('[data-dyn="sig"]'); if (dS) dS.textContent = sig;
   }
   $('#card').addEventListener('click', function (e) {
@@ -1400,7 +1485,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var el = $('#score'); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
     return score;
   }
-  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify, jarvis: PREFS.jarvis !== false, cine: PREFS.cine !== false })); } catch (e) {} }
+  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify, jarvis: PREFS.jarvis !== false, cine: PREFS.cine !== false, lastSeen: PREFS.lastSeen || 0, snap: PREFS.snap || null })); } catch (e) {} }
   function applyUi() {
     var app = $('#app'); app.classList.toggle('noroster', !rosterOpen); app.classList.toggle('nopanel', !panelOpen); app.classList.toggle('zen', zen);
     $('#score').textContent = '☄ ' + score; savePrefs();
@@ -1866,6 +1951,21 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         for (var q = 0; q < 4; q++) { Nn.push(0, 1, 0); U.push(0, 0); }
         I.push(v, v + 1, v + 2, v, v + 2, v + 3); v += 4;
       };
+      this.sides = function (B, Tp, y0, y1, cx, cz, capUp) {
+        var n = B.length, h = y1 - y0, ou = rnd(), ov = rnd(), i, j;
+        for (i = 0; i < n; i++) {
+          j = (i + 1) % n; var b0 = B[i], b1 = B[j], t0 = Tp[i], t1 = Tp[j], ex = b1[0] - b0[0], ez = b1[1] - b0[1], len = Math.hypot(ex, ez) || 1;
+          var nx = ez / len, nz = -ex / len, mx = (b0[0] + b1[0]) / 2 - cx, mz = (b0[1] + b1[1]) / 2 - cz; if (nx * mx + nz * mz < 0) { nx = -nx; nz = -nz; }
+          P.push(b0[0], y0, b0[1], b1[0], y0, b1[1], t1[0], y1, t1[1], t0[0], y1, t0[1]);
+          for (var k = 0; k < 4; k++) Nn.push(nx, 0.12, nz);
+          var su = len / (8 * WU), sv = h / (8 * WV); U.push(ou, ov, ou + su, ov, ou + su, ov + sv, ou, ov + sv);
+          I.push(v, v + 1, v + 2, v, v + 2, v + 3); v += 4;
+        }
+        var cap = Tp.reduce(function (a, q) { return a + Math.hypot(q[0] - cx, q[1] - cz); }, 0) / n;
+        if (capUp !== false && cap > 0.35) for (i = 0; i < n; i++) {
+          j = (i + 1) % n; P.push(cx, y1, cz, Tp[i][0], y1, Tp[i][1], Tp[j][0], y1, Tp[j][1]); for (var q = 0; q < 3; q++) { Nn.push(0, 1, 0); U.push(0, 0); } I.push(v, v + 1, v + 2); v += 3;
+        }
+      };
       this.mesh = function (mat) {
         var g = new THREE.BufferGeometry();
         g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(Nn, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2));
@@ -1889,28 +1989,53 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     }
     var wt = winTex();
     var bMat = new THREE.MeshStandardMaterial({ map: wt.map, emissiveMap: wt.em, emissive: 0xffffff, emissiveIntensity: 0.8, roughness: 0.45, metalness: 0.35 });
+    var bMatV = bMat.clone(); bMatV.color.setHex(0xc9b8ff); bMatV.emissive.setHex(0xd2c4ff);
+    var bMatT = bMat.clone(); bMatT.color.setHex(0xb8ffe6); bMatT.emissive.setHex(0xc4ffec);
     var padMat = new THREE.MeshStandardMaterial({ color: 0x08111a, roughness: 0.9, metalness: 0.1 });
     var BLDS = [], curGI = 0, curGJ = 0;
-    var bld = new Builder(), pads = new Builder(), edgePts = [], roofPts = [], roofCols = [], redPts = [], redCols = [], treePts = [], treeCols = [];
+    var bld = new Builder(), bldV = new Builder(), bldT = new Builder(), pads = new Builder(), edgePts = [], roofPts = [], roofCols = [], redPts = [], redCols = [], treePts = [], treeCols = [];
     var red = new THREE.Color(0xff5a5f), mint = new THREE.Color(0x7fe3c5);
     function topEdge(cx, cz, w, d, y) {
       var a = [cx - w / 2, cz - d / 2], b = [cx + w / 2, cz - d / 2], c = [cx + w / 2, cz + d / 2], e = [cx - w / 2, cz + d / 2];
       [[a, b], [b, c], [c, e], [e, a]].forEach(function (s) { edgePts.push(new THREE.Vector3(s[0][0], y, s[0][1]), new THREE.Vector3(s[1][0], y, s[1][1])); });
     }
+    var portDone = [0, 0, 0], V3c = THREE.Vector3;
+    function corners(w, d, ang) { var c = Math.cos(ang), sn = Math.sin(ang); return [[-w / 2, d / 2], [w / 2, d / 2], [w / 2, -d / 2], [-w / 2, -d / 2]].map(function (p) { return [p[0] * c - p[1] * sn, p[0] * sn + p[1] * c]; }); }
+    function offs(pts, cx, cz) { return pts.map(function (p) { return [p[0] + cx, p[1] + cz]; }); }
+    function ringPts(cx, cz, r, n, rot) { var o = []; for (var i = 0; i < n; i++) { var t = -(i / n) * Math.PI * 2 + (rot || 0); o.push([cx + Math.cos(t) * r, cz + Math.sin(t) * r]); } return o; }
+    function ringEdges(pts, y) { for (var i = 0; i < pts.length; i++) { var a = pts[i], b = pts[(i + 1) % pts.length]; edgePts.push(new V3c(a[0], y, a[1]), new V3c(b[0], y, b[1])); } }
+    function frus(B, cx, cz, w0, d0, w1, d1, y0, h, ang) {
+      var b = offs(corners(w0, d0, ang), cx, cz), t = offs(corners(w1, d1, ang), cx, cz); B.sides(b, t, y0, y0 + h, cx, cz); ringEdges(t, y0 + h); ringEdges(b, y0 + 0.02);
+    }
+    function poly(B, cx, cz, r0, r1, n, y0, h, rot) { var b = ringPts(cx, cz, r0, n, rot), t = ringPts(cx, cz, r1, n, rot); B.sides(b, t, y0, y0 + h, cx, cz); ringEdges(t, y0 + h); return t; }
+    function spire(cx, cz, y, hgt) { edgePts.push(new V3c(cx, y, cz), new V3c(cx, y + hgt, cz)); roofPts.push(new V3c(cx, y + hgt, cz)); roofCols.push(rnd() < 0.6 ? cyan : white); }
     function building(cx, cz, w, d, h) {
-      var multi = h > 20 && rnd() < 0.55;
-      BLDS.push({ x: cx, z: cz, w: w, d: d, top: 0.14 + (multi ? h * 0.55 : h), full: h, gi: curGI, gj: curGJ });
-      if (multi) {
-        var h1 = h * 0.55, h2 = h * 0.28, h3 = h * 0.17;
-        bld.box(cx, cz, w, d, 0.14, h1); topEdge(cx, cz, w, d, 0.14 + h1);
-        bld.box(cx, cz, w * 0.72, d * 0.72, 0.14 + h1, h2); topEdge(cx, cz, w * 0.72, d * 0.72, 0.14 + h1 + h2);
-        bld.box(cx, cz, w * 0.45, d * 0.45, 0.14 + h1 + h2, h3); topEdge(cx, cz, w * 0.45, d * 0.45, 0.14 + h);
-      } else {
-        bld.box(cx, cz, w, d, 0.14, h); topEdge(cx, cz, w, d, 0.14 + h);
-        if (rnd() < 0.35) bld.box(cx + w * 0.15, cz - d * 0.1, w * 0.35, d * 0.35, 0.14 + h, 1.3);
+      var rr = Math.hypot(cx, cz), r = rnd(), st, y0 = 0.14, top = h, flat = false, B = bld, mn = Math.min(w, d);
+      var sector = Math.floor((Math.atan2(cz, cx) + Math.PI) / (Math.PI * 2) * 3) % 3;
+      if (!portDone[sector] && h > 26 && rr > 80 && rr < 150) { st = 'S'; portDone[sector] = 1; } else if (h < 12) st = r < 0.65 ? 'G' : 'A'; else st = r < 0.22 ? 'A' : r < 0.4 ? 'B' : r < 0.62 ? 'C' : r < 0.7 ? 'D' : r < 0.82 ? 'E' : 'F';
+      if (st === 'A') { frus(B, cx, cz, w, d, w * 0.36, d * 0.36, y0, h, 0); spire(cx, cz, y0 + h, 4 + rnd() * 5); top = h + 8; }
+      else if (st === 'B') {
+        B = bldV; var segs = 4 + (h > 26 ? 2 : 0), hh = h / segs, k, s0 = 1;
+        for (k = 0; k < segs; k++) { s0 = 1 - 0.09 * k; frus(B, cx, cz, w * s0, d * s0, w * s0 * 0.97, d * s0 * 0.97, y0 + k * hh, hh, k * 0.26); }
+        spire(cx, cz, y0 + h, 3);
+      } else if (st === 'C') {
+        B = bldT; var n = 10 + 2 * Math.floor(rnd() * 3), r0 = mn / 2, r1 = r0 * (0.68 + rnd() * 0.25), tt;
+        poly(B, cx, cz, r0, r1, n, y0, h, 0); [0.33, 0.66].forEach(function (f) { ringEdges(ringPts(cx, cz, r0 + (r1 - r0) * f, n, 0), y0 + h * f); });
+        poly(B, cx, cz, r1 * 1.12, r1 * 1.12, n, y0 + h, 0.7, 0); tt = poly(B, cx, cz, r1 * 0.55, r1 * 0.3, n, y0 + h + 0.7, h * 0.16, 0); top = h * 1.16 + 0.7; if (h > 22) spire(cx, cz, y0 + top, 5);
+      } else if (st === 'D') { B = bldT; poly(B, cx, cz, mn * 0.62, 0.05, 4, y0, h * 0.92, Math.PI / 4); top = h * 0.92; roofPts.push(new V3c(cx, y0 + top + 0.6, cz)); roofCols.push(white); }
+      else if (st === 'E') {
+        B = bldV; var tw = w * 0.4, off = w * 0.3; frus(B, cx - off, cz, tw, d * 0.78, tw * 0.55, d * 0.5, y0, h, 0); frus(B, cx + off, cz, tw, d * 0.78, tw * 0.55, d * 0.5, y0, h * 0.92, 0);
+        B.sides(offs(corners(off * 2, d * 0.3, 0), cx, cz), offs(corners(off * 2, d * 0.3, 0), cx, cz), y0 + h * 0.58, y0 + h * 0.7, cx, cz); ringEdges(offs(corners(off * 2, d * 0.3, 0), cx, cz), y0 + h * 0.7); spire(cx - off, cz, y0 + h, 3);
+      } else if (st === 'F') {
+        var q = 1, yy = y0, hs = [0.45, 0.3, 0.25]; hs.forEach(function (f, k) { var s1 = q * (k === 2 ? 0.55 : 1); frus(B, cx, cz, w * q, d * q, w * q * 0.84, d * q * 0.84, yy, h * f, k * 0.12); yy += h * f; q *= 0.7; });
+        poly(B, cx, cz, mn * q * 0.6, mn * q * 0.6, 12, yy, 0.5, 0); top = h + 0.5; spire(cx, cz, y0 + top, 3);
+      } else if (st === 'G') { var hp = Math.min(h, 9); poly(B, cx, cz, mn / 2, mn * 0.4, 16, y0, hp, 0); poly(B, cx, cz, mn * 0.44, mn * 0.44, 16, y0 + hp, 0.5, 0); top = hp + 0.5; flat = true; }
+      else if (st === 'S') {
+        B = bldV; frus(B, cx, cz, w * 0.55, d * 0.55, w * 0.3, d * 0.3, y0, h, 0); poly(B, cx, cz, 7.6, 7.6, 18, y0 + h, 0.9, 0); ringEdges(ringPts(cx, cz, 7.6, 18, 0), y0 + h + 0.95); ringEdges(ringPts(cx, cz, 4.4, 14, 0), y0 + h + 0.95); top = h + 0.9; flat = true;
       }
-      if (h > 12 && rnd() < 0.45) { roofPts.push(new THREE.Vector3(cx, h + 0.9, cz)); roofCols.push(rnd() < 0.8 ? cyan : white); }
-      if (h > 30) { redPts.push(new THREE.Vector3(cx, h + 1.6, cz)); redCols.push(red); }
+      BLDS.push({ x: cx, z: cz, w: st === 'S' ? 15.2 : w, d: st === 'S' ? 15.2 : d, top: y0 + top, full: h, gi: curGI, gj: curGJ, flat: flat, port: st === 'S', style: st });
+      if (h > 12 && st !== 'D' && rnd() < 0.45) { roofPts.push(new V3c(cx, y0 + top + 0.9, cz)); roofCols.push(rnd() < 0.8 ? cyan : white); }
+      if (h > 30) { redPts.push(new V3c(cx, y0 + top + 1.6, cz)); redCols.push(red); }
     }
     for (var gi = -11; gi < 11; gi++) for (var gj = -11; gj < 11; gj++) {
       var bx = (gi + 0.5) * PITCH, bz = (gj + 0.5) * PITCH, rr = Math.hypot(bx, bz); curGI = gi; curGJ = gj;
@@ -1929,11 +2054,11 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       });
     }
     var padMesh = pads.mesh(padMat); scene.add(padMesh);
-    scene.add(bld.mesh(bMat));
+    scene.add(bld.mesh(bMat)); scene.add(bldV.mesh(bMatV)); scene.add(bldT.mesh(bMatT));
     var cityEdgeMat = new THREE.LineBasicMaterial({ color: 0x3f8fb8, transparent: true, opacity: 0.6 });
     scene.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(edgePts), cityEdgeMat));
     var cityFull = false;
-    function setCity(full) { cityFull = full; bMat.transparent = true; bMat.opacity = full ? 1 : 0.4; bMat.emissiveIntensity = full ? 0.8 : 0.18; bMat.needsUpdate = true; cityEdgeMat.opacity = full ? 0.6 : 0.16; }
+    function setCity(full) { cityFull = full; [bMat, bMatV, bMatT].forEach(function (m) { m.transparent = true; m.opacity = full ? 1 : 0.4; m.emissiveIntensity = full ? 0.8 : 0.18; m.needsUpdate = true; }); cityEdgeMat.opacity = full ? 0.6 : 0.16; }
     setCity(true);
     scene.add(pointsOf(roofPts, roofCols, 1.6));
     scene.add(pointsOf(redPts, redCols, 1.8, 0.9));
@@ -1971,11 +2096,16 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     });
 
     /* ---- Torre EVR ---- */
-    var N = AGENTS.length, FH = 6.0, Y0 = 3.0, TOP = Y0 + N * FH, CH = 6.4, BAL = 9.2, RR = 7.7;
-    function shellR(y) { return 6.6 - 1.4 * (y - Y0) / (N * FH); }
+    var N = AGENTS.length, FH = 5.4, Y0 = 3.2, TOP = Y0 + N * FH, CH = 4.6, BAL = 14.4, RR = 5.0;
+    var HX = [14.4, 12.8, 11.2], HZ = [10.4, 9.2, 8.0];
+    function tierOf(i) { return Math.min(2, Math.floor(i * 3 / N)); }
+    function hxOf(i) { return HX[tierOf(i)]; } function hzOf(i) { return HZ[tierOf(i)]; }
+    function rectPts(hx, hz, step) { var o = [], x, z; for (x = -hx; x <= hx + 0.01; x += step) { o.push([x, hz], [x, -hz]); } for (z = -hz + step; z < hz - 0.01; z += step) { o.push([hx, z], [-hx, z]); } return o; }
+    function frameBuf(hx, hz, y, t) { var b = new BoxBuf(); b.add(0, y, hz, 2 * hx + t, t, t, 0); b.add(0, y, -hz, 2 * hx + t, t, t, 0); b.add(hx, y, 0, t, t, 2 * hz - t, 0); b.add(-hx, y, 0, t, t, 2 * hz - t, 0); return b; }
+    function rrShape(w, h, r) { var s2 = new THREE.Shape(), x = -w / 2, y = -h / 2; s2.moveTo(x + r, y); s2.lineTo(x + w - r, y); s2.quadraticCurveTo(x + w, y, x + w, y + r); s2.lineTo(x + w, y + h - r); s2.quadraticCurveTo(x + w, y + h, x + w - r, y + h); s2.lineTo(x + r, y + h); s2.quadraticCurveTo(x, y + h, x, y + h - r); s2.lineTo(x, y + r); s2.quadraticCurveTo(x, y, x + r, y); return s2; }
     var tower = new THREE.Group(); scene.add(tower);
 
-    var podium = new THREE.Mesh(new THREE.CylinderGeometry(15, 16.5, Y0, 6), new THREE.MeshStandardMaterial({ color: 0x0d1823, roughness: 0.4, metalness: 0.5 }));
+    var podium = new THREE.Mesh(new THREE.BoxGeometry(2 * HX[0] + 10, Y0, 2 * HZ[0] + 10), new THREE.MeshStandardMaterial({ color: 0x0d1823, roughness: 0.4, metalness: 0.5 }));
     podium.position.y = Y0 / 2; tower.add(podium);
     var podEdgeMat = new THREE.LineBasicMaterial({ color: 0x5cc8ff, transparent: true, opacity: 0.6 });
     var pe = new THREE.LineSegments(new THREE.EdgesGeometry(podium.geometry), podEdgeMat); pe.position.y = Y0 / 2; tower.add(pe);
@@ -2283,7 +2413,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     function spawnStrike(a, force) {
       var col = STRIKE_COL[a.status] || (force ? 0xff4a3a : 0); if (!col) return;
       var tgt = new THREE.Vector3(), az = rnd() * Math.PI * 2, ta = rnd() * Math.PI * 2;
-      tgt.set(Math.sin(ta) * (BAL * 0.85), a.floorY, Math.cos(ta) * (BAL * 0.85));
+      tgt.set(Math.sin(ta) * hxOf(a.i) * 0.85, a.floorY, Math.cos(ta) * hzOf(a.i) * 0.85);
       var start = tgt.clone().add(new THREE.Vector3(Math.cos(az) * 230, 110 + rnd() * 90, Math.sin(az) * 230));
       var dir = tgt.clone().sub(start).normalize(), g = new THREE.Group();
       var rock = new THREE.Mesh(new THREE.IcosahedronGeometry(2.4, 0), new THREE.MeshStandardMaterial({ color: 0x3a2a28, roughness: 0.9, flatShading: true, emissive: col, emissiveIntensity: 0.9 }));
@@ -2314,12 +2444,6 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (total % 10 === 0 || (gold && total % 5 === 0)) { showerLeft = 9; showerT = 0.3; toast('¡Lluvia de meteoritos!'); }
     }
 
-    var pilMat = new THREE.MeshStandardMaterial({ color: 0xbfe9ff, roughness: 0.2, metalness: 0.7, emissive: 0x2a6f94 });
-    for (var pk2 = 0; pk2 < 6; pk2++) {
-      var pa = pk2 * Math.PI / 3, p0 = new THREE.Vector3(Math.sin(pa) * 6.6, Y0, Math.cos(pa) * 6.6), p1 = new THREE.Vector3(Math.sin(pa) * 5.2, TOP, Math.cos(pa) * 5.2);
-      var pm = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, p0.distanceTo(p1), 8), pilMat);
-      pm.position.copy(p0).add(p1).multiplyScalar(0.5); pm.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), p1.clone().sub(p0).normalize()); tower.add(pm);
-    }
     var tube = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.4, TOP - Y0, 24, 1, true), new THREE.MeshBasicMaterial({ color: 0x5cc8ff, transparent: true, opacity: 0.05, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
     tube.position.y = Y0 + (TOP - Y0) / 2; tower.add(tube);
     function numTex(n) {
@@ -2341,49 +2465,106 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       g.fillStyle = 'rgba(92,200,255,0.5)'; for (var b = 0; b < 8; b++) g.fillRect(16 + b * 14, 150 - (20 + (b * 37) % 50), 9, 20 + (b * 37) % 50);
       var t = new THREE.CanvasTexture(c); return new THREE.MeshBasicMaterial({ map: t, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false });
     })();
+
+    /* ---- Oficinas de cristal con pantallas y tablero de recados ---- */
+    var cabGlassM = new THREE.MeshBasicMaterial({ color: 0x9fe0ff, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+    var cabFrameM = new THREE.MeshBasicMaterial({ color: 0x7fd6ff, transparent: true, opacity: 0.75 });
+    var carpetM = new THREE.MeshStandardMaterial({ color: 0x12283b, roughness: 0.9, metalness: 0.1 });
+    function boardSig(a) {
+      var rec = (INBOX || []).filter(function (x) { return x.agent === a.id; }).map(function (x) { return x.id; }).join(','), tk = openTasks().filter(function (t) { return t.agent === a.id; }).slice(0, 3).map(function (t) { return t.id; }).join(',');
+      return a.status + '|' + (a.msg || '') + '|' + rec + '|' + tk + '|' + a.done;
+    }
+    function boardIcon(g, k, x, y, c) {
+      g.strokeStyle = c; g.fillStyle = c; g.lineWidth = 5; g.lineJoin = g.lineCap = 'round';
+      if (k === 'alert') { g.beginPath(); g.moveTo(x, y - 24); g.lineTo(x + 26, y + 20); g.lineTo(x - 26, y + 20); g.closePath(); g.stroke(); g.fillRect(x - 2.5, y - 8, 5, 16); g.fillRect(x - 2.5, y + 12, 5, 5); }
+      else if (k === 'mail') { g.strokeRect(x - 26, y - 17, 52, 36); g.beginPath(); g.moveTo(x - 26, y - 17); g.lineTo(x, y + 4); g.lineTo(x + 26, y - 17); g.stroke(); }
+      else if (k === 'clock') { g.beginPath(); g.arc(x, y, 24, 0, 7); g.stroke(); g.beginPath(); g.moveTo(x, y - 14); g.lineTo(x, y); g.lineTo(x + 11, y + 6); g.stroke(); }
+      else { g.beginPath(); g.moveTo(x - 22, y); g.lineTo(x - 6, y + 16); g.lineTo(x + 24, y - 16); g.stroke(); }
+    }
+    function drawBoard(a) {
+      var v = a.v, g = v.bc.getContext('2d'), W = 1024, H = 448, col = CSSC[a.status] || '#5cc8ff';
+      g.setTransform(v.bc.width / W, 0, 0, v.bc.height / H, 0, 0); g.clearRect(0, 0, W, H);
+      var bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, 'rgba(8,24,38,0.97)'); bg.addColorStop(1, 'rgba(4,12,22,0.97)'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+      g.strokeStyle = col; g.lineWidth = 6; g.strokeRect(3, 3, W - 6, H - 6); g.fillStyle = col; g.fillRect(0, 0, W, 8);
+      g.textAlign = 'left'; g.fillStyle = '#e6f4ff'; g.font = '600 38px "IBM Plex Sans", sans-serif'; g.fillText(a.name, 28, 62);
+      g.fillStyle = col; g.font = '500 24px "IBM Plex Mono", monospace'; g.textAlign = 'right'; g.fillText(LBL[a.status].toUpperCase(), W - 28, 56); g.textAlign = 'left';
+      g.fillStyle = '#8fa6b8'; g.font = '400 20px "IBM Plex Mono", monospace'; g.fillText('RECADOS Y PENDIENTES', 28, 92);
+      var cards = [];
+      if (a.status === 'error' || a.status === 'warning') cards.push({ c: a.status === 'error' ? '#ff5a5f' : '#ffc857', k: a.status === 'error' ? 'FALLA' : 'ATENCIÓN', t: a.msg || 'Necesita revisión', i: 'alert' });
+      (INBOX || []).filter(function (x) { return x.agent === a.id; }).slice(0, 3).forEach(function (x) { cards.push({ c: '#c9a84c', k: 'RECADO PARA TI', t: x.title, i: 'mail' }); });
+      openTasks().filter(function (t) { return t.agent === a.id; }).sort(function (x, y) { return x.at - y.at; }).slice(0, 3).forEach(function (t) { cards.push({ c: '#5cc8ff', k: 'A LAS ' + clock(t.at), t: t.title, i: 'clock' }); });
+      if (!cards.length) cards.push({ c: '#7fe3c5', k: 'AL DÍA', t: 'Sin recados ni pendientes', i: 'ok' });
+      cards.slice(0, 4).forEach(function (cd, i) {
+        var cx = 28 + (i % 2) * 490, cy = 112 + Math.floor(i / 2) * 160, w = 470, h = 146;
+        g.fillStyle = 'rgba(255,255,255,0.07)'; g.fillRect(cx, cy, w, h); g.fillStyle = cd.c; g.fillRect(cx, cy, 10, h);
+        boardIcon(g, cd.i, cx + 50, cy + 74, cd.c);
+        g.fillStyle = cd.c; g.font = '500 19px "IBM Plex Mono", monospace'; g.fillText(cd.k, cx + 92, cy + 34);
+        g.fillStyle = '#e6f4ff'; g.font = '500 25px "IBM Plex Sans", sans-serif';
+        wrapText(g, cd.t, w - 112, 3).forEach(function (l, j) { g.fillText(l, cx + 92, cy + 68 + j * 30); });
+      });
+      v.btex.needsUpdate = true;
+    }
+    function buildOffice(a, hx, hz, sx, y0) {
+      var v = a.v, G = new THREE.Group(), H = FH - 0.5, xin = 3.8, xout = hx - 0.3, L = xout - xin, xc = sx * (xin + xout) / 2, gb = new BoxBuf(), fb = new BoxBuf(), gap = 2.8, pw = 4.6 - gap, cy = y0 + H / 2 + 0.1;
+      gb.add(xc, cy, 4.6, L, H, 0.04, 0); gb.add(xc, cy, -4.6, L, H, 0.04, 0);
+      gb.add(sx * xin, cy, gap + pw / 2, 0.04, H, pw, 0); gb.add(sx * xin, cy, -(gap + pw / 2), 0.04, H, pw, 0);
+      [4.6, -4.6].forEach(function (z) { fb.add(xc, y0 + 0.12, z, L, 0.07, 0.07, 0); fb.add(xc, y0 + H + 0.1, z, L, 0.07, 0.07, 0); fb.add(sx * xin, cy, z, 0.09, H, 0.09, 0); });
+      [gap, -gap].forEach(function (z) { fb.add(sx * xin, cy, z, 0.09, H, 0.09, 0); });
+      fb.add(sx * xin, y0 + H + 0.1, 0, 0.09, 0.07, 9.2, 0); fb.add(xc, y0 + H + 0.06, 0, L - 1, 0.05, 0.5, 0);
+      G.add(gb.mesh(cabGlassM)); G.add(fb.mesh(cabFrameM));
+      var carpet = new THREE.Mesh(new THREE.PlaneGeometry(L, 9.2), carpetM); carpet.rotation.x = -Math.PI / 2; carpet.position.set(xc, y0 + 0.045, 0); G.add(carpet);
+      var sc = document.createElement('canvas'); sc.width = 512; sc.height = 112; var sg = sc.getContext('2d');
+      sg.fillStyle = 'rgba(8,16,26,0.92)'; sg.fillRect(0, 0, 512, 112); sg.strokeStyle = '#c9a84c'; sg.lineWidth = 5; sg.strokeRect(3, 3, 506, 106); sg.fillStyle = '#c9a84c'; sg.font = '600 40px Georgia, serif'; sg.textAlign = 'center'; sg.textBaseline = 'middle'; sg.fillText('OFICINA', 256, 34); sg.font = '500 32px "IBM Plex Sans", sans-serif'; sg.fillStyle = '#e8f7ff'; sg.fillText(a.name.toUpperCase().slice(0, 22), 256, 82);
+      var sign = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 0.74), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, fog: false })); sign.position.set(sx * (xin - 0.06), y0 + H - 0.55, 0); sign.rotation.y = -sx * Math.PI / 2; G.add(sign);
+      var wall = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 2.7), new THREE.MeshBasicMaterial({ map: v.ptex, transparent: true, fog: false })); wall.position.set(xc + sx * 0.8, y0 + 2.9, -4.5); G.add(wall);
+      var wallF = new THREE.LineSegments(new THREE.EdgesGeometry(wall.geometry), new THREE.LineBasicMaterial({ color: 0x9fe0ff })); wallF.position.copy(wall.position); G.add(wallF);
+      drawPanel(a, 0.35); v.officeG = G; tower.add(G);
+      /* tablero de recados al otro extremo del piso, legible desde ambos lados */
+      var B = new THREE.Group(); v.bc = document.createElement('canvas'); v.bc.width = 768; v.bc.height = 336; v.btex = new THREE.CanvasTexture(v.bc); v.btex.anisotropy = 4;
+      var bm = new THREE.MeshBasicMaterial({ map: v.btex, transparent: true, fog: false }), bx = -sx * (hx - 0.7);
+      [[0, sx * Math.PI / 2], [-sx * 0.07, sx * Math.PI / 2 + Math.PI]].forEach(function (q) {
+        var pl = new THREE.Mesh(new THREE.PlaneGeometry(8.4, 3.68), bm); pl.position.set(bx + q[0], y0 + 2.7, 0); pl.rotation.y = q[1]; B.add(pl);
+        var fr = new THREE.LineSegments(new THREE.EdgesGeometry(pl.geometry), v.edgeMat); fr.position.copy(pl.position); fr.rotation.copy(pl.rotation); B.add(fr);
+      });
+      v.boardG = B; tower.add(B); v.boardT = 0; v.boardSig = ''; drawBoard(a); v.boardSig = boardSig(a);
+    }
     var railBuf = new BoxBuf(), mullPts = [];
     AGENTS.forEach(function (a) {
       var y0 = Y0 + a.i * FH, y1 = y0 + FH, yMid = y0 + FH / 2, v = a.v = {};
-      a.y = y0 + 0.3; a.floorY = yMid; a.ang = a.i * 2.4; a.R = RR; a.dir = a.i % 2 ? 1 : -1;
+      a.y = y0 + 0.3; a.floorY = yMid; a.ang = a.i % 2 ? Math.PI : 0; a.R = RR; a.dir = a.i % 2 ? 1 : -1;
+      var hx = hxOf(a.i), hz = hzOf(a.i), sx = a.i % 2 ? -1 : 1;
       v.ghost = 1; v.dim = 1;
       v.bandMat = new THREE.MeshBasicMaterial({ color: COL[a.status], transparent: true, opacity: 0.04, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
-      var bandGeo = new THREE.CylinderGeometry(shellR(y1), shellR(y0), FH - 0.3, 6, 1, true);
+      var bandGeo = new THREE.BoxGeometry(hx * 2, FH - 0.3, hz * 2);
       var band = new THREE.Mesh(bandGeo, v.bandMat); band.position.y = yMid; tower.add(band);
       v.edgeMat = new THREE.LineBasicMaterial({ color: COL[a.status], transparent: true, opacity: 0.55 });
       var edges = new THREE.LineSegments(new THREE.EdgesGeometry(bandGeo), v.edgeMat); edges.position.y = yMid; tower.add(edges);
       /* balcón abierto: anillo con hueco central para ver los pisos de abajo */
-      var shp = new THREE.Shape(); shp.absarc(0, 0, BAL, 0, Math.PI * 2, false);
-      var hole = new THREE.Path(); hole.absarc(0, 0, 3.4, 0, Math.PI * 2, true); shp.holes.push(hole);
-      var slabGeo = new THREE.ExtrudeGeometry(shp, { depth: 0.28, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.04, bevelSegments: 2, curveSegments: 96 }); slabGeo.rotateX(-Math.PI / 2);
+      var shp = rrShape(hx * 2 + 1.6, hz * 2 + 1.6, 1.4);
+      var slabGeo = new THREE.ExtrudeGeometry(shp, { depth: 0.28, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.04, bevelSegments: 2, curveSegments: 6 }); slabGeo.rotateX(-Math.PI / 2);
       v.slabMat = new THREE.MeshStandardMaterial({ color: 0x1a3144, roughness: 0.35, metalness: 0.6, transparent: true, map: slabTex, bumpMap: slabTex, bumpScale: 1.4 });
       var slab = new THREE.Mesh(slabGeo, v.slabMat); slab.position.y = y0 - 0.16; tower.add(slab);
       v.rimMat = new THREE.MeshBasicMaterial({ color: COL[a.status], transparent: true });
-      var rim = new THREE.Mesh(new THREE.TorusGeometry(BAL, 0.07, 10, 200), v.rimMat); rim.rotation.x = Math.PI / 2; rim.position.y = y0 + 0.12; tower.add(rim);
+      tower.add(frameBuf(hx + 0.8, hz + 0.8, y0 + 0.12, 0.14).mesh(v.rimMat));
       /* detalle del piso: LED bajo la losa, barandal, consolas con pantalla y parantes de vidrio */
-      var led = new THREE.Mesh(new THREE.TorusGeometry(BAL - 0.3, 0.05, 6, 96), v.rimMat); led.rotation.x = Math.PI / 2; led.position.y = y0 - 0.34; tower.add(led);
-      var k2, cbuf = new BoxBuf(), sbuf = new BoxBuf();
-      for (k2 = 0; k2 < 48; k2++) { var ra2 = k2 / 48 * Math.PI * 2; railBuf.add(Math.cos(ra2) * (BAL - 0.2), y0 + 0.45, Math.sin(ra2) * (BAL - 0.2), 0.07, 0.9, 0.07, 0); }
-      for (k2 = 0; k2 < 3; k2++) { var ca = a.i * 0.7 + k2 * Math.PI * 2 / 3, ccx = Math.cos(ca) * 4.8, ccz = Math.sin(ca) * 4.8; cbuf.add(ccx, y0 + 0.3, ccz, 1.0, 0.55, 0.5, -(ca + Math.PI / 2)); sbuf.add(ccx, y0 + 0.6, ccz, 0.82, 0.04, 0.34, -(ca + Math.PI / 2)); }
+      tower.add(frameBuf(hx + 0.5, hz + 0.5, y0 - 0.34, 0.1).mesh(v.rimMat));
+      var cbuf = new BoxBuf(), sbuf = new BoxBuf();
+      [[-5, hz - 1.3, Math.PI], [5, hz - 1.3, Math.PI], [-5, -hz + 1.3, 0], [5, -hz + 1.3, 0]].forEach(function (q) { cbuf.add(q[0], y0 + 0.3, q[1], 1.5, 0.55, 0.6, q[2]); sbuf.add(q[0], y0 + 0.6, q[1], 1.25, 0.04, 0.34, q[2]); });
       tower.add(cbuf.mesh(darkM)); tower.add(sbuf.mesh(v.rimMat));
-      for (k2 = 0; k2 < 6; k2++) {
-        var t1 = k2 / 6 * Math.PI * 2, t2 = (k2 + 1) / 6 * Math.PI * 2;
-        [0.33, 0.66].forEach(function (f) {
-          var tb = shellR(y0), tt = shellR(y1), bx = (Math.sin(t1) * (1 - f) + Math.sin(t2) * f), bz = (Math.cos(t1) * (1 - f) + Math.cos(t2) * f);
-          mullPts.push(new THREE.Vector3(bx * tb, y0 + 0.2, bz * tb), new THREE.Vector3(bx * tt, y1 - 0.2, bz * tt));
-        });
-      }
+      [[hx, hz], [hx, -hz], [-hx, hz], [-hx, -hz]].forEach(function (q) { railBuf.add(q[0], yMid, q[1], 0.5, FH, 0.5, 0); });
+      rectPts(hx, hz, 2.4).forEach(function (q) { mullPts.push(new THREE.Vector3(q[0], y0 + 0.2, q[1]), new THREE.Vector3(q[0], y1 - 0.2, q[1])); });
       v.railMat = new THREE.MeshBasicMaterial({ color: 0x9fd8f5, transparent: true, opacity: 0.07, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
-      var rail = new THREE.Mesh(new THREE.CylinderGeometry(BAL - 0.2, BAL - 0.2, 1.0, 72, 1, true), v.railMat);
+      var rail = new THREE.Mesh(new THREE.BoxGeometry(hx * 2 + 1.2, 1.0, hz * 2 + 1.2), v.railMat);
       rail.position.y = y0 + 0.62; tower.add(rail);
       v.numMat = new THREE.SpriteMaterial({ map: numTex(a.i + 1), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false });
-      var num = new THREE.Sprite(v.numMat); num.scale.set(3.4, 1.7, 1); num.position.set(BAL + 2.4, y0 + 1.2, 0); tower.add(num);
+      var num = new THREE.Sprite(v.numMat); num.scale.set(3.4, 1.7, 1); num.position.set(hx + 2.8, y0 + 1.4, 0); tower.add(num);
       /* hologramas giratorios dentro del piso */
       v.spinMat = new THREE.MeshBasicMaterial({ color: COL[a.status], transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false });
       v.spin = new THREE.Group(); v.spin.position.y = yMid;
       [[3.6, 0.04, 0], [2.6, 0.03, 1.1]].forEach(function (s) { var t = new THREE.Mesh(new THREE.TorusGeometry(s[0], s[1], 6, 64), v.spinMat); t.rotation.x = Math.PI / 2 + s[2] * 0.5; v.spin.add(t); });
       tower.add(v.spin);
       /* escritorio futurista con silla flotante, pantallas holográficas y globo de datos */
-      a.deskAng = a.ang0 = a.i * 0.9 + 0.4; v.rad = a.R; v.seat = 0;
+      a.deskAng = a.ang0 = a.i % 2 ? Math.PI : 0; v.rad = a.R; v.seat = 0;
       var dk = new THREE.Group(), dBuf = new BoxBuf(), aBuf = new BoxBuf(), sBuf = new BoxBuf(), fBuf = new BoxBuf();
       dBuf.add(-1.22, 0.78, 0, 0.14, 1.56, 1.0, 0); dBuf.add(1.22, 0.78, 0, 0.14, 1.56, 1.0, 0);
       sBuf.add(0, 1.5, 0.61, 2.5, 0.05, 0.04, 0); sBuf.add(0, 1.69, -0.16, 1.1, 0.02, 0.38, 0);
@@ -2407,10 +2588,11 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       dk.position.set(Math.cos(a.deskAng) * 7.05, a.y - 0.18, Math.sin(a.deskAng) * 7.05); dk.rotation.y = Math.atan2(Math.cos(a.deskAng), Math.sin(a.deskAng)); tower.add(dk); v.desk = dk;
       /* robot */
       v.robot = makeRobot(a); tower.add(v.robot);
+      buildOffice(a, hx, hz, sx, y0);
       v.beamMat = new THREE.MeshBasicMaterial({ color: 0xff5a5f, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false });
       v.beam = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 36, 8, 1, true), v.beamMat); v.beam.visible = false; tower.add(v.beam);
       var hitMat = new THREE.MeshBasicMaterial({ visible: false });
-      var h1 = new THREE.Mesh(new THREE.SphereGeometry(1.5, 8, 6), hitMat), h2 = new THREE.Mesh(new THREE.CylinderGeometry(BAL, BAL, FH, 10), hitMat);
+      var h1 = new THREE.Mesh(new THREE.SphereGeometry(1.5, 8, 6), hitMat), h2 = new THREE.Mesh(new THREE.BoxGeometry(hx * 2, FH, hz * 2), hitMat);
       h1.position.y = 1.2; h2.position.y = yMid; h1.userData.agent = h2.userData.agent = a; v.robot.add(h1); tower.add(h2); pickables.push(h1, h2);
       v.nextPulse = 1 + a.i * 0.4; v.t = rnd() * 10;
     });
@@ -2427,14 +2609,14 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     }
 
     /* corona, letras EVR y espiga */
-    var crown = new THREE.Mesh(new THREE.CylinderGeometry(5.9, 5.4, CH, 6), new THREE.MeshStandardMaterial({ color: 0x0e1b29, roughness: 0.3, metalness: 0.7, emissive: 0x0a2233 }));
+    var crown = new THREE.Mesh(new THREE.BoxGeometry(2 * HX[2] - 1, CH, 2 * HZ[2] - 1), new THREE.MeshStandardMaterial({ color: 0x0e1b29, roughness: 0.3, metalness: 0.7, emissive: 0x0a2233 }));
     crown.position.y = TOP + CH / 2; tower.add(crown);
     var crownEdge = new THREE.LineSegments(new THREE.EdgesGeometry(crown.geometry), new THREE.LineBasicMaterial({ color: 0x9fe0ff })); crownEdge.position.y = TOP + CH / 2; tower.add(crownEdge);
-    var tier2 = new THREE.Mesh(new THREE.CylinderGeometry(3.9, 3.3, 3.4, 6), new THREE.MeshStandardMaterial({ color: 0x0e1b29, roughness: 0.3, metalness: 0.7, emissive: 0x0a2233 })); tier2.position.y = TOP + CH + 1.7; tower.add(tier2);
+    var tier2 = new THREE.Mesh(new THREE.BoxGeometry(2 * HX[2] - 7, 3.4, 2 * HZ[2] - 5), new THREE.MeshStandardMaterial({ color: 0x0e1b29, roughness: 0.3, metalness: 0.7, emissive: 0x0a2233 })); tier2.position.y = TOP + CH + 1.7; tower.add(tier2);
     var tier2e = new THREE.LineSegments(new THREE.EdgesGeometry(tier2.geometry), new THREE.LineBasicMaterial({ color: 0x9fe0ff })); tier2e.position.y = tier2.position.y; tower.add(tier2e);
-    [[5.75, TOP + CH + 0.06], [3.45, TOP + CH + 3.36]].forEach(function (rg) { var r2 = new THREE.Mesh(new THREE.TorusGeometry(rg[0], 0.07, 6, 96), new THREE.MeshBasicMaterial({ color: 0x9fe0ff })); r2.rotation.x = Math.PI / 2; r2.position.y = rg[1]; tower.add(r2); });
-    var podRing = new THREE.Mesh(new THREE.TorusGeometry(15.2, 0.09, 6, 120), new THREE.MeshBasicMaterial({ color: 0x5cc8ff })); podRing.rotation.x = Math.PI / 2; podRing.position.y = Y0 + 0.04; tower.add(podRing);
-    var bol = new BoxBuf(); for (var bk = 0; bk < 18; bk++) { var ba = bk / 18 * Math.PI * 2; bol.add(Math.cos(ba) * 18.4, 0.6, Math.sin(ba) * 18.4, 0.45, 1.2, 0.45, 0); } tower.add(bol.mesh(accentM));
+    [[HX[2] - 0.5, HZ[2] - 0.5, TOP + CH + 0.06], [HX[2] - 3.5, HZ[2] - 2.5, TOP + CH + 3.36]].forEach(function (rg) { tower.add(frameBuf(rg[0], rg[1], rg[2], 0.14).mesh(new THREE.MeshBasicMaterial({ color: 0x9fe0ff }))); });
+    tower.add(frameBuf(HX[0] + 4.6, HZ[0] + 4.6, Y0 + 0.04, 0.16).mesh(new THREE.MeshBasicMaterial({ color: 0x5cc8ff })));
+    var bol = new BoxBuf(); rectPts(HX[0] + 6.4, HZ[0] + 6.4, 5.5).forEach(function (q) { bol.add(q[0], 0.6, q[1], 0.45, 1.2, 0.45, 0); }); tower.add(bol.mesh(accentM));
     var spire = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.4, 14, 8), new THREE.MeshBasicMaterial({ color: 0xdff4ff })); spire.position.y = TOP + CH + 7; tower.add(spire);
     var beacon = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0x9fe0ff, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
     beacon.scale.set(9, 9, 1); beacon.position.y = TOP + CH + 14; tower.add(beacon);
@@ -2475,12 +2657,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     redrawSigns();
     if (document.fonts && document.fonts.load) document.fonts.load('400 100px Michroma').then(redrawSigns).catch(function () {});
     var faceMat = new THREE.MeshBasicMaterial({ map: texFace, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, fog: false });
-    var apo = 5.65 * Math.cos(Math.PI / 6);
-    for (var f = 0; f < 6; f++) {
-      var phi = Math.PI / 6 + f * Math.PI / 3;
-      var pl = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 2.4), faceMat);
-      pl.position.set((apo + 0.06) * Math.sin(phi), TOP + CH / 2, (apo + 0.06) * Math.cos(phi)); pl.rotation.y = phi; tower.add(pl);
-    }
+    [[0, HZ[2] - 0.5 + 0.06, 0], [0, -(HZ[2] - 0.5 + 0.06), Math.PI], [HX[2] - 0.5 + 0.06, 0, Math.PI / 2], [-(HX[2] - 0.5 + 0.06), 0, -Math.PI / 2]].forEach(function (q) {
+      var pl = new THREE.Mesh(new THREE.PlaneGeometry(8.4, 3.9), faceMat); pl.position.set(q[0], TOP + CH / 2, q[1]); pl.rotation.y = q[2]; tower.add(pl);
+    });
     var big = new THREE.Sprite(new THREE.SpriteMaterial({ map: texBig, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
     big.scale.set(26, 13, 1); big.position.y = TOP + CH + 32; tower.add(big);
 
@@ -2641,59 +2820,96 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       var hullM = new T.MeshStandardMaterial({ color: 0xe2ecf5, roughness: 0.3, metalness: 0.35, emissive: 0x35506b, emissiveIntensity: 0.9 });
       var darkHull = new T.MeshStandardMaterial({ color: 0x33475c, roughness: 0.4, metalness: 0.5, emissive: 0x12202e, emissiveIntensity: 0.8 });
       function G(k, a1, a2, a3, a4) { return k === 'c' ? new T.CylinderGeometry(a1, a2, a3, Math.max(a4 || 16, 20)) : k === 's' ? new T.SphereGeometry(a1, Math.max(a2 || 20, 26), Math.max(a3 || 14, 18)) : k === 'b' ? new T.BoxGeometry(a1, a2, a3) : k === 'k' ? new T.ConeGeometry(a1, a2, a3 || 12) : new T.TorusGeometry(a1, a2, 6, a3 || 48); }
+      var glassM = new T.MeshStandardMaterial({ color: 0x9fe0ff, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.22, depthWrite: false, emissive: 0x2a6f94, emissiveIntensity: 0.55 });
+      var paxBodyM = new T.MeshStandardMaterial({ color: 0x2a5f8f, roughness: 0.6, emissive: 0x16406a, emissiveIntensity: 0.7 }), paxHeadM = new T.MeshStandardMaterial({ color: 0xf1c9a5, roughness: 0.6, emissive: 0x5a4632, emissiveIntensity: 0.5 });
+      var padM = new T.MeshStandardMaterial({ color: 0x0d1823, roughness: 0.4, metalness: 0.6, emissive: 0x0a2233 });
+      function riderParts(pos) { var B = [], H = []; pos.forEach(function (p) { B.push({ g: new T.CylinderGeometry(0.34, 0.42, 0.95, 8), x: p[0], y: p[1], z: p[2] }); H.push({ g: new T.SphereGeometry(0.3, 8, 6), x: p[0], y: p[1] + 0.78, z: p[2] }); }); return { B: B, H: H }; }
+      function riderMeshes(pos) { var r = riderParts(pos), g = new T.Group(); g.add(new T.Mesh(mergeParts(r.B), paxBodyM)); g.add(new T.Mesh(mergeParts(r.H), paxHeadM)); return g; }
+      function rotorAt(g, rotors, x, y, z, rad, col) {
+        var ring = new T.Mesh(new T.TorusGeometry(rad, 0.2, 6, 28), darkHull); ring.rotation.x = Math.PI / 2; ring.position.set(x, y, z); g.add(ring);
+        var rg = new T.Group(); rg.position.set(x, y + 0.05, z);
+        rg.add(new T.Mesh(new T.BoxGeometry(rad * 1.9, 0.06, 0.34), hullM)); var b2 = new T.Mesh(new T.BoxGeometry(0.34, 0.06, rad * 1.9), hullM); rg.add(b2);
+        var disc = new T.Mesh(new T.CircleGeometry(rad * 0.95, 24), new T.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.12, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide })); disc.rotation.x = -Math.PI / 2; rg.add(disc);
+        g.add(rg); rotors.push(rg);
+      }
+      function arm(parts, x, z, y) { var L = Math.hypot(x, z); parts.push({ g: new T.BoxGeometry(0.34, 0.3, L), x: x / 2, y: y, z: z / 2, ry: Math.atan2(x, z) }); }
       function build(kind, col) {
-        var W = [], D = [], E = [], engines = [], navs = [], g = new T.Group(), L = kind === 'carrier' ? 1 : kind === 'dart' ? 0.8 : 1;
+        var W = [], D = [], E = [], GL = [], engines = [], navs = [], rotors = [], g = new T.Group(), pos = [], posB = [];
         var glowM = new T.MeshBasicMaterial({ color: col });
-        if (kind === 'carrier') {
-          W.push({ g: G('s', 6, 28, 18), sx: 1.4, sy: 0.5, sz: 4.6 }, { g: G('s', 2.6, 18, 12), y: 2.6, z: 9, sy: 0.7, sz: 1.7 }, { g: G('b', 15, 0.7, 9), x: -14, y: -0.6, z: -4, ry: 0.4 }, { g: G('b', 15, 0.7, 9), x: 14, y: -0.6, z: -4, ry: -0.4 }, { g: G('b', 0.7, 6, 9), y: 4, z: -15 });
-          D.push({ g: G('c', 1.9, 1.9, 7, 14), x: -6, z: -25, rx: Math.PI / 2 }, { g: G('c', 1.9, 1.9, 7, 14), x: 0, y: 0.6, z: -26, rx: Math.PI / 2 }, { g: G('c', 1.9, 1.9, 7, 14), x: 6, z: -25, rx: Math.PI / 2 }, { g: G('b', 17, 0.5, 20), y: -2.6, z: 0 });
-          E.push({ g: G('b', 0.25, 0.5, 30), x: -7.4, y: 0.5 }, { g: G('b', 0.25, 0.5, 30), x: 7.4, y: 0.5 }, { g: G('t', 5.6, 0.18, 40), y: 3.1, z: 9, rx: Math.PI / 2 });
-          for (var gi = 0; gi < 26; gi++) { var gz = -22 + gi * 1.7, gw = 3 + 6 * (1 - Math.abs(gz) / 28); W.push({ g: G('b', 0.5 + rnd() * 1.4, 0.4 + rnd() * 0.9, 0.7 + rnd() * 1.6), x: (rnd() - 0.5) * gw * 1.2, y: 2.4 + rnd() * 0.5 - Math.abs(gz) * 0.02, z: gz }); }
-          for (var wi = 0; wi < 34; wi++) { var wz = -20 + wi * 1.2; E.push({ g: G('b', 0.16, 0.34, 0.5), x: -7.9 + Math.abs(wz) * 0.02, y: 0.9, z: wz }, { g: G('b', 0.16, 0.34, 0.5), x: 7.9 - Math.abs(wz) * 0.02, y: 0.9, z: wz }); }
-          for (var ri = 0; ri < 9; ri++) W.push({ g: G('b', 14, 0.18, 0.5), y: -0.1, z: -22 + ri * 5.5, sx: 1 - Math.abs(-22 + ri * 5.5) / 36 });
-          E.push({ g: G('s', 2.1, 18, 12), y: 2.2, z: 12, sy: 0.55, sz: 1.5 }, { g: G('k', 1.4, 5, 10), z: 33, rx: Math.PI / 2 });
-          D.push({ g: G('s', 1.4, 14, 10), x: -9, y: 1.4, z: 4 }, { g: G('s', 1.4, 14, 10), x: 9, y: 1.4, z: 4 }, { g: G('c', 0.3, 0.3, 4, 8), x: -9, y: 1.6, z: 6.5, rx: Math.PI / 2 }, { g: G('c', 0.3, 0.3, 4, 8), x: 9, y: 1.6, z: 6.5, rx: Math.PI / 2 });
-          engines = [[-6, 0, -29.5, 9], [0, 0.6, -30.5, 9], [6, 0, -29.5, 9]]; navs = [[-28, -1, -8], [28, -1, -8], [0, 4.2, -15], [0, -3, 20]];
-        } else if (kind === 'dart') {
-          W.push({ g: G('k', 3.4, 42, 12), rx: Math.PI / 2, z: 6 }, { g: G('b', 14, 0.45, 15), x: -9, y: -0.4, z: -8, ry: 0.55 }, { g: G('b', 14, 0.45, 15), x: 9, y: -0.4, z: -8, ry: -0.55 }, { g: G('b', 0.5, 6.5, 8), x: -3.6, y: 3.4, z: -11 }, { g: G('b', 0.5, 6.5, 8), x: 3.6, y: 3.4, z: -11 });
-          D.push({ g: G('c', 1.5, 1.5, 6, 12), x: -2, z: -17, rx: Math.PI / 2 }, { g: G('c', 1.5, 1.5, 6, 12), x: 2, z: -17, rx: Math.PI / 2 }, { g: G('s', 2.1, 14, 10), y: 1.8, z: 4, sy: 0.7, sz: 2.1 });
-          E.push({ g: G('b', 0.2, 0.2, 22), x: -16, y: -0.3, z: -10, ry: 0.55 }, { g: G('b', 0.2, 0.2, 22), x: 16, y: -0.3, z: -10, ry: -0.55 });
-          for (var pi2 = 0; pi2 < 10; pi2++) E.push({ g: G('b', 0.14, 0.16, 3.4), y: 1.2, z: -8 + pi2 * 3.2, sx: 1, x: (pi2 % 2 ? 1 : -1) * 2.2 });
-          E.push({ g: G('s', 1.7, 16, 12), y: 2.2, z: 7, sy: 0.6, sz: 2 }, { g: G('b', 0.1, 0.1, 9), x: -3.6, y: 0.2, z: -2 }, { g: G('b', 0.1, 0.1, 9), x: 3.6, y: 0.2, z: -2 });
-          for (var fi2 = 0; fi2 < 6; fi2++) W.push({ g: G('b', 1.2 + rnd(), 0.35, 1 + rnd()), x: (rnd() - 0.5) * 3.6, y: 1.9 + rnd() * 0.3, z: -6 + fi2 * 3 });
-          engines = [[-2, 0, -20.4, 6], [2, 0, -20.4, 6]]; navs = [[-17, -0.5, -12], [17, -0.5, -12], [0, 6.8, -14]];
+        if (kind === 'barge') {
+          W.push({ g: G('s', 3.4, 24, 16), sx: 1, sy: 0.3, sz: 5.2 }, { g: G('b', 9, 0.3, 3), y: -0.9, z: -14 });
+          D.push({ g: G('b', 5.4, 0.5, 26), y: -1.55 }, { g: G('k', 1.5, 5, 10), z: 18.6, rx: Math.PI / 2 });
+          GL.push({ g: G('s', 3.0, 24, 16), y: 0.55, sx: 0.84, sy: 0.8, sz: 3.9 });
+          for (var zi = 0; zi < 6; zi++) { var z = -8.5 + zi * 3.4; pos.push([-1.1, 0.95, z]); posB.push([1.1, 0.95, z]); }
+          [-9, 0, 9].forEach(function (zz) { [-1, 1].forEach(function (sd) { arm(D, sd * 4.1, zz, 0.2); rotorAt(g, rotors, sd * 6.4, 0.7, zz, 2.3, col); engines.push([sd * 6.4, 0.1, zz, 7]); }); });
+          for (var wi = 0; wi < 22; wi++) { var wz = -14 + wi * 1.3; E.push({ g: G('b', 0.14, 0.22, 0.5), x: -3.35, y: -0.1, z: wz }, { g: G('b', 0.14, 0.22, 0.5), x: 3.35, y: -0.1, z: wz }); }
+          E.push({ g: G('b', 6, 0.12, 0.5), y: -1.8, z: 17 }); navs = [[-9, 0.7, 0], [9, 0.7, 0], [0, 2.7, 15], [0, 2.7, -15], [0, -1.8, 19]];
+        } else if (kind === 'taxi') {
+          W.push({ g: G('s', 2.8, 22, 14), sx: 1, sy: 0.35, sz: 1.7 });
+          D.push({ g: G('b', 3.2, 0.4, 5.4), y: -1.1 }, { g: G('k', 0.9, 3, 10), z: 5.2, rx: Math.PI / 2 });
+          GL.push({ g: G('s', 2.3, 22, 14), y: 0.6, sx: 0.9, sy: 0.85, sz: 1.35 });
+          pos.push([-0.85, 0.75, -0.9], [0.85, 0.75, -0.9]); posB.push([-0.85, 0.75, 1.1], [0.85, 0.75, 1.1]);
+          [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function (q) { arm(D, q[0] * 4.9, q[1] * 3.7, 0.4); rotorAt(g, rotors, q[0] * 4.9, 0.8, q[1] * 3.7, 2.0, col); engines.push([q[0] * 4.9, 0.2, q[1] * 3.7, 6]); });
+          E.push({ g: G('t', 2.4, 0.1, 40), y: -1.35, rx: Math.PI / 2 }); navs = [[-4.9, 1, 3.7], [4.9, 1, 3.7], [-4.9, 1, -3.7], [4.9, 1, -3.7], [0, 2.3, 0]];
         } else {
-          W.push({ g: G('s', 14, 30, 16), sy: 0.2 }, { g: G('s', 6.5, 22, 14), y: 2.6, sy: 0.85 });
+          W.push({ g: G('s', 14, 30, 16), sy: 0.2 });
           D.push({ g: G('c', 5, 7, 1.6, 24), y: -2.3 }, { g: G('c', 2.4, 3, 2, 18), y: -3.6 });
+          GL.push({ g: G('s', 6.5, 22, 14), y: 2.2, sy: 0.85 });
+          for (var qi = 0; qi < 4; qi++) { var qa = qi / 4 * Math.PI * 2 + 0.4; pos.push([Math.cos(qa) * 2.6, 3.4, Math.sin(qa) * 2.6]); }
           E.push({ g: G('t', 13, 0.35, 64), y: 0.1, rx: Math.PI / 2 }, { g: G('t', 8, 0.25, 48), y: -2.9, rx: Math.PI / 2 });
-          for (var qi = 0; qi < 28; qi++) { var qa = qi / 28 * Math.PI * 2; D.push({ g: G('b', 1.6, 1.1, 0.9), x: Math.cos(qa) * 13.4, y: 0, z: Math.sin(qa) * 13.4, ry: -qa + Math.PI / 2 }); E.push({ g: G('b', 0.5, 0.25, 0.2), x: Math.cos(qa) * 12.2, y: 0.5, z: Math.sin(qa) * 12.2, ry: -qa + Math.PI / 2 }); }
-          for (var ei = 0; ei < 12; ei++) { var ea = ei / 12 * Math.PI * 2; E.push({ g: G('b', 0.4, 0.2, 2), x: Math.cos(ea) * 3.2, y: 5.4, z: Math.sin(ea) * 3.2, ry: -ea + Math.PI / 2 }); }
+          for (var qj = 0; qj < 28; qj++) { var qb = qj / 28 * Math.PI * 2; D.push({ g: G('b', 1.6, 1.1, 0.9), x: Math.cos(qb) * 13.4, y: 0, z: Math.sin(qb) * 13.4, ry: -qb + Math.PI / 2 }); E.push({ g: G('b', 0.5, 0.25, 0.2), x: Math.cos(qb) * 12.2, y: 0.5, z: Math.sin(qb) * 12.2, ry: -qb + Math.PI / 2 }); }
           engines = [[0, -4.6, 0, 11]]; navs = [[-12, 0, 0], [12, 0, 0], [0, 0, 12], [0, 0, -12], [0, 8.4, 0]];
         }
         g.add(new T.Mesh(mergeParts(W), hullM)); g.add(new T.Mesh(mergeParts(D), darkHull)); var em = new T.Mesh(mergeParts(E), glowM); g.add(em);
+        var glass = new T.Mesh(mergeParts(GL), glassM); glass.renderOrder = 2; g.add(glass);
+        var paxA = riderMeshes(pos), paxB = riderMeshes(posB.length ? posB : [[0, -99, 0]]); g.add(paxA); g.add(paxB);
         var glows = engines.map(function (e) { var sp = new T.Sprite(new T.SpriteMaterial({ map: GLOW, color: col, transparent: true, depthWrite: false, blending: T.AdditiveBlending })); sp.position.set(e[0], e[1], e[2]); sp.scale.set(e[3], e[3], 1); g.add(sp); return sp; });
         var pts = new T.Points(new T.BufferGeometry().setFromPoints(navs.map(function (n) { return new V3(n[0], n[1], n[2]); })), new T.PointsMaterial({ size: 4.2, map: GLOW, color: 0xff6a5a, transparent: true, depthWrite: false, blending: T.AdditiveBlending })); pts.frustumCulled = false; g.add(pts);
-        var beam = null; if (kind !== 'dart') { beam = new T.Mesh(new T.ConeGeometry(kind === 'carrier' ? 9 : 8, 46, 20, 1, true), new T.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.055, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide })); beam.position.y = kind === 'carrier' ? -26 : -25; g.add(beam); }
-        return { g: g, glows: glows, pts: pts, em: em, beam: beam, kind: kind, ring: kind === 'saucer' ? em : null };
+        var beam = new T.Mesh(new T.ConeGeometry(kind === 'saucer' ? 8 : 5, 40, 20, 1, true), new T.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.05, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide })); beam.position.y = -22; g.add(beam);
+        return { g: g, glows: glows, pts: pts, em: em, beam: beam, kind: kind, ring: kind === 'saucer' ? em : null, rotors: rotors, paxB: paxB, mode: 'cruise', k: 0, timer: 0, pad: null };
       }
-      var specs = [['carrier', 0x5cc8ff, 175, 92, 0.017, 1.55], ['carrier', 0xa78bfa, 225, 72, -0.014, 1.2], ['carrier', 0x7fe3c5, 262, 118, 0.011, 1.0], ['dart', 0x5cc8ff, 145, 58, -0.05, 0.9], ['dart', 0xffc857, 195, 84, 0.042, 0.8], ['dart', 0xa78bfa, 240, 50, -0.036, 1.0], ['saucer', 0x7fe3c5, 128, 108, 0.03, 0.9], ['saucer', 0x5cc8ff, 205, 62, -0.024, 0.8]];
-      specs.forEach(function (sp, i) { var sh = build(sp[0], sp[1]); sh.R = sp[2]; sh.y = sp[3]; sh.sp = sp[4]; sh.ang = i * 0.9 + rnd() * 0.6; sh.sc = sp[5]; sh.g.scale.setScalar(sp[5]); grp.add(sh.g); ships.push(sh); });
+      var specs = [['barge', 0x5cc8ff, 175, 92, 0.017, 1.5], ['barge', 0xa78bfa, 225, 72, -0.014, 1.25], ['barge', 0x7fe3c5, 262, 118, 0.011, 1.1], ['taxi', 0x5cc8ff, 145, 58, -0.05, 2.0], ['taxi', 0xffc857, 195, 84, 0.042, 1.9], ['taxi', 0xa78bfa, 240, 50, -0.036, 2.1], ['saucer', 0x7fe3c5, 128, 108, 0.03, 0.9], ['saucer', 0x5cc8ff, 205, 62, -0.024, 0.8]];
+      specs.forEach(function (sp, i) { var sh = build(sp[0], sp[1]); sh.R = sp[2]; sh.y = sp[3]; sh.sp = sp[4]; sh.ang = i * 0.9 + rnd() * 0.6; sh.sc = sp[5]; sh.g.scale.setScalar(sp[5]); sh.timer = 14 + i * 9; grp.add(sh.g); ships.push(sh); });
+      /* puertos aéreos: plataformas en azoteas donde los taxis aterrizan a recoger y dejar pasajeros */
+      var ports = BLDS.filter(function (b) { return b.port; }), taxis = ships.filter(function (sh) { return sh.kind === 'taxi'; });
+      ports.forEach(function (b, i) {
+        var pg = new T.Group(); pg.position.set(b.x, b.top, b.z);
+        pg.add(new T.Mesh(new T.CylinderGeometry(7.2, 7.2, 0.3, 24), padM));
+        var pr = new T.Mesh(new T.TorusGeometry(6.2, 0.14, 6, 40), new T.MeshBasicMaterial({ color: 0x7fe3c5 })); pr.rotation.x = Math.PI / 2; pr.position.y = 0.2; pg.add(pr);
+        var h2 = new T.Mesh(new T.TorusGeometry(2.6, 0.12, 6, 28), new T.MeshBasicMaterial({ color: 0xffc857 })); h2.rotation.x = Math.PI / 2; h2.position.y = 0.2; pg.add(h2);
+        var bc = new T.Sprite(new T.SpriteMaterial({ map: GLOW, color: 0x7fe3c5, transparent: true, depthWrite: false, blending: T.AdditiveBlending, fog: false })); bc.scale.set(10, 10, 1); bc.position.y = 1.5; pg.add(bc);
+        grp.add(pg); if (taxis[i]) taxis[i].pad = { b: b, glow: bc };
+      });
+      var tmpP = new V3(), orb = new V3();
+      function ease(k) { return k * k * (3 - 2 * k); }
       function update(dt, t, tier) {
         grp.visible = tier < 3; if (!grp.visible) return;
         ships.forEach(function (sh, i) {
-          sh.ang += sh.sp * dt; var c = Math.cos(sh.ang), s = Math.sin(sh.ang), d = sh.sp > 0 ? 1 : -1;
-          sh.g.position.set(c * sh.R, sh.y + Math.sin(t * 0.35 + i) * 2.2, s * sh.R);
+          sh.ang += sh.sp * dt; var c = Math.cos(sh.ang), sn = Math.sin(sh.ang), d = sh.sp > 0 ? 1 : -1;
+          orb.set(c * sh.R, sh.y + Math.sin(t * 0.35 + i) * 2.2, sn * sh.R); var spin = 1, yaw = Math.atan2(-d * sn, d * c);
+          if (sh.pad) {
+            var pb = sh.pad.b; sh.timer -= dt;
+            if (sh.mode === 'cruise' && sh.timer <= 0) { sh.mode = 'approach'; sh.k = 0; }
+            else if (sh.mode === 'approach') { sh.k = Math.min(1, sh.k + dt / 10); if (sh.k >= 1) { sh.mode = 'dock'; sh.timer = 9; sh.paxB.visible = false; } }
+            else if (sh.mode === 'dock') { if (sh.timer < 4.5) sh.paxB.visible = true; if (sh.timer <= 0) { sh.mode = 'depart'; sh.k = 1; } }
+            else if (sh.mode === 'depart') { sh.k = Math.max(0, sh.k - dt / 10); if (sh.k <= 0) { sh.mode = 'cruise'; sh.timer = 50 + rnd() * 30; } }
+            var kk = sh.mode === 'dock' ? 1 : sh.mode === 'cruise' ? 0 : ease(sh.k);
+            tmpP.set(pb.x, pb.top + 2.4 * sh.sc * 0.55 + 1.4, pb.z); sh.g.position.copy(orb).lerp(tmpP, kk);
+            if (sh.mode === 'approach') yaw = Math.atan2(tmpP.x - orb.x, tmpP.z - orb.z);
+            else if (sh.mode === 'dock') { if (sh.dockYaw == null) sh.dockYaw = sh.g.rotation.y; yaw = sh.dockYaw; spin = 0.25; } else sh.dockYaw = null; sh.pad.glow.material.opacity = sh.mode === 'dock' ? 0.7 + 0.3 * Math.sin(t * 6) : 0.4;
+          } else sh.g.position.copy(orb);
           if (sh.kind === 'saucer') { sh.g.rotation.y += dt * 0.4; sh.g.rotation.z = Math.sin(t * 0.3 + i) * 0.04; }
-          else { sh.g.rotation.y = Math.atan2(-d * s, d * c); sh.g.rotation.z = -d * 0.1 + Math.sin(t * 0.5 + i) * 0.02; }
-          sh.g.visible = tier < 2 || i < 4; if (sh.beam) sh.beam.visible = tier < 1;
+          else { var dy = yaw - sh.g.rotation.y; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); sh.g.rotation.y += dy * Math.min(1, dt * 2.5); sh.g.rotation.z = (sh.mode === 'dock' ? 0 : -d * 0.1) + Math.sin(t * 0.5 + i) * 0.02; }
+          sh.rotors.forEach(function (r) { r.rotation.y += dt * 38 * spin; });
+          sh.g.visible = tier < 2 || i < 4; sh.beam.visible = tier < 1 && sh.mode !== 'dock';
           var pulse = 0.82 + 0.18 * Math.sin(t * 6 + i * 2); sh.glows.forEach(function (gl) { gl.material.opacity = pulse; });
           sh.pts.material.opacity = 0.35 + 0.65 * (Math.sin(t * 3 + i) > 0.3 ? 1 : 0.1);
         });
       }
       return { update: update, count: ships.length, root: grp };
     })();
-    var nearView = false, hoverA = null, hoverRing = new THREE.Mesh(new THREE.TorusGeometry(BAL + 0.4, 0.14, 8, 96), new THREE.MeshBasicMaterial({ color: 0xdff4ff, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
-    hoverRing.rotation.x = Math.PI / 2; hoverRing.visible = false; tower.add(hoverRing);
+    var nearView = false, hoverA = null, hoverRing = frameBuf(HX[0] + 1.0, HZ[0] + 1.0, 0, 0.22).mesh(new THREE.MeshBasicMaterial({ color: 0xdff4ff, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+    hoverRing.visible = false; tower.add(hoverRing);
     var liftFx = (function () {
       var T = THREE, lifts = [], notes = [], queue = [], nextAmb = 9, V3 = T.Vector3, SPD = 3.1;
       var glassM = new T.MeshBasicMaterial({ color: 0x9fe0ff, transparent: true, opacity: 0.18, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide });
@@ -2848,7 +3064,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       var w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
       renderer.setSize(w, h, false); if (CINE.composer) { CINE.composer.setPixelRatio(renderer.getPixelRatio()); CINE.composer.setSize(w, h); } camera.aspect = w / h; camera.fov = w / h < 0.8 ? 60 : 40;
       applyShift(true);
-      HOME.r = w / h < 0.8 ? 142 : 168; HOME.ty = w / h < 0.8 ? 58 : 62;
+      HOME.r = w / h < 0.8 ? 130 : 158; HOME.ty = w / h < 0.8 ? 56 : 58;
       if (!selected) { cam.gr = HOME.r; cam.gty = HOME.ty; }
     }
     new ResizeObserver(layout).observe(stage); layout(); layoutReady = true; setTimeout(cineUpdate, 2500); cam.r = cam.gr; cam.ty = cam.gty;
@@ -2981,7 +3197,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       else if (st === 'working') { v.sayText = hi + ' Soy ' + a.name + '. Ahora estoy ' + (act.indexOf('ando') > -1 || act.indexOf('iendo') > -1 ? act : 'con: ' + act) + '.'; }
       else v.sayText = hi + ' Soy ' + a.name + '. No tengo pendientes, avísame si me necesitas.';
       v.sayUntil = clockT + 5; if (st !== 'error') v.greetEnd = clockT + 4.5;
-      if (st !== 'error') voiceSay(a, v.sayText, null, true);
+      if (st !== 'error' && !JT.on) { try { if (TTS) TTS.cancel(); } catch (e) {} voiceSay(a, agentBrief(a).speech, null, false); }
     }
 
     /* ---- Bucle ---- */
@@ -3040,7 +3256,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       }
       var dt = Math.min(0.05, (now - last) / 1000); last = now; clockT += dt; var sdt = dt * speedMul; animT += sdt;
       if (!selected && !selectedProject && !selectedPlanet && !drag && !reduce) cam.th += sdt * 0.04;
-      if (cam.follow && !drag) { var dth = cam.follow.ang - cam.th; dth = Math.atan2(Math.sin(dth), Math.cos(dth)); cam.th += dth * Math.min(1, dt * 1.2); }
+      if (cam.follow && !drag) { var dth = (cam.follow.deskAng != null ? cam.follow.deskAng : cam.follow.ang) - cam.th; dth = Math.atan2(Math.sin(dth), Math.cos(dth)); cam.th += dth * Math.min(1, dt * 1.2); }
       applyShift(false);
       var k = 1 - Math.pow(0.002, dt);
       cam.r += (cam.gr - cam.r) * k * 0.7; cam.ty += (cam.gty - cam.ty) * k * 0.7; cam.tx += (cam.gtx - cam.tx) * k * 0.7; cam.tz += (cam.gtz - cam.tz) * k * 0.7;
@@ -3067,7 +3283,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
           else if (st === 'warning') { v.walk = true; v.timer = 5; }
           else { v.walk = false; v.timer = 6 + rnd() * 5; v.pose = ['look', 'think', 'stretch', 'rest'][Math.floor(rnd() * 4)]; }
         }
-        var wantSeat = nearView && (st === 'working' || st === 'idle'), seatWalk = 0;
+        var wantSeat = (st === 'working' || st === 'idle'), seatWalk = 0;
         var dA = Math.atan2(Math.sin(a.deskAng - a.ang), Math.cos(a.deskAng - a.ang));
         if (wantSeat) {
           if (Math.abs(dA) > 0.05 && v.seat < 0.02) { a.ang += Math.sign(dA) * Math.min(Math.abs(dA), 0.6 * dt); seatWalk = 1; v.rad += (a.R - v.rad) * Math.min(1, dt * 3); }
@@ -3078,7 +3294,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         var tv = (!greeting && v.walk && (working || st === 'warning')) ? (working ? 0.2 : 0.1) : 0;
         if (wantSeat || v.seat > 0) tv = 0;
         v.vel += (tv - v.vel) * Math.min(1, dt * 1.6);
-        if (!wantSeat && v.seat <= 0) a.ang += a.dir * v.vel * sdt;
+        if (!wantSeat && v.seat <= 0) { v.pace = (v.pace || 0) + v.vel * sdt * 2.6; a.ang = a.deskAng + Math.sin(v.pace) * 0.34; }
         var cx = Math.cos(a.ang), sz = Math.sin(a.ang);
         var legW = Math.max(Math.min(1, v.vel / 0.2), seatWalk), sp = v.seat * v.seat * (3 - 2 * v.seat);
         rb.position.set(cx * v.rad, a.y - 0.16 + (legW > 0.05 ? Math.abs(Math.sin(clockT * 7)) * 0.05 * legW : 0) - sp * 0.86, sz * v.rad);
@@ -3086,7 +3302,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         if (greeting) yaw = Math.atan2(camP.x - rb.position.x, camP.z - rb.position.z);
         else if (v.seat > 0.02 || seatWalk === 0.6) yaw = Math.atan2(cx, sz);
         else if (seatWalk === 1) yaw = Math.atan2(-Math.sign(dA) * sz, Math.sign(dA) * cx);
-        else if (v.vel > 0.02) yaw = Math.atan2(-a.dir * sz, a.dir * cx);
+        else if (v.vel > 0.02) { var pd = (Math.cos(v.pace || 0) >= 0 ? 1 : -1) * a.dir; yaw = Math.atan2(-pd * sz, pd * cx); }
         else if (working) yaw = Math.atan2(-cx, -sz);
         else yaw = Math.atan2(cx, sz);
         var dyaw = yaw - rb.rotation.y; dyaw = Math.atan2(Math.sin(dyaw), Math.cos(dyaw)); rb.rotation.y += dyaw * Math.min(1, dt * 3);
@@ -3125,8 +3341,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         v.panel.visible = working && !greeting;
         if (v.seat > 0.5) { v.panel.position.set(0.85, 1.8 + Math.sin(tt * 0.7) * 0.02, 0.62); v.panel.rotation.y = -0.45; v.panel.scale.setScalar(0.8); } else if (v.panel.scale.x !== 1) { v.panel.scale.setScalar(1); v.panel.position.set(1.2, 1.55, 0.5); v.panel.rotation.y = -0.5; }
         if (v.steam) { v.steam.position.y = 2.0 + ((tt * 0.25) % 1) * 0.35; v.steam.material.opacity = 0.5 * (1 - ((tt * 0.25) % 1)); }
-        if (v.globe) { v.globe.rotation.y += dt * 0.8; v.globe.rotation.x += dt * 0.3; v.globe.visible = rb.visible; v.desk.visible = rb.visible; }
+        if (v.globe) { v.globe.rotation.y += dt * 0.8; v.globe.rotation.x += dt * 0.3; v.globe.visible = rb.visible; v.desk.visible = rb.visible; if (v.officeG) { v.officeG.visible = rb.visible; v.boardG.visible = rb.visible; } }
         if (working) { v.panelT -= dt; v.prog = (v.prog + sdt * 0.03) % 1; if (v.panelT <= 0 || v.panelAct !== a.act) { v.panelT = 0.5; drawPanel(a, v.prog); } if (v.seat <= 0.5) v.panel.position.y = 1.55 + Math.sin(tt * 0.7) * 0.05; }
+        v.boardT -= dt; if (v.boardT <= 0) { v.boardT = 1.5; var bsig = boardSig(a); if (bsig !== v.boardSig) { v.boardSig = bsig; drawBoard(a); } }
         v.icon.position.y = 2.65 + Math.sin(tt * 0.8) * 0.08;
         v.iconMat.opacity = (st === 'idle' ? 0.55 : 1) * gh;
         v.glowMat.opacity = gh * (st === 'error' ? 0.5 + 0.5 * Math.abs(Math.sin(clockT * 4)) : st === 'idle' ? 0.5 : 1);
@@ -3218,7 +3435,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       });
       if (skyFx) skyFx.update(sdt, clockT, tier, tier < 2);
       shipFx.update(dt, clockT, tier); liftFx.update(dt, clockT);
-      if (hoverA && hoverA.v && hoverA.v.ghost > 0.45) { hoverRing.visible = true; hoverRing.position.y = hoverA.floorY - FH / 2 + 0.25; hoverRing.material.opacity = 0.45 + 0.3 * Math.sin(clockT * 5); } else hoverRing.visible = false;
+      if (hoverA && hoverA.v && hoverA.v.ghost > 0.45) { hoverRing.visible = true; hoverRing.position.y = hoverA.floorY - FH / 2 + 0.25; hoverRing.scale.set(hxOf(hoverA.i) / HX[0], 1, hzOf(hoverA.i) / HZ[0]); hoverRing.material.opacity = 0.45 + 0.3 * Math.sin(clockT * 5); } else hoverRing.visible = false;
       logo.rotation.y += sdt * 1.1; logoRing.rotation.y += sdt * 0.8;
       halo.rotation.z += sdt * 0.4; halo.position.y = TOP + CH + 8 + Math.sin(animT) * 0.4;
       beacon.material.opacity = 0.65 + 0.35 * Math.sin(clockT * 1.8); streakH.material.opacity = 0.4 + 0.2 * Math.sin(clockT * 1.8 + 1); streakH.visible = streakV.visible = tier < 2;
@@ -3236,7 +3453,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
 
     return {
       applyVisual: applyVisual,
-      focus: function (a, fromTour) { cam.gtx = 0; cam.gtz = 0; cam.gty = a.y + 2; cam.gph = 1.3; cam.follow = a; cam.gr = window.innerWidth > 860 ? 50 : 62; if (!fromTour) { a.v.lastGreet = -99; greetAgent(a); } },
+      focus: function (a, fromTour) { cam.gtx = Math.cos(a.deskAng) * 4.5; cam.gtz = Math.sin(a.deskAng) * 4.5; cam.gty = a.y + 2; cam.gph = 1.3; cam.follow = a; cam.gr = window.innerWidth > 860 ? 44 : 58; if (!fromTour) { a.v.lastGreet = -99; greetAgent(a); } },
       home: function () { cam.gtx = 0; cam.gtz = 0; cam.gty = HOME.ty; cam.gr = HOME.r; cam.gph = 1.42; cam.follow = null; },
       setProjects: setProjects,
       probe: function (kind, id) {
