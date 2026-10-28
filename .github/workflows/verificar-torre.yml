@@ -1,0 +1,16 @@
+name: Verificar la Torre de Control
+on:
+  push:
+    paths: ['torre-de-control-de-agentes-imperial-remodeling/**']
+  pull_request:
+    paths: ['torre-de-control-de-agentes-imperial-remodeling/**']
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar instalación (archivos, HTML, secretos, Python, respaldo)
+        run: python3 torre-de-control-de-agentes-imperial-remodeling/setup/verificar_setup.py

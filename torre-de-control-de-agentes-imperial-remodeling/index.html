@@ -215,6 +215,9 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 #voLine.show { display: block; }
 .jarvis { position: absolute; left: var(--gutter-l); top: 92px; bottom: 64px; width: 340px; display: flex; flex-direction: column; background: rgba(5, 10, 16, 0.94); backdrop-filter: blur(8px); border: 1px solid rgba(92, 200, 255, 0.4); box-shadow: 0 0 40px rgba(92, 200, 255, 0.16); z-index: 7; }
 .jarvis[hidden] { display: none; }
+.sysrow { display: grid; grid-template-columns: 12px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); } .sysrow b { display: block; font-weight: 500; font-size: 13px; } .sysrow span { display: block; font-size: 12px; line-height: 1.4; color: var(--muted); margin-top: 2px; }
+.imp { padding: 9px 0; border-bottom: 1px solid var(--line); } .imp b { font-weight: 500; font-size: 13px; } .imp p { margin: 3px 0 6px; font-size: 12px; line-height: 1.4; color: var(--muted); } .imp .chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; } .imp .chips .btn { padding: 3px 9px; font-size: 11px; } .impsec { font: 500 10px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 12px 0 0; }
+.imp.done b { text-decoration: line-through; color: var(--muted); }
 #app.jaopen .roster { visibility: hidden; }
 .jarvis.mini { bottom: auto; } .jarvis.mini .jabody, .jarvis.mini .jaform, .jarvis.mini .jaans, .jarvis.mini footer { display: none; } .jarvis header { cursor: pointer; }
 .jabody li { cursor: default; } .jabody li.on { background: rgba(92, 200, 255, 0.12); box-shadow: inset 2px 0 0 var(--accent); }
@@ -230,7 +233,8 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .jabody li::before { content: ""; position: absolute; left: 2px; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .jabody .w li::before { background: var(--warn); } .jabody .b li::before { background: var(--err); } .jabody .m li::before { background: var(--idle); }
 .jaform { display: flex; gap: 8px; padding: 8px 14px; border-top: 1px solid var(--line); } .jaform input { flex: 1; min-width: 0; background: var(--panel-2); border: 1px solid var(--line); color: var(--fg); padding: 8px 10px; font: 13px var(--body); border-radius: 3px; }
-.jaans { margin: 0 14px 8px; padding: 8px 10px; font-size: 13px; line-height: 1.45; background: var(--panel-2); border-left: 2px solid var(--accent); white-space: pre-wrap; max-height: 150px; overflow-y: auto; }
+.jastop { margin: 0 14px 8px; } .jachk + .jachk { margin-left: 8px; }
+.jaans { margin: 0 14px 8px; padding: 8px 10px; font-size: 13px; line-height: 1.45; background: var(--panel-2); border-left: 2px solid var(--accent); white-space: pre-wrap; max-height: 210px; overflow-y: auto; }
 .jarvis footer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 14px 12px; } .jachk { margin-left: auto; font: 11px var(--mono); color: var(--muted); display: flex; align-items: center; gap: 5px; }
 @keyframes pop { 30% { transform: scale(1.18); border-color: #ffd98a; } }
 #app.nopanel { grid-template-columns: minmax(0, 1fr); }
@@ -381,7 +385,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     <button class="ico rdock" id="rosterDock" type="button" aria-label="Mostrar el directorio de pisos"></button>
     <button class="ico zenbtn" id="zenBtn" type="button" aria-label="Modo inmersivo (tecla H)" title="Modo inmersivo (H)"></button>
     <div class="voice" id="voiceBox"><button class="btn" id="voTalk" type="button" title="Los agentes te hablan">Voz: no</button><button class="btn" id="voMic" type="button" title="Háblale a la torre">Hablar</button><button class="btn" id="voJar" type="button" title="Informe de Jarvis, el agente principal">Jarvis</button><span id="voLine" role="status" aria-live="polite"></span></div>
-    <section class="jarvis" id="jarvis" hidden role="dialog" aria-label="Informe de Jarvis"><header><i class="orb" aria-hidden="true"></i><div><b>Jarvis</b><p>Agente principal · piso Reportes</p></div><button class="btn" id="jaMini" type="button" aria-label="Minimizar a Jarvis" title="Minimizar">–</button><button class="btn" id="jaClose" type="button" aria-label="Cerrar informe">×</button></header><div class="jabody" id="jaBody"></div><form class="jaform" id="jaForm" autocomplete="off"><input id="jaIn" type="text" maxlength="200" placeholder="Escríbele o dicta: estado, reinicia facturación…" aria-label="Orden para Jarvis"><button class="btn primary" type="submit">Enviar</button></form><div class="jaans" id="jaAns" role="status" aria-live="polite" hidden></div><footer><button class="btn primary" id="jaTour" type="button">Recorrer problemas</button><button class="btn" id="jaSpeak" type="button">Leer en voz alta</button><button class="btn" id="jaSee" type="button">Ver a Jarvis</button><button class="btn" id="jaRef" type="button">Actualizar</button><label class="jachk"><input type="checkbox" id="jaAuto"> Abrir al entrar</label></footer></section>
+    <section class="jarvis" id="jarvis" hidden role="dialog" aria-label="Informe de Jarvis"><header><i class="orb" aria-hidden="true"></i><div><b>Jarvis</b><p>Agente principal · piso Reportes</p></div><button class="btn" id="jaMini" type="button" aria-label="Minimizar a Jarvis" title="Minimizar">–</button><button class="btn" id="jaClose" type="button" aria-label="Cerrar informe">×</button></header><div class="jabody" id="jaBody"></div><form class="jaform" id="jaForm" autocomplete="off"><input id="jaIn" type="text" maxlength="300" placeholder="Pídele lo que quieras: estado, corrige facturación, crea una tarea…" aria-label="Orden para Jarvis"><button class="btn" id="jaMic" type="button" title="Hablar con Jarvis" aria-label="Hablar con Jarvis"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button class="btn primary" type="submit">Enviar</button></form><div class="jaans" id="jaAns" role="status" aria-live="polite" hidden></div><div class="jastop" id="jaStopBox" hidden><button class="btn" id="jaStop" type="button">Detener a Jarvis</button></div><footer><button class="btn primary" id="jaTour" type="button">Recorrer problemas</button><button class="btn" id="jaSpeak" type="button">Leer en voz alta</button><button class="btn" id="jaSee" type="button">Ver a Jarvis</button><button class="btn" id="jaRef" type="button">Actualizar</button><label class="jachk"><input type="checkbox" id="jaHands"> Manos libres</label><label class="jachk"><input type="checkbox" id="jaAuto"> Abrir al entrar</label></footer></section>
     <div class="score" id="score" title="Meteoritos capturados. Toca los que cruzan el cielo.">☄ 0</div>
     <div class="nogl" id="nogl" hidden>Tu navegador no pudo iniciar la vista 3D. La bandeja y las tareas siguen funcionando a la derecha.</div>
   </main>
@@ -396,6 +400,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <button class="tb" role="tab" id="tabMem" aria-selected="false" aria-label="Memoria" title="Memoria" type="button"><b id="bMem"></b></button>
       <button class="tb" role="tab" id="tabStruct" aria-selected="false" aria-label="Estructura" title="Estructura" type="button"></button>
       <button class="tb" role="tab" id="tabAsst" aria-selected="false" aria-label="Asistente" title="Asistente" type="button"></button>
+      <button class="tb" role="tab" id="tabSys" aria-selected="false" aria-label="Sistema y mejoras" title="Sistema y mejoras" type="button"><b id="bSys"></b></button>
       <button class="ico hidepanel" id="panelHide" type="button" aria-label="Ocultar el panel"></button>
     </div>
     <div class="ptitle" id="ptitle">Bandeja</div>
@@ -476,6 +481,18 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <div id="groupList"></div>
       <p class="sec">Base de datos</p>
       <div id="dbInv"></div>
+    </div>
+    <div class="list" id="sys" role="tabpanel" hidden>
+      <div class="tbar"><button class="btn primary" id="sysRun" type="button">Verificar ahora</button><button class="btn" id="sysFix" type="button">Reparar datos</button><button class="btn" id="sysBack" type="button">Descargar respaldo</button></div>
+      <p class="note" id="sysNote"></p>
+      <div id="sysList"></div>
+      <p class="sec">Mejoras por sección</p>
+      <form class="tform" id="impForm" autocomplete="off">
+        <div class="two"><label>Sección<select id="imSec"></select></label><label>Mejora<input id="imTitle" type="text" maxlength="120" required></label></div>
+        <label>Detalle<textarea id="imDet" maxlength="400" rows="2"></textarea></label>
+        <div class="acts"><button class="btn primary" type="submit">Agregar</button><button class="btn" id="imAsk" type="button">Pedir ideas a Jarvis</button></div>
+      </form>
+      <div id="impList"></div>
     </div>
     <div class="list" id="asst" role="tabpanel" hidden>
       <p class="sec">Pídele a Claude</p>
@@ -582,6 +599,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   if (PREFS.v !== 2) { PREFS.bg = 'espacio'; PREFS.q = 'auto'; }
   var qualityPref = PREFS.q || 'auto', alarmPrefsLoaded = true, rosterOpen = PREFS.roster !== false, panelOpen = PREFS.panel !== false, zen = false, bgPref = PREFS.bg || 'espacio', score = +PREFS.score || 0, selectedPlanet = null;
   var ICO = {
+    sys: '<path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>',
     inbox: '<path d="M3 13l3-8h12l3 8v6H3z"/><path d="M3 13h5l1 3h6l1-3h5"/>', tasks: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.5 1.5L7.5 5M3.5 12l1.5 1.5L7.5 11M3.5 18l1.5 1.5L7.5 17"/>',
     projects: '<path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6M8 11h2M14 11h2"/>', asst: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 16l.8 2.2L21 19l-2.2.8L18 22l-.8-2.2L15 19l2.2-.8z"/>',
     posts: '<rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="1.6"/><path d="M4 16l5-4 4 3 3-2 4 3"/>', tokens: '<circle cx="12" cy="12" r="8"/><path d="M13 7l-4 6h5l-3 5"/>',
@@ -591,7 +609,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   };
   function svg(k) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICO[k] + '</svg>'; }
   var POST_STAGES = ['Idea', 'Borrador', 'Programado', 'Publicado'], NETS = ['Instagram', 'Facebook', 'TikTok', 'Google'], MEM_KINDS = ['Regla', 'Proceso', 'Cliente', 'Decisión', 'Preferencia', 'Nota'];
-  var TAB_TITLES = { struct: 'Estructura: agentes y grupos', inbox: 'Bandeja', tasks: 'Tareas programadas', projects: 'Obras', posts: 'Publicaciones', tokens: 'Gasto de tokens', mem: 'Memoria', asst: 'Asistente' };
+  var TAB_TITLES = { sys: 'Sistema y mejoras', struct: 'Estructura: agentes y grupos', inbox: 'Bandeja', tasks: 'Tareas programadas', projects: 'Obras', posts: 'Publicaciones', tokens: 'Gasto de tokens', mem: 'Memoria', asst: 'Asistente' };
   var POSTS = [
     { id: 'o1', title: 'Antes y después: cocina con isla', network: 'Instagram', status: 'Programado', at: t0 + 3 * 3600000, caption: '', tokens: 1800 },
     { id: 'o2', title: 'Cómo elegir cuarzo para tu cocina', network: 'Facebook', status: 'Borrador', at: t0 + 26 * 3600000, caption: 'Borrador: tres claves para elegir cuarzo sin equivocarte.', tokens: 2400 },
@@ -700,7 +718,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     t.textContent = 'Voz: ' + (VOICE.on ? 'sí' : 'no'); t.classList.toggle('on', VOICE.on);
     m.textContent = VOICE.listening ? 'Escuchando…' : 'Hablar'; m.classList.toggle('rec', VOICE.listening); m.title = VOICE.micBlocked ? 'Micrófono bloqueado: escribe tus órdenes en el cuadro de Jarvis' : 'Háblale a la torre';
   }
-  function pickVoice(a) { try { var vs = (TTS && TTS.getVoices()) || [], es = vs.filter(function (v) { return /^es/i.test(v.lang); }); if (!es.length) return null; var us = es.filter(function (v) { return /^es[-_](US|MX)/i.test(v.lang); }); var pool = us.length ? us : es; return pool[(a ? a.i : 0) % pool.length]; } catch (e) { return null; } }
+  function pickVoice(a) { try { var vs = (TTS && TTS.getVoices()) || [], es = vs.filter(function (v) { return /^es/i.test(v.lang); }); if (!es.length) return null; var loc = es.filter(function (v) { return v.localService; }), pool = loc.length ? loc : es, us = pool.filter(function (v) { return /^es[-_](US|MX)/i.test(v.lang); }); return (us.length ? us : pool)[0]; } catch (e) { return null; } }
   function voiceSay(a, text, done, low, intr) {
     text = String(text || ''); var who = a ? a.name : 'Jarvis';
     if (VOICE.on || VOICE.listening) voiceLine(text, who);
@@ -713,12 +731,20 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         if (!chunks.length) { if (done) done(); return; }
         var vo = pickVoice(a);
         chunks.forEach(function (c, i) {
-          var u = new SpeechSynthesisUtterance(c.trim()); u.lang = 'es-US'; if (vo) { u.voice = vo; u.lang = vo.lang; }
-          u.rate = 1.0; u.pitch = a ? 0.8 + (a.i % 6) * 0.1 : 1; u.volume = 1;
           var last = i === chunks.length - 1, fin = function () { if (last && done) { var d = done; done = null; d(); } };
-          u.onstart = function () { VOICE.heard = true; }; u.onend = fin;
-          u.onerror = function (ev) { if (ev && ev.error === 'not-allowed' && !VOICE.heard) voiceLine('Toca la pantalla una vez para que Jarvis te hable.', 'Jarvis'); if (ev && (ev.error === 'canceled' || ev.error === 'interrupted')) { done = null; return; } fin(); };
-          TTS.speak(u);
+          (function speakOne(useVoice) {
+            var u = new SpeechSynthesisUtterance(c.trim()); u.lang = 'es-US'; if (vo && useVoice) { u.voice = vo; u.lang = vo.lang; }
+            u.rate = a ? 0.96 + (a.i % 4) * 0.03 : 1; u.pitch = a ? 0.85 + (a.i % 6) * 0.07 : 1; u.volume = 1;
+            u.onstart = function () { VOICE.heard = true; }; u.onend = fin;
+            u.onerror = function (ev) {
+              var er = ev && ev.error;
+              if (er === 'not-allowed' && !VOICE.heard) voiceLine('Toca la pantalla una vez para que Jarvis te hable.', 'Jarvis');
+              if (er === 'canceled' || er === 'interrupted') { done = null; return; }
+              if (useVoice && vo && er && er !== 'not-allowed') { speakOne(false); return; }
+              fin();
+            };
+            TTS.speak(u);
+          })(true);
         });
       };
       if (intr) { TTS.cancel(); setTimeout(go, 90); } else go();
@@ -798,6 +824,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (!ALARM.sound) improve.push('El sonido de alarma está apagado.');
     if (VOICE.micBlocked || micPolicyBlocked()) improve.push('El micrófono está bloqueado en este marco: mientras tanto escribe tus órdenes aquí abajo.'); else if (!VOICE.on) improve.push('Activa «Voz» para que los agentes te hablen.');
     if (!SAMPLE) improve.push('Las preguntas libres a Claude solo funcionan dentro de claude.ai.');
+    var sbad = sysChecks().filter(function (c) { return c.st === 'bad'; });
+    sbad.forEach(function (c) { watch.push({ t: 'Sistema: ' + c.t + ' — ' + c.d, b: true, acts: [{ l: 'Abrir sistema', k: 'tab', id: 'sys' }] }); });
+    var oi = IMPROVE.filter(function (m) { return m.status !== 'Hecho'; }).length; if (oi) improve.push({ t: 'Tienes ' + oi + ' mejoras pendientes en la lista de mejoras.', acts: [{ l: 'Ver mejoras', k: 'tab', id: 'sys' }] });
     return { good: good, watch: watch, improve: improve, live: live, N: N };
   }
   function jarvisHtml(r) {
@@ -822,14 +851,54 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (speak) voiceSay(null, jarvisSpeech(r), function () { if (VOICE.on && VOICE.micOk && SR && !VOICE.micBlocked) startListen(8000); });
     return r;
   }
-  function jarvisAsk(q) {
-    var out = $('#jaAns'); out.hidden = false;
-    if (!SAMPLE) { out.textContent = 'No entendí esa orden. Di «ayuda» para ver lo que puedo hacer. Las preguntas libres funcionan al abrir la torre dentro de claude.ai.'; return; }
-    var r = jarvisReport(), ctx = 'Bien: ' + r.good.join(' ') + '\nAtención: ' + r.watch.map(function (x) { return x.t; }).join(' ') + '\nMejorar: ' + r.improve.join(' ');
-    var prompt = 'Eres Jarvis, el agente principal de la Torre de Control de Imperial Remodeling (remodelación en Dallas–Fort Worth). Responde en español, breve (máximo 5 líneas), práctico y sin inventar datos. Solo sugiere; nunca digas que enviaste o hiciste algo, porque no puedes actuar sin que el dueño lo apruebe. Estado actual:\n' + ctx + '\n\nPregunta del dueño: ' + String(q).slice(0, 300);
-    out.textContent = 'Jarvis está pensando…';
-    SAMPLE(prompt, { onText: function (o) { out.textContent = o.text; } }).then(function (res) { var t = (res && res.text) || out.textContent; out.textContent = t; addUsage('reportes', est(prompt), est(t), 'pregunta a Jarvis'); voiceSay(null, t); }).catch(function () { out.textContent = 'No pude consultar a Claude ahora. Inténtalo otra vez.'; });
+
+  /* ---------- Jarvis conversacional: Claude con herramientas dentro de la torre ---------- */
+  var JCHAT = { turns: [], ctl: null, busy: false, tools: false, hands: false };
+  var JRULES = 'Eres Jarvis, el agente principal de la Torre de Control de Agentes de Imperial Remodeling (remodelación en Dallas–Fort Worth, dueño: Ernesto). Hablas en español, de forma cálida y directa; tus respuestas se leen en voz alta, así que usa frases cortas, sin listas largas ni formato Markdown (máximo 5 frases). Puedes consultar el estado de la torre y actuar con tus herramientas: enfocar un agente, abrir una sección, reiniciar o pausar agentes, crear tareas, guardar notas en la memoria y anotar mejoras. Después de actuar, di en una frase qué hiciste. REGLAS: nunca envíes ni contestes nada a clientes, correos, redes ni terceros; no apruebes recados de la bandeja ni toques cobros: para eso guía al dueño al botón correspondiente (abre la sección y dile cuál tocar). No inventes datos: si no lo sabes, dilo y ofrece revisarlo. Si una orden es ambigua, pregunta una sola cosa.';
+  function agentFrom(txt) { var n = normV(txt), a = null; AGENTS.forEach(function (x) { if (!a && (x.id === n || normV(x.name) === n)) a = x; }); return a || findAgentV(n) || AGENTS.filter(function (x) { return n && normV(x.name).indexOf(n) > -1; })[0] || null; }
+  function jarvisState() {
+    var r = jarvisReport(), L = ['Agentes:'];
+    AGENTS.forEach(function (a) { L.push('- ' + a.name + ' [' + a.id + '] ' + LBL[a.status] + (a.act ? ': ' + a.act : '') + (a.msg ? ' (' + a.msg + ')' : '')); });
+    L.push('Atención: ' + (r.watch.map(function (x) { return x.t; }).join(' | ') || 'nada urgente'));
+    L.push('Por mejorar: ' + r.improve.map(function (x) { return typeof x === 'string' ? x : x.t; }).join(' | '));
+    L.push('Agente abierto en pantalla: ' + (selected ? byId(selected).name : 'ninguno'));
+    return L.join('\n').slice(0, 6000);
   }
+  var SECTIONS_TAB = { bandeja: 'inbox', tareas: 'tasks', obras: 'projects', publicaciones: 'posts', tokens: 'tokens', gastos: 'tokens', memoria: 'mem', estructura: 'struct', grupos: 'struct', asistente: 'asst', sistema: 'sys', mejoras: 'sys', salud: 'sys' };
+  function jarvisTools() {
+    function need(x) { var a = agentFrom(x && x.agent); if (!a) throw new Error('No encuentro ese agente. Agentes: ' + AGENTS.map(function (q) { return q.id; }).join(', ')); return a; }
+    return [
+      { name: 'get_tower_status', description: 'Devuelve el estado actual de todos los agentes, alertas, bandeja y tareas. Úsala antes de afirmar algo sobre la torre.', execute: function () { return jarvisState(); } },
+      { name: 'focus_agent', description: 'Lleva la cámara 3D y la ficha al agente indicado (por id o nombre).', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); select(a.id); return 'Mostrando a ' + a.name; } },
+      { name: 'open_section', description: 'Abre una sección del panel: bandeja, tareas, obras, publicaciones, tokens, memoria, estructura, asistente o sistema.', inputSchema: { type: 'object', properties: { section: { type: 'string' } }, required: ['section'] }, execute: function (i) { var k = SECTIONS_TAB[normV(i && i.section)]; if (!k) throw new Error('Sección desconocida'); panelOpen = true; zen = false; applyUi(); tab(k); return 'Abrí ' + TAB_TITLES[k]; } },
+      { name: 'restart_agent', description: 'Reinicia un agente que esté con falla o lento (acción interna de la torre).', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (a.status !== 'error' && a.status !== 'warning') return a.name + ' ya está bien, no hace falta reiniciarlo.'; fixAgent(a); return 'Reiniciando ' + a.name; } },
+      { name: 'pause_agent', description: 'Pone un agente en pausa.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (a.status !== 'idle') togglePause(a); return a.name + ' en pausa'; } },
+      { name: 'resume_agent', description: 'Reanuda un agente en pausa.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (a.status === 'idle') togglePause(a); return a.name + ' reanudado'; } },
+      { name: 'create_task', description: 'Crea una tarea programada interna para un agente. minutes = en cuántos minutos corre la primera vez; repeat_minutes = cada cuántos minutos se repite (0 = una sola vez).', inputSchema: { type: 'object', properties: { agent: { type: 'string' }, title: { type: 'string' }, minutes: { type: 'number' }, repeat_minutes: { type: 'number' } }, required: ['agent', 'title'] }, execute: function (i) { var a = need(i), t = String(i.title || '').slice(0, 120); if (!t) throw new Error('Falta el título'); addTask({ title: t, agent: a.id, every: Math.max(0, Math.round(+i.repeat_minutes || 0)), at: Date.now() + Math.max(1, Math.round(+i.minutes || 60)) * 60000 }); return 'Tarea creada para ' + a.name + ': ' + t; } },
+      { name: 'save_memory_note', description: 'Guarda una nota en la memoria de la torre (reglas, procesos, preferencias del dueño).', inputSchema: { type: 'object', properties: { title: { type: 'string' }, body: { type: 'string' }, kind: { type: 'string', description: 'Regla, Proceso, Cliente, Decisión, Preferencia o Nota' } }, required: ['title', 'body'] }, execute: function (i) { var rec = { title: String(i.title || '').slice(0, 100), body: String(i.body || '').slice(0, 1500), kind: MEM_KINDS.indexOf(i.kind) > -1 ? i.kind : 'Nota', tags: [], pinned: false, source: 'jarvis', createdAt: Date.now(), updatedAt: Date.now() }; if (!rec.title || !rec.body) throw new Error('Falta título o texto'); if (DB) DB.collection('memory').add(rec).catch(fail); else { rec.id = 'm' + (++localId); MEMORY.push(rec); renderMemory(); } logEvent('Jarvis guardó la nota “' + rec.title + '”', '', 'mem'); refresh(); return 'Nota guardada'; } },
+      { name: 'add_improvement', description: 'Anota una mejora para una sección de la torre en la lista de mejoras del dueño.', inputSchema: { type: 'object', properties: { section: { type: 'string' }, title: { type: 'string' }, detail: { type: 'string' } }, required: ['section', 'title'] }, execute: function (i) { addImprovement({ section: String(i.section || 'General').slice(0, 40), title: String(i.title || '').slice(0, 120), detail: String(i.detail || '').slice(0, 400), source: 'jarvis' }); return 'Mejora anotada'; } },
+      { name: 'run_system_check', description: 'Revisa la salud del sistema (base de datos, Claude, voz, micrófono, datos, errores) y devuelve los puntos con problemas.', execute: function () { return sysChecks().filter(function (c) { return c.st === 'bad' || c.st === 'warn'; }).map(function (c) { return c.t + ': ' + c.d; }).join(' | ') || 'Todo en orden'; } }
+    ];
+  }
+  function chatShow(t) { var out = $('#jaAns'); out.hidden = false; out.textContent = t; out.scrollTop = out.scrollHeight; }
+  function jarvisAsk(q) {
+    if (!SAMPLE) { chatShow('Para conversar con Claude abre la torre dentro de claude.ai. Mientras tanto entiendo órdenes como: estado, sube, baja, piso 5, habla con calendario, reinicia facturación.'); return; }
+    if (JCHAT.busy) { chatShow('Un momento, sigo con tu orden anterior.'); return; }
+    var turns = JCHAT.turns.slice(-8); turns.push({ role: 'user', content: String(q).slice(0, 600) });
+    var ctl = JCHAT.ctl = new AbortController(); JCHAT.busy = true; $('#jaStopBox').hidden = false; chatShow('Jarvis está pensando…');
+    var opts = { signal: ctl.signal, cache: false, modelTier: 'quick', onText: function (o) { chatShow('Jarvis: ' + o.text); } };
+    if (JCHAT.tools) opts.tools = jarvisTools();
+    SAMPLE([{ role: 'user', content: JRULES + '\n\nESTADO ACTUAL DE LA TORRE:\n' + jarvisState() }].concat(turns), opts).then(function (res) {
+      var t = (res && res.text) || ''; JCHAT.turns = turns.concat([{ role: 'assistant', content: t.slice(0, 800) }]).slice(-12); chatShow('Jarvis: ' + t);
+      addUsage('reportes', est(q) + 800, est(t), 'conversación con Jarvis');
+      voiceSay(null, t, function () { if (JCHAT.hands && VOICE.micOk && SR && !VOICE.micBlocked) startListen(9000); }, false, true);
+    }).catch(function (e) {
+      var c = e && e.code, m = { not_granted: 'No diste permiso a Claude en esta torre. Puedes permitirlo en el menú de permisos del artefacto.', rate_limited: 'Llegaste al límite de uso de Claude por ahora. Inténtalo en unos minutos.', cancelled: 'Detenido.', session_expired: 'Tu sesión expiró; vuelve a entrar a Claude.', tools_unavailable: 'Esta vista no permite acciones; solo conversación.' }[c] || 'No pude hablar con Claude ahora. Inténtalo otra vez.';
+      if (c === 'tools_unavailable') JCHAT.tools = false; chatShow((e && e.text && c === 'cancelled' ? 'Jarvis: ' + e.text + '\n' : '') + m);
+    }).then(function () { JCHAT.busy = false; $('#jaStopBox').hidden = true; });
+  }
+  $('#jaStop').onclick = function () { try { if (JCHAT.ctl) JCHAT.ctl.abort(); } catch (e) {} try { if (TTS) TTS.cancel(); } catch (e) {} };
+  $('#jaHands').onchange = function () { JCHAT.hands = this.checked; if (this.checked && !VOICE.micOk) toast('Manos libres: primero toca el micrófono y permite el acceso'); };
   var JT = { on: false, i: 0, timer: 0 };
   function jarvisClose() { jarvisTour(false); $('#jarvis').hidden = true; $('#app').classList.remove('jaopen'); try { if (TTS) TTS.cancel(); } catch (e) {} }
   function jaMark(i) { var els = $('#jaBody').querySelectorAll('li'); Array.prototype.forEach.call(els, function (el) { el.classList.toggle('on', +el.dataset.i === i); }); }
@@ -860,7 +929,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     return { text: parts.length ? 'Desde tu última visita, hace ' + (hrs >= 48 ? Math.round(hrs / 24) + ' días' : hrs + (hrs === 1 ? ' hora' : ' horas')) + ': ' + parts.join('; ') + '.' : 'Sin cambios desde tu última visita.', snap: { inbox: ib, work: work, alerts: al } };
   }
   function jarvisBrief(auto) {
-    var quiet = PREFS.jarvis === false && auto, r = quiet ? jarvisReport() : jarvisOpen(false), sn = sinceText(), N = AGENTS.length, work = AGENTS.filter(function (a) { return a.status === 'working'; }).length;
+    var quiet = PREFS.jarvis === false, r = quiet ? jarvisReport() : jarvisOpen(false), sn = sinceText(), N = AGENTS.length, work = AGENTS.filter(function (a) { return a.status === 'working'; }).length;
     VOICE.briefed = true;
     var txt = 'Bienvenido, jefe. ' + work + ' de ' + N + ' agentes están trabajando. ' + sn.text + ' ' + (r.watch.length ? 'Tienes ' + r.watch.length + (r.watch.length === 1 ? ' asunto' : ' asuntos') + ' que requieren atención; te los muestro en la torre.' : 'No hay nada urgente.');
     PREFS.snap = sn.snap; PREFS.lastSeen = Date.now(); savePrefs();
@@ -888,13 +957,14 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   $('#jaForm').addEventListener('submit', function (e) {
     e.preventDefault(); var i = $('#jaIn'), t = i.value.trim(); if (!t) return; i.value = ''; unlockAudio();
     $('#jaAns').hidden = false; $('#jaAns').textContent = 'Tú: ' + t;
-    var n = normV(t), r = voiceCommand(n);
+    var n = normV(t), r = wantsLLM(n) ? '__ask' : voiceCommand(n);
     if (r === '__ask') { jarvisAsk(t); return; }
     if (r) { $('#jaAns').textContent = 'Jarvis: ' + r; voiceSay(null, r); }
   });
   setTimeout(function () { if (VOICE.on) jarvisBrief(true); else if (PREFS.jarvis !== false && !JA.shown) jarvisOpen(false); }, 3800);
   setInterval(function () { if (!$('#jarvis').hidden && !JT.on) jarvisRender(); }, 20000);
-  function heard(txt) { voiceLine(txt, 'Tú'); var r = voiceCommand(normV(txt)); if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; } if (r) { voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } }
+  function wantsLLM(n) { return !!SAMPLE && (n.split(' ').length > 5 || /\b(crea|crear|agrega|agregar|anota|anotar|guarda|guardar|recuerdame|programa|programar|mejora|mejoras|porque|por que|puedes|quiero|necesito|dime|explica|explicame|ayudame|compara|resume|resumen de|cuanto|cuantos|cuantas|cual|cuales)\b/.test(n)); }
+  function heard(txt) { voiceLine(txt, 'Tú'); var r = wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; } if (r) { voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } }
   function micPolicyBlocked() { try { var pp = document.permissionsPolicy || document.featurePolicy; return !!(pp && pp.allowsFeature && !pp.allowsFeature('microphone')); } catch (e) { return false; } }
   function micFallback() { var el = $('#jaAns'); if (!el) return; el.hidden = false; el.textContent = 'El micrófono está bloqueado aquí (el navegador o el marco de Claude no lo permite). Escribe tu orden en el cuadro de arriba. En el celular o en la computadora puedes dictar con el micrófono del teclado (celular) o con Windows+H / Fn Fn (Mac). Si quieres usar el micrófono directo, permítelo en el candado de la barra de direcciones y recarga.'; var i = $('#jaIn'); if (i) { try { i.focus(); } catch (e) {} } }
   function startListen(ms) {
@@ -914,6 +984,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (VOICE.on) { VOICE.welcomed = true; voiceSay(null, 'Voz activada. ' + briefingText(false) + ' Toca Hablar o escribe en el cuadro de Jarvis. Di ayuda para ver los comandos.'); } else { try { if (TTS) TTS.cancel(); } catch (e) {} voiceLine('Voz apagada.', 'Torre'); }
   };
   $('#voMic').onclick = function () { unlockAudio(); if (VOICE.listening) { stopListen(); return; } if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } startListen(9000); };
+  $('#jaMic').onclick = function () { $('#voMic').onclick(); };
   function voiceWelcome() { if (VOICE.welcomed) return; VOICE.welcomed = true; if (VOICE.on && !VOICE.heard) { VOICE.briefed = false; jarvisBrief(false); } }
   document.addEventListener('pointerdown', voiceWelcome, { once: true, passive: true }); document.addEventListener('keydown', voiceWelcome, { once: true });
   setTimeout(function () { if (!VOICE.on && !VOICE.welcomed) voiceLine('Toca «Voz» para que los agentes te hablen y «Hablar» para darles órdenes con tu voz.', 'Torre'); }, 4500);
@@ -1105,13 +1176,14 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
 
   /* ---------- Pestañas ---------- */
   function tab(which) {
-    var btn = { struct: '#tabStruct', inbox: '#tabInbox', tasks: '#tabTasks', projects: '#tabProj', posts: '#tabPosts', tokens: '#tabTokens', mem: '#tabMem', asst: '#tabAsst' };
+    var btn = { sys: '#tabSys', struct: '#tabStruct', inbox: '#tabInbox', tasks: '#tabTasks', projects: '#tabProj', posts: '#tabPosts', tokens: '#tabTokens', mem: '#tabMem', asst: '#tabAsst' };
     Object.keys(btn).forEach(function (k) { $('#' + k).hidden = k !== which; $(btn[k]).setAttribute('aria-selected', k === which); });
     $('#ptitle').textContent = TAB_TITLES[which]; $('#alarmBar').hidden = which !== 'inbox'; if (which === 'inbox') renderAlarmBar();
     if (which === 'asst') { if (!currentReport) currentReport = localReport(); $('#repOut').textContent = currentReport; renderReport(); }
-    else if (which === 'struct') renderStruct(); else if (which === 'tokens') renderTokens(); else if (which === 'posts') renderPosts(); else if (which === 'mem') renderMemory();
+    else if (which === 'sys') renderSys(); else if (which === 'struct') renderStruct(); else if (which === 'tokens') renderTokens(); else if (which === 'posts') renderPosts(); else if (which === 'mem') renderMemory();
   }
   $('#tabInbox').onclick = function () { tab('inbox'); };
+  $('#tabSys').onclick = function () { tab('sys'); };
   $('#tabTasks').onclick = function () { tab('tasks'); };
   $('#tabProj').onclick = function () { tab('projects'); };
   $('#tabAsst').onclick = function () { tab('asst'); };
@@ -1119,7 +1191,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   $('#tabStruct').onclick = function () { tab('struct'); };
   $('#tabTokens').onclick = function () { tab('tokens'); };
   $('#tabMem').onclick = function () { tab('mem'); };
-  [['#tabStruct', 'org'], ['#tabInbox', 'inbox'], ['#tabTasks', 'tasks'], ['#tabProj', 'projects'], ['#tabPosts', 'posts'], ['#tabTokens', 'tokens'], ['#tabMem', 'mem'], ['#tabAsst', 'asst']].forEach(function (k) { $(k[0]).insertAdjacentHTML('afterbegin', svg(k[1])); });
+  [['#tabSys', 'sys'], ['#tabStruct', 'org'], ['#tabInbox', 'inbox'], ['#tabTasks', 'tasks'], ['#tabProj', 'projects'], ['#tabPosts', 'posts'], ['#tabTokens', 'tokens'], ['#tabMem', 'mem'], ['#tabAsst', 'asst']].forEach(function (k) { $(k[0]).insertAdjacentHTML('afterbegin', svg(k[1])); });
 
   /* ---------- Directorio, ascensor y etiquetas ---------- */
   function buildStrip() {
@@ -1282,7 +1354,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     }
   }
 
-  function select(id, fromTour) { if (!fromTour) stopTour(); selected = id; selectedProject = null; selectedPlanet = null; if (scene3d) scene3d.focus(byId(id), !!fromTour); refresh(); }
+  function select(id, fromTour) { if (!fromTour) { stopTour(); if (JT.on) jarvisTour(false); } selected = id; selectedProject = null; selectedPlanet = null; if (scene3d) scene3d.focus(byId(id), !!fromTour); refresh(); }
   function deselect() { stopTour(); selected = null; selectedProject = null; selectedPlanet = null; if (scene3d) scene3d.home(); refresh(); }
   function selectProject(id) { var p = PROJECTS.filter(function (x) { return x.id === id; })[0]; if (!p) return; stopTour(); selected = null; selectedPlanet = null; selectedProject = id; if (scene3d) scene3d.focusProject(p); refresh(); }
   function selectPlanet(id) { stopTour(); selected = null; selectedProject = null; selectedPlanet = id; if (scene3d) scene3d.focusPlanet(id); refresh(); }
@@ -1494,7 +1566,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   };
   function connectSample() {
     if (!window.claude || !window.claude.use) return;
-    window.claude.use('sample').then(function (f) { SAMPLE = f || null; }).catch(function () {});
+    window.claude.use('sample').then(function (f) { SAMPLE = f || null; if (SAMPLE && SAMPLE.limits) SAMPLE.limits().then(function (l) { JCHAT.tools = !!(l && l.tools); }).catch(function () {}); }).catch(function () {});
   }
 
   /* ---------- Planetas, meteoritos y vista inmersiva ---------- */
@@ -1523,7 +1595,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var el = $('#score'); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
     return score;
   }
-  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify, jarvis: PREFS.jarvis !== false, cine: PREFS.cine !== false, lastSeen: PREFS.lastSeen || 0, snap: PREFS.snap || null })); } catch (e) {} }
+  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify, jarvis: PREFS.jarvis !== false, cine: PREFS.cine !== false, lastSeen: PREFS.lastSeen || 0, snap: PREFS.snap || null, lastBackup: PREFS.lastBackup || 0 })); } catch (e) {} }
   function applyUi() {
     var app = $('#app'); app.classList.toggle('noroster', !rosterOpen); app.classList.toggle('nopanel', !panelOpen); app.classList.toggle('zen', zen);
     $('#score').textContent = '☄ ' + score; savePrefs();
@@ -1708,6 +1780,88 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     logEvent('Memoria: guardó “' + title + '”', '', 'mem'); memEdit = null; $('#memForm').hidden = true; toast('Nota guardada en la memoria'); refresh();
   });
 
+
+  /* ---------- Sistema: salud, respaldo y mejoras ---------- */
+  var VERSION = '2026.10.29-8', ERRS = [], IMPROVE = [];
+  var SECTIONS = ['Torre 3D', 'Jarvis y voz', 'Agentes', 'Bandeja', 'Tareas', 'Obras', 'Publicaciones', 'Tokens', 'Memoria', 'Estructura', 'Ciudad y naves', 'Sistema', 'Conexiones'];
+  window.addEventListener('error', function (e) { ERRS.unshift({ ts: Date.now(), msg: String(e && e.message || 'error').slice(0, 160) }); ERRS = ERRS.slice(0, 20); });
+  window.addEventListener('unhandledrejection', function (e) { var r = e && e.reason; ERRS.unshift({ ts: Date.now(), msg: 'promesa: ' + String(r && (r.message || r.code) || r).slice(0, 160) }); ERRS = ERRS.slice(0, 20); });
+  function integrityIssues() {
+    var I = [];
+    AGENTS.forEach(function (a) { if (!COL[a.status]) I.push({ w: 'Agente ' + a.id + ' con estado raro', fix: function () { setStatus(a, 'idle'); } }); });
+    TASKS.forEach(function (t) { if (!t.title || !byId(t.agent)) I.push({ w: 'Tarea sin título o sin agente válido', fix: function () { removeTask(t); } }); });
+    (INBOX || []).forEach(function (r) { if (!byId(r.agent)) I.push({ w: 'Recado «' + String(r.title || '').slice(0, 30) + '» de un agente que no existe', fix: function () { r.agent = 'reportes'; if (DB) DB.doc('inbox/' + r.id).update({ agent: 'reportes' }).catch(fail); } }); });
+    PROJECTS.forEach(function (p) { if (STAGES.indexOf(p.stage) < 0) I.push({ w: 'Obra «' + String(p.name || '').slice(0, 30) + '» con etapa inválida', fix: function () { p.stage = 'Estimado'; if (DB) DB.doc('projects/' + p.id).update({ stage: 'Estimado' }).catch(fail); } }); });
+    POSTS.forEach(function (p) { if (POST_STAGES.indexOf(p.status) < 0) I.push({ w: 'Publicación «' + String(p.title || '').slice(0, 30) + '» con estado inválido', fix: function () { patchPost(p, { status: 'Idea' }); } }); });
+    return I;
+  }
+  function sysChecks() {
+    var C = [], gh = null; try { gh = scene3d && scene3d.health ? scene3d.health() : null; } catch (e) {}
+    function add(st, t, d) { C.push({ st: st, t: t, d: d }); }
+    add(DB ? 'ok' : 'warn', 'Base de datos compartida', DB ? 'Conectada: los cambios se guardan y los ve todo el equipo.' : 'Sin conexión: los cambios solo viven en esta pantalla. Abre la torre dentro de Claude.');
+    add(SAMPLE ? 'ok' : 'warn', 'Claude (Jarvis y asistente)', SAMPLE ? 'Listo para conversar.' : 'No disponible aquí; abre la torre dentro de claude.ai.');
+    add(JCHAT.tools ? 'ok' : 'warn', 'Acciones de Jarvis', JCHAT.tools ? 'Jarvis puede enfocar agentes, reiniciarlos, crear tareas y anotar mejoras.' : 'Jarvis solo conversa; esta vista no le permite actuar.');
+    add(!TTS ? 'bad' : VOICE.heard ? 'ok' : 'warn', 'Voz de los agentes', !TTS ? 'Este navegador no puede hablar.' : VOICE.heard ? 'Funcionando.' : 'Toca la pantalla una vez; el navegador exige un toque antes de hablar.');
+    add(!SR ? 'warn' : (VOICE.micBlocked || micPolicyBlocked()) ? 'warn' : VOICE.micOk ? 'ok' : 'warn', 'Micrófono', !SR ? 'Este navegador no reconoce voz (usa Chrome, Edge o Safari). Puedes escribir o dictar con el teclado.' : (VOICE.micBlocked || micPolicyBlocked()) ? 'Bloqueado en este marco: escribe tus órdenes o dicta con el teclado.' : VOICE.micOk ? 'Funcionando.' : 'Sin probar: toca «Hablar».');
+    add(window.Notification && Notification.permission === 'granted' && ALARM.notify ? 'ok' : 'warn', 'Avisos del navegador', ALARM.notify ? 'Activados.' : 'Apagados: actívalos en la bandeja para recibir alarmas.');
+    add(!scene3d ? 'bad' : gh && gh.glLost ? 'bad' : 'ok', 'Gráficos 3D', !scene3d ? 'No se pudo iniciar; se usa la vista simplificada.' : gh ? 'Calidad ' + ['alta', 'media', 'baja', 'mínima'][gh.tier] + (gh.cine ? ' con efectos de cine' : '') + (gh.frameErrs ? '; hubo ' + gh.frameErrs + ' errores de dibujo' : '') + '.' : 'Funcionando.');
+    var iss = integrityIssues(); add(iss.length ? 'warn' : 'ok', 'Integridad de datos', iss.length ? iss.length + ' problema(s): ' + iss.slice(0, 2).map(function (x) { return x.w; }).join('; ') + '. Toca «Reparar datos».' : 'Agentes, tareas, bandeja, obras y publicaciones están bien formados.');
+    add(ERRS.length ? 'warn' : 'ok', 'Errores recientes', ERRS.length ? ERRS.length + ' error(es); el último: ' + ERRS[0].msg : 'Sin errores en esta sesión.');
+    var days = PREFS.lastBackup ? Math.floor((Date.now() - PREFS.lastBackup) / 86400000) : -1;
+    add(days < 0 ? 'warn' : days > 7 ? 'warn' : 'ok', 'Respaldo', days < 0 ? 'Aún no descargas un respaldo. Toca «Descargar respaldo».' : days > 7 ? 'Tu último respaldo fue hace ' + days + ' días.' : 'Último respaldo hace ' + (days || 0) + ' día(s).');
+    add('idle', 'Rutinas fuera de la página', 'Vigilante cada hora, aviso diario de Nesty y búsqueda de oportunidades corren en Claude (se administran en tus tareas programadas).');
+    add('idle', 'Telegram al teléfono', 'Pendiente de configurar el token nuevo y tu chat (ver PENDIENTES).');
+    add('idle', 'Versión', 'Torre ' + VERSION + '.');
+    return C;
+  }
+  var STC = { ok: 'working', warn: 'warning', bad: 'error', idle: 'idle' };
+  function renderSys() {
+    if ($('#sys').hidden) return;
+    var C = sysChecks(), bad = C.filter(function (c) { return c.st === 'bad'; }).length, warn = C.filter(function (c) { return c.st === 'warn'; }).length;
+    $('#sysNote').textContent = bad ? bad + ' punto(s) con falla y ' + warn + ' por revisar.' : warn ? warn + ' punto(s) por revisar; lo demás está bien.' : 'Todo está en orden.';
+    setHtml($('#sysList'), C.map(function (c) { return '<div class="sysrow"><i class="dot" data-s="' + STC[c.st] + '"></i><div><b>' + esc(c.t) + '</b><span>' + esc(c.d) + '</span></div></div>'; }).join(''));
+    var sel = $('#imSec'); if (!sel.options.length) sel.innerHTML = SECTIONS.map(function (x) { return '<option>' + esc(x) + '</option>'; }).join('');
+    renderImprove();
+    var open = C.filter(function (c) { return c.st === 'bad' || c.st === 'warn'; }).length; $('#bSys').textContent = open ? String(open) : ''; $('#bSys').hidden = !open;
+  }
+  $('#sysRun').onclick = function () { renderSys(); toast('Sistema verificado'); };
+  $('#sysFix').onclick = function () { var I = integrityIssues(); if (!I.length) { toast('Los datos están bien'); return; } I.forEach(function (x) { try { x.fix(); } catch (e) {} }); logEvent('Reparó ' + I.length + ' dato(s)', '', 'fix'); toast('Reparé ' + I.length + ' dato(s)'); renderSys(); refresh(); };
+  $('#sysBack').onclick = function () {
+    var data = { app: 'torre-evr', version: VERSION, creado: new Date().toISOString(), agentes: AGENTS.map(function (a) { return { id: a.id, status: a.status, act: a.act }; }), tareas: TASKS, bandeja: INBOX, obras: PROJECTS, publicaciones: POSTS, memoria: MEMORY, grupos: GROUPS, mejoras: IMPROVE, tokens: SETTINGS, uso: USAGE };
+    var json = JSON.stringify(data, null, 2), name = 'respaldo-torre-evr-' + new Date().toISOString().slice(0, 10) + '.json';
+    function done() { PREFS.lastBackup = Date.now(); savePrefs(); toast('Respaldo descargado'); renderSys(); }
+    function fallback() { try { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' })); a.download = name; document.body.appendChild(a); a.click(); a.remove(); done(); } catch (e) { toast('No se pudo descargar aquí'); } }
+    if (window.claude && window.claude.use) window.claude.use('downloads').then(function (d) { if (!d) return fallback(); d.save({ filename: name, data: json }).then(done).catch(function (e) { if (e && e.code === 'declined') toast('Cancelaste la descarga'); else fallback(); }); }).catch(fallback); else fallback();
+  };
+  function addImprovement(rec) {
+    rec.status = rec.status || 'Idea'; rec.createdAt = Date.now();
+    if (DB) DB.collection('improvements').add(rec).catch(fail); else { rec.id = 'im' + (++localId); IMPROVE.push(rec); renderSys(); }
+    logEvent('Mejora anotada: ' + rec.title, '', 'imp');
+  }
+  function renderImprove() {
+    var by = {}; IMPROVE.forEach(function (m) { (by[m.section || 'General'] = by[m.section || 'General'] || []).push(m); });
+    var ORD = ['Idea', 'En curso', 'Hecho'];
+    var html = Object.keys(by).sort().map(function (sec) {
+      return '<p class="impsec">' + esc(sec) + '</p>' + by[sec].sort(function (a, b) { return ORD.indexOf(a.status) - ORD.indexOf(b.status); }).map(function (m) {
+        return '<div class="imp ' + (m.status === 'Hecho' ? 'done' : '') + '"><b>' + esc(m.title) + '</b>' + (m.detail ? '<p>' + esc(m.detail) + '</p>' : '') + '<div class="chips"><button class="btn" type="button" data-im="cyc" data-id="' + esc(m.id) + '">' + esc(m.status || 'Idea') + ' ›</button><button class="btn" type="button" data-im="del" data-id="' + esc(m.id) + '">Quitar</button>' + (m.source === 'jarvis' ? '<span class="tag">idea de Jarvis</span>' : '') + '</div></div>';
+      }).join('');
+    }).join('');
+    setHtml($('#impList'), html || '<p class="note">Aún no hay mejoras anotadas. Agrega una o pídele ideas a Jarvis.</p>');
+  }
+  $('#impList').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b || !b.dataset.im) return; var m = IMPROVE.filter(function (x) { return x.id === b.dataset.id; })[0]; if (!m) return;
+    if (b.dataset.im === 'cyc') { var ORD = ['Idea', 'En curso', 'Hecho'], nx = ORD[(ORD.indexOf(m.status || 'Idea') + 1) % 3]; m.status = nx; if (DB) DB.doc('improvements/' + m.id).update({ status: nx }).catch(fail); logEvent('Mejora «' + m.title + '» → ' + nx, '', 'imp'); renderImprove(); }
+    else { if (DB) DB.doc('improvements/' + m.id).delete().catch(fail); IMPROVE.splice(IMPROVE.indexOf(m), 1); renderImprove(); }
+  });
+  $('#impForm').addEventListener('submit', function (e) { e.preventDefault(); var t = $('#imTitle').value.trim(); if (!t) return; addImprovement({ section: $('#imSec').value, title: t.slice(0, 120), detail: $('#imDet').value.trim().slice(0, 400), source: 'torre' }); $('#impForm').reset(); toast('Mejora anotada'); });
+  $('#imAsk').onclick = function () {
+    if (!SAMPLE) { toast('Pedir ideas funciona al abrir la torre dentro de Claude'); return; }
+    var b = $('#imAsk'); b.disabled = true; b.textContent = 'Pensando…';
+    var prompt = 'Eres Jarvis, agente principal de la Torre de Control de Imperial Remodeling. Con este estado, propone 5 mejoras concretas y distintas para que el dueño controle mejor la torre. Secciones válidas: ' + SECTIONS.join(', ') + '. No repitas estas mejoras ya anotadas: ' + (IMPROVE.map(function (m) { return m.title; }).join('; ') || 'ninguna') + '.\n\nESTADO:\n' + jarvisState() + '\n\nResponde SOLO con un arreglo JSON de 5 objetos {"section": string, "title": string (máx 90 caracteres), "detail": string (máx 200 caracteres)}.';
+    SAMPLE.json(prompt, { modelTier: 'quick', cache: false }).then(function (arr) { var n = 0; (Array.isArray(arr) ? arr : []).slice(0, 5).forEach(function (x) { if (x && x.title) { addImprovement({ section: SECTIONS.indexOf(x.section) > -1 ? x.section : 'Torre 3D', title: String(x.title).slice(0, 120), detail: String(x.detail || '').slice(0, 400), source: 'jarvis' }); n++; } }); toast(n ? 'Jarvis anotó ' + n + ' ideas' : 'Jarvis no encontró ideas nuevas'); }).catch(function () { toast('No pude pedir ideas ahora'); }).then(function () { b.disabled = false; b.textContent = 'Pedir ideas a Jarvis'; });
+  };
+  setInterval(function () { if (!$('#sys').hidden) renderSys(); }, 15000);
+
   /* ---------- Quién está en la torre ---------- */
   function renderPresence() { var el = $('#presence'); el.hidden = PEERS < 2; $('#presN').textContent = PEERS + ' en la torre'; }
   function connectRoom() {
@@ -1853,6 +2007,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       }, fail);
       db.collection('posts').onSnapshot(function (snap) {
         POSTS = snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x.id = d.id; return x; }); renderPosts(); refresh();
+      }, fail);
+      db.collection('improvements').onSnapshot(function (snap) {
+        IMPROVE = snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x.id = d.id; return x; }); renderSys();
       }, fail);
       db.collection('memory').onSnapshot(function (snap) {
         MEMORY = snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x.id = d.id; return x; }); renderMemory(); refresh();
@@ -3537,6 +3694,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       setQuality: function (q) { qualityPref = q; tier = { alta: 0, media: 1, baja: 3, auto: 0 }[q] || 0; fFrames = 0; fWinStart = performance.now(); tStart = performance.now(); applyTier(); return q; },
       toggleCine: function () { CINE.want = !CINE.want; if (!CINE.want) CINE.on = false; cineUpdate(); layout(); return CINE.want; },
       cineOn: function () { return CINE.on; },
+      health: function () { return { tier: tier, cine: CINE.on, glLost: glLost, frameErrs: frameErrs }; },
       toggleSpeed: function () { speedMul = reduce ? 0.3 : (speedMul < 0.8 ? 1 : 0.55); return speedMul < 0.8 ? 'lenta' : 'normal'; }
     };
   }

@@ -5,7 +5,7 @@ const init = `
 (function(){
   var REAL=${JSON.stringify(REAL)};
   function deep(o){ if(o&&typeof o==='object'&&!Object.isFrozen(o)){ Object.keys(o).forEach(function(k){deep(o[k])}); Object.freeze(o);} return o; }
-  var store={alerts:{},groups:{},tasks:{},inbox:{},agents:{},projects:{},logs:{},reports:{},posts:{},memory:{},usage:{},settings:{tokens:{budget:150000,pin:3,pout:15}}}, subs=[];
+  var store={improvements:{},alerts:{},groups:{},tasks:{},inbox:{},agents:{},projects:{},logs:{},reports:{},posts:{},memory:{},usage:{},settings:{tokens:{budget:150000,pin:3,pout:15}}}, subs=[];
   Object.keys(REAL).forEach(function(c){ Object.keys(REAL[c]).forEach(function(id){ store[c][id]=REAL[c][id]; }); });
   function notify(c){ subs.filter(function(s){return s.c===c}).forEach(function(s){ s.f(s.doc?dsnap(c,s.id):snap(c)); }); }
   function snap(c){ var ids=Object.keys(store[c]).sort(); var docs=ids.map(function(id){var d=deep(JSON.parse(JSON.stringify(store[c][id]))); return {id:id,exists:true,data:function(){return d}}}); return {docs:docs,size:docs.length,empty:!docs.length,metadata:{hasPendingWrites:false}}; }
@@ -70,7 +70,7 @@ window.SpeechRecognition=R; window.webkitSpeechRecognition=R;
       ok('caja de texto ejecuta orden', await p.evaluate(()=>/Jarvis: .*agentes trabajando/.test(document.getElementById('jaAns').textContent)));
       await p.fill('#jaIn','como mejoro mi negocio'); await p.press('#jaIn','Enter'); await W(800);
       ok('pregunta libre responde via Claude', await p.evaluate(()=>/Texto de prueba/.test(document.getElementById('jaAns').textContent)));
-      ok('prompt de Jarvis con estado', await p.evaluate(()=>/Jarvis/.test(window.__lastPrompt||'') && /Estado actual/.test(window.__lastPrompt||'')));
+      ok('prompt de Jarvis con estado', await p.evaluate(()=>/Jarvis/.test(JSON.stringify(window.__lastPrompt||'')) && /ESTADO ACTUAL/.test(JSON.stringify(window.__lastPrompt||''))));
       const ri = await p.evaluate(()=>window.__voiceTest.cmd('dame el informe')); ok('comando informe', /Informe de Jarvis/.test(ri));
       const rc = await p.evaluate(()=>{const r=document.getElementById('jarvis').getBoundingClientRect(); return [Math.round(r.left),Math.round(r.right)]}); ok('Jarvis acoplado a un costado '+rc, rc[1] < 470);
       await p.evaluate(()=>document.querySelector('#jaBody ul.w li button[data-k=see]').click()); await W(1500);
@@ -94,7 +94,7 @@ window.SpeechRecognition=R; window.webkitSpeechRecognition=R;
       await p.evaluate(()=>window.__voiceTest.cmd('baja')); await W(3000);
       ok('baja vuelve al piso 5', await p.evaluate(()=>/Prospectos/.test(document.querySelector('#card h2')?.textContent||'')));
       const qa = await p.evaluate(()=>window.__voiceTest.cmd('que haces calendario')); ok('comando: qué haces + agente', /Para mejorar/.test(qa));
-      const qb = await p.evaluate(()=>window.__voiceTest.cmd('como vas cotizaciones')); ok('agente dice su avance: '+qb.slice(0,70), /por ciento de esta tarea/.test(qb));
+      const qb = await p.evaluate(()=>window.__voiceTest.cmd('como vas cotizaciones')); ok('agente dice su avance: '+qb.slice(0,70), /por ciento de esta tarea|Estoy en espera|Estoy detenido|Sigo trabajando/.test(qb) && /Hoy he completado|Tengo/.test(qb));
       await p.click('#voMic'); await W(400);
       ok('Hablar abre reconocimiento', await p.evaluate(()=>window.__recs.length===1));
       await p.evaluate(()=>{ window.__recs[0].onresult({results:[[{transcript:'ayuda'}]]}); window.__recs[0].onend(); }); await W(500);
