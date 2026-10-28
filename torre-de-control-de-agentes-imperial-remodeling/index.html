@@ -207,6 +207,28 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .htip { position: fixed; z-index: 40; pointer-events: none; padding: 6px 10px; background: rgba(8, 18, 28, 0.94); border: 1px solid var(--accent); border-radius: 4px; font: 12px/1.4 var(--body); color: var(--fg); white-space: nowrap; }
 .htip[hidden] { display: none; }
 .card .ask { display: flex; gap: 6px; margin: 8px 0 4px; } .card .ask input { flex: 1; min-width: 0; background: var(--panel-2); border: 1px solid var(--line); color: var(--fg); padding: 7px 9px; font: 12.5px var(--body); border-radius: 3px; } .card .aans { margin: 4px 0 8px; padding: 7px 9px; font-size: 12.5px; line-height: 1.45; background: var(--panel-2); border-left: 2px solid var(--accent); white-space: pre-wrap; }
+
+.jorb { display: inline-flex; align-items: center; gap: 8px; padding: 0 10px 0 0; border: 0; background: none; cursor: pointer; }
+.jorb .jo { position: relative; width: 50px; height: 50px; flex: none; transition: filter 0.4s; }
+.jorb .jo i { position: absolute; border-radius: 50%; pointer-events: none; }
+.jorb .o1 { inset: 0; background: conic-gradient(from 0deg, #5cc8ff, #b4a0ff, #7fe3c5, transparent 45%, #5cc8ff); -webkit-mask: radial-gradient(circle, transparent 56%, #000 58%); mask: radial-gradient(circle, transparent 56%, #000 58%); animation: jspin 3.6s linear infinite; }
+.jorb .o2 { inset: 5px; background: repeating-conic-gradient(rgba(223, 244, 255, 0.9) 0 7deg, transparent 7deg 20deg); -webkit-mask: radial-gradient(circle, transparent 50%, #000 53%, #000 68%, transparent 71%); mask: radial-gradient(circle, transparent 50%, #000 53%, #000 68%, transparent 71%); animation: jspin 6s linear infinite reverse; opacity: 0.85; }
+.jorb .o3, .jorb .o4 { inset: 4px; border: 2px solid rgba(92, 200, 255, 0.6); animation: jwave 2.8s ease-out infinite; }
+.jorb .o4 { animation-delay: 1.4s; }
+.jorb .core { inset: 15px; background: radial-gradient(circle at 35% 30%, #fff 0, #8fe0ff 35%, #0a4a73 100%); box-shadow: 0 0 14px #5cc8ff, 0 0 30px rgba(92, 200, 255, 0.4); animation: jbreath 2.2s ease-in-out infinite; }
+.jorb em { font: 500 12px/1 var(--mono); font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.jorb.talk .core { animation: jtalk 0.38s ease-in-out infinite; } .jorb.talk .o3, .jorb.talk .o4 { animation-duration: 1.1s; } .jorb.talk .o1 { animation-duration: 1.4s; }
+.jorb.listen .jo { filter: hue-rotate(150deg) saturate(1.7); } .jorb.listen .core { animation: jtalk 0.9s ease-in-out infinite; }
+.jorb.alert:not(.listen) .jo { filter: hue-rotate(200deg) saturate(1.5); }
+.jorb.always .jo { box-shadow: 0 0 0 2px rgba(127, 227, 197, 0.55), 0 0 18px rgba(127, 227, 197, 0.35); border-radius: 50%; }
+.jorb:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 26px; }
+@keyframes jspin { to { transform: rotate(360deg); } }
+@keyframes jwave { 0% { transform: scale(0.7); opacity: 0.8; } 100% { transform: scale(1.7); opacity: 0; } }
+@keyframes jbreath { 50% { transform: scale(1.12); } }
+@keyframes jtalk { 50% { transform: scale(1.35); box-shadow: 0 0 22px #5cc8ff, 0 0 46px rgba(92, 200, 255, 0.6); } }
+@media (prefers-reduced-motion: reduce) { .jorb .o1 { animation-duration: 14s; } .jorb .o2 { animation-duration: 20s; } .jorb .o3, .jorb .o4 { animation-duration: 6s; } }
+.jasend { display: inline-flex; align-items: center; gap: 4px; font: 11px/1.2 var(--mono); color: var(--muted); white-space: nowrap; }
+.jaform { align-items: center; }
 .voice { position: absolute; left: calc(var(--gutter-l) + 112px); bottom: 16px; display: flex; align-items: center; gap: 8px; z-index: 5; max-width: min(560px, 46%); }
 .voice .btn { background: rgba(7, 13, 21, 0.82); white-space: nowrap; }
 .voice .btn.on { border-color: var(--accent); color: var(--accent); }
@@ -304,8 +326,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   .zenbtn, .score { bottom: 58px; }
   .jarvis { position: fixed; left: 8px; right: 8px; top: 8px; bottom: 8px; width: auto; max-height: none; transform: none; z-index: 30; }
   #app.jaopen .roster { visibility: visible; }
-  .voice { left: var(--gutter-l); bottom: 104px; max-width: calc(100% - 2 * var(--gutter-l)); flex-wrap: wrap; }
-  #voLine { order: -1; flex: 1 0 100%; max-width: none; font-size: 11px; display: none; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .jorb { padding: 0; } .jorb em { display: none; } .jorb .jo { width: 40px; height: 40px; } .jorb .core { inset: 12px; } .voice .btn { padding: 5px 8px; font-size: 11px; } .voice { gap: 6px; }
+  .voice { left: var(--gutter-l); bottom: 104px; max-width: 136px; flex-wrap: wrap; }
+  #voLine { position: absolute; left: 0; bottom: calc(100% + 6px); width: min(300px, calc(100vw - 32px)); max-width: none; font-size: 11px; display: none; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   #voLine.show { display: -webkit-box; }
   .tabs { gap: 11px; }
   .tabs button { letter-spacing: 0.03em; }
@@ -384,8 +407,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     <nav class="dock" id="dock" aria-label="Paneles ocultos"></nav>
     <button class="ico rdock" id="rosterDock" type="button" aria-label="Mostrar el directorio de pisos"></button>
     <button class="ico zenbtn" id="zenBtn" type="button" aria-label="Modo inmersivo (tecla H)" title="Modo inmersivo (H)"></button>
-    <div class="voice" id="voiceBox"><button class="btn" id="voTalk" type="button" title="Los agentes te hablan">Voz: no</button><button class="btn" id="voMic" type="button" title="Háblale a la torre">Hablar</button><button class="btn" id="voJar" type="button" title="Informe de Jarvis, el agente principal">Jarvis</button><span id="voLine" role="status" aria-live="polite"></span></div>
-    <section class="jarvis" id="jarvis" hidden role="dialog" aria-label="Informe de Jarvis"><header><i class="orb" aria-hidden="true"></i><div><b>Jarvis</b><p>Agente principal · piso Reportes</p></div><button class="btn" id="jaMini" type="button" aria-label="Minimizar a Jarvis" title="Minimizar">–</button><button class="btn" id="jaClose" type="button" aria-label="Cerrar informe">×</button></header><div class="jabody" id="jaBody"></div><form class="jaform" id="jaForm" autocomplete="off"><input id="jaIn" type="text" maxlength="300" placeholder="Pídele lo que quieras: estado, corrige facturación, crea una tarea…" aria-label="Orden para Jarvis"><button class="btn" id="jaMic" type="button" title="Hablar con Jarvis" aria-label="Hablar con Jarvis"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button class="btn primary" type="submit">Enviar</button></form><div class="jaans" id="jaAns" role="status" aria-live="polite" hidden></div><div class="jastop" id="jaStopBox" hidden><button class="btn" id="jaStop" type="button">Detener a Jarvis</button></div><footer><button class="btn primary" id="jaTour" type="button">Recorrer problemas</button><button class="btn" id="jaSpeak" type="button">Leer en voz alta</button><button class="btn" id="jaSee" type="button">Ver a Jarvis</button><button class="btn" id="jaRef" type="button">Actualizar</button><label class="jachk"><input type="checkbox" id="jaHands"> Manos libres</label><label class="jachk"><input type="checkbox" id="jaAuto"> Abrir al entrar</label></footer></section>
+    <div class="voice" id="voiceBox"><button class="btn" id="voTalk" type="button" title="Los agentes te hablan">Voz: no</button><button class="btn" id="voMic" type="button" title="Háblale a la torre">Hablar</button><button class="jorb" id="voJar" type="button" title="Jarvis, el agente principal" aria-label="Jarvis, el agente principal"><span class="jo" aria-hidden="true"><i class="o1"></i><i class="o2"></i><i class="o3"></i><i class="o4"></i><i class="core"></i></span><em>Jarvis</em></button><span id="voLine" role="status" aria-live="polite"></span></div>
+    <section class="jarvis" id="jarvis" hidden role="dialog" aria-label="Informe de Jarvis"><header><i class="orb" aria-hidden="true"></i><div><b>Jarvis</b><p>Agente principal · piso Reportes</p></div><button class="btn" id="jaMini" type="button" aria-label="Minimizar a Jarvis" title="Minimizar">–</button><button class="btn" id="jaClose" type="button" aria-label="Cerrar informe">×</button></header><div class="jabody" id="jaBody"></div><form class="jaform" id="jaForm" autocomplete="off"><input id="jaIn" type="text" maxlength="300" placeholder="Pídele lo que quieras: estado, corrige facturación, crea una tarea…" aria-label="Orden para Jarvis"><button class="btn" id="jaMic" type="button" title="Hablar: tu voz se escribe aquí" aria-label="Hablar: tu voz se escribe en la barra"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><label class="jasend" title="Enviar a Jarvis apenas termines de hablar"><input type="checkbox" id="jaSend" checked> enviar al hablar</label><button class="btn primary" type="submit">Enviar</button></form><div class="jaans" id="jaAns" role="status" aria-live="polite" hidden></div><div class="jastop" id="jaStopBox" hidden><button class="btn" id="jaStop" type="button">Detener a Jarvis</button></div><footer><button class="btn primary" id="jaTour" type="button">Recorrer problemas</button><button class="btn" id="jaSpeak" type="button">Leer en voz alta</button><button class="btn" id="jaSee" type="button">Ver a Jarvis</button><button class="btn" id="jaRef" type="button">Actualizar</button><label class="jachk" title="Jarvis escucha todo el tiempo que estés en la torre; responde cuando dices «Jarvis»"><input type="checkbox" id="jaAlways"> Siempre atento</label><label class="jachk"><input type="checkbox" id="jaHands"> Manos libres</label><label class="jachk"><input type="checkbox" id="jaAuto"> Abrir al entrar</label></footer></section>
     <div class="score" id="score" title="Meteoritos capturados. Toca los que cruzan el cielo.">☄ 0</div>
     <div class="nogl" id="nogl" hidden>Tu navegador no pudo iniciar la vista 3D. La bandeja y las tareas siguen funcionando a la derecha.</div>
   </main>
@@ -891,7 +914,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     SAMPLE([{ role: 'user', content: JRULES + '\n\nESTADO ACTUAL DE LA TORRE:\n' + jarvisState() }].concat(turns), opts).then(function (res) {
       var t = (res && res.text) || ''; JCHAT.turns = turns.concat([{ role: 'assistant', content: t.slice(0, 800) }]).slice(-12); chatShow('Jarvis: ' + t);
       addUsage('reportes', est(q) + 800, est(t), 'conversación con Jarvis');
-      voiceSay(null, t, function () { if (JCHAT.hands && VOICE.micOk && SR && !VOICE.micBlocked) startListen(9000); }, false, true);
+      VOICE.convUntil = Date.now() + 14000; voiceSay(null, t, function () { VOICE.convUntil = Date.now() + 12000; if (JCHAT.hands && VOICE.micOk && SR && !VOICE.micBlocked && !VOICE.always) startListen(9000); }, false, true);
     }).catch(function (e) {
       var c = e && e.code, m = { not_granted: 'No diste permiso a Claude en esta torre. Puedes permitirlo en el menú de permisos del artefacto.', rate_limited: 'Llegaste al límite de uso de Claude por ahora. Inténtalo en unos minutos.', cancelled: 'Detenido.', session_expired: 'Tu sesión expiró; vuelve a entrar a Claude.', tools_unavailable: 'Esta vista no permite acciones; solo conversación.' }[c] || 'No pude hablar con Claude ahora. Inténtalo otra vez.';
       if (c === 'tools_unavailable') JCHAT.tools = false; chatShow((e && e.text && c === 'cancelled' ? 'Jarvis: ' + e.text + '\n' : '') + m);
@@ -967,14 +990,29 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function heard(txt) { voiceLine(txt, 'Tú'); var r = wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; } if (r) { voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } }
   function micPolicyBlocked() { try { var pp = document.permissionsPolicy || document.featurePolicy; return !!(pp && pp.allowsFeature && !pp.allowsFeature('microphone')); } catch (e) { return false; } }
   function micFallback() { var el = $('#jaAns'); if (!el) return; el.hidden = false; el.textContent = 'El micrófono está bloqueado aquí (el navegador o el marco de Claude no lo permite). Escribe tu orden en el cuadro de arriba. En el celular o en la computadora puedes dictar con el micrófono del teclado (celular) o con Windows+H / Fn Fn (Mac). Si quieres usar el micrófono directo, permítelo en el candado de la barra de direcciones y recarga.'; var i = $('#jaIn'); if (i) { try { i.focus(); } catch (e) {} } }
-  function startListen(ms) {
+  function speechFinal(txt, mode) {
+    var inp = $('#jaIn');
+    if (mode === 'dictate') { if (inp) { inp.value = txt; try { inp.focus(); } catch (e) {} } return; }
+    if (mode === 'wake') {
+      var has = /\bjarvis\b/.test(normV(txt)); if (!has && Date.now() > (VOICE.convUntil || 0)) return;
+      var rest = txt.replace(/\b(hey |oye |ok |okay )?jarvis[,.:!?]*\s*/i, '').trim(); VOICE.convUntil = Date.now() + 12000;
+      if (!rest) { voiceSay(null, 'Dime.', null, false, true); return; } heard(rest); return;
+    }
+    if (inp) inp.value = ''; heard(txt);
+  }
+  function startListen(ms, mode) {
     if (micPolicyBlocked()) { VOICE.micBlocked = true; renderVoice(); jarvisOpen(false); micFallback(); return false; }
     if (!SR) { voiceLine('Este navegador no permite escuchar por voz. Usa Chrome, Edge o Safari.', 'Voz'); return false; }
     if (VOICE.rec) return true;
-    var r = new SR(); r.lang = 'es-US'; r.interimResults = false; r.maxAlternatives = 3; r.continuous = false;
+    VOICE.mode = mode || 'send';
+    var r = new SR(); r.lang = 'es-US'; r.interimResults = true; r.maxAlternatives = 1; r.continuous = false;
     r.onstart = function () { VOICE.listening = true; renderVoice(); };
-    r.onresult = function (e) { var txt = e.results[0][0].transcript; VOICE.micOk = true; savePrefs(); heard(txt); };
-    r.onerror = function (e) { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { VOICE.micBlocked = true; renderVoice(); jarvisOpen(false); micFallback(); } var m = { 'not-allowed': 'El micrófono está bloqueado en esta página.', 'service-not-allowed': 'Este marco no permite el micrófono.', 'no-speech': 'No te escuché. Inténtalo de nuevo.', 'audio-capture': 'No encuentro un micrófono.', 'network': 'Sin conexión para reconocer la voz.' }[e.error]; if (m) voiceLine(m, 'Voz'); };
+    r.onresult = function (e) {
+      var txt = '', fin = false, i; for (i = e.resultIndex || 0; i < e.results.length; i++) { var a = e.results[i]; txt += (a[0] && a[0].transcript) || ''; if (a.isFinal !== false) fin = true; }
+      txt = txt.trim(); if (!txt) return; var inp = $('#jaIn'); if (VOICE.mode !== 'wake' && inp) inp.value = txt;
+      if (!fin) return; VOICE.micOk = true; savePrefs(); speechFinal(txt, VOICE.mode);
+    };
+    r.onerror = function (e) { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { VOICE.micBlocked = true; VOICE.always = false; var al = $('#jaAlways'); if (al) al.checked = false; renderVoice(); jarvisOpen(false); micFallback(); } var m = { 'not-allowed': 'El micrófono está bloqueado en esta página.', 'service-not-allowed': 'Este marco no permite el micrófono.', 'no-speech': VOICE.mode === 'wake' ? '' : 'No te escuché. Inténtalo de nuevo.', 'audio-capture': 'No encuentro un micrófono.', 'network': 'Sin conexión para reconocer la voz.' }[e.error]; if (m) voiceLine(m, 'Voz'); };
     r.onend = function () { VOICE.rec = null; VOICE.listening = false; clearTimeout(VOICE.lt); renderVoice(); };
     try { r.start(); VOICE.rec = r; VOICE.lt = setTimeout(function () { try { r.stop(); } catch (e) {} }, ms || 9000); return true; } catch (e) { voiceLine('No pude abrir el micrófono.', 'Voz'); return false; }
   }
@@ -984,13 +1022,23 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (VOICE.on) { VOICE.welcomed = true; voiceSay(null, 'Voz activada. ' + briefingText(false) + ' Toca Hablar o escribe en el cuadro de Jarvis. Di ayuda para ver los comandos.'); } else { try { if (TTS) TTS.cancel(); } catch (e) {} voiceLine('Voz apagada.', 'Torre'); }
   };
   $('#voMic').onclick = function () { unlockAudio(); if (VOICE.listening) { stopListen(); return; } if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } startListen(9000); };
-  $('#jaMic').onclick = function () { $('#voMic').onclick(); };
+  $('#jaMic').onclick = function () { unlockAudio(); if (VOICE.listening) { stopListen(); return; } if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } var snd = $('#jaSend'); if (snd) { PREFS.send = snd.checked; savePrefs(); } startListen(14000, snd && snd.checked ? 'send' : 'dictate'); };
+  VOICE.always = PREFS.always === true && PREFS.mic === true; VOICE.convUntil = 0;
+  $('#jaAlways').checked = VOICE.always; $('#jaSend').checked = PREFS.send !== false;
+  $('#jaSend').onchange = function () { PREFS.send = this.checked; savePrefs(); };
+  $('#jaAlways').onchange = function () {
+    PREFS.always = this.checked; VOICE.always = this.checked; savePrefs();
+    if (this.checked) { if (!SR) { toast('Este navegador no reconoce voz'); this.checked = false; VOICE.always = false; PREFS.always = false; savePrefs(); return; } unlockAudio(); if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } if (!startListen(30000, 'wake')) { this.checked = false; VOICE.always = false; return; } toast('Jarvis atento: di «Jarvis» y tu orden'); voiceLine('Estoy atento. Di «Jarvis» y tu orden.', 'Jarvis'); }
+    else stopListen();
+  };
+  setInterval(function () { if (VOICE.always && VOICE.micOk && !VOICE.rec && !VOICE.micBlocked && !document.hidden && !JCHAT.busy && !(TTS && TTS.speaking)) startListen(30000, 'wake'); }, 1500);
+  setInterval(function () { var o = $('#voJar'); if (!o) return; o.classList.toggle('talk', !!(TTS && TTS.speaking)); o.classList.toggle('listen', !!VOICE.listening); o.classList.toggle('alert', alerts().length > 0); o.classList.toggle('always', !!VOICE.always); }, 350);
   function voiceWelcome() { if (VOICE.welcomed) return; VOICE.welcomed = true; if (VOICE.on && !VOICE.heard) { VOICE.briefed = false; jarvisBrief(false); } }
   document.addEventListener('pointerdown', voiceWelcome, { once: true, passive: true }); document.addEventListener('keydown', voiceWelcome, { once: true });
   setTimeout(function () { if (!VOICE.on && !VOICE.welcomed) voiceLine('Toca «Voz» para que los agentes te hablen y «Hablar» para darles órdenes con tu voz.', 'Torre'); }, 4500);
   if (TTS && TTS.addEventListener) TTS.addEventListener('voiceschanged', function () {});
   renderVoice();
-  if (window.__EVR_TEST__) window.__voiceTest = { report: function () { return jarvisReport(); }, ask: jarvisAsk, open: jarvisOpen, cmd: function (t) { return voiceCommand(normV(t)); }, heard: heard, help: voiceHelp, agent: findAgentV, state: function () { return { on: VOICE.on, aw: !!VOICE.awaiting }; } };
+  if (window.__EVR_TEST__) window.__voiceTest = { report: function () { return jarvisReport(); }, ask: jarvisAsk, open: jarvisOpen, cmd: function (t) { return voiceCommand(normV(t)); }, heard: heard, help: voiceHelp, agent: findAgentV, state: function () { return { on: VOICE.on, aw: !!VOICE.awaiting, always: VOICE.always, listening: VOICE.listening, micOk: VOICE.micOk, blocked: VOICE.micBlocked }; } };
 
   /* ---------- Vista simplificada: respaldo si el 3D no puede mantenerse ---------- */
   function setFlat(on, why) {
@@ -1595,7 +1643,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var el = $('#score'); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
     return score;
   }
-  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify, jarvis: PREFS.jarvis !== false, cine: PREFS.cine !== false, lastSeen: PREFS.lastSeen || 0, snap: PREFS.snap || null, lastBackup: PREFS.lastBackup || 0 })); } catch (e) {} }
+  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify, jarvis: PREFS.jarvis !== false, cine: PREFS.cine !== false, lastSeen: PREFS.lastSeen || 0, snap: PREFS.snap || null, lastBackup: PREFS.lastBackup || 0, always: PREFS.always === true, send: PREFS.send !== false })); } catch (e) {} }
   function applyUi() {
     var app = $('#app'); app.classList.toggle('noroster', !rosterOpen); app.classList.toggle('nopanel', !panelOpen); app.classList.toggle('zen', zen);
     $('#score').textContent = '☄ ' + score; savePrefs();
