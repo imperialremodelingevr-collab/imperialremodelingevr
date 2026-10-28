@@ -204,6 +204,9 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .score { position: absolute; left: calc(var(--gutter-l) + 46px); bottom: 16px; height: 36px; display: flex; align-items: center; padding: 0 12px; font: 500 12px/1 var(--mono); letter-spacing: 0.04em; color: #ffd98a; border: 1px solid var(--line); background: rgba(7, 13, 21, 0.82); border-radius: 3px; font-variant-numeric: tabular-nums; }
 .score.pop { animation: pop 0.5s; }
 .stage::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(ellipse at 50% 46%, transparent 52%, rgba(0, 3, 8, 0.38) 100%); }
+.htip { position: fixed; z-index: 40; pointer-events: none; padding: 6px 10px; background: rgba(8, 18, 28, 0.94); border: 1px solid var(--accent); border-radius: 4px; font: 12px/1.4 var(--body); color: var(--fg); white-space: nowrap; }
+.htip[hidden] { display: none; }
+.card .ask { display: flex; gap: 6px; margin: 8px 0 4px; } .card .ask input { flex: 1; min-width: 0; background: var(--panel-2); border: 1px solid var(--line); color: var(--fg); padding: 7px 9px; font: 12.5px var(--body); border-radius: 3px; } .card .aans { margin: 4px 0 8px; padding: 7px 9px; font-size: 12.5px; line-height: 1.45; background: var(--panel-2); border-left: 2px solid var(--accent); white-space: pre-wrap; }
 .voice { position: absolute; left: calc(var(--gutter-l) + 112px); bottom: 16px; display: flex; align-items: center; gap: 8px; z-index: 5; max-width: min(560px, 46%); }
 .voice .btn { background: rgba(7, 13, 21, 0.82); white-space: nowrap; }
 .voice .btn.on { border-color: var(--accent); color: var(--accent); }
@@ -213,6 +216,7 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .jarvis { position: absolute; left: var(--gutter-l); top: 92px; bottom: 64px; width: 340px; display: flex; flex-direction: column; background: rgba(5, 10, 16, 0.94); backdrop-filter: blur(8px); border: 1px solid rgba(92, 200, 255, 0.4); box-shadow: 0 0 40px rgba(92, 200, 255, 0.16); z-index: 7; }
 .jarvis[hidden] { display: none; }
 #app.jaopen .roster { visibility: hidden; }
+.jarvis.mini { bottom: auto; } .jarvis.mini .jabody, .jarvis.mini .jaform, .jarvis.mini .jaans, .jarvis.mini footer { display: none; } .jarvis header { cursor: pointer; }
 .jabody li { cursor: default; } .jabody li.on { background: rgba(92, 200, 255, 0.12); box-shadow: inset 2px 0 0 var(--accent); }
 .jabody .jab { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; } .jabody .jab button { padding: 3px 9px; font-size: 11px; }
 .brief { margin: 4px 0 10px; } .brief small { display: block; font: 500 10px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 8px; } .brief p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; } .brief ul { margin: 3px 0 0; padding-left: 16px; font-size: 12.5px; line-height: 1.45; }
@@ -377,7 +381,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     <button class="ico rdock" id="rosterDock" type="button" aria-label="Mostrar el directorio de pisos"></button>
     <button class="ico zenbtn" id="zenBtn" type="button" aria-label="Modo inmersivo (tecla H)" title="Modo inmersivo (H)"></button>
     <div class="voice" id="voiceBox"><button class="btn" id="voTalk" type="button" title="Los agentes te hablan">Voz: no</button><button class="btn" id="voMic" type="button" title="Háblale a la torre">Hablar</button><button class="btn" id="voJar" type="button" title="Informe de Jarvis, el agente principal">Jarvis</button><span id="voLine" role="status" aria-live="polite"></span></div>
-    <section class="jarvis" id="jarvis" hidden role="dialog" aria-label="Informe de Jarvis"><header><i class="orb" aria-hidden="true"></i><div><b>Jarvis</b><p>Agente principal · piso Reportes</p></div><button class="btn" id="jaClose" type="button" aria-label="Cerrar informe">×</button></header><div class="jabody" id="jaBody"></div><form class="jaform" id="jaForm" autocomplete="off"><input id="jaIn" type="text" maxlength="200" placeholder="Escríbele o dicta: estado, reinicia facturación…" aria-label="Orden para Jarvis"><button class="btn primary" type="submit">Enviar</button></form><div class="jaans" id="jaAns" role="status" aria-live="polite" hidden></div><footer><button class="btn primary" id="jaTour" type="button">Recorrer problemas</button><button class="btn" id="jaSpeak" type="button">Leer en voz alta</button><button class="btn" id="jaSee" type="button">Ver a Jarvis</button><button class="btn" id="jaRef" type="button">Actualizar</button><label class="jachk"><input type="checkbox" id="jaAuto"> Abrir al entrar</label></footer></section>
+    <section class="jarvis" id="jarvis" hidden role="dialog" aria-label="Informe de Jarvis"><header><i class="orb" aria-hidden="true"></i><div><b>Jarvis</b><p>Agente principal · piso Reportes</p></div><button class="btn" id="jaMini" type="button" aria-label="Minimizar a Jarvis" title="Minimizar">–</button><button class="btn" id="jaClose" type="button" aria-label="Cerrar informe">×</button></header><div class="jabody" id="jaBody"></div><form class="jaform" id="jaForm" autocomplete="off"><input id="jaIn" type="text" maxlength="200" placeholder="Escríbele o dicta: estado, reinicia facturación…" aria-label="Orden para Jarvis"><button class="btn primary" type="submit">Enviar</button></form><div class="jaans" id="jaAns" role="status" aria-live="polite" hidden></div><footer><button class="btn primary" id="jaTour" type="button">Recorrer problemas</button><button class="btn" id="jaSpeak" type="button">Leer en voz alta</button><button class="btn" id="jaSee" type="button">Ver a Jarvis</button><button class="btn" id="jaRef" type="button">Actualizar</button><label class="jachk"><input type="checkbox" id="jaAuto"> Abrir al entrar</label></footer></section>
     <div class="score" id="score" title="Meteoritos capturados. Toca los que cruzan el cielo.">☄ 0</div>
     <div class="nogl" id="nogl" hidden>Tu navegador no pudo iniciar la vista 3D. La bandeja y las tareas siguen funcionando a la derecha.</div>
   </main>
@@ -493,6 +497,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <div id="repList"></div>
     </div>
   </aside>
+  <div class="htip" id="htip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
 </div>
 
@@ -696,16 +701,27 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     m.textContent = VOICE.listening ? 'Escuchando…' : 'Hablar'; m.classList.toggle('rec', VOICE.listening); m.title = VOICE.micBlocked ? 'Micrófono bloqueado: escribe tus órdenes en el cuadro de Jarvis' : 'Háblale a la torre';
   }
   function pickVoice(a) { try { var vs = (TTS && TTS.getVoices()) || [], es = vs.filter(function (v) { return /^es/i.test(v.lang); }); if (!es.length) return null; var us = es.filter(function (v) { return /^es[-_](US|MX)/i.test(v.lang); }); var pool = us.length ? us : es; return pool[(a ? a.i : 0) % pool.length]; } catch (e) { return null; } }
-  function voiceSay(a, text, done, low) {
+  function voiceSay(a, text, done, low, intr) {
     text = String(text || ''); var who = a ? a.name : 'Jarvis';
     if (VOICE.on || VOICE.listening) voiceLine(text, who);
     if (!VOICE.on || !TTS) { if (done) done(); return; }
     try {
       if (low && (TTS.speaking || TTS.pending)) { if (done) done(); return; }
-      var u = new SpeechSynthesisUtterance(text.replace(/[✉🔊]/g, '')); u.lang = 'es-US'; var vo = pickVoice(a); if (vo) { u.voice = vo; u.lang = vo.lang; }
-      u.rate = 1.0; u.pitch = a ? 0.8 + (a.i % 6) * 0.1 : 1; u.volume = 1;
-      var fin = function () { if (done) { var d = done; done = null; d(); } }; u.onstart = function () { VOICE.heard = true; }; u.onend = fin; u.onerror = function (ev) { if (ev && ev.error === 'not-allowed' && !VOICE.heard) voiceLine('Toca la pantalla una vez para que Jarvis te hable.', 'Jarvis'); fin(); };
-      TTS.speak(u);
+      var go = function () {
+        var parts = text.replace(/[✉🔊]/g, '').match(/[^.!?¡¿]+[.!?]*/g) || [text], chunks = [], cur = '';
+        parts.forEach(function (p) { if ((cur + p).length > 150 && cur) { chunks.push(cur); cur = p; } else cur += p; }); if (cur.trim()) chunks.push(cur);
+        if (!chunks.length) { if (done) done(); return; }
+        var vo = pickVoice(a);
+        chunks.forEach(function (c, i) {
+          var u = new SpeechSynthesisUtterance(c.trim()); u.lang = 'es-US'; if (vo) { u.voice = vo; u.lang = vo.lang; }
+          u.rate = 1.0; u.pitch = a ? 0.8 + (a.i % 6) * 0.1 : 1; u.volume = 1;
+          var last = i === chunks.length - 1, fin = function () { if (last && done) { var d = done; done = null; d(); } };
+          u.onstart = function () { VOICE.heard = true; }; u.onend = fin;
+          u.onerror = function (ev) { if (ev && ev.error === 'not-allowed' && !VOICE.heard) voiceLine('Toca la pantalla una vez para que Jarvis te hable.', 'Jarvis'); if (ev && (ev.error === 'canceled' || ev.error === 'interrupted')) { done = null; return; } fin(); };
+          TTS.speak(u);
+        });
+      };
+      if (intr) { TTS.cancel(); setTimeout(go, 90); } else go();
     } catch (e) { if (done) done(); }
   }
   function briefingText(welcome) {
@@ -726,9 +742,13 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (/\b(si|dale|claro|hazlo|adelante|reinicia|reiniciala|reinicialo|corrige|corrigelo|ok|okey|de acuerdo|por favor)\b/.test(n)) { VOICE.awaiting = null; aw.yes(); return ''; }
       if (/\b(no|despues|luego|ignora|espera|cancela|silencia|nada)\b/.test(n)) { VOICE.awaiting = null; aw.no(); return ''; }
     }
+    var pn = n.match(/\bpiso (\d{1,2})\b/); if (pn && AGENTS[+pn[1] - 1]) { select(AGENTS[+pn[1] - 1].id); return ''; }
+    if (/\b(sube|subir|arriba|siguiente|proximo)\b/.test(n) && !findAgentV(n)) { moveFloor(1); return ''; }
+    if (/\b(baja|bajar|abajo|anterior)\b/.test(n) && !findAgentV(n)) { moveFloor(-1); return ''; }
+    if (/\b(habla con|hablame con|pasame con|llama a|ve con|ir con|vamos con)\b/.test(n)) { var ha = findAgentV(n); if (ha) { select(ha.id); return ''; } }
     if (/\b(que haces|que hace|como mejoras|como mejorar|como mejoro|cuentame|como vas)\b/.test(n)) { var qa = findAgentV(n); if (qa) { select(qa.id); return agentBrief(qa).speech; } }
     if (/\b(informe|reporte del dia|jarvis|que mejoro|que falta|que debo mejorar|dime todo|que hay de nuevo)\b/.test(n)) { var jr = jarvisOpen(false); return jarvisSpeech(jr); }
-    if (/\b(ayuda|comandos|que puedo decir)\b/.test(n)) return 'Puedes decir: estado, reinicia o corrige seguido del agente, pausa o reanuda un agente, abre la bandeja, tareas, obras o tokens, ver un agente, vista interior, torre completa, y silencia.';
+    if (/\b(ayuda|comandos|que puedo decir)\b/.test(n)) return 'Puedes decir: estado, sube, baja, piso 5, habla con calendario, qué haces calendario, reinicia o corrige seguido del agente, pausa o reanuda un agente, abre la bandeja, tareas, obras o tokens, ver un agente, vista interior, torre completa, y silencia.';
     if (/\b(estado|resumen|que pasa|como va|informe|novedades)\b/.test(n)) return briefingText(false);
     if (/\b(reinicia|reiniciar|corrige|corregir|arregla|arreglar|soluciona|solucionar)\b/.test(n)) {
       var ag = findAgentV(n), tg = ag ? [ag] : alerts().filter(function (x) { return x.status === 'error'; });
@@ -798,7 +818,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   var JA = { shown: false };
   function jarvisRender() { var r = jarvisReport(); setHtml($('#jaBody'), jarvisHtml(r)); $('#jaAuto').checked = PREFS.jarvis !== false; return r; }
   function jarvisOpen(speak) {
-    var r = jarvisRender(); $('#jarvis').hidden = false; $('#app').classList.add('jaopen'); JA.shown = true;
+    var r = jarvisRender(); $('#jarvis').hidden = false; $('#jarvis').classList.remove('mini'); $('#app').classList.add('jaopen'); JA.shown = true;
     if (speak) voiceSay(null, jarvisSpeech(r), function () { if (VOICE.on && VOICE.micOk && SR && !VOICE.micBlocked) startListen(8000); });
     return r;
   }
@@ -848,6 +868,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     voiceSay(null, txt, function () { if (r.watch.length && !quiet && !$('#jarvis').hidden) jarvisTour(true); });
   }
   $('#voJar').onclick = function () { unlockAudio(); if (!$('#jarvis').hidden) { jarvisClose(); return; } jarvisOpen(false); };
+  function jarvisMini(on) { var j = $('#jarvis'); if (j.hidden) return; j.classList.toggle('mini', on); $('#jaMini').textContent = on ? '+' : '–'; $('#jaMini').title = on ? 'Expandir' : 'Minimizar'; }
+  $('#jaMini').onclick = function (e) { e.stopPropagation(); jarvisMini(!$('#jarvis').classList.contains('mini')); };
+  $('#jarvis > header').onclick = function (e) { if (e.target.closest('button')) return; if ($('#jarvis').classList.contains('mini')) jarvisMini(false); };
   $('#jaClose').onclick = jarvisClose;
   $('#jaTour').onclick = function () { unlockAudio(); if (JT.on) jarvisTour(false); else jarvisTour(true); };
   $('#jaSpeak').onclick = function () { unlockAudio(); if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } jarvisTour(false); jarvisBrief(); };
@@ -1168,8 +1191,10 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     return { doing: doing, improve: imp, speech: doing + ' Para mejorar: ' + imp.join(' ') };
   }
   /* ---------- Tarjeta del agente ---------- */
+  var AGENT_ANS = {};
   function renderCard() {
     var c = $('#card');
+    var fe = document.activeElement && document.activeElement.closest && document.activeElement.closest('#card [data-cask]'); if (fe && fe.getAttribute('data-cask') === selected) return;
     if (selectedPlanet) { renderPlanetCard(c); return; }
     if (selectedProject) { renderProjCard(c); return; }
     if (!selected) { c.hidden = true; return; }
@@ -1187,10 +1212,23 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       '<div class="brief"><small>Qué estoy haciendo</small><p data-dyn="bdo"></p><small>Cómo puedo mejorar</small><ul data-dyn="bimp"></ul></div>' +
       '<dl class="nums"><div><dt>Tareas hoy</dt><dd>' + a.done + '</dd></div><div><dt>Última señal</dt><dd data-dyn="sig"></dd></div></dl>' +
       '<div class="mine"><small>Próximas tareas</small>' + (mine.length ? '<ul>' + mine.map(function (t) { return '<li><time>' + clock(t.at) + '</time><span>' + esc(t.title) + '</span></li>'; }).join('') + '</ul>' : '<p>Sin tareas programadas.</p>') + '</div>' +
+      '<form class="ask" data-cask="' + esc(a.id) + '" autocomplete="off"><input type="text" maxlength="160" placeholder="Pregúntale a ' + esc(a.name) + '…" aria-label="Pregúntale a ' + esc(a.name) + '"><button class="btn primary" type="submit">Preguntar</button></form>' + (AGENT_ANS[a.id] ? '<p class="aans">' + esc(AGENT_ANS[a.id]) + '</p>' : '') +
       '<div class="btns">' + main + '<button class="btn" data-cadd type="button">Asignar tarea</button>' + (a.id === 'publica' ? '<button class="btn" data-copen="posts" type="button">Publicaciones</button><button class="btn" data-copen="tokens" type="button">Tokens</button>' : '') + '</div>');
     var br = agentBrief(a), bd = c.querySelector('[data-dyn="bdo"]'), bi = c.querySelector('[data-dyn="bimp"]'); if (bd) bd.textContent = br.doing; if (bi) bi.innerHTML = br.improve.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
     var dA = c.querySelector('[data-dyn="act"]'); if (dA) dA.textContent = a.act; var dS = c.querySelector('[data-dyn="sig"]'); if (dS) dS.textContent = sig;
   }
+  function askAgent(a, q) {
+    var el = $('#card .aans'); function show(t) { AGENT_ANS[a.id] = t; var c = $('#card'); var p = c.querySelector('.aans'); if (!p) { p = document.createElement('p'); p.className = 'aans'; var f = c.querySelector('[data-cask]'); if (f) f.insertAdjacentElement('afterend', p); } if (p) p.textContent = t; }
+    var br = agentBrief(a);
+    if (!SAMPLE) { var t0 = 'Aquí no puedo consultar a Claude, pero esto es lo que sé. ' + br.speech; show(t0); voiceSay(a, t0, null, false, true); return; }
+    var mine = openTasks().filter(function (t) { return t.agent === a.id; }).slice(0, 4).map(function (t) { return t.title; }).join('; ');
+    var prompt = 'Eres «' + a.name + '», agente de la Torre de Control de Imperial Remodeling (remodelación en Dallas–Fort Worth). Tu función: ' + a.role + ' Estado: ' + LBL[a.status] + '. Haciendo ahora: ' + a.act + '. ' + br.doing + ' Tareas próximas: ' + (mine || 'ninguna') + '. Responde en primera persona, en español, máximo 4 líneas, solo con lo que sabes; si no lo sabes, dilo. Nunca prometas enviar ni contestar nada a terceros sin la aprobación del dueño.\n\nPregunta del dueño: ' + String(q).slice(0, 200);
+    show('Pensando…');
+    SAMPLE(prompt, { onText: function (o) { var p = $('#card .aans'); if (p && selected === a.id) p.textContent = o.text; } }).then(function (r) { var t = (r && r.text) || 'No tengo respuesta ahora.'; show(t); addUsage(a.id, est(prompt), est(t), 'pregunta al agente'); voiceSay(a, t, null, false, true); }).catch(function () { show('No pude consultar a Claude ahora. Inténtalo otra vez.'); });
+  }
+  $('#card').addEventListener('submit', function (e) {
+    var f = e.target.closest('[data-cask]'); if (!f) return; e.preventDefault(); var inp = f.querySelector('input'), q = inp.value.trim(), a = byId(selected); if (!q || !a) return; inp.value = ''; askAgent(a, q);
+  });
   $('#card').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
     if (selectedPlanet) { planetCardClick(b); return; }
@@ -2593,7 +2631,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       v.beam = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 36, 8, 1, true), v.beamMat); v.beam.visible = false; tower.add(v.beam);
       var hitMat = new THREE.MeshBasicMaterial({ visible: false });
       var h1 = new THREE.Mesh(new THREE.SphereGeometry(1.5, 8, 6), hitMat), h2 = new THREE.Mesh(new THREE.BoxGeometry(hx * 2, FH, hz * 2), hitMat);
-      h1.position.y = 1.2; h2.position.y = yMid; h1.userData.agent = h2.userData.agent = a; v.robot.add(h1); tower.add(h2); pickables.push(h1, h2);
+      h1.position.y = 1.2; h2.position.y = yMid; h1.userData.agent = h2.userData.agent = a; h2.userData.floor = true; v.robot.add(h1); tower.add(h2); pickables.push(h1, h2);
       v.nextPulse = 1 + a.i * 0.4; v.t = rnd() * 10;
     });
     tower.add(railBuf.mesh(accentM));
@@ -3018,7 +3056,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var cam = { tx: 0, tz: 0, gtx: 0, gtz: 0, th: 0.8, ph: 1.42, gph: null, follow: null, r: HOME.r, ty: HOME.ty, gr: HOME.r, gty: HOME.ty };
     function applyShift(snap) {
       var w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
-      var t = (window.innerWidth > 860 && rosterOpen && !zen) ? ((selected || selectedProject || selectedPlanet) ? -24 : 40) : 0;
+      var ja = window.innerWidth > 860 && !zen && $('#app').classList.contains('jaopen') && !$('#jarvis').classList.contains('mini'), anySel = !!(selected || selectedProject || selectedPlanet);
+      var t = ja ? (anySel ? 8 : 150) : (window.innerWidth > 860 && rosterOpen && !zen) ? (anySel ? -24 : 40) : 0;
       if (snap) SHIFT = t; else if (Math.abs(t - SHIFT) < 0.3) return; else SHIFT += (t - SHIFT) * 0.08;
       if (Math.abs(SHIFT) > 0.5) camera.setViewOffset(w, h, -SHIFT, 0, w, h); else camera.clearViewOffset();
       camera.updateProjectionMatrix();
@@ -3079,7 +3118,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     canvas.addEventListener('pointermove', function (e) {
       if (!ptrs[e.pointerId]) {
         var nowH = performance.now(); if (nowH - lastHover < 70 || e.pointerType === 'touch') return; lastHover = nowH;
-        var uh = hit(e); canvas.style.cursor = uh ? 'pointer' : ''; hoverA = uh && uh.agent ? uh.agent : null; return;
+        var uh = hit(e); canvas.style.cursor = uh ? 'pointer' : ''; hoverA = uh && uh.agent ? uh.agent : null; var ht = $('#htip'); if (hoverA) { ht.textContent = hoverA.name + ' · ' + LBL[hoverA.status] + ' · toca para hablar'; ht.style.left = (e.clientX + 14) + 'px'; ht.style.top = (e.clientY + 14) + 'px'; ht.hidden = false; } else ht.hidden = true; return;
       }
       ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
       var ks = Object.keys(ptrs);
@@ -3094,7 +3133,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     canvas.addEventListener('pointerup', function (e) {
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
-      if (wasTap) { var ud = hit(e); if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
+      if (wasTap) { var ud = hit(e); if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
     canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; });
@@ -3103,7 +3142,17 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
     function hit(e) {
       var rc = canvas.getBoundingClientRect(); ndc.set((e.clientX - rc.left) / rc.width * 2 - 1, -((e.clientY - rc.top) / rc.height) * 2 + 1);
-      ray.setFromCamera(ndc, camera); var r = ray.intersectObjects(pickables, false); for (var q = 0; q < r.length; q++) { var ud = r[q].object.userData; if (ud.project || ud.meteor || ud.planet) return ud; if (ud.agent && ud.agent.v.ghost > 0.45) return ud; } return null;
+      ray.setFromCamera(ndc, camera); var r = ray.intersectObjects(pickables, false), first = null, robot = null;
+      for (var q = 0; q < r.length; q++) {
+        var ud = r[q].object.userData;
+        if (ud.meteor) { if (ray.ray.distanceToPoint(ud.meteor.g.position) <= (ud.meteor.gold ? 8 : 6)) return ud; continue; }
+        if (ud.agent && !ud.floor) { if (!robot && ud.agent.v.ghost > 0.45) robot = ud; continue; }
+        if (!first) { if (ud.floor) { var o = ray.ray.origin, dr = ray.ray.direction, hd = dr.x * dr.x + dr.z * dr.z, tc = hd > 1e-9 ? -(o.x * dr.x + o.z * dr.z) / hd : 0, yc = o.y + dr.y * Math.max(0, tc), fa = AGENTS[Math.max(0, Math.min(N - 1, Math.floor((yc - Y0) / FH)))], bd = 9, pv = new THREE.Vector3();
+          AGENTS.forEach(function (ag) { pv.copy(ag.v.robot.position); pv.y += 2.4; var dd = ray.ray.distanceToPoint(pv); if (dd < bd) { bd = dd; fa = ag; } });
+          first = { agent: fa, floorHit: true }; } else first = ud; }
+      }
+      if (first && !first.floorHit) return first;
+      return robot || first || null;
     }
 
     /* ---- Obras: marcadores en la ciudad ---- */
@@ -3189,7 +3238,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     }
 
     function greetAgent(a) {
-      var v = a.v, st = a.status; if (clockT - v.lastGreet < 6) return; v.lastGreet = clockT;
+      var v = a.v, st = a.status; if (clockT - v.lastGreet < 3) return; v.lastGreet = clockT;
       AGENTS.forEach(function (o) { if (o !== a) { o.v.sayUntil = 0; o.v.greetEnd = 0; } });
       var hi = ['¡Hola!', '¡Buenas!', '¡Qué gusto verte!', '¡Hola, jefe!'][Math.floor(Math.random() * 4)], act = a.act.charAt(0).toLowerCase() + a.act.slice(1);
       if (st === 'error') v.sayText = '¡Necesito ayuda! ' + (a.msg || 'Dejé de responder.');
@@ -3197,7 +3246,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       else if (st === 'working') { v.sayText = hi + ' Soy ' + a.name + '. Ahora estoy ' + (act.indexOf('ando') > -1 || act.indexOf('iendo') > -1 ? act : 'con: ' + act) + '.'; }
       else v.sayText = hi + ' Soy ' + a.name + '. No tengo pendientes, avísame si me necesitas.';
       v.sayUntil = clockT + 5; if (st !== 'error') v.greetEnd = clockT + 4.5;
-      if (st !== 'error' && !JT.on) { try { if (TTS) TTS.cancel(); } catch (e) {} voiceSay(a, agentBrief(a).speech, null, false); }
+      if (st !== 'error' && !JT.on) voiceSay(a, agentBrief(a).speech, null, false, true);
     }
 
     /* ---- Bucle ---- */
