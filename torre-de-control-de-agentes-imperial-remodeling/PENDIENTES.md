@@ -26,4 +26,5 @@
 - [x] Vista interior: al acercarse (o con el botón) los agentes se sientan en escritorios futuristas con pantallas holográficas; alta definición (más detalle en robots, naves, planetas, ventanas, pisos).
 - [x] Uniformes con logo EVR (gorra, pecho, espalda, cinturón de herramientas), mensajeros en los ascensores que entregan recados reales (alertas y bandeja), escritorios con placa de nombre y café.
 - [x] Ropa de oficina (saco con solapas, camisa y corbata, gafete con logo, pañuelo, gemelos, zapatos, peinados, lentes) y voz: los agentes piden ayuda hablando («Voz») y la torre te escucha («Hablar»: estado, reinicia X, abre bandeja…). Nada se envía afuera sin tu «sí».
+- [x] Jarvis, agente principal (piso Reportes): al entrar abre el informe (todo bien / requiere atención / por mejorar), lo lee en voz alta si la Voz está activa, y recibe órdenes escritas (cuadro de texto) cuando el micrófono está bloqueado. Preguntas libres van a Claude solo como sugerencias.
 - [x] 90/90 pruebas de botones y clics 3D + móvil.

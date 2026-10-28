@@ -209,6 +209,20 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .voice .btn.rec { border-color: var(--err); color: var(--err); animation: blink 1s infinite; }
 #voLine { display: none; font: 12px/1.35 var(--mono); color: var(--fg); background: rgba(7, 13, 21, 0.86); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; max-width: 340px; }
 #voLine.show { display: block; }
+.jarvis { position: absolute; left: 50%; top: 96px; transform: translateX(-50%); width: min(520px, calc(100% - 32px)); max-height: calc(100% - 190px); display: flex; flex-direction: column; background: rgba(5, 10, 16, 0.94); backdrop-filter: blur(8px); border: 1px solid rgba(92, 200, 255, 0.4); box-shadow: 0 0 40px rgba(92, 200, 255, 0.16); z-index: 7; }
+.jarvis[hidden] { display: none; }
+.jarvis header { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.jarvis header div { flex: 1; min-width: 0; } .jarvis header b { font: 500 13px/1.2 var(--display); letter-spacing: 0.14em; text-transform: uppercase; } .jarvis header p { margin: 2px 0 0; font: 11px/1.3 var(--mono); color: var(--muted); }
+.jarvis .orb { width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0, var(--accent) 35%, #0a4a73 100%); box-shadow: 0 0 16px var(--accent); animation: orb 2.4s ease-in-out infinite; flex: none; }
+@keyframes orb { 50% { box-shadow: 0 0 28px var(--accent); transform: scale(1.08); } }
+.jabody { overflow-y: auto; padding: 10px 14px 4px; min-height: 0; }
+.jabody h3 { margin: 10px 0 5px; font: 500 10px/1.3 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.jabody ul { margin: 0; padding: 0; list-style: none; } .jabody li { position: relative; padding: 4px 0 4px 16px; font-size: 13px; line-height: 1.4; }
+.jabody li::before { content: ""; position: absolute; left: 2px; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.jabody .w li::before { background: var(--warn); } .jabody .b li::before { background: var(--err); } .jabody .m li::before { background: var(--idle); }
+.jaform { display: flex; gap: 8px; padding: 8px 14px; border-top: 1px solid var(--line); } .jaform input { flex: 1; min-width: 0; background: var(--panel-2); border: 1px solid var(--line); color: var(--fg); padding: 8px 10px; font: 13px var(--body); border-radius: 3px; }
+.jaans { margin: 0 14px 8px; padding: 8px 10px; font-size: 13px; line-height: 1.45; background: var(--panel-2); border-left: 2px solid var(--accent); white-space: pre-wrap; max-height: 150px; overflow-y: auto; }
+.jarvis footer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 14px 12px; } .jachk { margin-left: auto; font: 11px var(--mono); color: var(--muted); display: flex; align-items: center; gap: 5px; }
 @keyframes pop { 30% { transform: scale(1.18); border-color: #ffd98a; } }
 #app.nopanel { grid-template-columns: minmax(0, 1fr); }
 #app.nopanel .panel, #app.noroster .roster { display: none; }
@@ -275,6 +289,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   #app.nopanel { grid-template-rows: auto minmax(0, 1fr); }
   #app.zen { grid-template-rows: 0 minmax(0, 1fr); }
   .zenbtn, .score { bottom: 58px; }
+  .jarvis { position: fixed; left: 8px; right: 8px; top: 8px; bottom: 8px; width: auto; max-height: none; transform: none; z-index: 30; }
   .voice { left: var(--gutter-l); bottom: 104px; max-width: calc(100% - 2 * var(--gutter-l)); flex-wrap: wrap; }
   #voLine { order: -1; flex: 1 0 100%; max-width: none; font-size: 11px; display: none; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   #voLine.show { display: -webkit-box; }
@@ -354,7 +369,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     <nav class="dock" id="dock" aria-label="Paneles ocultos"></nav>
     <button class="ico rdock" id="rosterDock" type="button" aria-label="Mostrar el directorio de pisos"></button>
     <button class="ico zenbtn" id="zenBtn" type="button" aria-label="Modo inmersivo (tecla H)" title="Modo inmersivo (H)"></button>
-    <div class="voice" id="voiceBox"><button class="btn" id="voTalk" type="button" title="Los agentes te hablan">Voz: no</button><button class="btn" id="voMic" type="button" title="Háblale a la torre">Hablar</button><span id="voLine" role="status" aria-live="polite"></span></div>
+    <div class="voice" id="voiceBox"><button class="btn" id="voTalk" type="button" title="Los agentes te hablan">Voz: no</button><button class="btn" id="voMic" type="button" title="Háblale a la torre">Hablar</button><button class="btn" id="voJar" type="button" title="Informe de Jarvis, el agente principal">Jarvis</button><span id="voLine" role="status" aria-live="polite"></span></div>
+    <section class="jarvis" id="jarvis" hidden role="dialog" aria-label="Informe de Jarvis"><header><i class="orb" aria-hidden="true"></i><div><b>Jarvis</b><p>Agente principal · piso Reportes</p></div><button class="btn" id="jaClose" type="button" aria-label="Cerrar informe">×</button></header><div class="jabody" id="jaBody"></div><form class="jaform" id="jaForm" autocomplete="off"><input id="jaIn" type="text" maxlength="200" placeholder="Escríbele o dicta: estado, reinicia facturación…" aria-label="Orden para Jarvis"><button class="btn primary" type="submit">Enviar</button></form><div class="jaans" id="jaAns" role="status" aria-live="polite" hidden></div><footer><button class="btn" id="jaSpeak" type="button">Leer en voz alta</button><button class="btn" id="jaSee" type="button">Ver a Jarvis</button><button class="btn" id="jaRef" type="button">Actualizar</button><label class="jachk"><input type="checkbox" id="jaAuto"> Abrir al entrar</label></footer></section>
     <div class="score" id="score" title="Meteoritos capturados. Toca los que cruzan el cielo.">☄ 0</div>
     <div class="nogl" id="nogl" hidden>Tu navegador no pudo iniciar la vista 3D. La bandeja y las tareas siguen funcionando a la derecha.</div>
   </main>
@@ -614,7 +630,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
 
   /* ---------- Alarmas: sonido, aviso del navegador y registro para avisos externos ---------- */
-  var VOICE = { on: PREFS.voice === true, micOk: PREFS.mic === true, listening: false, rec: null, awaiting: null, welcomed: false, lt: 0 };
+  var VOICE = { on: PREFS.voice === true, micOk: PREFS.mic === true, micBlocked: false, listening: false, rec: null, awaiting: null, welcomed: false, lt: 0 };
   var ALARM = { sound: PREFS.sound !== false, notify: PREFS.notify === true, audio: null, last: {} }, flatOn = false;
   function unlockAudio() { try { if (!ALARM.audio) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) ALARM.audio = new AC(); } if (ALARM.audio && ALARM.audio.state === 'suspended') ALARM.audio.resume(); } catch (e) {} }
   document.addEventListener('pointerdown', unlockAudio, { passive: true }); document.addEventListener('keydown', unlockAudio, { passive: true });
@@ -667,11 +683,11 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function renderVoice() {
     var t = $('#voTalk'), m = $('#voMic'); if (!t || !m) return;
     t.textContent = 'Voz: ' + (VOICE.on ? 'sí' : 'no'); t.classList.toggle('on', VOICE.on);
-    m.textContent = VOICE.listening ? 'Escuchando…' : 'Hablar'; m.classList.toggle('rec', VOICE.listening);
+    m.textContent = VOICE.listening ? 'Escuchando…' : 'Hablar'; m.classList.toggle('rec', VOICE.listening); m.title = VOICE.micBlocked ? 'Micrófono bloqueado: escribe tus órdenes en el cuadro de Jarvis' : 'Háblale a la torre';
   }
   function pickVoice(a) { try { var vs = (TTS && TTS.getVoices()) || [], es = vs.filter(function (v) { return /^es/i.test(v.lang); }); if (!es.length) return null; var us = es.filter(function (v) { return /^es[-_](US|MX)/i.test(v.lang); }); var pool = us.length ? us : es; return pool[(a ? a.i : 0) % pool.length]; } catch (e) { return null; } }
   function voiceSay(a, text, done, low) {
-    text = String(text || ''); var who = a ? a.name : 'Torre';
+    text = String(text || ''); var who = a ? a.name : 'Jarvis';
     if (VOICE.on || VOICE.listening) voiceLine(text, who);
     if (!VOICE.on || !TTS) { if (done) done(); return; }
     try {
@@ -700,6 +716,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (/\b(si|dale|claro|hazlo|adelante|reinicia|reiniciala|reinicialo|corrige|corrigelo|ok|okey|de acuerdo|por favor)\b/.test(n)) { VOICE.awaiting = null; aw.yes(); return ''; }
       if (/\b(no|despues|luego|ignora|espera|cancela|silencia|nada)\b/.test(n)) { VOICE.awaiting = null; aw.no(); return ''; }
     }
+    if (/\b(informe|reporte del dia|jarvis|que mejoro|que falta|que debo mejorar|dime todo|que hay de nuevo)\b/.test(n)) { var jr = jarvisOpen(false); return jarvisSpeech(jr); }
     if (/\b(ayuda|comandos|que puedo decir)\b/.test(n)) return 'Puedes decir: estado, reinicia o corrige seguido del agente, pausa o reanuda un agente, abre la bandeja, tareas, obras o tokens, ver un agente, vista interior, torre completa, y silencia.';
     if (/\b(estado|resumen|que pasa|como va|informe|novedades)\b/.test(n)) return briefingText(false);
     if (/\b(reinicia|reiniciar|corrige|corregir|arregla|arreglar|soluciona|solucionar)\b/.test(n)) {
@@ -720,31 +737,108 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (hit) { tab(hit[1]); return 'Abriendo ' + hit[0] + '.'; }
       var av = findAgentV(n); if (av) { select(av.id); return 'Aquí está ' + av.name + '.'; }
     }
-    return 'No entendí. Di ayuda para ver lo que puedo hacer.';
+    return SAMPLE ? '__ask' : 'No entendí. Di ayuda para ver lo que puedo hacer.';
   }
-  function heard(txt) { voiceLine(txt, 'Tú'); var r = voiceCommand(normV(txt)); if (r) voiceSay(null, r); }
+
+  /* ---------- Jarvis: agente principal, informe al entrar y órdenes por texto ---------- */
+  function jarvisReport() {
+    var now = Date.now(), good = [], watch = [], improve = [], N = AGENTS.length;
+    var al = alerts(), work = AGENTS.filter(function (a) { return a.status === 'working'; }).length, idle = AGENTS.filter(function (a) { return a.status === 'idle'; });
+    good.push(work + ' de ' + N + ' agentes están trabajando.');
+    if (!al.length) good.push('No hay alertas activas.');
+    al.forEach(function (a) { watch.push({ b: a.status === 'error', t: a.name + (a.status === 'error' ? ' dejó de funcionar' : ' va lento') + (a.msg ? ': ' + a.msg.replace(/[.\s]+$/, '') : '') + '. Di «reinicia ' + a.name.toLowerCase() + '».' }); });
+    if (idle.length) watch.push({ t: idle.length + ' en pausa: ' + idle.map(function (a) { return a.name; }).join(', ') + '.' });
+    var tk = TASKS || [], over = tk.filter(function (t) { return !t.done && t.at && t.at < now - 5 * 60000; }), dn = tk.filter(function (t) { return t.done; }).length;
+    if (over.length) watch.push({ t: over.length + (over.length === 1 ? ' tarea atrasada: ' : ' tareas atrasadas: ') + over.slice(0, 2).map(function (t) { return t.title; }).join('; ') + '.' }); else good.push('Ninguna tarea atrasada' + (dn ? ' y ' + dn + ' completadas.' : '.'));
+    var ib = INBOX || [];
+    if (ib.length) watch.push({ t: ib.length + ' en la bandeja esperan tu decisión: ' + ib.slice(0, 3).map(function (x) { return x.title; }).join('; ') + '.' }); else good.push('Bandeja al día.');
+    var pr = PROJECTS || [], wait = pr.filter(function (p) { return /esperando|firmar|pendiente/i.test(p.next || ''); });
+    if (pr.length) good.push(pr.length + ' obras en curso; la más avanzada: ' + pr.slice().sort(function (a, b) { return b.progress - a.progress; })[0].name + ' al ' + pr.slice().sort(function (a, b) { return b.progress - a.progress; })[0].progress + '%.');
+    wait.forEach(function (p) { watch.push({ t: 'Obra «' + p.name + '» depende de algo externo: ' + p.next + '.' }); });
+    var po = POSTS || [], sch = po.filter(function (p) { return p.status === 'Programado'; }), dr = po.filter(function (p) { return p.status === 'Borrador' || p.status === 'Idea'; });
+    if (sch.length) good.push(sch.length + ' publicación(es) programada(s).');
+    if (dr.length) improve.push(dr.length + ' publicaciones siguen en borrador o idea: ponles fecha para que salgan.');
+    var ts = tokenState();
+    if (ts.level !== 'ok') watch.push({ b: ts.level === 'over', t: 'El gasto de tokens va al ' + ts.pct + '% del presupuesto diario.' }); else good.push('Gasto de tokens al ' + ts.pct + '% del presupuesto diario.');
+    var live = AGENTS.filter(function (a) { return a.live; }).length;
+    if (live < N) improve.push(live ? live + ' de ' + N + ' agentes están conectados a datos reales; conecta el resto.' : 'Los ' + N + ' agentes son de ejemplo: conéctalos a tus plataformas reales, uno por uno (Correo, Calendario, Prospectos, Cobros, Comunidad).');
+    improve.push('Alertas al teléfono por Telegram: pendiente de configurar el token y tu chat (ver PENDIENTES).');
+    if (!ALARM.notify) improve.push('Activa «Aviso del navegador» en la bandeja para recibir alarmas aunque estés en otra pestaña.');
+    if (!ALARM.sound) improve.push('El sonido de alarma está apagado.');
+    if (VOICE.micBlocked || micPolicyBlocked()) improve.push('El micrófono está bloqueado en este marco: mientras tanto escribe tus órdenes aquí abajo.'); else if (!VOICE.on) improve.push('Activa «Voz» para que los agentes te hablen.');
+    if (!SAMPLE) improve.push('Las preguntas libres a Claude solo funcionan dentro de claude.ai.');
+    return { good: good, watch: watch, improve: improve, live: live, N: N };
+  }
+  function jarvisHtml(r) {
+    function ul(cls, items) { return '<ul class="' + cls + '">' + items.map(function (x) { var t = typeof x === 'string' ? x : x.t, c = typeof x === 'string' ? '' : (x.b ? 'b' : ''); return '<li class="' + c + '">' + esc(t) + '</li>'; }).join('') + '</ul>'; }
+    var h = '<h3>Todo bien</h3>' + ul('', r.good);
+    h += '<h3>Requiere tu atención</h3>' + (r.watch.length ? ul('w', r.watch) : '<ul class="m"><li>Nada urgente en este momento.</li></ul>');
+    h += '<h3>Por mejorar</h3>' + ul('m', r.improve);
+    return h;
+  }
+  function jarvisSpeech(r) {
+    var t = 'Informe de Jarvis. ';
+    t += r.good.slice(0, 2).join(' ') + ' ';
+    t += r.watch.length ? 'Requiere tu atención: ' + r.watch.slice(0, 3).map(function (x) { return x.t; }).join(' ') + ' ' : 'No hay nada urgente. ';
+    t += 'Por mejorar: ' + r.improve.slice(0, 2).join(' ');
+    return t;
+  }
+  var JA = { shown: false };
+  function jarvisRender() { var r = jarvisReport(); setHtml($('#jaBody'), jarvisHtml(r)); $('#jaAuto').checked = PREFS.jarvis !== false; return r; }
+  function jarvisOpen(speak) {
+    var r = jarvisRender(); $('#jarvis').hidden = false; JA.shown = true;
+    if (speak) voiceSay(null, jarvisSpeech(r), function () { if (VOICE.on && VOICE.micOk && SR && !VOICE.micBlocked) startListen(8000); });
+    return r;
+  }
+  function jarvisAsk(q) {
+    var out = $('#jaAns'); out.hidden = false;
+    if (!SAMPLE) { out.textContent = 'No entendí esa orden. Di «ayuda» para ver lo que puedo hacer. Las preguntas libres funcionan al abrir la torre dentro de claude.ai.'; return; }
+    var r = jarvisReport(), ctx = 'Bien: ' + r.good.join(' ') + '\nAtención: ' + r.watch.map(function (x) { return x.t; }).join(' ') + '\nMejorar: ' + r.improve.join(' ');
+    var prompt = 'Eres Jarvis, el agente principal de la Torre de Control de Imperial Remodeling (remodelación en Dallas–Fort Worth). Responde en español, breve (máximo 5 líneas), práctico y sin inventar datos. Solo sugiere; nunca digas que enviaste o hiciste algo, porque no puedes actuar sin que el dueño lo apruebe. Estado actual:\n' + ctx + '\n\nPregunta del dueño: ' + String(q).slice(0, 300);
+    out.textContent = 'Jarvis está pensando…';
+    SAMPLE(prompt, { onText: function (o) { out.textContent = o.text; } }).then(function (res) { var t = (res && res.text) || out.textContent; out.textContent = t; addUsage('reportes', est(prompt), est(t), 'pregunta a Jarvis'); voiceSay(null, t); }).catch(function () { out.textContent = 'No pude consultar a Claude ahora. Inténtalo otra vez.'; });
+  }
+  $('#voJar').onclick = function () { unlockAudio(); if (!$('#jarvis').hidden) { $('#jarvis').hidden = true; return; } jarvisOpen(true); };
+  $('#jaClose').onclick = function () { $('#jarvis').hidden = true; try { if (TTS) TTS.cancel(); } catch (e) {} };
+  $('#jaSpeak').onclick = function () { unlockAudio(); var r = jarvisRender(); if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } voiceSay(null, jarvisSpeech(r)); };
+  $('#jaSee').onclick = function () { select('reportes'); };
+  $('#jaRef').onclick = function () { jarvisRender(); toast('Informe actualizado'); };
+  $('#jaAuto').onchange = function () { PREFS.jarvis = this.checked; savePrefs(); };
+  $('#jaForm').addEventListener('submit', function (e) {
+    e.preventDefault(); var i = $('#jaIn'), t = i.value.trim(); if (!t) return; i.value = ''; unlockAudio();
+    $('#jaAns').hidden = false; $('#jaAns').textContent = 'Tú: ' + t;
+    var n = normV(t), r = voiceCommand(n);
+    if (r === '__ask') { jarvisAsk(t); return; }
+    if (r) { $('#jaAns').textContent = 'Jarvis: ' + r; voiceSay(null, r); }
+  });
+  setTimeout(function () { if (PREFS.jarvis !== false && !JA.shown) { var r = jarvisOpen(false); if (VOICE.on) voiceSay(null, jarvisSpeech(r)); } }, 3500);
+  setInterval(function () { if (!$('#jarvis').hidden) jarvisRender(); }, 20000);
+  function heard(txt) { voiceLine(txt, 'Tú'); var r = voiceCommand(normV(txt)); if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; } if (r) { voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } }
+  function micPolicyBlocked() { try { var pp = document.permissionsPolicy || document.featurePolicy; return !!(pp && pp.allowsFeature && !pp.allowsFeature('microphone')); } catch (e) { return false; } }
+  function micFallback() { var el = $('#jaAns'); if (!el) return; el.hidden = false; el.textContent = 'El micrófono está bloqueado aquí (el navegador o el marco de Claude no lo permite). Escribe tu orden en el cuadro de arriba. En el celular o en la computadora puedes dictar con el micrófono del teclado (celular) o con Windows+H / Fn Fn (Mac). Si quieres usar el micrófono directo, permítelo en el candado de la barra de direcciones y recarga.'; var i = $('#jaIn'); if (i) { try { i.focus(); } catch (e) {} } }
   function startListen(ms) {
+    if (micPolicyBlocked()) { VOICE.micBlocked = true; renderVoice(); jarvisOpen(false); micFallback(); return false; }
     if (!SR) { voiceLine('Este navegador no permite escuchar por voz. Usa Chrome, Edge o Safari.', 'Voz'); return false; }
     if (VOICE.rec) return true;
     var r = new SR(); r.lang = 'es-US'; r.interimResults = false; r.maxAlternatives = 3; r.continuous = false;
     r.onstart = function () { VOICE.listening = true; renderVoice(); };
     r.onresult = function (e) { var txt = e.results[0][0].transcript; VOICE.micOk = true; savePrefs(); heard(txt); };
-    r.onerror = function (e) { var m = { 'not-allowed': 'El micrófono está bloqueado. Permítelo en el candado de la barra de direcciones, o abre la torre en una pestaña propia.', 'service-not-allowed': 'El micrófono no está permitido en este marco. Abre la torre en una pestaña propia.', 'no-speech': 'No te escuché. Inténtalo de nuevo.', 'audio-capture': 'No encuentro un micrófono.', 'network': 'Sin conexión para reconocer la voz.' }[e.error]; if (m) voiceLine(m, 'Voz'); };
+    r.onerror = function (e) { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { VOICE.micBlocked = true; renderVoice(); jarvisOpen(false); micFallback(); } var m = { 'not-allowed': 'El micrófono está bloqueado en esta página.', 'service-not-allowed': 'Este marco no permite el micrófono.', 'no-speech': 'No te escuché. Inténtalo de nuevo.', 'audio-capture': 'No encuentro un micrófono.', 'network': 'Sin conexión para reconocer la voz.' }[e.error]; if (m) voiceLine(m, 'Voz'); };
     r.onend = function () { VOICE.rec = null; VOICE.listening = false; clearTimeout(VOICE.lt); renderVoice(); };
     try { r.start(); VOICE.rec = r; VOICE.lt = setTimeout(function () { try { r.stop(); } catch (e) {} }, ms || 9000); return true; } catch (e) { voiceLine('No pude abrir el micrófono.', 'Voz'); return false; }
   }
   function stopListen() { try { if (VOICE.rec) VOICE.rec.stop(); } catch (e) {} }
   $('#voTalk').onclick = function () {
     unlockAudio(); VOICE.on = !VOICE.on; savePrefs(); renderVoice();
-    if (VOICE.on) { VOICE.welcomed = true; voiceSay(null, 'Voz activada. ' + briefingText(false) + ' Toca Hablar y di ayuda para ver los comandos.'); } else { try { if (TTS) TTS.cancel(); } catch (e) {} voiceLine('Voz apagada.', 'Torre'); }
+    if (VOICE.on) { VOICE.welcomed = true; voiceSay(null, 'Voz activada. ' + briefingText(false) + ' Toca Hablar o escribe en el cuadro de Jarvis. Di ayuda para ver los comandos.'); } else { try { if (TTS) TTS.cancel(); } catch (e) {} voiceLine('Voz apagada.', 'Torre'); }
   };
   $('#voMic').onclick = function () { unlockAudio(); if (VOICE.listening) { stopListen(); return; } if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } startListen(9000); };
-  function voiceWelcome() { if (VOICE.welcomed) return; VOICE.welcomed = true; if (VOICE.on) { var al = alerts(); voiceSay(null, briefingText(true), al.length ? function () { voiceHelp(al[0]); } : null); } }
+  function voiceWelcome() { if (VOICE.welcomed) return; VOICE.welcomed = true; if (VOICE.on) { var al = alerts(); voiceSay(null, 'Bienvenido, jefe. ' + jarvisSpeech(jarvisReport()), al.length ? function () { voiceHelp(al[0]); } : null); } }
   document.addEventListener('pointerdown', voiceWelcome, { once: true, passive: true }); document.addEventListener('keydown', voiceWelcome, { once: true });
   setTimeout(function () { if (!VOICE.on && !VOICE.welcomed) voiceLine('Toca «Voz» para que los agentes te hablen y «Hablar» para darles órdenes con tu voz.', 'Torre'); }, 4500);
   if (TTS && TTS.addEventListener) TTS.addEventListener('voiceschanged', function () {});
   renderVoice();
-  if (window.__EVR_TEST__) window.__voiceTest = { cmd: function (t) { return voiceCommand(normV(t)); }, heard: heard, help: voiceHelp, agent: findAgentV, state: function () { return { on: VOICE.on, aw: !!VOICE.awaiting }; } };
+  if (window.__EVR_TEST__) window.__voiceTest = { report: function () { return jarvisReport(); }, ask: jarvisAsk, open: jarvisOpen, cmd: function (t) { return voiceCommand(normV(t)); }, heard: heard, help: voiceHelp, agent: findAgentV, state: function () { return { on: VOICE.on, aw: !!VOICE.awaiting }; } };
 
   /* ---------- Vista simplificada: respaldo si el 3D no puede mantenerse ---------- */
   function setFlat(on, why) {
