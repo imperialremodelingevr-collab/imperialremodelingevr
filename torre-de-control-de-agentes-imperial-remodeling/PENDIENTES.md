@@ -39,3 +39,5 @@
 
 - Oportunidades: botón «Propiedades y mapa» en su tarjeta (dirección exacta, datos, mapa de Google embebido + «Abrir en Google Maps» / «Cómo llegar», estados, agregar dirección, preguntar por cada casa). Jarvis: list_properties y show_property_map. Todos los agentes: campo «Enséñale una skill» (se guarda en memoria con tag skill:<agente> y se usa en sus respuestas; la búsqueda diaria de Oportunidades también las lee). La búsqueda diaria ahora guarda cada casa en la colección `properties`.
 - Por verificar en tu pantalla: que el mapa embebido cargue dentro de claude.ai (en mi prueba sin internet no se pudo ver); si no carga, el botón «Abrir en Google Maps» siempre funciona.
+
+- Voz en teléfono: el navegador del móvil solo deja hablar tras un toque real (click/touchend, no pointerdown). Ahora la torre desbloquea la voz con el primer toque, guarda el saludo pendiente y lo dice en ese toque; si la voz en español no existe prueba con la voz por defecto; si el navegador no tiene voz lo avisa en pantalla.
