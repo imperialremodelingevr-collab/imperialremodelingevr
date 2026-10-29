@@ -1346,7 +1346,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (!c.length) return; c.sort(function (x, y) { return (y.status === 'error') - (x.status === 'error'); }); callout(c[0]);
   }, 6000);
   setInterval(function () { AGENTS.forEach(function (a) { var on = !!a.calling, r = document.querySelector('.rrow[data-id="' + a.id + '"]'), ch = document.querySelector('.chip[data-id="' + a.id + '"]'); if (r) r.classList.toggle('calling', on); if (ch) ch.classList.toggle('calling', on); if (on && Date.now() - (CALLS.per[a.id] || 0) > 25000) a.calling = false; }); }, 700);
-  window.__evrLog = function (text, id) { logEvent(text, id, 'defense'); };
+  window.__evrLog = function (text, id) { logEvent(text, id, 'defense'); toast(text); };
   /* ---------- Tarjeta del agente ---------- */
   var AGENT_ANS = {};
   function renderCard() {
@@ -2750,20 +2750,21 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       g.add(rock); g.add(gl); g.add(tail); g.position.copy(start); scene.add(g);
       var stk = { g: g, rock: rock, dir: dir, tgt: tgt, col: col, sp: 150 + rnd() * 40, age: 0, agent: a };
       var cand = shipFx.ships.filter(function (sh) { return sh.g.visible && sh.kind !== 'saucer' && sh.mode !== 'dock'; });
-      if (cand.length && ((window.__evrTest && window.__evrTest.icpt) || rnd() < 0.62)) { cand.sort(function (x, y) { return x.g.position.distanceTo(tgt) - y.g.position.distanceTo(tgt); }); stk.icpt = { sh: cand[0], shots: 0, next: 0, engaged: false }; stk.sp = 85; }
+      if (cand.length && ((window.__evrTest && window.__evrTest.icpt) || rnd() < 0.85)) { cand.sort(function (x, y) { return x.g.position.distanceTo(tgt) - y.g.position.distanceTo(tgt); }); stk.icpt = { sh: cand[0], shots: 0, next: 0, engaged: false }; stk.sp = 48; cand[0].scramble = { p: tgt.clone().add(start.clone().sub(tgt).setLength(85)).add(new THREE.Vector3(0, 10, 0)), t: 0, dur: 7 }; }
       strikes.push(stk);
     }
     var lasers = [], DEF = { intercepted: 0, impacts: 0, lastLog: -99 };
     function fireLaser(sh, m) {
       var a = sh.g.position, b = m.g.position, len = a.distanceTo(b), dirv = b.clone().sub(a).normalize();
-      var bm = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 1, 6, 1, true), new THREE.MeshBasicMaterial({ color: 0xbff4ff, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+      var bm = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 1, 8, 1, true), new THREE.MeshBasicMaterial({ color: 0xbff4ff, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
       bm.scale.set(1, len, 1); bm.position.copy(a).add(b).multiplyScalar(0.5); bm.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dirv); scene.add(bm);
-      var fl = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0xbff4ff, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); fl.position.copy(a); fl.scale.set(18, 18, 1); scene.add(fl);
-      lasers.push({ bm: bm, fl: fl, life: 0.22, max: 0.22 });
+      var fl = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0xbff4ff, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); fl.position.copy(a); fl.scale.set(30, 30, 1); scene.add(fl);
+      lasers.push({ bm: bm, fl: fl, life: 0.5, max: 0.5 });
     }
     function airBurst(pos, col) {
-      burstAt(pos, false, 0xffb070, 64); burstAt(pos, true, col, 30);
-      var fl = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0xffd9a0, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); fl.position.copy(pos); fl.scale.set(26, 26, 1); scene.add(fl); shocks.push({ m: fl, t: 0, max: 0.8, k: 'flash' });
+      burstAt(pos, false, 0xffb070, 90); burstAt(pos, true, col, 50); burstAt(pos, false, 0xffffff, 30);
+      var fl = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0xffd9a0, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); fl.position.copy(pos); fl.scale.set(60, 60, 1); scene.add(fl); shocks.push({ m: fl, t: 0, max: 1.1, k: 'flash' });
+      var rg = new THREE.Mesh(new THREE.RingGeometry(0.9, 1.15, 48), new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false })); rg.position.copy(pos); rg.lookAt(camera.position); scene.add(rg); shocks.push({ m: rg, t: 0, max: 1.0, k: 'ring' });
     }
     function killStrike(m) { scene.remove(m.g); disposeObj(m.g); var ix = strikes.indexOf(m); if (ix > -1) strikes.splice(ix, 1); }
     function impactAt(tgt, col) {
@@ -3230,6 +3231,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         ships.forEach(function (sh, i) {
           sh.ang += sh.sp * dt; var c = Math.cos(sh.ang), sn = Math.sin(sh.ang), d = sh.sp > 0 ? 1 : -1;
           orb.set(c * sh.R, sh.y + Math.sin(t * 0.35 + i) * 2.2, sn * sh.R); var spin = 1, yaw = Math.atan2(-d * sn, d * c);
+          if (sh.scramble) { var sc = sh.scramble; sc.t += dt; var kk2 = Math.min(1, sc.t / 1.8) * Math.min(1, Math.max(0, (sc.dur - sc.t) / 1.8)); kk2 = kk2 * kk2 * (3 - 2 * kk2); orb.lerp(sc.p, kk2); if (sc.t >= sc.dur) sh.scramble = null; }
           if (sh.aimT > 0 && sh.aimP) { sh.aimT -= dt; yaw = Math.atan2(sh.aimP.x - sh.g.position.x, sh.aimP.z - sh.g.position.z); }
           if (sh.pad) {
             var pb = sh.pad.b; sh.timer -= dt;
@@ -3787,11 +3789,11 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         var ic = m.icpt;
         if (ic) {
           var dTgt = m.g.position.distanceTo(m.tgt), dSh = m.g.position.distanceTo(ic.sh.g.position);
-          if (!ic.engaged && dTgt < 230) { ic.engaged = true; shipFx.aim(ic.sh, m.g.position, 4); }
-          if (ic.engaged && dSh < 340) { ic.next -= dt; if (ic.next <= 0 && ic.shots < 4) { fireLaser(ic.sh, m); ic.shots++; ic.next = 0.18; } }
-          if (ic.shots >= 4 || dTgt < 45) {
+          if (!ic.engaged && dTgt < 190) { ic.engaged = true; shipFx.aim(ic.sh, m.g.position, 6); }
+          if (ic.engaged && dSh < 260) { ic.next -= dt; if (ic.next <= 0 && ic.shots < 8) { fireLaser(ic.sh, m); ic.shots++; ic.next = 0.22; } }
+          if (ic.shots >= 8 || dTgt < 40) {
             airBurst(m.g.position, m.col); DEF.intercepted++; ic.sh.aimT = 0.6; var ag = m.agent; pulse(ag.floorY, m.col, 3.5, 9, 1.4);
-            if (clockT - DEF.lastLog > 20 && window.__evrLog) { DEF.lastLog = clockT; window.__evrLog('Un dron destruyó un meteorito que iba hacia ' + ag.name, ag.id); }
+            if (clockT - DEF.lastLog > 12 && window.__evrLog) { DEF.lastLog = clockT; window.__evrLog('Un dron destruyó un meteorito que iba hacia ' + ag.name, ag.id); }
             killStrike(m); return;
           }
         }
@@ -3835,6 +3837,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         v.project(camera); return { x: rc.left + (v.x * 0.5 + 0.5) * rc.width, y: rc.top + (-v.y * 0.5 + 0.5) * rc.height, z: v.z };
       },
       defenseDemo: function (hold) { var sh = shipFx.ships[3], m = { g: { position: new THREE.Vector3(10, 62, 4) } }; fireLaser(sh, m); var L = lasers[lasers.length - 1]; if (hold) { L.life = L.max = hold; } airBurst(m.g.position, 0xff4a3a); return true; },
+      laserCount: function () { return lasers.length; },
       defenseStats: function () { return { intercepted: DEF.intercepted, impacts: DEF.impacts }; },
       callout: function (a, text) { var v = a.v; v.sayText = text; v.sayUntil = clockT + 9; v.greetEnd = clockT + 6; v.callUntil = clockT + 11; },
       strikeTest: function (id) { var a = AGENTS.filter(function (x) { return x.id === id; })[0]; if (a) spawnStrike(a, true); return strikes.length; },
