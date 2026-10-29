@@ -34,3 +34,5 @@
 - [x] Defensa: drones y barcazas aéreas disparan láser y destruyen en el aire parte de los meteoritos de alerta (el piso afectado sigue marcado); cada agente trae su equipo de especialista (casco, audífonos, cámara, binoculares, etc.) y props en su escritorio; los agentes te llaman solos con silbido, «Hey, jefe», globo, señal sobre la cabeza y parpadeo en el directorio (botón «Llamados» en Más herramientas).
 - [x] Telegram vía Composio (sin pegar tokens en el chat): enlace de conexión creado; falta que Ernesto lo abra, pegue el token del bot SOLO ahí y escriba /start al bot. WhatsApp: requiere cuenta de WhatsApp Business (API de Meta).
 - [x] 90/90 pruebas de botones y clics 3D + móvil.
+
+- Teléfono: las naves/drones se ven en todos los niveles de calidad, los meteoros y las intercepciones ya no se apagan en calidad baja o con "reducir movimiento", el automático en móvil no baja de nivel 2, el directorio de pisos arranca cerrado en pantallas chicas y la cámara inicial es más abierta (se ve el cielo).
