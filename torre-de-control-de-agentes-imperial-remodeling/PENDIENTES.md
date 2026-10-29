@@ -36,3 +36,6 @@
 - [x] 90/90 pruebas de botones y clics 3D + móvil.
 
 - Teléfono: las naves/drones se ven en todos los niveles de calidad, los meteoros y las intercepciones ya no se apagan en calidad baja o con "reducir movimiento", el automático en móvil no baja de nivel 2, el directorio de pisos arranca cerrado en pantallas chicas y la cámara inicial es más abierta (se ve el cielo).
+
+- Oportunidades: botón «Propiedades y mapa» en su tarjeta (dirección exacta, datos, mapa de Google embebido + «Abrir en Google Maps» / «Cómo llegar», estados, agregar dirección, preguntar por cada casa). Jarvis: list_properties y show_property_map. Todos los agentes: campo «Enséñale una skill» (se guarda en memoria con tag skill:<agente> y se usa en sus respuestas; la búsqueda diaria de Oportunidades también las lee). La búsqueda diaria ahora guarda cada casa en la colección `properties`.
+- Por verificar en tu pantalla: que el mapa embebido cargue dentro de claude.ai (en mi prueba sin internet no se pudo ver); si no carga, el botón «Abrir en Google Maps» siempre funciona.

@@ -238,6 +238,18 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 #voLine.show { display: block; }
 .jarvis { position: absolute; left: var(--gutter-l); top: 92px; bottom: 64px; width: 340px; display: flex; flex-direction: column; background: rgba(5, 10, 16, 0.94); backdrop-filter: blur(8px); border: 1px solid rgba(92, 200, 255, 0.4); box-shadow: 0 0 40px rgba(92, 200, 255, 0.16); z-index: 7; }
 .jarvis[hidden] { display: none; }
+.props { position: absolute; inset: 70px 16px 60px 16px; max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; background: #050a10; border: 1px solid rgba(92, 200, 255, 0.45); box-shadow: 0 0 50px rgba(92, 200, 255, 0.2); z-index: 9; overflow: hidden; }
+.props[hidden] { display: none; }
+.props header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); } .props header h2 { margin: 0; font-size: 14px; flex: 1; }
+.props .pbody { flex: 1; display: grid; grid-template-columns: 300px 1fr; min-height: 0; }
+.props .plist { overflow: auto; border-right: 1px solid var(--line); } .props .pdet { overflow: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.props .pitem { display: block; width: 100%; text-align: left; padding: 10px 12px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: inherit; }
+.props .pitem[aria-current="true"] { background: rgba(92, 200, 255, 0.12); } .props .pitem b { display: block; font-size: 13px; } .props .pitem small { opacity: 0.7; }
+.props iframe { width: 100%; height: 300px; border: 1px solid var(--line); background: #0b1118; } .props .pnums { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; } .props .pnums span { opacity: 0.85; }
+.props .pbtn { display: flex; flex-wrap: wrap; gap: 6px; } .props .pform { display: grid; gap: 6px; padding: 10px 12px; border-top: 1px solid var(--line); } .props .pform input { width: 100%; }
+.props a.btn { text-decoration: none; color: inherit; } .props a.btn.primary { color: #04121c; }
+.props .pnote { font-size: 12px; opacity: 0.85; line-height: 1.45; margin: 0; }
+@media (max-width: 860px) { .props { inset: 56px 6px 56px 6px; } .props .pbody { grid-template-columns: 1fr; grid-template-rows: 130px 1fr; } .props .plist { border-right: 0; border-bottom: 1px solid var(--line); } .props iframe { height: 240px; } }
 .sysrow { display: grid; grid-template-columns: 12px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); } .sysrow b { display: block; font-weight: 500; font-size: 13px; } .sysrow span { display: block; font-size: 12px; line-height: 1.4; color: var(--muted); margin-top: 2px; }
 .imp { padding: 9px 0; border-bottom: 1px solid var(--line); } .imp b { font-weight: 500; font-size: 13px; } .imp p { margin: 3px 0 6px; font-size: 12px; line-height: 1.4; color: var(--muted); } .imp .chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; } .imp .chips .btn { padding: 3px 9px; font-size: 11px; } .impsec { font: 500 10px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 12px 0 0; }
 .imp.done b { text-decoration: line-through; color: var(--muted); }
@@ -540,6 +552,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     </div>
   </aside>
   <div class="htip" id="htip" hidden></div>
+  <section class="props" id="props" hidden aria-label="Propiedades y mapa"></section>
   <div class="toast" id="toast" role="status"></div>
 </div>
 
@@ -900,6 +913,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       { name: 'pause_agent', description: 'Pone un agente en pausa.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (a.status !== 'idle') togglePause(a); return a.name + ' en pausa'; } },
       { name: 'resume_agent', description: 'Reanuda un agente en pausa.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (a.status === 'idle') togglePause(a); return a.name + ' reanudado'; } },
       { name: 'create_task', description: 'Crea una tarea programada interna para un agente. minutes = en cuántos minutos corre la primera vez; repeat_minutes = cada cuántos minutos se repite (0 = una sola vez).', inputSchema: { type: 'object', properties: { agent: { type: 'string' }, title: { type: 'string' }, minutes: { type: 'number' }, repeat_minutes: { type: 'number' } }, required: ['agent', 'title'] }, execute: function (i) { var a = need(i), t = String(i.title || '').slice(0, 120); if (!t) throw new Error('Falta el título'); addTask({ title: t, agent: a.id, every: Math.max(0, Math.round(+i.repeat_minutes || 0)), at: Date.now() + Math.max(1, Math.round(+i.minutes || 60)) * 60000 }); return 'Tarea creada para ' + a.name + ': ' + t; } },
+      { name: 'list_properties', description: 'Lista las propiedades que encontró el agente Oportunidades, con dirección exacta, precio y estado.', execute: function () { return PROPS.length ? propSummary() : 'Aún no hay propiedades guardadas.'; } },
+      { name: 'show_property_map', description: 'Abre el mapa de una propiedad (por dirección o parte de ella) y devuelve su dirección exacta.', inputSchema: { type: 'object', properties: { address: { type: 'string' } } }, execute: function (i) { var q = normV((i && i.address) || ''); var x = PROPS.filter(function (y) { return !q || normV(propFull(y)).indexOf(q) > -1; })[0] || PROPS[0]; if (!x) throw new Error('No hay propiedades guardadas'); openProps(x.id); return 'Mapa abierto: ' + propFull(x); } },
       { name: 'save_memory_note', description: 'Guarda una nota en la memoria de la torre (reglas, procesos, preferencias del dueño).', inputSchema: { type: 'object', properties: { title: { type: 'string' }, body: { type: 'string' }, kind: { type: 'string', description: 'Regla, Proceso, Cliente, Decisión, Preferencia o Nota' } }, required: ['title', 'body'] }, execute: function (i) { var rec = { title: String(i.title || '').slice(0, 100), body: String(i.body || '').slice(0, 1500), kind: MEM_KINDS.indexOf(i.kind) > -1 ? i.kind : 'Nota', tags: [], pinned: false, source: 'jarvis', createdAt: Date.now(), updatedAt: Date.now() }; if (!rec.title || !rec.body) throw new Error('Falta título o texto'); if (DB) DB.collection('memory').add(rec).catch(fail); else { rec.id = 'm' + (++localId); MEMORY.push(rec); renderMemory(); } logEvent('Jarvis guardó la nota “' + rec.title + '”', '', 'mem'); refresh(); return 'Nota guardada'; } },
       { name: 'add_improvement', description: 'Anota una mejora para una sección de la torre en la lista de mejoras del dueño.', inputSchema: { type: 'object', properties: { section: { type: 'string' }, title: { type: 'string' }, detail: { type: 'string' } }, required: ['section', 'title'] }, execute: function (i) { addImprovement({ section: String(i.section || 'General').slice(0, 40), title: String(i.title || '').slice(0, 120), detail: String(i.detail || '').slice(0, 400), source: 'jarvis' }); return 'Mejora anotada'; } },
       { name: 'run_system_check', description: 'Revisa la salud del sistema (base de datos, Claude, voz, micrófono, datos, errores) y devuelve los puntos con problemas.', execute: function () { return sysChecks().filter(function (c) { return c.st === 'bad' || c.st === 'warn'; }).map(function (c) { return c.t + ': ' + c.d; }).join(' | ') || 'Todo en orden'; } }
@@ -1351,7 +1366,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   var AGENT_ANS = {};
   function renderCard() {
     var c = $('#card');
-    var fe = document.activeElement && document.activeElement.closest && document.activeElement.closest('#card [data-cask]'); if (fe && fe.getAttribute('data-cask') === selected) return;
+    var fe = document.activeElement && document.activeElement.closest && document.activeElement.closest('#card [data-cask], #card [data-cskill]'); if (fe && (fe.getAttribute('data-cask') || fe.getAttribute('data-cskill')) === selected) return;
     if (selectedPlanet) { renderPlanetCard(c); return; }
     if (selectedProject) { renderProjCard(c); return; }
     if (!selected) { c.hidden = true; return; }
@@ -1370,20 +1385,87 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       '<dl class="nums"><div><dt>Tareas hoy</dt><dd>' + a.done + '</dd></div><div><dt>Última señal</dt><dd data-dyn="sig"></dd></div></dl>' +
       '<div class="mine"><small>Próximas tareas</small>' + (mine.length ? '<ul>' + mine.map(function (t) { return '<li><time>' + clock(t.at) + '</time><span>' + esc(t.title) + '</span></li>'; }).join('') + '</ul>' : '<p>Sin tareas programadas.</p>') + '</div>' +
       '<form class="ask" data-cask="' + esc(a.id) + '" autocomplete="off"><input type="text" maxlength="160" placeholder="Pregúntale a ' + esc(a.name) + '…" aria-label="Pregúntale a ' + esc(a.name) + '"><button class="btn primary" type="submit">Preguntar</button></form>' + (AGENT_ANS[a.id] ? '<p class="aans">' + esc(AGENT_ANS[a.id]) + '</p>' : '') +
-      '<div class="btns">' + main + ((INBOX || []).some(function (x) { return x.agent === a.id; }) ? '<button class="btn primary" data-copen="inbox" type="button">Atender mis recados</button>' : '') + '<button class="btn" data-cadd type="button">Asignar tarea</button>' + (a.id === 'publica' ? '<button class="btn" data-copen="posts" type="button">Publicaciones</button><button class="btn" data-copen="tokens" type="button">Tokens</button>' : '') + '</div>');
+      '<form class="ask" data-cskill="' + esc(a.id) + '" autocomplete="off"><input type="text" maxlength="300" placeholder="Enséñale una skill o regla…" aria-label="Enseñar una skill a ' + esc(a.name) + '"><button class="btn" type="submit">Enseñar</button></form>' + (skillsOf(a.id).length ? '<p class="role">Skills aprendidas: ' + skillsOf(a.id).length + ' · última: ' + esc(skillsOf(a.id).slice(-1)[0].body.slice(0, 70)) + '</p>' : '') +
+      '<div class="btns">' + (a.id === 'oport' ? '<button class="btn primary" data-cprops type="button">Propiedades y mapa (' + PROPS.length + ')</button>' : '') + + main + ((INBOX || []).some(function (x) { return x.agent === a.id; }) ? '<button class="btn primary" data-copen="inbox" type="button">Atender mis recados</button>' : '') + '<button class="btn" data-cadd type="button">Asignar tarea</button>' + (a.id === 'publica' ? '<button class="btn" data-copen="posts" type="button">Publicaciones</button><button class="btn" data-copen="tokens" type="button">Tokens</button>' : '') + '</div>');
     var br = agentBrief(a), bd = c.querySelector('[data-dyn="bdo"]'), bi = c.querySelector('[data-dyn="bimp"]'); if (bd) bd.textContent = br.doing; if (bi) bi.innerHTML = br.improve.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
     var dA = c.querySelector('[data-dyn="act"]'); if (dA) dA.textContent = a.act; var dS = c.querySelector('[data-dyn="sig"]'); if (dS) dS.textContent = sig;
+  }
+
+  var PROPS = [
+    { id: 'p1', addr: '1003 Garcia St', city: 'McKinney', state: 'TX', price: 140000, sqft: 1132, beds: 2, baths: 1, year: 1941, status: 'nueva', notes: 'Requiere remodelación importante, se vende tal como está, solo efectivo. Fuente: NTREIS 21308872. Verifica que siga disponible.', createdAt: 1793205600000 },
+    { id: 'p2', addr: '2624 Downing Dr', city: 'Plano', state: 'TX', price: 410000, sqft: 2474, beds: 4, baths: 2.5, year: 1975, status: 'nueva', notes: 'Se vende tal como está; techo de ~1 año. No detalla cuánta remodelación necesita: hay que verla. Fuente: NTREIS 21354016.', createdAt: 1793205600000 },
+    { id: 'p3', addr: '3508 Gatewood Ln', city: 'Plano', state: 'TX', price: 264900, sqft: 1368, beds: 3, baths: 2, status: 'nueva', notes: 'Investor special; cocina actualizada y techo nuevo, puede necesitar poco. Encaja menos con remodelación integral.', createdAt: 1793205600000 }
+  ], propSel = null, propOpen = false, PSTAT = ['nueva', 'me interesa', 'ver en persona', 'descartada'];
+  function propFull(x) { return [x.addr, x.city, (x.state || 'TX') + (x.zip ? ' ' + x.zip : '')].filter(Boolean).join(', '); }
+  function mapQ(x) { return encodeURIComponent(propFull(x)); }
+  function money(n) { return n ? '$' + Math.round(n).toLocaleString('en-US') : '—'; }
+  function skillsOf(id) { return (MEMORY || []).filter(function (m) { return (m.tags || []).indexOf('skill:' + id) > -1; }); }
+  function propSummary() { return PROPS.filter(function (x) { return x.status !== 'descartada'; }).slice(0, 12).map(function (x) { return propFull(x) + ' (' + money(x.price) + (x.sqft ? ', ' + x.sqft + ' pies²' : '') + (x.beds ? ', ' + x.beds + ' rec' : '') + ', estado: ' + (x.status || 'nueva') + ')'; }).join('; '); }
+  function renderProps() {
+    var el = $('#props'); if (!propOpen) { el.hidden = true; return; } el.hidden = false;
+    var cur = PROPS.filter(function (x) { return x.id === propSel; })[0] || PROPS[0]; if (cur) propSel = cur.id;
+    var list = PROPS.map(function (x) { return '<button class="pitem" data-psel="' + esc(x.id) + '" aria-current="' + (cur && cur.id === x.id) + '" type="button"><b>' + esc(x.addr) + '</b><small>' + esc(x.city) + ' · ' + money(x.price) + ' · ' + esc(x.status || 'nueva') + '</small></button>'; }).join('') || '<p class="pnote" style="padding:12px">Aún no hay propiedades. Agrega una dirección abajo o espera la búsqueda diaria.</p>';
+    var det = '<p class="pnote">Elige una propiedad para ver su dirección exacta y el mapa.</p>';
+    if (cur) {
+      var q = mapQ(cur);
+      det = '<h3 style="margin:0;font-size:16px">' + esc(propFull(cur)) + '</h3>' +
+        '<div class="pnums"><span><b>' + money(cur.price) + '</b></span>' + (cur.sqft ? '<span>' + cur.sqft + ' pies²' + (cur.price ? ' · $' + Math.round(cur.price / cur.sqft) + '/pie²' : '') + '</span>' : '') + (cur.beds ? '<span>' + cur.beds + ' recámaras</span>' : '') + (cur.baths ? '<span>' + cur.baths + ' baños</span>' : '') + (cur.year ? '<span>Año ' + cur.year + '</span>' : '') + '</div>' +
+        (cur.notes ? '<p class="pnote">' + esc(cur.notes) + '</p>' : '') +
+        '<iframe title="Mapa de ' + esc(propFull(cur)) + '" loading="lazy" referrerpolicy="no-referrer" src="https://maps.google.com/maps?q=' + q + '&z=17&output=embed"></iframe>' +
+        '<p class="pnote">Si el mapa no carga aquí, usa «Abrir en Google Maps».</p>' +
+        '<div class="pbtn"><a class="btn primary" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=' + q + '">Abrir en Google Maps</a><a class="btn" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&destination=' + q + '">Cómo llegar</a><button class="btn" data-pcopy type="button">Copiar dirección</button></div>' +
+        '<div class="pbtn">' + PSTAT.map(function (st) { return '<button class="btn" data-pstat="' + esc(st) + '" aria-pressed="' + ((cur.status || 'nueva') === st) + '" type="button">' + esc(st) + '</button>'; }).join('') + '</div>' +
+        '<form class="ask" data-pask autocomplete="off"><input type="text" maxlength="160" placeholder="Pregúntale a Oportunidades sobre esta casa…" aria-label="Pregunta sobre la propiedad"><button class="btn primary" type="submit">Preguntar</button></form>' + (PROP_ANS[cur.id] ? '<p class="aans">' + esc(PROP_ANS[cur.id]) + '</p>' : '');
+    }
+    var fe = document.activeElement && document.activeElement.closest && document.activeElement.closest('#props form'); if (fe) return;
+    setHtml(el, '<header><h2>Oportunidades · Propiedades y mapa (' + PROPS.length + ')</h2><button class="x" data-pclose aria-label="Cerrar" type="button">×</button></header><div class="pbody"><div class="plist">' + list + '</div><div class="pdet">' + det + '</div></div>' +
+      '<form class="pform" data-padd autocomplete="off"><input type="text" maxlength="140" placeholder="Agregar dirección exacta: 123 Main St, Plano, TX 75074" aria-label="Dirección exacta"><input type="text" maxlength="200" placeholder="Precio y notas (opcional): 250000 · necesita cocina y techo" aria-label="Notas"><button class="btn primary" type="submit">Agregar propiedad</button></form>');
+  }
+  var PROP_ANS = {};
+  function openProps(id) { propOpen = true; if (id) propSel = id; renderProps(); }
+  function saveProp(x, patch) { Object.assign(x, patch); if (DB) DB.doc('properties/' + x.id).update(patch).catch(fail); renderProps(); }
+  function askProp(x, q) {
+    var a = byId('oport'); function show(t) { PROP_ANS[x.id] = t; var p = $('#props .aans'); if (!p) { renderProps(); p = $('#props .aans'); } if (p) p.textContent = t; }
+    if (!SAMPLE) { show('Aquí no puedo consultar a Claude. Datos que tengo: ' + propFull(x) + ', ' + money(x.price) + '. ' + (x.notes || '')); return; }
+    var sk = skillsOf('oport').map(function (m) { return m.title + ': ' + m.body; }).join(' | ');
+    var prompt = 'Eres «Oportunidades», agente de Imperial Remodeling (remodelación en Dallas–Fort Worth). Propiedad: ' + propFull(x) + ', precio ' + money(x.price) + ', ' + (x.sqft || '?') + ' pies², ' + (x.beds || '?') + ' rec, ' + (x.baths || '?') + ' baños, año ' + (x.year || '?') + '. Notas: ' + (x.notes || 'ninguna') + '. Skills que el dueño te enseñó: ' + (sk || 'ninguna') + '. Responde en español, máximo 5 líneas, en primera persona, solo con estos datos; no inventes precios de obra ni valores de reventa: si faltan, di qué dato necesitas. Nunca prometas contactar a nadie ni enviar nada sin aprobación del dueño.\n\nPregunta del dueño: ' + String(q).slice(0, 200);
+    show('Pensando…');
+    SAMPLE(prompt, { onText: function (o) { var p = $('#props .aans'); if (p) p.textContent = o.text; } }).then(function (rr) { var t = (rr && rr.text) || 'No tengo respuesta ahora.'; show(t); if (a) addUsage('oport', est(prompt), est(t), 'pregunta sobre propiedad'); }).catch(function () { show('No pude consultar a Claude ahora.'); });
+  }
+  $('#props').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; var cur = PROPS.filter(function (x) { return x.id === propSel; })[0];
+    if (b.hasAttribute('data-pclose')) { propOpen = false; renderProps(); }
+    else if (b.dataset.psel) { propSel = b.dataset.psel; renderProps(); }
+    else if (b.dataset.pstat && cur) saveProp(cur, { status: b.dataset.pstat });
+    else if (b.hasAttribute('data-pcopy') && cur) { var t = propFull(cur); try { navigator.clipboard.writeText(t).then(function () { toast('Dirección copiada'); }, function () { toast(t); }); } catch (er) { toast(t); } }
+  });
+  $('#props').addEventListener('submit', function (e) {
+    e.preventDefault(); var f = e.target;
+    if (f.hasAttribute('data-pask')) { var inp = f.querySelector('input'), q = inp.value.trim(), cur = PROPS.filter(function (x) { return x.id === propSel; })[0]; if (q && cur) { inp.value = ''; askProp(cur, q); } return; }
+    if (f.hasAttribute('data-padd')) {
+      var ins = f.querySelectorAll('input'), line = ins[0].value.trim(); if (!line) { ins[0].focus(); return; }
+      var parts = line.split(',').map(function (t) { return t.trim(); }), m = (parts[2] || '').match(/([A-Za-z]{2})?\s*(\d{5})?/) || [], nt = ins[1].value.trim(), pm = nt.match(/\$?\s*(\d[\d,]{4,})/);
+      var rec = { addr: parts[0], city: parts[1] || '', state: (m[1] || 'TX').toUpperCase(), zip: m[2] || '', price: pm ? +pm[1].replace(/,/g, '') : 0, status: 'nueva', notes: nt.slice(0, 300), source: 'torre', createdAt: Date.now() };
+      if (DB) DB.collection('properties').add(rec).catch(fail); else { rec.id = 'p' + (++localId); PROPS.push(rec); propSel = rec.id; }
+      logEvent('Propiedades: agregó ' + propFull(rec), 'oport', 'ok'); toast('Propiedad agregada'); ins[0].value = ''; ins[1].value = ''; renderProps();
+    }
+  });
+  function teachSkill(a, txt) {
+    var rec = { title: ('Skill de ' + a.name + ': ' + txt).slice(0, 100), body: txt.slice(0, 600), kind: 'Proceso', tags: ['skill', 'skill:' + a.id], pinned: false, source: 'torre', createdAt: Date.now(), updatedAt: Date.now() };
+    if (DB) DB.collection('memory').add(rec).catch(fail); else { rec.id = 'm' + (++localId); MEMORY.push(rec); renderMemory(); }
+    logEvent(a.name + ' aprendió una skill nueva', a.id, 'ok'); toast(a.name + ' aprendió: ' + txt.slice(0, 50)); renderCard();
   }
   function askAgent(a, q) {
     var el = $('#card .aans'); function show(t) { AGENT_ANS[a.id] = t; var c = $('#card'); var p = c.querySelector('.aans'); if (!p) { p = document.createElement('p'); p.className = 'aans'; var f = c.querySelector('[data-cask]'); if (f) f.insertAdjacentElement('afterend', p); } if (p) p.textContent = t; }
     var br = agentBrief(a);
     if (!SAMPLE) { var t0 = 'Aquí no puedo consultar a Claude, pero esto es lo que sé. ' + br.speech; show(t0); voiceSay(a, t0, null, false, true); return; }
     var mine = openTasks().filter(function (t) { return t.agent === a.id; }).slice(0, 4).map(function (t) { return t.title; }).join('; ');
-    var prompt = 'Eres «' + a.name + '», agente de la Torre de Control de Imperial Remodeling (remodelación en Dallas–Fort Worth). Tu función: ' + a.role + ' Estado: ' + LBL[a.status] + '. Haciendo ahora: ' + a.act + '. ' + br.doing + ' Tareas próximas: ' + (mine || 'ninguna') + '. Responde en primera persona, en español, máximo 4 líneas, solo con lo que sabes; si no lo sabes, dilo. Nunca prometas enviar ni contestar nada a terceros sin la aprobación del dueño.\n\nPregunta del dueño: ' + String(q).slice(0, 200);
+    var prompt = 'Eres «' + a.name + '», agente de la Torre de Control de Imperial Remodeling (remodelación en Dallas–Fort Worth). Tu función: ' + a.role + ' Estado: ' + LBL[a.status] + '. Haciendo ahora: ' + a.act + '. ' + br.doing + ' Tareas próximas: ' + (mine || 'ninguna') + '. Responde en primera persona, en español, máximo 4 líneas, solo con lo que sabes; si no lo sabes, dilo. Nunca prometas enviar ni contestar nada a terceros sin la aprobación del dueño.' + (skillsOf(a.id).length ? ' Skills que el dueño te enseñó (úsalas): ' + skillsOf(a.id).slice(0, 8).map(function (m) { return m.body; }).join(' | ') + '.' : '') + (a.id === 'oport' && PROPS.length ? ' Propiedades que tienes ahora (con dirección exacta): ' + propSummary() + '. Si te piden una dirección, dala completa y ofrece abrir el mapa.' : '') + '\n\nPregunta del dueño: ' + String(q).slice(0, 200);
     show('Pensando…');
     SAMPLE(prompt, { onText: function (o) { var p = $('#card .aans'); if (p && selected === a.id) p.textContent = o.text; } }).then(function (r) { var t = (r && r.text) || 'No tengo respuesta ahora.'; show(t); addUsage(a.id, est(prompt), est(t), 'pregunta al agente'); voiceSay(a, t, null, false, true); }).catch(function () { show('No pude consultar a Claude ahora. Inténtalo otra vez.'); });
   }
   $('#card').addEventListener('submit', function (e) {
+    var sf = e.target.closest('[data-cskill]'); if (sf) { e.preventDefault(); var si = sf.querySelector('input'), st = si.value.trim(), sa = byId(selected); if (st && sa) { si.value = ''; teachSkill(sa, st); } return; }
     var f = e.target.closest('[data-cask]'); if (!f) return; e.preventDefault(); var inp = f.querySelector('input'), q = inp.value.trim(), a = byId(selected); if (!q || !a) return; inp.value = ''; askAgent(a, q);
   });
   $('#card').addEventListener('click', function (e) {
@@ -1394,6 +1476,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (b.hasAttribute('data-cx')) deselect();
     else if (b.hasAttribute('data-cfix')) fixAgent(a);
     else if (b.hasAttribute('data-cpause')) togglePause(a);
+    else if (b.hasAttribute('data-cprops')) openProps();
     else if (b.hasAttribute('data-cadd')) openForm(a.id);
     else if (b.dataset.copen) { panelOpen = true; zen = false; applyUi(); tab(b.dataset.copen); }
   });
@@ -2086,7 +2169,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         INBOX_SEEN = INBOX_SEEN || {}; INBOX.forEach(function (x) { INBOX_SEEN[x.id] = 1; });
         renderInbox(); refresh();
       }, fail);
-      PROJECTS = []; POSTS = []; MEMORY = []; USAGE = {}; renderProjects(); syncScene(); renderPosts(); renderMemory();
+      PROJECTS = []; POSTS = []; MEMORY = []; PROPS = []; USAGE = {}; renderProjects(); syncScene(); renderPosts(); renderMemory();
       GROUPS = [];
       db.collection('groups').onSnapshot(function (snap) {
         GROUPS = snap.docs.map(function (d) { var x = JSON.parse(JSON.stringify(d.data())); x.id = d.id; x.agents = x.agents || []; return x; }); renderStruct(); refresh(); if (hlGroup) applyHighlight();
@@ -2096,6 +2179,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       }, fail);
       db.collection('improvements').onSnapshot(function (snap) {
         IMPROVE = snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x.id = d.id; return x; }); renderSys();
+      }, fail);
+      db.collection('properties').onSnapshot(function (snap) {
+        PROPS = snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x.id = d.id; return x; }).sort(function (x, y) { return (y.createdAt || 0) - (x.createdAt || 0); }); renderProps(); renderCard();
       }, fail);
       db.collection('memory').onSnapshot(function (snap) {
         MEMORY = snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x.id = d.id; return x; }); renderMemory(); refresh();

@@ -1908,5 +1908,56 @@
    },
    "day": "2026-10-28"
   }
+ },
+ "properties": {
+  "p1": {
+   "addr": "1003 Garcia St",
+   "city": "McKinney",
+   "state": "TX",
+   "price": 140000,
+   "sqft": 1132,
+   "beds": 2,
+   "baths": 1,
+   "year": 1941,
+   "status": "nueva"
+  },
+  "p2": {
+   "addr": "2624 Downing Dr",
+   "city": "Plano",
+   "state": "TX",
+   "price": 410000,
+   "sqft": 2474,
+   "beds": 4,
+   "baths": 2.5,
+   "year": 1975,
+   "status": "nueva"
+  },
+  "p3": {
+   "addr": "3508 Gatewood Ln",
+   "city": "Plano",
+   "state": "TX",
+   "price": 264900,
+   "sqft": 1368,
+   "beds": 3,
+   "baths": 2,
+   "status": "nueva"
+  },
+  "p4": {
+   "addr": "2605 FM 546",
+   "city": "McKinney",
+   "state": "TX",
+   "price": 130000,
+   "beds": 3,
+   "baths": 2,
+   "year": 1940,
+   "status": "nueva"
+  },
+  "p5": {
+   "addr": "1018 N College St",
+   "city": "McKinney",
+   "state": "TX",
+   "price": 245000,
+   "status": "nueva"
+  }
  }
 }
