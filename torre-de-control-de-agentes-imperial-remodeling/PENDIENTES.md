@@ -51,3 +51,5 @@
 - Corregido: la tarjeta del agente perdía los botones Pausar/Reiniciar/Corregir (un «+ +» de más); la tarjeta ahora se desplaza y deja los botones fijos abajo.
 
 - Botón redondo de Jarvis: cara animada (corona, ojos que parpadean, boca que se abre con el ritmo de la voz). Dorada al hablar, ojos abiertos al escuchar, cejas y color rojizo con alertas.
+
+- Tráfico en la ciudad: ~130 autos autónomos con luces (delanteras blancas, traseras rojas, brillo inferior cian) por las calles; trenes maglev de 4 vagones en el anillo alto; autos en dos carriles (uno por sentido) en el anillo bajo y en las 4 calzadas elevadas; tranvías modernos de 3 vagones en 4 líneas de la ciudad. Instanciado (barato); en calidad media/baja se reduce la cantidad y en calidad mínima vuelven los puntos de luz.

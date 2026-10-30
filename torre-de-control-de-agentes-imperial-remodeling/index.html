@@ -3205,11 +3205,11 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
 
     var CARS = 170, cars = [], carPos = new Float32Array(CARS * 3), carCol = new Float32Array(CARS * 3);
     for (var ci = 0; ci < CARS; ci++) {
-      cars.push({ ax: rnd() < 0.5 ? 0 : 1, line: Math.round((rnd() - 0.5) * 20) * PITCH, t: (rnd() - 0.5) * 2 * LIM, dir: rnd() < 0.5 ? 1 : -1, sp: 3 + rnd() * 3.5 });
+      cars.push({ ax: rnd() < 0.5 ? 0 : 1, line: (function () { var q = Math.round((rnd() - 0.5) * 20); if (Math.abs(q) === 3) q += q > 0 ? 1 : -1; return q * PITCH; })(), t: (rnd() - 0.5) * 2 * LIM, dir: rnd() < 0.5 ? 1 : -1, sp: 3 + rnd() * 3.5 });
       var cc = rnd() < 0.7 ? white : new THREE.Color(0xffd48a); carCol[ci * 3] = cc.r; carCol[ci * 3 + 1] = cc.g; carCol[ci * 3 + 2] = cc.b;
     }
     var carGeo = new THREE.BufferGeometry(); carGeo.setAttribute('position', new THREE.BufferAttribute(carPos, 3)); carGeo.setAttribute('color', new THREE.BufferAttribute(carCol, 3));
-    scene.add(new THREE.Points(carGeo, new THREE.PointsMaterial({ size: 1.0, map: GLOW, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false, blending: THREE.AdditiveBlending })));
+    var carPoints = new THREE.Points(carGeo, new THREE.PointsMaterial({ size: 1.0, map: GLOW, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false, blending: THREE.AdditiveBlending })); scene.add(carPoints);
 
     var drones = [];
     for (var d = 0; d < 8; d++) {
@@ -3253,7 +3253,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         var segs = []; for (i = 0; i < pts.length - 1; i++) { segs.push(L[i], L[i + 1], R[i], R[i + 1]); }
         return new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(segs), lineMat);
       }
-      var pods = [];
+      var pods = [], lanesOut = [];
       function addPods(curve, n, speed, col, closed) { for (var i = 0; i < n; i++) pods.push({ c: curve, u: i / n + rnd() * 0.05, sp: speed * (0.8 + rnd() * 0.4), col: col, ping: !closed, dir: 1 }); }
 
       /* 1) Pasarelas de cristal entre edificios vecinos */
@@ -3304,7 +3304,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         var crv = new THREE.CatmullRomCurve3(pts.slice(0, n), true);
         bridgeGroup.add(new THREE.Mesh(new THREE.TubeGeometry(crv, 160, 0.28, 5, true), ri ? tubeVi : tubeCy));
         for (i = 0; i < 20; i++) { var pa2 = i / 20 * Math.PI * 2; pylon.add(Math.cos(pa2) * R[0], R[1] / 2 - 0.4, Math.sin(pa2) * R[0], 0.9, R[1] - 0.8, 0.9); }
-        addPods(crv, ri ? 7 : 5, ri ? 0.012 : 0.016, ri, true); count.ring++;
+        addPods(crv, ri ? 7 : 5, ri ? 0.012 : 0.016, ri, true); lanesOut.push({ c: crv, closed: true, ring: ri, w: R[2] }); count.ring++;
       });
 
       /* 4) Calzadas elevadas desde la plaza hasta el anillo, una por avenida */
@@ -3315,7 +3315,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         var crv2 = new THREE.CatmullRomCurve3(pts2.filter(function (_, q) { return q % 2 === 0; }));
         bridgeGroup.add(new THREE.Mesh(new THREE.TubeGeometry(crv2, 44, 0.22, 5, false), sp % 2 ? tubeVi : tubeCy));
         for (i2 = 3; i2 < 44; i2 += 6) { pylon.add(pts2[i2].x, pts2[i2].y / 2 - 0.3, pts2[i2].z, 0.8, pts2[i2].y - 0.6, 0.8); }
-        addPods(crv2, 3, 0.035, sp % 2, false); count.causeway++;
+        addPods(crv2, 3, 0.035, sp % 2, false); lanesOut.push({ c: crv2, closed: false, w: 4.2 }); count.causeway++;
       }
       bridgeGroup.add(pylon.mesh(finMat));
 
@@ -3340,7 +3340,66 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
           pa4.needsUpdate = true;
         }
       }
-      return { root: root, bridges: bridgeGroup, update: update, count: count, pods: pods.length };
+      return { root: root, bridges: bridgeGroup, update: update, count: count, pods: pods.length, lanes: lanesOut };
+    })();
+
+    /* ---- Tráfico: autos autónomos y tranvías/maglev modernos sobre calles, puentes y anillos ---- */
+    var traffic = (function () {
+      var T3 = THREE, UPv = new T3.Vector3(0, 1, 0), dum = new T3.Object3D(); dum.rotation.order = 'YZX';
+      function box(x, y, z, sx, sy, sz, c) { return { g: new T3.BoxGeometry(1, 1, 1), x: x, y: y, z: z, sx: sx, sy: sy, sz: sz, c: new T3.Color(c) }; }
+      function vgeo(parts) {
+        var P = [], N = [], C = [], I = [], off = 0;
+        parts.forEach(function (q) { var g = mergeParts([q]), pa = g.attributes.position, na = g.attributes.normal, i; for (i = 0; i < pa.count; i++) { P.push(pa.getX(i), pa.getY(i), pa.getZ(i)); N.push(na.getX(i), na.getY(i), na.getZ(i)); C.push(q.c.r, q.c.g, q.c.b); } for (i = 0; i < g.index.count; i++) I.push(g.index.getX(i) + off); off += pa.count; });
+        var geo = new T3.BufferGeometry(); geo.setAttribute('position', new T3.Float32BufferAttribute(P, 3)); geo.setAttribute('normal', new T3.Float32BufferAttribute(N, 3)); geo.setAttribute('color', new T3.Float32BufferAttribute(C, 3)); geo.setIndex(I); return geo;
+      }
+      var carBody = vgeo([box(0, 0.45, 0, 3.4, 0.55, 1.5, 0xffffff), box(-0.2, 0.92, 0, 1.8, 0.42, 1.25, 0x0c2236), box(1.5, 0.35, 0, 0.5, 0.3, 1.35, 0xdfe8ee)]);
+      var carLight = vgeo([box(1.72, 0.5, 0.5, 0.1, 0.16, 0.34, 0xfff2c4), box(1.72, 0.5, -0.5, 0.1, 0.16, 0.34, 0xfff2c4), box(-1.72, 0.55, 0.5, 0.1, 0.14, 0.34, 0xff2b2b), box(-1.72, 0.55, -0.5, 0.1, 0.14, 0.34, 0xff2b2b), box(0, 0.1, 0, 3.0, 0.05, 1.3, 0x2fb6ff), box(-0.2, 1.0, 0, 1.4, 0.06, 1.28, 0x66e0ff)]);
+      var trBody = vgeo([box(0, 0.95, 0, 7.2, 1.3, 2.0, 0xe9f1f6), box(0, 1.2, 0, 6.5, 0.55, 2.04, 0x0b2034), box(0, 1.8, 0, 6.8, 0.16, 1.6, 0xb8c6d0), box(3.5, 0.8, 0, 0.5, 0.9, 1.8, 0xe9f1f6)]);
+      var trLight = vgeo([box(3.78, 0.95, 0.6, 0.08, 0.2, 0.4, 0xfff2c4), box(3.78, 0.95, -0.6, 0.08, 0.2, 0.4, 0xfff2c4), box(-3.62, 0.95, 0.6, 0.08, 0.2, 0.4, 0xff2b2b), box(-3.62, 0.95, -0.6, 0.08, 0.2, 0.4, 0xff2b2b), box(0, 1.2, 0, 6.2, 0.36, 2.07, 0x57d0ff), box(0, 0.22, 0, 6.4, 0.06, 1.7, 0x3aa8ff), box(0, 1.7, 0, 6.6, 0.05, 0.9, 0xa78bfa)]);
+      var matBody = new T3.MeshStandardMaterial({ vertexColors: true, roughness: 0.32, metalness: 0.55, emissive: 0x0a1c2a, emissiveIntensity: 0.6 });
+      var matLight = new T3.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.95, blending: T3.AdditiveBlending, depthWrite: false });
+      function inst(geoB, geoL, n) { var b = new T3.InstancedMesh(geoB, matBody, n), l = new T3.InstancedMesh(geoL, matLight, n); b.frustumCulled = l.frustumCulled = false; b.count = l.count = n; scene.add(b); scene.add(l); return { b: b, l: l, n: n }; }
+      var PAL = [0xffffff, 0xe3edf5, 0xbfd8ea, 0x9fe8ff, 0xc7b3ff, 0xffe29a, 0xcfe8f7, 0x7fe3c5];
+      var lanes = (skyFx && skyFx.lanes) || [], bv = [];
+      lanes.forEach(function (ln) {
+        ln.len = ln.c.getLength();
+        if (ln.closed && ln.ring === 0) { /* anillo alto: maglev, un tren por sentido */ [1, -1].forEach(function (d, k) { bv.push({ ln: ln, kind: 'train', dir: d, u: k * 0.5, sp: 22, off: 0, cars: 4 }); }); }
+        else { var nPer = ln.closed ? 11 : 4; [1, -1].forEach(function (d) { for (var q = 0; q < nPer; q++) bv.push({ ln: ln, kind: 'car', dir: d, u: (q + Math.random() * 0.6) / nPer, sp: (ln.closed ? 15 : 11) * (0.8 + Math.random() * 0.4), off: d * 1.0, cars: 1 }); }); }
+      });
+      var bridgeCars = bv.filter(function (v) { return v.kind === 'car'; }), bridgeTrains = bv.filter(function (v) { return v.kind === 'train'; });
+      var gridCarsN = Math.min(CARS, 130), trams = [];
+      [-3, 3].forEach(function (q) { [0, 1].forEach(function (ax) { for (var k = 0; k < 2; k++) trams.push({ ax: ax, line: q * PITCH, t: -LIM + k * LIM, dir: (q > 0 ? 1 : -1) * (ax ? 1 : -1), sp: 9 + k * 1.5, cars: 3 }); }); });
+      var nTramCars = trams.length * 3 + bridgeTrains.length * 4;
+      var carsI = inst(carBody, carLight, gridCarsN + bridgeCars.length), trI = inst(trBody, trLight, nTramCars);
+      var col = new T3.Color(), i0;
+      for (i0 = 0; i0 < carsI.n; i0++) { col.setHex(PAL[(i0 * 7 + (i0 >> 2)) % PAL.length]); carsI.b.setColorAt(i0, col); carsI.l.setColorAt(i0, new T3.Color(0xffffff)); }
+      for (i0 = 0; i0 < trI.n; i0++) { col.setHex(i0 % 5 === 0 ? 0xd8e6f0 : 0xf4f8fb); trI.b.setColorAt(i0, col); trI.l.setColorAt(i0, new T3.Color(0xffffff)); }
+      var pt = new T3.Vector3(), tg = new T3.Vector3(), sd = new T3.Vector3();
+      function put(I, k, x, y, z, yaw, pitch, sc) { dum.position.set(x, y, z); dum.rotation.set(0, yaw, pitch); dum.scale.setScalar(sc * (I === carsI ? 1.3 : 1.15)); dum.updateMatrix(); I.b.setMatrixAt(k, dum.matrix); I.l.setMatrixAt(k, dum.matrix); }
+      function onCurve(v, uu, I, k, back) {
+        var ln = v.ln, u = ((uu % 1) + 1) % 1; ln.c.getPointAt(u, pt); ln.c.getTangentAt(u, tg); if (v.dir < 0) tg.negate();
+        sd.crossVectors(UPv, tg).setY(0).normalize().multiplyScalar(v.off); var yaw = Math.atan2(-tg.z, tg.x), pitch = Math.atan2(tg.y, Math.hypot(tg.x, tg.z)), fade = ln.closed ? 1 : Math.max(0, Math.min(1, Math.min(u, 1 - u) / 0.05));
+        put(I, k, pt.x + sd.x, pt.y + 0.3, pt.z + sd.z, yaw, pitch, fade);
+      }
+      var frame = 0;
+      function update(dt, tier) {
+        var on = tier < 3; carsI.b.visible = carsI.l.visible = trI.b.visible = trI.l.visible = on; carPoints.visible = !on; if (!on) return;
+        frame++; if (tier >= 2 && (frame & 1)) return;
+        var k = tier >= 2 ? 0.45 : tier === 1 ? 0.75 : 1, nCars = Math.floor(carsI.n * k), nTr = trI.n, i, c, ki = 0, q;
+        carsI.b.count = carsI.l.count = nCars;
+        for (i = 0; i < gridCarsN && i < nCars; i++) {
+          c = cars[i]; var x = c.ax ? c.t : c.line + 1.1 * c.dir, z = c.ax ? c.line + 1.1 * c.dir : c.t, rr = Math.hypot(x, z), yaw = c.ax ? (c.dir > 0 ? 0 : Math.PI) : -Math.PI / 2 * c.dir;
+          put(carsI, i, x, 0.1, z, yaw, 0, rr < PLAZA + 4 || rr > LIM ? 0.0001 : 1);
+        }
+        for (i = 0; i < bridgeCars.length && gridCarsN + i < nCars; i++) { var v = bridgeCars[i]; v.u += v.dir * v.sp / v.ln.len * dt; onCurve(v, v.u, carsI, gridCarsN + i); }
+        for (i = 0; i < trams.length; i++) {
+          var tr = trams[i]; tr.t += tr.dir * tr.sp * dt; if (tr.t > LIM + 30) tr.t = -LIM - 30; else if (tr.t < -LIM - 30) tr.t = LIM + 30;
+          for (q = 0; q < tr.cars; q++) { var tt = tr.t - tr.dir * q * 7.6, x2 = tr.ax ? tt : tr.line, z2 = tr.ax ? tr.line : tt, yaw2 = tr.ax ? (tr.dir > 0 ? 0 : Math.PI) : -Math.PI / 2 * tr.dir; put(trI, ki++, x2, 0.12, z2, yaw2, 0, Math.abs(tt) > LIM ? 0.0001 : 1); }
+        }
+        for (i = 0; i < bridgeTrains.length; i++) { var bt = bridgeTrains[i]; bt.u += bt.dir * bt.sp / bt.ln.len * dt; for (q = 0; q < bt.cars; q++) onCurve(bt, bt.u - bt.dir * q * 7.6 / bt.ln.len, trI, ki++); }
+        carsI.b.instanceMatrix.needsUpdate = carsI.l.instanceMatrix.needsUpdate = trI.b.instanceMatrix.needsUpdate = trI.l.instanceMatrix.needsUpdate = true;
+      }
+      return { update: update, counts: function () { return { cars: carsI.n, trams: trI.n, bridgeLanes: bv.length }; } };
     })();
 
     /* ---- Naves voladoras grandes y ascensores de cristal dentro de la torre ---- */
@@ -3993,6 +4052,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         if (k >= 1) killShock(sh);
       });
       if (skyFx) skyFx.update(sdt, clockT, tier, tier < 2);
+      if (traffic) traffic.update(sdt, tier);
       shipFx.update(dt, clockT, tier); liftFx.update(dt, clockT);
       if (hoverA && hoverA.v && hoverA.v.ghost > 0.45) { hoverRing.visible = true; hoverRing.position.y = hoverA.floorY - FH / 2 + 0.25; hoverRing.scale.set(hxOf(hoverA.i) / HX[0], 1, hzOf(hoverA.i) / HZ[0]); hoverRing.material.opacity = 0.45 + 0.3 * Math.sin(clockT * 5); } else hoverRing.visible = false;
       logo.rotation.y += sdt * 1.1; logoRing.rotation.y += sdt * 0.8;
@@ -4059,6 +4119,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       setQuality: function (q) { qualityPref = q; tier = { alta: 0, media: 1, baja: 3, auto: 0 }[q] || 0; fFrames = 0; fWinStart = performance.now(); tStart = performance.now(); applyTier(); return q; },
       toggleCine: function () { CINE.want = !CINE.want; if (!CINE.want) CINE.on = false; cineUpdate(); layout(); return CINE.want; },
       cineOn: function () { return CINE.on; },
+      trafficInfo: function () { return traffic.counts(); },
       health: function () { return { tier: tier, cine: CINE.on, glLost: glLost, frameErrs: frameErrs }; },
       toggleSpeed: function () { speedMul = reduce ? 0.3 : (speedMul < 0.8 ? 1 : 0.55); return speedMul < 0.8 ? 'lenta' : 'normal'; }
     };
