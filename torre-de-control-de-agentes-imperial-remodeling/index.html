@@ -238,6 +238,20 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 #voLine.show { display: block; }
 .jarvis { position: absolute; left: var(--gutter-l); top: 92px; bottom: 64px; width: 340px; display: flex; flex-direction: column; background: rgba(5, 10, 16, 0.94); backdrop-filter: blur(8px); border: 1px solid rgba(92, 200, 255, 0.4); box-shadow: 0 0 40px rgba(92, 200, 255, 0.16); z-index: 7; }
 .jarvis[hidden] { display: none; }
+.hpip { position: absolute; left: 530px; top: 120px; width: 220px; z-index: 8; background: rgba(3, 9, 15, 0.92); border: 1px solid rgba(92, 255, 230, 0.55); box-shadow: 0 0 28px rgba(92, 255, 230, 0.25), inset 0 0 22px rgba(92, 255, 230, 0.12); border-radius: 4px; overflow: hidden; }
+.hpip[hidden] { display: none; }
+.hpip .hv { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #02070c; }
+.hpip video, .hpip canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+.hpip video { opacity: 0.5; filter: grayscale(1) sepia(1) hue-rotate(125deg) saturate(2.6) contrast(1.1); }
+.hpip .hv::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(92, 255, 230, 0.08) 0 1px, transparent 1px 3px); pointer-events: none; }
+.hpip .hm { padding: 6px 9px; font-size: 11px; line-height: 1.35; color: #bffcf0; display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.hpip .hm b { color: #5cffe6; font-weight: 600; } .hpip .hm button { border: 1px solid rgba(92, 255, 230, 0.5); background: transparent; color: #bffcf0; font-size: 11px; padding: 3px 8px; border-radius: 3px; }
+.hpip .hh { padding: 0 9px 7px; font-size: 10.5px; color: #8fb9b3; line-height: 1.35; }
+.holofx { position: absolute; inset: 0; pointer-events: none; z-index: 2; display: none; mix-blend-mode: screen; background: repeating-linear-gradient(0deg, rgba(92, 255, 230, 0.05) 0 1px, transparent 1px 4px), radial-gradient(90% 70% at 50% 45%, transparent 55%, rgba(40, 200, 255, 0.16) 100%); animation: holoflick 6s steps(1) infinite; }
+#app.holo .holofx { display: block; }
+@keyframes holoflick { 0%, 92%, 100% { opacity: 0.85; } 93% { opacity: 0.5; } 95% { opacity: 1; } 97% { opacity: 0.65; } }
+@media (prefers-reduced-motion: reduce) { .holofx { animation: none; } }
+@media (max-width: 860px) { .hpip { width: 150px; left: 8px; top: 130px; } }
 .props { position: absolute; inset: 70px 16px 60px 16px; max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; background: #050a10; border: 1px solid rgba(92, 200, 255, 0.45); box-shadow: 0 0 50px rgba(92, 200, 255, 0.2); z-index: 9; overflow: hidden; }
 .props[hidden] { display: none; }
 .props header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); } .props header h2 { margin: 0; font-size: 14px; flex: 1; }
@@ -401,6 +415,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <button class="btn" id="btnMore" type="button">Más herramientas</button>
       <button class="btn mobonly" id="btnUp" type="button" aria-label="Piso arriba">▲</button>
       <button class="btn mobonly" id="btnDown" type="button" aria-label="Piso abajo">▼</button>
+      <button class="btn extra" id="btnHand" type="button">Cámara de manos: apagada</button>
+      <button class="btn extra" id="btnHolo" type="button">Holograma: encendido</button>
       <button class="btn extra" id="btnMap" type="button">Mapa de la ciudad</button>
       <button class="btn extra" id="btnSky" type="button">Mirar al cielo</button>
       <button class="btn extra" id="btnInside" type="button">Vista interior</button>
@@ -552,6 +568,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     </div>
   </aside>
   <div class="htip" id="htip" hidden></div>
+  <div class="holofx" aria-hidden="true"></div>
+  <section class="hpip" id="hpip" hidden aria-label="Control con las manos"><div class="hv"><video id="hVid" playsinline muted></video><canvas id="hCan" width="320" height="240"></canvas></div><div class="hm"><span id="hMsg">Iniciando cámara…</span><button id="hOff" type="button">Apagar</button></div><div class="hh" id="hHelp"></div></section>
   <section class="props" id="props" hidden aria-label="Propiedades y mapa"></section>
   <div class="toast" id="toast" role="status"></div>
 </div>
@@ -701,6 +719,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
 
   /* ---------- Alarmas: sonido, aviso del navegador y registro para avisos externos ---------- */
+  var HOLO = { on: PREFS.holo !== false };
   var VOICE = { on: PREFS.voice !== false, heard: false, briefed: false, micOk: PREFS.mic === true, micBlocked: false, listening: false, rec: null, awaiting: null, welcomed: false, lt: 0 };
   var ALARM = { sound: PREFS.sound !== false, notify: PREFS.notify === true, audio: null, last: {} }, flatOn = false;
   function unlockAudio() { try { if (!ALARM.audio) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) ALARM.audio = new AC(); } if (ALARM.audio && ALARM.audio.state === 'suspended') ALARM.audio.resume(); } catch (e) {} }
@@ -1772,7 +1791,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var el = $('#score'); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
     return score;
   }
-  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify, jarvis: PREFS.jarvis !== false, cine: PREFS.cine !== false, lastSeen: PREFS.lastSeen || 0, snap: PREFS.snap || null, lastBackup: PREFS.lastBackup || 0, calls: PREFS.calls !== false, always: PREFS.always === true, send: PREFS.send !== false })); } catch (e) {} }
+  function savePrefs() { try { localStorage.setItem('evr.ui', JSON.stringify({ v: 2, voice: VOICE.on, mic: VOICE.micOk, roster: rosterOpen, panel: panelOpen, bg: bgPref, score: score, q: qualityPref, sound: ALARM.sound, notify: ALARM.notify, jarvis: PREFS.jarvis !== false, cine: PREFS.cine !== false, lastSeen: PREFS.lastSeen || 0, snap: PREFS.snap || null, lastBackup: PREFS.lastBackup || 0, calls: PREFS.calls !== false, always: PREFS.always === true, send: PREFS.send !== false, holo: HOLO.on })); } catch (e) {} }
   function applyUi() {
     var app = $('#app'); app.classList.toggle('noroster', !rosterOpen); app.classList.toggle('nopanel', !panelOpen); app.classList.toggle('zen', zen);
     $('#score').textContent = '☄ ' + score; savePrefs();
@@ -3052,6 +3071,28 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var crownEdge = new THREE.LineSegments(new THREE.EdgesGeometry(crown.geometry), new THREE.LineBasicMaterial({ color: 0x9fe0ff })); crownEdge.position.y = TOP + CH / 2; tower.add(crownEdge);
     var tier2 = new THREE.Mesh(new THREE.BoxGeometry(2 * HX[2] - 7, 3.4, 2 * HZ[2] - 5), new THREE.MeshStandardMaterial({ color: 0x0e1b29, roughness: 0.3, metalness: 0.7, emissive: 0x0a2233 })); tier2.position.y = TOP + CH + 1.7; tower.add(tier2);
     var tier2e = new THREE.LineSegments(new THREE.EdgesGeometry(tier2.geometry), new THREE.LineBasicMaterial({ color: 0x9fe0ff })); tier2e.position.y = tier2.position.y; tower.add(tier2e);
+    var holoG = new THREE.Group(); scene.add(holoG); holoG.visible = HOLO.on; var holoRings = [], holoScan = null, holoBeams = [];
+    (function () {
+      var cy = 0x5cffe6;
+      [[12, 12.4], [19, 19.3], [27, 27.25], [33.4, 33.6]].forEach(function (rr, i) {
+        var m = new THREE.Mesh(new THREE.RingGeometry(rr[0], rr[1], 96, 1), new THREE.MeshBasicMaterial({ color: cy, transparent: true, opacity: 0.55 - i * 0.08, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+        m.rotation.x = -Math.PI / 2; m.position.y = 0.45 + i * 0.02; holoG.add(m); holoRings.push(m);
+        var dash = new THREE.Mesh(new THREE.RingGeometry(rr[1] + 0.6, rr[1] + 1.0, 8 + i * 4, 1), new THREE.MeshBasicMaterial({ color: 0x7fd8ff, transparent: true, opacity: 0.35, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false, wireframe: true }));
+        dash.rotation.x = -Math.PI / 2; dash.position.y = 0.5; holoG.add(dash); holoRings.push(dash);
+      });
+      holoScan = new THREE.Mesh(new THREE.RingGeometry(9.5, 10.6, 64, 1), new THREE.MeshBasicMaterial({ color: cy, transparent: true, opacity: 0.7, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+      holoScan.rotation.x = -Math.PI / 2; holoG.add(holoScan);
+      for (var b = 0; b < 8; b++) {
+        var bm = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1, 4, 1, true), new THREE.MeshBasicMaterial({ color: 0x7fe8ff, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false }));
+        bm.userData.a = b / 8 * Math.PI * 2; bm.userData.r = 11 + (b % 2) * 3; holoG.add(bm); holoBeams.push(bm);
+      }
+    })();
+    function holoUpdate(t, tr) {
+      holoG.visible = HOLO.on && tr < 3; if (!holoG.visible) return;
+      holoRings.forEach(function (m, i) { m.rotation.z = t * (0.12 + i * 0.03) * (i % 2 ? -1 : 1); });
+      var q = (t * 0.16) % 1; holoScan.position.y = 0.6 + q * (TOP + CH + 2); holoScan.material.opacity = 0.75 * Math.sin(q * Math.PI);
+      holoBeams.forEach(function (bm, i) { var h = 6 + 10 * (0.5 + 0.5 * Math.sin(t * 1.4 + i * 1.3)); bm.scale.y = h; bm.position.set(Math.cos(bm.userData.a + t * 0.2) * bm.userData.r, h / 2 + 0.5, Math.sin(bm.userData.a + t * 0.2) * bm.userData.r); });
+    }
     [[HX[2] - 0.5, HZ[2] - 0.5, TOP + CH + 0.06], [HX[2] - 3.5, HZ[2] - 2.5, TOP + CH + 3.36]].forEach(function (rg) { tower.add(frameBuf(rg[0], rg[1], rg[2], 0.14).mesh(new THREE.MeshBasicMaterial({ color: 0x9fe0ff }))); });
     tower.add(frameBuf(HX[0] + 4.6, HZ[0] + 4.6, Y0 + 0.04, 0.16).mesh(new THREE.MeshBasicMaterial({ color: 0x5cc8ff })));
     var bol = new BoxBuf(); rectPts(HX[0] + 6.4, HZ[0] + 6.4, 5.5).forEach(function (q) { bol.add(q[0], 0.6, q[1], 0.45, 1.2, 0.45, 0); }); tower.add(bol.mesh(accentM));
@@ -3711,7 +3752,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (!selected && !selectedProject && !selectedPlanet && !drag && !reduce) cam.th += sdt * 0.04;
       if (cam.follow && !drag) { var dth = (cam.follow.deskAng != null ? cam.follow.deskAng : cam.follow.ang) - cam.th; dth = Math.atan2(Math.sin(dth), Math.cos(dth)); cam.th += dth * Math.min(1, dt * 1.2); }
       applyShift(false);
-      var k = 1 - Math.pow(0.002, dt);
+      var k = 1 - Math.pow(0.002, dt); holoUpdate(clockT, tier);
       cam.r += (cam.gr - cam.r) * k * 0.7; cam.ty += (cam.gty - cam.ty) * k * 0.7; cam.tx += (cam.gtx - cam.tx) * k * 0.7; cam.tz += (cam.gtz - cam.tz) * k * 0.7;
       if (cam.gph != null) { cam.ph += (cam.gph - cam.ph) * k * 0.6; if (Math.abs(cam.gph - cam.ph) < 0.004) cam.gph = null; }
       var sp = Math.sin(cam.ph);
@@ -3921,6 +3962,14 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       applyVisual: applyVisual,
       focus: function (a, fromTour) { cam.gtx = Math.cos(a.deskAng) * 4.5; cam.gtz = Math.sin(a.deskAng) * 4.5; cam.gty = a.y + 2; cam.gph = 1.3; cam.follow = a; cam.gr = window.innerWidth > 860 ? 44 : 58; if (!fromTour) { a.v.lastGreet = -99; greetAgent(a); } },
       home: function () { cam.gtx = 0; cam.gtz = 0; cam.gty = HOME.ty; cam.gr = HOME.r; cam.gph = 1.42; cam.follow = null; },
+      setHolo: function (on) { HOLO.on = !!on; holoG.visible = HOLO.on; },
+      handMove: function (dth, dph, zf, dty) {
+        cam.follow = null; cam.gph = null; stopTour();
+        if (dth) cam.th += dth; if (dph) cam.ph = Math.min(1.6, Math.max(0.3, cam.ph + dph));
+        if (zf && zf !== 1) cam.gr = Math.min(460, Math.max(20, cam.gr * zf));
+        if (dty) cam.gty = Math.min(170, Math.max(-12, cam.gty + dty));
+      },
+      camState: function () { return { th: cam.th, ph: cam.ph, gr: cam.gr, gty: cam.gty }; },
       setProjects: setProjects,
       probe: function (kind, id) {
         var v = new THREE.Vector3(), rc = canvas.getBoundingClientRect();
@@ -3963,6 +4012,106 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     };
   }
 
+  /* ---------- Control con las manos (cámara) y holograma ---------- */
+  var HAND = { on: false, stream: null, mode: '', hands: null, raf: 0, last: 0, busy: false, o: 0.5, prevMid: null, mot: null, prevArea: 0, lms: null, msg: '', t0: 0 };
+  var HAND_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
+  function handSay(t) { HAND.msg = t; var m = $('#hMsg'); if (m) m.textContent = t; }
+  function handCtl(hs, dt) {
+    var d = Math.min(0.1, Math.max(0.005, dt)); if (!scene3d || !hs.length) return '';
+    function palm(l) { var ids = [0, 5, 9, 13, 17], x = 0, y = 0; ids.forEach(function (i) { x += l[i].x; y += l[i].y; }); return { x: 1 - x / 5, y: y / 5 }; }
+    function open(l) { var sz = Math.hypot(l[0].x - l[9].x, l[0].y - l[9].y) || 0.001, m = 0; [8, 12, 16, 20].forEach(function (i) { m += Math.hypot(l[i].x - l[0].x, l[i].y - l[0].y) / sz; }); return Math.min(1, Math.max(0, (m / 4 - 1.25) / 0.75)); }
+    if (hs.length >= 2) {
+      var a = palm(hs[0]), b = palm(hs[1]), mid = { y: (a.y + b.y) / 2 }, lab = 'Dos manos: sube o baja para cambiar la altura';
+      if (HAND.prevMid != null) { var dy = mid.y - HAND.prevMid; if (Math.abs(dy) > 0.002) scene3d.handMove(0, 0, 1, -dy * 140); }
+      HAND.prevMid = mid.y; return lab;
+    }
+    HAND.prevMid = null;
+    var pl = palm(hs[0]), o = open(hs[0]); HAND.o += (o - HAND.o) * Math.min(1, d * 9);
+    var x = pl.x - 0.5, y = pl.y - 0.5, dz = 0.13, lab2 = [];
+    var ox = Math.abs(x) > dz ? (x - Math.sign(x) * dz) : 0, oy = Math.abs(y) > dz ? (y - Math.sign(y) * dz) : 0;
+    var zf = 1;
+    if (HAND.o > 0.72) { zf = Math.exp(0.7 * d * (HAND.o - 0.6) * 2.2); lab2.push('mano abierta: alejando'); }
+    else if (HAND.o < 0.3) { zf = Math.exp(-0.7 * d * (0.42 - HAND.o) * 2.4); lab2.push('mano cerrada: acercando'); }
+    if (ox) lab2.push(ox > 0 ? 'girando a la derecha' : 'girando a la izquierda'); if (oy) lab2.push(oy > 0 ? 'mirando desde abajo' : 'mirando desde arriba');
+    scene3d.handMove(-ox * d * 2.6, -oy * d * 1.6, zf, 0);
+    return lab2.length ? lab2.join(' · ') : 'Mano al centro: quieta';
+  }
+  function handDraw(hs) {
+    var c = $('#hCan'); if (!c) return; var g = c.getContext('2d'); g.clearRect(0, 0, c.width, c.height); g.lineWidth = 2; g.strokeStyle = 'rgba(92,255,230,.9)'; g.fillStyle = '#bffcf0'; g.shadowColor = '#5cffe6'; g.shadowBlur = 8;
+    var CON = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+    hs.forEach(function (l) { CON.forEach(function (e) { g.beginPath(); g.moveTo(l[e[0]].x * c.width, l[e[0]].y * c.height); g.lineTo(l[e[1]].x * c.width, l[e[1]].y * c.height); g.stroke(); }); l.forEach(function (pt) { g.beginPath(); g.arc(pt.x * c.width, pt.y * c.height, 2.4, 0, 6.3); g.fill(); }); });
+  }
+  function motionStep(dt) {
+    var v = $('#hVid'), W = 64, H = 48; if (!v || v.readyState < 2) return '';
+    if (!HAND.mot) { HAND.mot = { cv: document.createElement('canvas'), prev: null }; HAND.mot.cv.width = W; HAND.mot.cv.height = H; }
+    var g = HAND.mot.cv.getContext('2d', { willReadFrequently: true }); g.drawImage(v, 0, 0, W, H); var px = g.getImageData(0, 0, W, H).data, cur = new Uint8Array(W * H), i;
+    for (i = 0; i < W * H; i++) cur[i] = (px[i * 4] * 0.3 + px[i * 4 + 1] * 0.59 + px[i * 4 + 2] * 0.11) | 0;
+    var prev = HAND.mot.prev; HAND.mot.prev = cur; if (!prev) return '';
+    var n = 0, sx = 0, sy = 0, x0 = W, x1 = 0, y0 = H, y1 = 0;
+    for (var yy = 0; yy < H; yy++) for (var xx = 0; xx < W; xx++) { if (Math.abs(cur[yy * W + xx] - prev[yy * W + xx]) > 26) { n++; sx += xx; sy += yy; if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; } }
+    var cv = $('#hCan'), gg = cv.getContext('2d'); gg.clearRect(0, 0, cv.width, cv.height);
+    if (n < W * H * 0.012) { HAND.prevArea = 0; return 'Mueve la mano frente a la cámara'; }
+    var cx = 1 - sx / n / W, cy = sy / n / H, area = (x1 - x0 + 1) * (y1 - y0 + 1) / (W * H), d = Math.min(0.1, Math.max(0.005, dt)), lab = [];
+    gg.strokeStyle = 'rgba(92,255,230,.9)'; gg.lineWidth = 2; gg.strokeRect(x0 / W * cv.width, y0 / H * cv.height, (x1 - x0) / W * cv.width, (y1 - y0) / H * cv.height);
+    var x = cx - 0.5, y = cy - 0.5, ox = Math.abs(x) > 0.13 ? x - Math.sign(x) * 0.13 : 0, oy = Math.abs(y) > 0.13 ? y - Math.sign(y) * 0.13 : 0, zf = 1;
+    if (HAND.prevArea) { var ratio = area / HAND.prevArea; if (ratio > 1.06) { zf = Math.exp(-0.9 * d * 2); lab.push('acercando la mano: acercando'); } else if (ratio < 0.94) { zf = Math.exp(0.9 * d * 2); lab.push('alejando la mano: alejando'); } }
+    HAND.prevArea = HAND.prevArea ? HAND.prevArea * 0.7 + area * 0.3 : area;
+    if (ox) lab.push(ox > 0 ? 'girando a la derecha' : 'girando a la izquierda'); if (oy) lab.push(oy > 0 ? 'mirando desde abajo' : 'mirando desde arriba');
+    if (scene3d) scene3d.handMove(-ox * d * 2.6, -oy * d * 1.6, zf, 0);
+    return lab.length ? lab.join(' · ') : 'Movimiento detectado';
+  }
+  function loadHandsLib() {
+    return new Promise(function (res, rej) {
+      if (window.Hands) { res(); return; }
+      var sc = document.createElement('script'); sc.src = HAND_CDN + 'hands.js'; sc.crossOrigin = 'anonymous'; var to = setTimeout(function () { rej(new Error('timeout')); }, 12000);
+      sc.onload = function () { clearTimeout(to); window.Hands ? res() : rej(new Error('nohands')); }; sc.onerror = function () { clearTimeout(to); rej(new Error('load')); }; document.head.appendChild(sc);
+    });
+  }
+  function handLoop(now) {
+    if (!HAND.on) return; HAND.raf = requestAnimationFrame(handLoop);
+    if (document.hidden || HAND.busy || now - HAND.last < 50) return; var dt = (now - HAND.last) / 1000; HAND.last = now;
+    var v = $('#hVid'); if (!v || v.readyState < 2) return;
+    if (HAND.mode === 'mp' && HAND.hands) {
+      HAND.busy = true;
+      HAND.hands.send({ image: v }).then(function () { HAND.busy = false; }, function () { HAND.busy = false; HAND.fails = (HAND.fails || 0) + 1; if (HAND.fails > 5) { HAND.mode = 'motion'; handSay('Modo básico de movimiento'); } });
+      HAND.lastDt = dt;
+    } else if (HAND.mode === 'motion') { var t = motionStep(dt); if (t) handSay(t); }
+  }
+  function handResults(res) {
+    var hs = (res && res.multiHandLandmarks) || []; handDraw(hs);
+    if (!hs.length) { HAND.prevMid = null; handSay('Muestra tu mano a la cámara'); return; }
+    handSay(handCtl(hs, HAND.lastDt || 0.05));
+  }
+  function handStart() {
+    var help = $('#hHelp'), pip = $('#hpip');
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast('Este navegador no permite usar la cámara aquí'); return; }
+    pip.hidden = false; handSay('Pidiendo permiso de cámara…'); help.textContent = 'Tu imagen se queda en este equipo: no se guarda ni se envía.';
+    navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }, audio: false }).then(function (st) {
+      HAND.stream = st; HAND.on = true; var v = $('#hVid'); v.srcObject = st; v.play().catch(function () {});
+      $('#btnHand').textContent = 'Cámara de manos: encendida'; HAND.last = performance.now(); HAND.mode = 'motion'; HAND.fails = 0; HAND.prevMid = null; HAND.mot = null; HAND.prevArea = 0;
+      help.textContent = 'Mano abierta = alejar · cerrada = acercar · mueve la mano del centro = girar · dos manos arriba/abajo = altura. Tu imagen no se guarda ni se envía.';
+      handSay('Cámara lista. Cargando seguimiento de manos…'); cancelAnimationFrame(HAND.raf); HAND.raf = requestAnimationFrame(handLoop);
+      loadHandsLib().then(function () {
+        var h = new window.Hands({ locateFile: function (f) { return HAND_CDN + f; } }); h.setOptions({ maxNumHands: 2, modelComplexity: 0, minDetectionConfidence: 0.6, minTrackingConfidence: 0.5 }); h.onResults(handResults);
+        return Promise.race([h.initialize().then(function () { return h; }), new Promise(function (_, rj) { setTimeout(function () { rj(new Error('init')); }, 20000); })]);
+      }).then(function (h) { if (!HAND.on) return; HAND.hands = h; HAND.mode = 'mp'; handSay('Muestra tu mano a la cámara'); }).catch(function () { if (!HAND.on) return; HAND.mode = 'motion'; help.textContent = 'Modo básico (sin seguimiento de dedos): mueve la mano para girar y acércala o aléjala de la cámara para el zoom.'; handSay('Modo básico de movimiento'); });
+    }, function (e) {
+      var nm = e && e.name; handSay(nm === 'NotAllowedError' || nm === 'SecurityError' ? 'Cámara bloqueada aquí' : nm === 'NotFoundError' ? 'No encontré una cámara' : 'No pude abrir la cámara');
+      help.textContent = nm === 'NotAllowedError' || nm === 'SecurityError' ? 'Permite la cámara en el candado del navegador. Si sigue bloqueada, abre la torre en una pestaña normal de Chrome o Edge.' : 'Revisa que ninguna otra app esté usando la cámara.';
+      HAND.on = false; $('#btnHand').textContent = 'Cámara de manos: apagada';
+    });
+  }
+  function handStop() {
+    HAND.on = false; cancelAnimationFrame(HAND.raf); try { if (HAND.stream) HAND.stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {} HAND.stream = null; try { if (HAND.hands && HAND.hands.close) HAND.hands.close(); } catch (e) {} HAND.hands = null; HAND.mode = '';
+    var v = $('#hVid'); if (v) v.srcObject = null; $('#hpip').hidden = true; $('#btnHand').textContent = 'Cámara de manos: apagada';
+  }
+  $('#btnHand').onclick = function () { if (HAND.on) handStop(); else handStart(); };
+  $('#hOff').onclick = handStop;
+  window.addEventListener('pagehide', handStop);
+  function renderHolo() { $('#app').classList.toggle('holo', HOLO.on); $('#btnHolo').textContent = 'Holograma: ' + (HOLO.on ? 'encendido' : 'apagado'); if (scene3d && scene3d.setHolo) scene3d.setHolo(HOLO.on); }
+  $('#btnHolo').onclick = function () { HOLO.on = !HOLO.on; renderHolo(); savePrefs(); };
+  if (window.__EVR_TEST__) window.__handTest = { ctl: handCtl, mode: function () { return HAND.mode; }, state: function () { return scene3d && scene3d.camState(); } };
+
   /* ---------- Arranque ---------- */
   buildStrip();
   try {
@@ -3972,7 +4121,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (window.console) console.error('3D ' + (err && err.stack || err));
     setFlat(true, 'Tu navegador no pudo iniciar el 3D. Esta es la versión simplificada de la torre.');
   }
-  refresh(true);
+  refresh(true); renderHolo();
   applyUi(); syncScene(); renderProjects(); renderPosts(); renderMemory(); connectDb(); connectSample(); connectRoom();
   if (location.hash === '#tareas') tab('tasks');
 

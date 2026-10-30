@@ -41,3 +41,6 @@
 - Por verificar en tu pantalla: que el mapa embebido cargue dentro de claude.ai (en mi prueba sin internet no se pudo ver); si no carga, el botón «Abrir en Google Maps» siempre funciona.
 
 - Voz en teléfono: el navegador del móvil solo deja hablar tras un toque real (click/touchend, no pointerdown). Ahora la torre desbloquea la voz con el primer toque, guarda el saludo pendiente y lo dice en ese toque; si la voz en español no existe prueba con la voz por defecto; si el navegador no tiene voz lo avisa en pantalla.
+
+- Control con las manos: botón «Cámara de manos» (Más herramientas). Mano abierta = alejar, cerrada = acercar, mover la mano del centro = girar, dos manos arriba/abajo = altura. Usa MediaPipe Hands desde jsDelivr; si no carga, modo básico por movimiento. La imagen no se guarda ni se envía. Por verificar en tu equipo real: permiso de cámara dentro de claude.ai y carga de MediaPipe (en mis pruebas no hay internet a jsDelivr ni cámara real).
+- Holograma: anillos, haz de escaneo y rayos de datos alrededor de la torre + líneas de escaneo en pantalla (botón «Holograma»).
