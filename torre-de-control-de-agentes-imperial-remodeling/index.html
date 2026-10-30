@@ -83,9 +83,10 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .lf[data-s="warning"]::after { background: var(--warn); }
 .lf[data-s="error"]::after { background: var(--err); animation: blink 1.1s infinite; }
 .lf.arrow { height: 26px; color: var(--muted); }
-.card { position: absolute; right: calc(var(--gutter-r) + 54px); top: 148px; width: min(300px, calc(100% - var(--gutter-l) - var(--gutter-r))); padding: 14px 16px 16px; background: rgba(7, 13, 21, 0.9); border: 1px solid var(--line); backdrop-filter: blur(6px); }
+.card { max-height: calc(100% - 164px); overflow-y: auto; overscroll-behavior: contain; position: absolute; right: calc(var(--gutter-r) + 54px); top: 148px; width: min(300px, calc(100% - var(--gutter-l) - var(--gutter-r))); padding: 14px 16px 16px; background: rgba(7, 13, 21, 0.9); border: 1px solid var(--line); backdrop-filter: blur(6px); }
 .card header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .card h2 { margin: 0; font: 400 12.5px/1.3 var(--display); letter-spacing: 0.1em; text-transform: uppercase; text-wrap: balance; }
+.card .btns { position: sticky; bottom: -16px; background: rgba(7, 13, 21, 0.97); padding: 8px 0 14px; margin-bottom: -16px; z-index: 2; }
 .card .x { border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; padding: 2px 6px; }
 .card .role { margin: 6px 0 12px; color: var(--muted); font-size: 12.5px; }
 .pill { display: inline-flex; align-items: center; gap: 6px; font: 500 10.5px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
@@ -722,23 +723,46 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   var HOLO = { on: PREFS.holo !== false };
   var VOICE = { on: PREFS.voice !== false, heard: false, briefed: false, micOk: PREFS.mic === true, micBlocked: false, listening: false, rec: null, awaiting: null, welcomed: false, lt: 0 };
   var ALARM = { sound: PREFS.sound !== false, notify: PREFS.notify === true, audio: null, last: {} }, flatOn = false;
+  /* Importancia para la compañía (1 crítica … 4 informativa) e identidad propia de cada agente: emoji, color, tono, vibración */
+  var TIERS = { 1: { n: 'CRÍTICA', dot: '🔴' }, 2: { n: 'ALTA', dot: '🟠' }, 3: { n: 'MEDIA', dot: '🟡' }, 4: { n: 'INFO', dot: '🔵' } };
+  var AID = {
+    cobros:   { t: 1, e: '💰', c: '#ff5c5c', hz: 520, vib: [400, 120, 400, 120, 400] },
+    cliente:  { t: 1, e: '🙋', c: '#ff8a5c', hz: 660, vib: [300, 100, 300, 100, 300] },
+    cotiz:    { t: 2, e: '🧾', c: '#ffc857', hz: 740, vib: [250, 90, 120, 90, 250] },
+    leads:    { t: 2, e: '🎯', c: '#ffa94d', hz: 830, vib: [120, 80, 120, 80, 120, 80, 120] },
+    correo:   { t: 2, e: '✉️', c: '#5cc8ff', hz: 930, vib: [200, 100, 200] },
+    citas:    { t: 2, e: '📅', c: '#9b8cff', hz: 590, vib: [150, 70, 350] },
+    proyectos:{ t: 3, e: '🏗️', c: '#7fe3c5', hz: 480, vib: [350, 150, 150] },
+    social:   { t: 3, e: '💬', c: '#ff7ac8', hz: 1000, vib: [100, 60, 100, 60, 100] },
+    resenas:  { t: 3, e: '⭐', c: '#ffe066', hz: 880, vib: [220, 80, 80] },
+    reportes: { t: 4, e: '📊', c: '#8fb4d6', hz: 400, vib: [500] },
+    publica:  { t: 4, e: '📣', c: '#c39bff', hz: 1100, vib: [90, 60, 90] },
+    oport:    { t: 4, e: '🏠', c: '#6fe39a', hz: 700, vib: [180, 120, 180] }
+  };
+  function aid(a) { return AID[a.id] || { t: 4, e: '🔔', c: '#8fb4d6', hz: 800, vib: [200] }; }
+  function byImportance(x, y) { var ix = aid(x), iy = aid(y), ex = x.status === 'error' ? 0 : 1, ey = y.status === 'error' ? 0 : 1; return (ix.t - iy.t) || (ex - ey) || ((x.errorAt || x.since || 0) - (y.errorAt || y.since || 0)); }
+  function alertTitle(a) { var i = aid(a), tr = TIERS[i.t]; return tr.dot + ' ' + tr.n + ' · ' + i.e + ' ' + a.name; }
   function unlockAudio() { try { if (!ALARM.audio) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) ALARM.audio = new AC(); } if (ALARM.audio && ALARM.audio.state === 'suspended') ALARM.audio.resume(); } catch (e) {} }
   document.addEventListener('pointerdown', unlockAudio, { passive: true }); document.addEventListener('keydown', unlockAudio, { passive: true });
-  function beep() {
+  function beep(a) {
     if (!ALARM.sound || !ALARM.audio) return;
-    try { var c = ALARM.audio, t = c.currentTime; [0, 0.28, 0.56].forEach(function (d) { var o = c.createOscillator(), g = c.createGain(); o.type = 'square'; o.frequency.value = 880; g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(0.16, t + d + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.22); o.connect(g); g.connect(c.destination); o.start(t + d); o.stop(t + d + 0.25); }); } catch (e) {}
+    try {
+      var c = ALARM.audio, id = a ? aid(a) : { t: 3, hz: 880 }, now = c.currentTime, t0 = Math.max(now, ALARM.nextAt || 0), n = id.t === 1 ? 4 : id.t === 2 ? 3 : id.t === 3 ? 2 : 1;
+      for (var k = 0; k < n; k++) { var d = k * (id.t === 1 ? 0.2 : 0.28), o = c.createOscillator(), g = c.createGain(); o.type = id.t === 1 ? 'sawtooth' : 'square'; o.frequency.value = id.hz * (k % 2 && id.t === 1 ? 1.25 : 1); g.gain.setValueAtTime(0.0001, t0 + d); g.gain.exponentialRampToValueAtTime(0.15, t0 + d + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + 0.2); o.connect(g); g.connect(c.destination); o.start(t0 + d); o.stop(t0 + d + 0.22); }
+      ALARM.nextAt = t0 + n * 0.3 + 0.4;
+    } catch (e) {}
   }
-  function desktopNotify(title, body) {
+  function desktopNotify(title, body, a) {
     if (!ALARM.notify) return;
-    try { if (window.Notification && Notification.permission === 'granted') { var n = new Notification(title, { body: body, tag: 'evr-alarma' }); n.onclick = function () { try { window.focus(); } catch (e) {} n.close(); }; } } catch (e) {}
+    try { if (window.Notification && Notification.permission === 'granted') { var n = new Notification(title, { body: body, tag: 'evr-' + (a ? a.id : 'prueba'), renotify: false, requireInteraction: !!(a && aid(a).t === 1), silent: false, vibrate: a ? aid(a).vib : [200] }); n.onclick = function () { try { window.focus(); } catch (e) {} n.close(); }; } } catch (e) {}
   }
   function flashStage() { var st = $('#stage'); st.classList.remove('flash'); void st.offsetWidth; st.classList.add('flash'); setTimeout(function () { st.classList.remove('flash'); }, 3000); }
   function fireAlarm(a, test) {
     var msg = a.name + ' dejó de funcionar' + (a.msg ? ': ' + a.msg : '');
     ALARM.last[a.id] = Date.now(); a.acked = false;
-    toast('Alarma: ' + msg); beep(); desktopNotify('Torre EVR: alarma', msg); flashStage();
+    toast('Alarma · ' + alertTitle(a) + ': ' + (a.msg || 'dejó de funcionar')); beep(a); desktopNotify(alertTitle(a), msg, a); flashStage();
     if (test) voiceSay(null, 'Prueba de voz. Así te avisarán los agentes.'); else voiceHelp(a);
-    try { if (navigator.vibrate) navigator.vibrate([220, 100, 220]); } catch (e) {}
+    try { if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(aid(a).vib); } catch (e) {}
     if (test) return;
     logEvent('Alarma: ' + a.name + ' dejó de funcionar', a.id, 'alarm');
     if (DB) { a.alertId = a.id + '_' + (a.errorAt || Date.now()); DB.doc('alerts/' + a.alertId).set({ agent: a.id, name: a.name, msg: a.msg || '', level: 'error', since: a.errorAt || Date.now(), createdAt: Date.now(), ack: false, notified: false }).catch(function () {}); }
@@ -760,7 +784,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   $('#alTest').onclick = function () { unlockAudio(); fireAlarm({ id: 'prueba', name: 'Agente de prueba', msg: 'Así sonará y se verá una alarma real.' }, true); };
   setInterval(function () {
     var n = Date.now();
-    AGENTS.forEach(function (a) { if (a.status === 'error' && !a.acked && n - (ALARM.last[a.id] || 0) > 5 * 60000) { ALARM.last[a.id] = n; beep(); desktopNotify('Torre EVR: sigue sin funcionar', a.name + ' lleva ' + mins(n - (a.errorAt || n)) + ' min caído'); } });
+    AGENTS.forEach(function (a) { if (a.status === 'error' && !a.acked && n - (ALARM.last[a.id] || 0) > (aid(a).t <= 2 ? 5 : 15) * 60000) { ALARM.last[a.id] = n; beep(a); desktopNotify(alertTitle(a) + ' · sigue caído', a.name + ' lleva ' + mins(n - (a.errorAt || n)) + ' min caído', a); } });
   }, 30000);
 
   /* ---------- Voz: los agentes hablan y escuchan (el reconocimiento lo hace el navegador) ---------- */
@@ -1218,13 +1242,13 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
 
   /* ---------- Bandeja ---------- */
   var openAsk = null;
-  function alerts() { return AGENTS.filter(function (a) { return a.status === 'error' || (a.status === 'warning' && !a.fixing); }); }
+  function alerts() { return AGENTS.filter(function (a) { return a.status === 'error' || (a.status === 'warning' && !a.fixing); }).sort(byImportance); }
   function renderInbox() {
     var box = $('#inbox'), html = '', tks = tokenState();
-    var al = alerts().sort(function (x, y) { return (y.status === 'error') - (x.status === 'error'); });
+    var al = alerts();
     al.forEach(function (a) {
       var err = a.status === 'error';
-      html += '<article class="row"><div class="meta"><span class="tag ' + (err ? 'err' : 'warn') + '"><i class="dot" data-s="' + a.status + '"></i>' + (err ? 'Falla' : 'Atención') + '</span><span>' + esc(a.name) + '</span></div>' +
+      html += '<article class="row" style="border-left:3px solid ' + aid(a).c + '"><div class="meta"><span class="tag ' + (err ? 'err' : 'warn') + '"><i class="dot" data-s="' + a.status + '"></i>' + TIERS[aid(a).t].dot + ' ' + TIERS[aid(a).t].n + ' · ' + (err ? 'Falla' : 'Atención') + '</span><span>' + aid(a).e + ' ' + esc(a.name) + '</span></div>' +
         '<h3>' + (err ? esc(a.name) + ' no está funcionando' : esc(a.name) + ' va lento') + '</h3><p>' + esc(a.msg || '') + ' ' + esc(a.fix || '') + '</p>' +
         '<div class="acts"><button class="btn ' + (err ? 'danger' : 'primary') + '" data-fix="' + a.id + '" type="button">' + (err ? 'Corregir ahora' : 'Reiniciar') + '</button><button class="btn" data-see="' + a.id + '" type="button">Ver agente</button></div></article>';
     });
@@ -1413,7 +1437,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       '<div class="mine"><small>Próximas tareas</small>' + (mine.length ? '<ul>' + mine.map(function (t) { return '<li><time>' + clock(t.at) + '</time><span>' + esc(t.title) + '</span></li>'; }).join('') + '</ul>' : '<p>Sin tareas programadas.</p>') + '</div>' +
       '<form class="ask" data-cask="' + esc(a.id) + '" autocomplete="off"><input type="text" maxlength="160" placeholder="Pregúntale a ' + esc(a.name) + '…" aria-label="Pregúntale a ' + esc(a.name) + '"><button class="btn primary" type="submit">Preguntar</button></form>' + (AGENT_ANS[a.id] ? '<p class="aans">' + esc(AGENT_ANS[a.id]) + '</p>' : '') +
       '<form class="ask" data-cskill="' + esc(a.id) + '" autocomplete="off"><input type="text" maxlength="300" placeholder="Enséñale una skill o regla…" aria-label="Enseñar una skill a ' + esc(a.name) + '"><button class="btn" type="submit">Enseñar</button></form>' + (skillsOf(a.id).length ? '<p class="role">Skills aprendidas: ' + skillsOf(a.id).length + ' · última: ' + esc(skillsOf(a.id).slice(-1)[0].body.slice(0, 70)) + '</p>' : '') +
-      '<div class="btns">' + (a.id === 'oport' ? '<button class="btn primary" data-cprops type="button">Propiedades y mapa (' + PROPS.length + ')</button>' : '') + + main + ((INBOX || []).some(function (x) { return x.agent === a.id; }) ? '<button class="btn primary" data-copen="inbox" type="button">Atender mis recados</button>' : '') + '<button class="btn" data-cadd type="button">Asignar tarea</button>' + (a.id === 'publica' ? '<button class="btn" data-copen="posts" type="button">Publicaciones</button><button class="btn" data-copen="tokens" type="button">Tokens</button>' : '') + '</div>');
+      '<div class="btns">' + (a.id === 'oport' ? '<button class="btn primary" data-cprops type="button">Propiedades y mapa (' + PROPS.length + ')</button>' : '') + main + ((INBOX || []).some(function (x) { return x.agent === a.id; }) ? '<button class="btn primary" data-copen="inbox" type="button">Atender mis recados</button>' : '') + '<button class="btn" data-cadd type="button">Asignar tarea</button>' + (a.id === 'publica' ? '<button class="btn" data-copen="posts" type="button">Publicaciones</button><button class="btn" data-copen="tokens" type="button">Tokens</button>' : '') + '</div>');
     var br = agentBrief(a), bd = c.querySelector('[data-dyn="bdo"]'), bi = c.querySelector('[data-dyn="bimp"]'); if (bd) bd.textContent = br.doing; if (bi) bi.innerHTML = br.improve.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
     var dA = c.querySelector('[data-dyn="act"]'); if (dA) dA.textContent = a.act; var dS = c.querySelector('[data-dyn="sig"]'); if (dS) dS.textContent = sig;
   }
@@ -1509,12 +1533,12 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   });
 
   function renderAlert() {
-    var errs = AGENTS.filter(function (a) { return a.status === 'error'; });
+    var errs = AGENTS.filter(function (a) { return a.status === 'error'; }).sort(byImportance);
     var bar = $('#alert');
     bar.hidden = !errs.length;
     if (!errs.length) return;
     var a = errs[0];
-    setHtml($('#alertText'), '<strong>Alerta: ' + esc(a.name) + ' dejó de funcionar</strong> hace ' + mins(Date.now() - a.errorAt) + ' min. ' + esc(a.msg) + (errs.length > 1 ? ' (+' + (errs.length - 1) + ' más)' : ''));
+    setHtml($('#alertText'), '<strong>' + TIERS[aid(a).t].dot + ' ' + TIERS[aid(a).t].n + ': ' + aid(a).e + ' ' + esc(a.name) + ' dejó de funcionar</strong> hace ' + mins(Date.now() - a.errorAt) + ' min. ' + esc(a.msg) + (errs.length > 1 ? ' (+' + (errs.length - 1) + ' más)' : ''));
     $('#alertFix').onclick = function () { fixAgent(a); };
     $('#alertMute').onclick = function () { errs.forEach(function (x) { x.acked = true; }); toast('Alarma silenciada hasta que algo cambie'); };
     $('#alertSee').onclick = function () { select(a.id); };

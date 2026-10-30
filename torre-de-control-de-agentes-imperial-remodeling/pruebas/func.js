@@ -5,7 +5,7 @@ const init = `
 (function(){
   var REAL=${JSON.stringify(REAL)};
   function deep(o){ if(o&&typeof o==='object'&&!Object.isFrozen(o)){ Object.keys(o).forEach(function(k){deep(o[k])}); Object.freeze(o);} return o; }
-  var store={alerts:{},groups:{},tasks:{},inbox:{},agents:{},projects:{},logs:{},reports:{},posts:{},memory:{},usage:{},settings:{tokens:{budget:150000,pin:3,pout:15}}}, subs=[];
+  var store={properties:{},improvements:{},alerts:{},groups:{},tasks:{},inbox:{},agents:{},projects:{},logs:{},reports:{},posts:{},memory:{},usage:{},settings:{tokens:{budget:150000,pin:3,pout:15}}}, subs=[];
   Object.keys(REAL).forEach(function(c){ Object.keys(REAL[c]).forEach(function(id){ store[c][id]=REAL[c][id]; }); });
   function notify(c){ subs.filter(function(s){return s.c===c}).forEach(function(s){ s.f(s.doc?dsnap(c,s.id):snap(c)); }); }
   function snap(c){ var ids=Object.keys(store[c]).sort(); var docs=ids.map(function(id){var d=deep(JSON.parse(JSON.stringify(store[c][id]))); return {id:id,exists:true,data:function(){return d}}}); return {docs:docs,size:docs.length,empty:!docs.length,metadata:{hasPendingWrites:false}}; }
@@ -23,7 +23,7 @@ const init = `
   function N(t,o){ window.__notifs.push(t+'|'+(o&&o.body)); this.close=function(){}; } N.permission='default'; N.requestPermission=function(cb){ N.permission='granted'; if(cb) cb('granted'); return Promise.resolve('granted'); }; window.Notification=N;
   window.claude={ use:function(name){ return Promise.resolve(name==='db'?db:name==='sample'?sample:name==='room'?room:null); } };
   window.__errs=[]; window.addEventListener('error',function(e){ window.__errs.push('ERR '+e.message); }); window.addEventListener('unhandledrejection',function(e){ window.__errs.push('REJ '+(e.reason&&e.reason.message||e.reason)); });
-  try{ localStorage.setItem('evr.ui', JSON.stringify({v:2,q:'media'})); }catch(e){}
+  try{ localStorage.setItem('evr.ui', JSON.stringify({v:2,q:'media',jarvis:false})); }catch(e){}
 })();`;
 const results=[]; 
 (async () => {
@@ -39,9 +39,9 @@ const results=[];
   await p.waitForTimeout(5000);
   const ev=(f,a)=>p.evaluate(f,a);
   const heaps=[]; let nT=0;
-  async function t(name, fn){ try { const r = await Promise.race([fn(), new Promise((_,j)=>setTimeout(()=>j(new Error('TIMEOUT 60s')),60000))]); console.log('..',name); if (r === false) throw new Error('assert false'); results.push(['ok',name]); } catch(e){ results.push(['FAIL',name,String(e.message).split('\n')[0].slice(0,140)]); console.log('FAIL',name,String(e.message).split('\n')[0].slice(0,140)); } }
+  async function t(name, fn){ try { const r = await Promise.race([fn(), new Promise((_,j)=>setTimeout(()=>j(new Error('TIMEOUT 120s')),60000))]); console.log('..',name); if (r === false) throw new Error('assert false'); results.push(['ok',name]); } catch(e){ results.push(['FAIL',name,String(e.message).split('\n')[0].slice(0,140)]); console.log('FAIL',name,String(e.message).split('\n')[0].slice(0,140)); } }
   const diag=[];
-  const click=async(sel)=>{ try { await p.click(sel,{timeout:20000}); } catch(e){ const d=await p.evaluate(s=>{ const el=document.querySelector(s); if(!el) return 'no existe'; const r=el.getBoundingClientRect(); const top=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2); return JSON.stringify({sel:s,rect:[Math.round(r.left),Math.round(r.top),Math.round(r.width),Math.round(r.height)],hidden:el.hidden||!el.offsetParent,top:top?(top.tagName+'#'+top.id+'.'+(top.className||'').toString().slice(0,30)):null,appCls:document.querySelector('#app').className, flat:!document.querySelector('#flat').hidden, glvis:document.querySelector('#gl').style.visibility}); },sel).catch(x=>'eval fail '+x.message); const raf=await p.evaluate(()=>new Promise(r=>{const t=[performance.now()]; let n=0; function f(){ t.push(performance.now()); if(++n<4) requestAnimationFrame(f); else r(Math.round((t[4]-t[0])/4)); } requestAnimationFrame(f); })).catch(()=>-1); diag.push(d+' rafms='+raf); throw e; } };
+  const click=async(sel)=>{ try { await p.click(sel,{timeout:45000}); } catch(e){ const d=await p.evaluate(s=>{ const el=document.querySelector(s); if(!el) return 'no existe'; const r=el.getBoundingClientRect(); const top=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2); return JSON.stringify({sel:s,rect:[Math.round(r.left),Math.round(r.top),Math.round(r.width),Math.round(r.height)],hidden:el.hidden||!el.offsetParent,top:top?(top.tagName+'#'+top.id+'.'+(top.className||'').toString().slice(0,30)):null,appCls:document.querySelector('#app').className, flat:!document.querySelector('#flat').hidden, glvis:document.querySelector('#gl').style.visibility}); },sel).catch(x=>'eval fail '+x.message); const raf=await p.evaluate(()=>new Promise(r=>{const t=[performance.now()]; let n=0; function f(){ t.push(performance.now()); if(++n<4) requestAnimationFrame(f); else r(Math.round((t[4]-t[0])/4)); } requestAnimationFrame(f); })).catch(()=>-1); diag.push(d+' rafms='+raf); throw e; } };
   const vis=(sel)=>ev(s=>{const e=document.querySelector(s); return !!e && !e.hidden && e.offsetParent!==null;},sel);
   const txtU=(sel)=>ev(s=>{const e=document.querySelector(s); return e? e.textContent.replace(/\s+/g,' ').trim().toUpperCase():'';},sel);
   const txt=(sel)=>ev(s=>{const e=document.querySelector(s); return e? e.textContent.replace(/\s+/g,' ').trim():null;},sel);

@@ -46,3 +46,6 @@
 - Holograma: anillos, haz de escaneo y rayos de datos alrededor de la torre + líneas de escaneo en pantalla (botón «Holograma»).
 
 - Jarvis es el logo de arriba de la torre: al hablar se pone más dorado y brillante; tocar el logo abre/cierra a Jarvis.
+
+- Alertas por importancia y por agente: cada agente tiene nivel (🔴 CRÍTICA: Facturación y cobros, Atención al cliente · 🟠 ALTA: Cotizaciones, Prospectos, Correo, Calendario · 🟡 MEDIA: Proyectos, Comunidad, Reseñas · 🔵 INFO: Reportes, Publicaciones, Oportunidades), emoji, color, tono y vibración propios. La barra, la bandeja y los avisos del navegador salen ordenados por importancia, sin repetirse (una etiqueta por agente). El Vigilante (cada hora, aviso al teléfono) usa el mismo orden y emoji.
+- Corregido: la tarjeta del agente perdía los botones Pausar/Reiniciar/Corregir (un «+ +» de más); la tarjeta ahora se desplaza y deja los botones fijos abajo.
