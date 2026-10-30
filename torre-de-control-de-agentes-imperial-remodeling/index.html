@@ -3113,6 +3113,42 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     logo.position.y = TOP + CH + 18; logo.renderOrder = 10; tower.add(logo);
     var logoRing = new THREE.Mesh(new THREE.TorusGeometry(5.6, 0.05, 6, 96), new THREE.MeshBasicMaterial({ color: 0xcfeaff, transparent: true, opacity: 0.75, depthTest: false, fog: false }));
     logoRing.rotation.x = Math.PI / 2.3; logoRing.position.y = TOP + CH + 18; logoRing.renderOrder = 9; tower.add(logoRing);
+    /* Jarvis: enjambre algorítmico alrededor del logo (reacciona a escuchar, hablar y alertas) */
+    var JV = { n: 84, mx: 260, y: TOP + CH + 18, mode: 'idle', amp: 0, col: new THREE.Color(0x7fd8ff), tgt: new THREE.Color(0x7fd8ff), spin: 0 };
+    var jvG = new THREE.Group(); jvG.position.y = JV.y; jvG.scale.setScalar(1.3); tower.add(jvG);
+    var jvPos = new Float32Array(JV.n * 3), jvPh = [], jvPts, jvLines, jvLinePos = new Float32Array(JV.mx * 6), jvRings = [];
+    for (var ji = 0; ji < JV.n; ji++) jvPh.push({ a: Math.random() * 6.28, b: Math.random() * 6.28, f1: 0.25 + Math.random() * 0.7, f2: 0.2 + Math.random() * 0.8, f3: 0.3 + Math.random() * 0.6, r: 4.2 + Math.random() * 3.2 });
+    var jvGeo = new THREE.BufferGeometry(); jvGeo.setAttribute('position', new THREE.BufferAttribute(jvPos, 3));
+    jvPts = new THREE.Points(jvGeo, new THREE.PointsMaterial({ map: GLOW, color: 0x7fd8ff, size: 1.5, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending, sizeAttenuation: true, fog: false })); jvPts.renderOrder = 11; jvPts.frustumCulled = false; jvG.add(jvPts);
+    var jvLGeo = new THREE.BufferGeometry(); jvLGeo.setAttribute('position', new THREE.BufferAttribute(jvLinePos, 3)); jvLGeo.setDrawRange(0, 0);
+    jvLines = new THREE.LineSegments(jvLGeo, new THREE.LineBasicMaterial({ color: 0x7fd8ff, transparent: true, opacity: 0.4, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); jvLines.renderOrder = 11; jvLines.frustumCulled = false; jvG.add(jvLines);
+    [[6.6, 0.04, 0.3, 0.1], [7.6, 0.04, 1.2, -0.07], [8.6, 0.035, 2.1, 0.05]].forEach(function (c, i) {
+      var rg = new THREE.Mesh(new THREE.TorusGeometry(c[0], c[1], 6, 120), new THREE.MeshBasicMaterial({ color: 0x9fe8ff, transparent: true, opacity: 0.55, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
+      rg.rotation.set(c[2], i * 1.1, 0); rg.renderOrder = 11; rg.userData.w = c[3]; jvG.add(rg); jvRings.push(rg);
+    });
+    var jvHit = new THREE.Sphere(new THREE.Vector3(0, JV.y, 0), 12);
+    function jvUpdate(t, dt, tr) {
+      var talking = !!(typeof TTS !== 'undefined' && TTS && TTS.speaking), listen = !!VOICE.listening, bad = alerts().length > 0;
+      JV.mode = talking ? 'talk' : listen ? 'listen' : bad ? 'alert' : 'idle';
+      JV.tgt.setHex(JV.mode === 'talk' ? 0xb4a0ff : JV.mode === 'listen' ? 0xffd27a : JV.mode === 'alert' ? 0xff8a7a : 0x7fd8ff); JV.col.lerp(JV.tgt, Math.min(1, dt * 4));
+      var amp = JV.mode === 'talk' ? 0.55 + 0.45 * Math.abs(Math.sin(t * 9) * Math.sin(t * 3.3)) : JV.mode === 'listen' ? 0.35 + 0.25 * Math.sin(t * 5) : JV.mode === 'alert' ? 0.3 + 0.2 * Math.sin(t * 7) : 0.12;
+      JV.amp += (amp - JV.amp) * Math.min(1, dt * 6); var sp = 0.5 + JV.amp * 1.6, n = tr >= 2 ? 40 : JV.n, i, j;
+      jvPts.material.color.copy(JV.col); jvLines.material.color.copy(JV.col); jvPts.material.size = 1.2 + JV.amp * 1.4;
+      for (i = 0; i < JV.n; i++) {
+        var ph = jvPh[i], k = i < n ? 1 : 0, rr = (ph.r + JV.amp * 2.4 * Math.sin(t * 2 + ph.a)) * (JV.mode === 'listen' ? 0.82 + 0.12 * Math.sin(t * 5 + i) : 1);
+        var ax = ph.a + t * ph.f1 * sp, bx = ph.b + t * ph.f2 * sp;
+        jvPos[i * 3] = Math.cos(ax) * Math.cos(bx * 0.7 + Math.sin(t * ph.f3)) * rr * k; jvPos[i * 3 + 1] = Math.sin(bx) * rr * 0.8 * k; jvPos[i * 3 + 2] = Math.sin(ax) * Math.cos(bx) * rr * k;
+      }
+      jvGeo.attributes.position.needsUpdate = true;
+      var c = 0, th2 = 5.2 + JV.amp * 3; th2 *= th2;
+      for (i = 0; i < n && c < JV.mx; i++) for (j = i + 1; j < n && c < JV.mx; j++) {
+        var dx = jvPos[i * 3] - jvPos[j * 3], dy = jvPos[i * 3 + 1] - jvPos[j * 3 + 1], dz = jvPos[i * 3 + 2] - jvPos[j * 3 + 2];
+        if (dx * dx + dy * dy + dz * dz < th2) { jvLinePos.set([jvPos[i * 3], jvPos[i * 3 + 1], jvPos[i * 3 + 2], jvPos[j * 3], jvPos[j * 3 + 1], jvPos[j * 3 + 2]], c * 6); c++; }
+      }
+      jvLGeo.setDrawRange(0, c * 2); jvLGeo.attributes.position.needsUpdate = true; jvLines.material.opacity = 0.25 + JV.amp * 0.5;
+      jvRings.forEach(function (rg, q) { rg.rotation.x += rg.userData.w * (1 + JV.amp * 6); rg.rotation.y += (0.1 + q * 0.04) * dt * (1 + JV.amp * 5); rg.material.color.copy(JV.col); rg.material.opacity = 0.35 + JV.amp * 0.5; });
+      var ls = 1 + JV.amp * 0.18 * (JV.mode === 'talk' ? 1 : 0.5); logoGlow.scale.set(14 * ls, 14 * ls, 1); logoGlow.material.color.copy(JV.col).lerp(new THREE.Color(0xffffff), 0.45);
+    }
     var beamUp = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 200, 6, 1, true), new THREE.MeshBasicMaterial({ color: 0x5cc8ff, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false }));
     beamUp.position.y = TOP + 100; tower.add(beamUp);
 
@@ -3562,7 +3598,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     canvas.addEventListener('pointermove', function (e) {
       if (!ptrs[e.pointerId]) {
         var nowH = performance.now(); if (nowH - lastHover < 70 || e.pointerType === 'touch') return; lastHover = nowH;
-        var uh = hit(e); canvas.style.cursor = uh ? 'pointer' : ''; hoverA = uh && uh.agent ? uh.agent : null; var ht = $('#htip'); if (hoverA) { ht.textContent = hoverA.name + ' · ' + LBL[hoverA.status] + ' · toca para hablar'; ht.style.left = (e.clientX + 14) + 'px'; ht.style.top = (e.clientY + 14) + 'px'; ht.hidden = false; } else ht.hidden = true; return;
+        var uh = hit(e); canvas.style.cursor = uh ? 'pointer' : ''; hoverA = uh && uh.agent ? uh.agent : null; if (uh && uh.jarvis) { canvas.style.cursor = 'pointer'; } var ht = $('#htip'); if (hoverA) { ht.textContent = hoverA.name + ' · ' + LBL[hoverA.status] + ' · toca para hablar'; ht.style.left = (e.clientX + 14) + 'px'; ht.style.top = (e.clientY + 14) + 'px'; ht.hidden = false; } else ht.hidden = true; return;
       }
       ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
       var ks = Object.keys(ptrs);
@@ -3577,7 +3613,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     canvas.addEventListener('pointerup', function (e) {
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
-      if (wasTap) { var ud = hit(e); if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
+      if (wasTap) { var ud = hit(e); if (ud && ud.jarvis) { unlockAudio(); if (!$('#jarvis').hidden) jarvisClose(); else jarvisOpen(false); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
     canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; });
@@ -3587,6 +3623,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     function hit(e) {
       var rc = canvas.getBoundingClientRect(); ndc.set((e.clientX - rc.left) / rc.width * 2 - 1, -((e.clientY - rc.top) / rc.height) * 2 + 1);
       ray.setFromCamera(ndc, camera); var r = ray.intersectObjects(pickables, false), first = null, robot = null;
+      var jvp = new THREE.Vector3(); if (ray.ray.intersectSphere(jvHit.clone().applyMatrix4(tower.matrixWorld), jvp)) return { jarvis: true };
       for (var q = 0; q < r.length; q++) {
         var ud = r[q].object.userData;
         if (ud.meteor) { if (ray.ray.distanceToPoint(ud.meteor.g.position) <= (ud.meteor.gold ? 8 : 6)) return ud; continue; }
@@ -3752,7 +3789,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (!selected && !selectedProject && !selectedPlanet && !drag && !reduce) cam.th += sdt * 0.04;
       if (cam.follow && !drag) { var dth = (cam.follow.deskAng != null ? cam.follow.deskAng : cam.follow.ang) - cam.th; dth = Math.atan2(Math.sin(dth), Math.cos(dth)); cam.th += dth * Math.min(1, dt * 1.2); }
       applyShift(false);
-      var k = 1 - Math.pow(0.002, dt); holoUpdate(clockT, tier);
+      var k = 1 - Math.pow(0.002, dt); holoUpdate(clockT, tier); if (tier < 3 || true) jvUpdate(clockT, dt, tier);
       cam.r += (cam.gr - cam.r) * k * 0.7; cam.ty += (cam.gty - cam.ty) * k * 0.7; cam.tx += (cam.gtx - cam.tx) * k * 0.7; cam.tz += (cam.gtz - cam.tz) * k * 0.7;
       if (cam.gph != null) { cam.ph += (cam.gph - cam.ph) * k * 0.6; if (Math.abs(cam.gph - cam.ph) < 0.004) cam.gph = null; }
       var sp = Math.sin(cam.ph);
