@@ -45,4 +45,4 @@
 - Control con las manos: botón «Cámara de manos» (Más herramientas). Mano abierta = alejar, cerrada = acercar, mover la mano del centro = girar, dos manos arriba/abajo = altura. Usa MediaPipe Hands desde jsDelivr; si no carga, modo básico por movimiento. La imagen no se guarda ni se envía. Por verificar en tu equipo real: permiso de cámara dentro de claude.ai y carga de MediaPipe (en mis pruebas no hay internet a jsDelivr ni cámara real).
 - Holograma: anillos, haz de escaneo y rayos de datos alrededor de la torre + líneas de escaneo en pantalla (botón «Holograma»).
 
-- Jarvis en lo alto de la torre: enjambre algorítmico de partículas y líneas alrededor del logo, con anillos giroscópicos. Reacciona: cian en reposo, dorado al escuchar, violeta al hablar, rojo con alertas. Tocarlo abre/cierra el panel de Jarvis.
+- Jarvis es el logo de arriba de la torre: al hablar se pone más dorado y brillante; tocar el logo abre/cierra a Jarvis.
