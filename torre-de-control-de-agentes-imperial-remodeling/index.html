@@ -1523,7 +1523,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var b = e.target.closest('button'); if (!b) return;
     if (selectedPlanet) { planetCardClick(b); return; }
     if (selectedProject) { projCardClick(b); return; }
-    var a = byId(selected);
+    var a = byId(selected); if (!a && !b.hasAttribute('data-cx')) return;
     if (b.hasAttribute('data-cx')) deselect();
     else if (b.hasAttribute('data-cfix')) fixAgent(a);
     else if (b.hasAttribute('data-cpause')) togglePause(a);

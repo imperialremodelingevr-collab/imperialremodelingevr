@@ -38,20 +38,19 @@ const results=[];
   await p.goto('http://127.0.0.1:8766/func.html', { waitUntil: 'commit', timeout: 120000 });
   const W=(ms)=>p.waitForTimeout(ms); await W(22000);
   await p.evaluate(()=>{ document.getElementById('jaClose')?.click(); document.getElementById('panelHide')?.click(); });
-  const bad=[]; let clicked=0; const labels=new Set();
-  for (let round=0; round<3; round++) {
-    const n = await p.evaluate(()=>document.querySelectorAll('button').length);
-    for (let i=0;i<n;i++) {
-      const r = await p.evaluate((i)=>{ const b=document.querySelectorAll('button')[i]; if(!b) return null; const id=b.id||b.className||''; const t=(b.textContent||b.getAttribute('aria-label')||'').trim().slice(0,30); if (/flatRetry|btnRestart3d/.test(id)) return {skip:1,t}; if (b.disabled) return {skip:1,t}; try { window.__errs.length=0; b.click(); } catch(e) { return {err:'throw '+e.message,t,id}; } return {t,id}; }, i);
-      if (!r || r.skip) continue; clicked++;
-      await p.waitForTimeout(60);
-      const er = await p.evaluate(()=>window.__errs.slice());
-      if (r.err || er.length) bad.push((r.t||'')+' | '+(r.id||'')+' | '+(r.err||er.join(' ; ')));
-      // cerrar paneles modales para seguir
-      await p.evaluate(()=>{ ['props','jarvis','hpip'].forEach(x=>{}); });
-    }
+  const bad=[]; let clicked=0; const fs2=require('fs'); fs2.writeFileSync('reg/btn.log','');
+  p.on('dialog', d=>d.dismiss().catch(()=>{}));
+  const n = await p.evaluate(()=>document.querySelectorAll('button').length);
+  for (let i=0;i<n;i++) {
+    const r = await Promise.race([p.evaluate((i)=>{ const b=document.querySelectorAll('button')[i]; if(!b) return null; const id=b.id||''; const t=(b.textContent||b.getAttribute('aria-label')||'').trim().slice(0,30); if (/flatRetry|btnRestart3d|hOff/.test(id)||b.disabled) return {skip:1}; try { window.__errs.length=0; b.click(); } catch(e) { return {err:'throw '+e.message,t,id}; } return {t,id,cls:b.className.slice(0,25)}; }, i), new Promise(r=>setTimeout(()=>r({hang:1}),15000))]).catch(e=>({err:String(e).slice(0,100)}));
+    if (!r || r.skip) continue; clicked++;
+    if (r.hang) { bad.push('HANG en boton #'+i); break; }
+    await p.waitForTimeout(40);
+    const er = await Promise.race([p.evaluate(()=>window.__errs.slice()), new Promise(r=>setTimeout(()=>r(['HANG2']),10000))]);
+    fs2.appendFileSync('reg/btn.log', i+' '+(r.t||'')+' | '+(r.id||r.cls||'')+(er.length?' ERR '+er.join(';'):'')+'\n');
+    if (r.err || er.length) bad.push((r.t||'')+' | '+(r.id||r.cls||'')+' | '+(r.err||er.join(' ; ')));
   }
-  console.log('BOTONES clicados', clicked, 'con error', bad.length); bad.slice(0,30).forEach(x=>console.log(' ERR', x));
+  console.log('BOTONES clicados', clicked, 'de', n, 'con error', bad.length); bad.slice(0,30).forEach(x=>console.log(' ERR', x));
   console.log('PAGEERR', JSON.stringify(perr.slice(0,5)));
   console.log('PERR', JSON.stringify(perr)); await b.close();
 })();
