@@ -1,0 +1,360 @@
+<title>Casas para Flip Collin</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: a working desk. Criteria strip on top, the deal table as the main surface,
+   the analyzer beside/below it, the source directory at the bottom. */
+:root{
+  --bg:#f5f6f9; --surface:#ffffff; --sunk:#eceef3; --ink:#141a24; --muted:#586374; --line:#d9dee7;
+  --accent:#a3122a; --accent-ink:#ffffff; --accent-soft:#f7e6e9;
+  --good:#17754a; --good-soft:#e2f3ea; --warn:#8f5a00; --warn-soft:#fbefd6; --bad:#b3261e; --bad-soft:#fbe6e4;
+  --display:"Space Grotesk","Segoe UI",system-ui,sans-serif; --body:"Inter","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f131a; --surface:#171d27; --sunk:#1f2632; --ink:#e8ecf2; --muted:#9aa5b5; --line:#2b3442;
+  --accent:#e04a5f; --accent-ink:#ffffff; --accent-soft:#3a1a21;
+  --good:#52c890; --good-soft:#143023; --warn:#e3a53a; --warn-soft:#35280f; --bad:#ff8379; --bad-soft:#3a1917;
+  color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0f131a; --surface:#171d27; --sunk:#1f2632; --ink:#e8ecf2; --muted:#9aa5b5; --line:#2b3442;
+  --accent:#e04a5f; --accent-ink:#ffffff; --accent-soft:#3a1a21;
+  --good:#52c890; --good-soft:#143023; --warn:#e3a53a; --warn-soft:#35280f; --bad:#ff8379; --bad-soft:#3a1917;
+  color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:32px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(26px,4vw,36px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:20px;font-weight:600}
+h3{font-size:15px;font-weight:600}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:600}
+header{display:flex;flex-direction:column;gap:14px}
+.lede{max-width:65ch;color:var(--muted)}
+.criteria{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
+.criteria li{border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:999px;font-size:13px}
+.criteria b{font-weight:600}
+.counts{display:flex;flex-wrap:wrap;gap:24px;border-top:1px solid var(--line);padding-top:16px}
+.counts div{display:flex;flex-direction:column}
+.counts .n{font-family:var(--display);font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.counts .l{font-size:12px;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:14px;min-width:0}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filters button{font:inherit;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tablebox{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:980px;font-size:13.5px}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top;font-variant-numeric:tabular-nums;white-space:nowrap}
+th{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--sunk)}
+th:first-child,td:first-child{text-align:left;white-space:normal;min-width:230px}
+tr:last-child td{border-bottom:0}
+.addr{font-weight:600}
+.sub{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:2px}
+a{color:var(--accent)}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.none{background:var(--sunk);color:var(--muted)}
+.tag{font-size:11px;color:var(--warn);border:1px solid currentColor;border-radius:4px;padding:0 5px}
+.pos{color:var(--good);font-weight:600}.neg{color:var(--bad);font-weight:600}
+select,input,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:8px 10px;width:100%;min-width:0}
+td select{width:auto;padding:4px 6px;font-size:13px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{font:inherit;font-weight:600;border-radius:7px;padding:9px 16px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.small{padding:3px 9px;font-size:12px;font-weight:500}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.rowact{display:flex;gap:6px;justify-content:flex-end}
+.empty{padding:28px 20px;text-align:left;white-space:normal;color:var(--muted)}
+.empty strong{color:var(--ink);display:block;font-family:var(--display);font-size:16px;margin-bottom:4px}
+.note{font-size:13px;padding:9px 12px;border-radius:7px;background:var(--warn-soft);color:var(--warn)}
+.analyzer{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px;align-items:start}
+form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:500;min-width:0}
+.c2{grid-column:span 2}.c4{grid-column:1/-1}
+.formact{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.verdict{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.verdict dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:8px 16px;font-variant-numeric:tabular-nums}
+.verdict dt{color:var(--muted);font-size:13px}.verdict dd{margin:0;text-align:right;font-weight:600}
+.verdict .big{font-family:var(--display);font-size:28px}
+.formula{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px 28px}
+.sources ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+.sources li{font-size:13.5px;min-width:0}
+.sources li span{display:block;color:var(--muted);font-size:12.5px}
+.sources h3{border-bottom:2px solid var(--accent);padding-bottom:6px}
+footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;max-width:75ch}
+@media (max-width:860px){.analyzer{grid-template-columns:minmax(0,1fr)} form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:440px){form{grid-template-columns:minmax(0,1fr)} .c2{grid-column:auto}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Imperial Remodeling · Adquisiciones</span>
+    <h1>Casas para flip en Plano, Frisco y McKinney</h1>
+    <p class="lede">Aquí quedan las casas que el buscador encuentra y las que tú agregues. Cada una se mide con la regla del 70%: si el precio queda por debajo de la oferta máxima, el flip tiene margen.</p>
+    <ul class="criteria">
+      <li><b>Zona:</b> Plano, Frisco y McKinney</li>
+      <li><b>Tamaño:</b> 1,300 a 1,700 sq ft</li>
+      <li><b>Compra:</b> hasta $300,000</li>
+      <li><b>Oferta máxima:</b> 70% del ARV menos reparación</li>
+    </ul>
+    <div class="counts" aria-live="polite">
+      <div><span class="n" id="cTotal">–</span><span class="l">casas guardadas</span></div>
+      <div><span class="n" id="cEntra">–</span><span class="l">entran en la regla del 70%</span></div>
+      <div><span class="n" id="cOferta">–</span><span class="l">con oferta enviada</span></div>
+      <div><span class="n" id="cGan">–</span><span class="l">mejor ganancia estimada</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="head">
+      <h2>Oportunidades</h2>
+      <div class="filters" id="filters" role="group" aria-label="Filtrar por estado">
+        <button type="button" data-f="activas" aria-pressed="true">Activas</button>
+        <button type="button" data-f="entra" aria-pressed="false">Solo las que entran</button>
+        <button type="button" data-f="todas" aria-pressed="false">Todas</button>
+      </div>
+    </div>
+    <p class="note" id="note" hidden></p>
+    <div class="tablebox">
+      <table>
+        <thead><tr>
+          <th>Casa</th><th>Precio</th><th>Sq ft</th><th>$/sq ft</th><th>ARV</th><th>Reparación</th>
+          <th>Oferta máx.</th><th>Ganancia est.</th><th>Veredicto</th><th>Estado</th><th></th>
+        </tr></thead>
+        <tbody id="rows"><tr><td colspan="11" class="empty">Cargando las casas guardadas…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="head"><h2 id="formTitle">Analizar una casa</h2><span class="muted" style="font-size:13px">Escribe los números y el resultado se calcula al momento.</span></div>
+    <div class="analyzer">
+      <form id="f" novalidate>
+        <label class="c2">Dirección<input id="direccion" required placeholder="1234 Elm St"></label>
+        <label>Ciudad<input id="ciudad" placeholder="Plano" list="ciudades"><datalist id="ciudades"><option value="Plano"></option><option value="Frisco"></option><option value="McKinney"></option></datalist></label>
+        <label>ZIP<input id="zip" inputmode="numeric" placeholder="75074"></label>
+        <label>Precio de compra ($)<input id="precio" inputmode="numeric" placeholder="215000"></label>
+        <label>Sq ft<input id="sqft" inputmode="numeric" placeholder="1500"></label>
+        <label>Cuartos<input id="camas" inputmode="numeric" placeholder="3"></label>
+        <label>Baños<input id="banos" inputmode="decimal" placeholder="2"></label>
+        <label>ARV, valor ya remodelada ($)<input id="arv" inputmode="numeric" placeholder="340000"></label>
+        <label>Reparación ($)<input id="reparacion" inputmode="numeric" placeholder="45000"></label>
+        <label>Cierre y tenencia (% del ARV)<input id="costos_pct" inputmode="decimal" value="10"></label>
+        <label>Estado<select id="estado">
+          <option value="nueva">Nueva</option><option value="analizando">Analizando</option>
+          <option value="oferta">Oferta enviada</option><option value="comprada">Comprada</option>
+          <option value="descartada">Descartada</option></select></label>
+        <label class="c2">Fuente<input id="fuente" placeholder="Auction.com, mayorista, dueño directo…"></label>
+        <label class="c2">Enlace del anuncio<input id="url" inputmode="url" placeholder="https://…"></label>
+        <label class="c4">Notas (por qué vende, condición, contacto)<textarea id="notas" rows="2"></textarea></label>
+        <div class="formact">
+          <button class="btn" type="submit" id="save">Guardar casa</button>
+          <button class="btn ghost" type="button" id="clear">Limpiar</button>
+          <span id="msg" class="muted" role="status" style="font-size:13px"></span>
+        </div>
+      </form>
+      <aside class="verdict" aria-live="polite">
+        <div><span class="pill none" id="vPill">Faltan números</span></div>
+        <div><div class="muted" style="font-size:13px">Oferta máxima</div><div class="big" id="vMao">–</div></div>
+        <dl>
+          <dt>Ganancia estimada</dt><dd id="vGan">–</dd>
+          <dt>Retorno sobre lo invertido</dt><dd id="vRoi">–</dd>
+          <dt>Precio por sq ft</dt><dd id="vPsf">–</dd>
+          <dt>ARV por sq ft</dt><dd id="vApsf">–</dd>
+        </dl>
+        <p class="formula">Oferta máxima = ARV × 70% − reparación. Ganancia = ARV − compra − reparación − cierre y tenencia. Son estimados: confirma el ARV con ventas comparables de los últimos 6 meses a menos de media milla.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section>
+    <div class="head"><h2>Dónde aparecen estas casas</h2><span class="muted" style="font-size:13px">Las que piden registro lo indican. En Texas las subastas de foreclosure son el primer martes de cada mes.</span></div>
+    <div class="sources">
+      <div><h3>Subastas y foreclosures</h3><ul>
+        <li><a href="https://www.auction.com" target="_blank" rel="noopener">Auction.com</a><span>Registro gratis para pujar. Foreclosures y casas de bancos.</span></li>
+        <li><a href="https://www.hubzu.com" target="_blank" rel="noopener">Hubzu</a><span>Registro gratis. Subastas en línea de casas de bancos.</span></li>
+        <li><a href="https://www.xome.com/auctions" target="_blank" rel="noopener">Xome</a><span>Registro gratis. Subastas en línea.</span></li>
+        <li><a href="https://www.hudhomestore.gov" target="_blank" rel="noopener">HUD Home Store</a><span>Casas del gobierno. Las ofertas se envían por un agente registrado con HUD.</span></li>
+        <li><a href="https://www.homepath.fanniemae.com" target="_blank" rel="noopener">HomePath (Fannie Mae)</a><span>Casas recuperadas por Fannie Mae.</span></li>
+        <li><a href="https://taxsales.lgbs.com" target="_blank" rel="noopener">Ventas por impuestos (Linebarger)</a><span>Casas con impuestos atrasados que venden los condados de Texas. Busca Collin County.</span></li>
+      </ul></div>
+      <div><h3>Mayoristas</h3><ul>
+        <li><a href="https://www.newwestern.com" target="_blank" rel="noopener">New Western</a><span>Con sede en Dallas. Te registras como inversionista para ver el inventario.</span></li>
+        <li><a href="https://investorlift.com" target="_blank" rel="noopener">InvestorLift</a><span>Mercado de contratos de mayoristas. Registro como comprador.</span></li>
+        <li><a href="https://www.myhousedeals.com" target="_blank" rel="noopener">MyHouseDeals</a><span>Casas de mayoristas y dueños motivados. Membresía.</span></li>
+        <li><a href="https://www.biggerpockets.com" target="_blank" rel="noopener">BiggerPockets</a><span>Foro y mercado de inversionistas. Registro gratis.</span></li>
+        <li><a href="https://www.facebook.com/groups/" target="_blank" rel="noopener">Grupos de Facebook</a><span>Busca "Collin County wholesale real estate" y "DFW off market deals".</span></li>
+      </ul></div>
+      <div><h3>Dueños directos</h3><ul>
+        <li>Zillow, venta por dueño: <a href="https://www.zillow.com/plano-tx/fsbo/" target="_blank" rel="noopener">Plano</a>, <a href="https://www.zillow.com/frisco-tx/fsbo/" target="_blank" rel="noopener">Frisco</a>, <a href="https://www.zillow.com/mckinney-tx/fsbo/" target="_blank" rel="noopener">McKinney</a><span>Sin agente de por medio.</span></li>
+        <li><a href="https://dallas.craigslist.org/search/ndf/rea" target="_blank" rel="noopener">Craigslist, norte de DFW</a><span>Sección de bienes raíces de la zona norte.</span></li>
+        <li><a href="https://www.facebook.com/marketplace/dallas/propertyforsale" target="_blank" rel="noopener">Facebook Marketplace</a><span>Casas en venta publicadas por el dueño.</span></li>
+        <li><a href="https://www.propstream.com" target="_blank" rel="noopener">PropStream</a><span>De pago. Listas de pre-foreclosure, herencias e impuestos atrasados.</span></li>
+        <li><a href="https://www.collincad.org" target="_blank" rel="noopener">Collin Central Appraisal District</a><span>Gratis. Dueño, valor fiscal y año de construcción. La parte oeste de Frisco está en Denton County.</span></li>
+      </ul></div>
+      <div><h3>Listados envejecidos</h3><ul>
+        <li><a href="https://www.redfin.com" target="_blank" rel="noopener">Redfin</a><span>Filtra por más de 90 días en el mercado y rebajas de precio.</span></li>
+        <li><a href="https://www.zillow.com/plano-tx/" target="_blank" rel="noopener">Zillow</a><span>Filtra por "price cut" y días publicados.</span></li>
+        <li><a href="https://www.realtor.com" target="_blank" rel="noopener">Realtor.com</a><span>Filtra por precio reducido y "fixer upper".</span></li>
+      </ul></div>
+    </div>
+  </section>
+
+  <footer>Los números son estimados para decidir rápido, no un avalúo. Antes de ofertar, revisa título, impuestos pendientes y la casa en persona.</footer>
+</div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var FIELDS=["direccion","ciudad","zip","precio","sqft","camas","banos","arv","reparacion","costos_pct","estado","fuente","url","notas"];
+  var NUM=["precio","sqft","camas","banos","arv","reparacion","costos_pct"];
+  var ESTADOS={nueva:"Nueva",analizando:"Analizando",oferta:"Oferta enviada",comprada:"Comprada",descartada:"Descartada"};
+  var db=null, col=null, casas=[], filtro="activas", editId=null, canWrite=true, loaded=false, pendingDel=null;
+
+  function num(v){ if(v===null||v===undefined||v==="")return null; var n=Number(String(v).replace(/[$,\s]/g,"")); return isFinite(n)?n:null }
+  function money(n){ return n===null?"–":(n<0?"−$":"$")+Math.abs(Math.round(n)).toLocaleString("en-US") }
+
+  // Pure flip math. All inputs in dollars; costos_pct is % of ARV.
+  function calc(c){
+    var p=num(c.precio), a=num(c.arv), r=num(c.reparacion), s=num(c.sqft), k=num(c.costos_pct);
+    if(k===null)k=10; if(r===null)r=0;
+    var o={psf:(p&&s)?p/s:null, apsf:(a&&s)?a/s:null, mao:null, gan:null, roi:null, v:"none", t:"Falta ARV"};
+    if(a){ o.mao=a*0.70-r; }
+    if(a&&p){
+      o.gan=a-p-r-a*k/100; o.roi=o.gan/(p+r);
+      if(p<=o.mao){o.v="good";o.t="Entra"} else if(p<=o.mao*1.08){o.v="warn";o.t="Negociar"} else {o.v="bad";o.t="No entra"}
+    } else if(!a&&!p){ o.t="Faltan números" }
+    return o;
+  }
+  function fuera(c){ var p=num(c.precio), s=num(c.sqft), z=String(c.ciudad||"").trim().toLowerCase(); return (p!==null&&p>300000)||(s!==null&&(s<1300||s>1700))||(z!==""&&["plano","frisco","mckinney"].indexOf(z)<0) }
+  function safeUrl(u){ return /^https?:\/\//i.test(u||"")?u:null }
+  function el(tag,cls,text){ var e=document.createElement(tag); if(cls)e.className=cls; if(text!==undefined)e.textContent=text; return e }
+
+  function render(){
+    var body=$("rows"); body.textContent="";
+    var act=casas.filter(function(c){return c.estado!=="descartada"});
+    var entran=act.filter(function(c){return calc(c).v==="good"});
+    $("cTotal").textContent=loaded?casas.length:"–";
+    $("cEntra").textContent=loaded?entran.length:"–";
+    $("cOferta").textContent=loaded?casas.filter(function(c){return c.estado==="oferta"}).length:"–";
+    var best=null; act.forEach(function(c){var g=calc(c).gan; if(g!==null&&(best===null||g>best))best=g});
+    $("cGan").textContent=loaded?money(best):"–";
+    var list=filtro==="todas"?casas.slice():(filtro==="entra"?entran:act);
+    list.sort(function(a,b){ var ga=calc(a).gan, gb=calc(b).gan; return (gb===null?-1e12:gb)-(ga===null?-1e12:ga) });
+    if(!list.length){
+      var tr=el("tr"), td=el("td","empty"); td.colSpan=11;
+      if(!loaded){ td.textContent="Cargando las casas guardadas…" }
+      else if(casas.length){ td.textContent="Ninguna casa coincide con este filtro." }
+      else { td.appendChild(el("strong","","Todavía no hay casas guardadas")); td.appendChild(document.createTextNode("Pídele a Claude \"busca casas para flip\" y aparecerán aquí con su análisis, o agrega una con el formulario de abajo.")) }
+      tr.appendChild(td); body.appendChild(tr); return;
+    }
+    list.forEach(function(c){
+      var k=calc(c), tr=el("tr"), td=el("td");
+      td.appendChild(el("div","addr",c.direccion||"Sin dirección"));
+      var sub=el("div","sub");
+      var loc=[c.ciudad,c.zip].filter(Boolean).join(" "); if(loc)sub.appendChild(el("span","",loc));
+      var cb=[num(c.camas)?num(c.camas)+" cuartos":"",num(c.banos)?num(c.banos)+" baños":""].filter(Boolean).join(", "); if(cb)sub.appendChild(el("span","",cb));
+      var u=safeUrl(c.url);
+      if(u){ var a=el("a","",c.fuente||"Ver anuncio"); a.href=u; a.target="_blank"; a.rel="noopener"; sub.appendChild(a) }
+      else if(c.fuente) sub.appendChild(el("span","",c.fuente));
+      if(fuera(c)) sub.appendChild(el("span","tag","fuera de criterio"));
+      td.appendChild(sub);
+      if(c.notas){ var n=el("div","sub",c.notas); td.appendChild(n) }
+      tr.appendChild(td);
+      tr.appendChild(el("td","",money(num(c.precio))));
+      tr.appendChild(el("td","",num(c.sqft)?num(c.sqft).toLocaleString("en-US"):"–"));
+      tr.appendChild(el("td","",k.psf?money(k.psf):"–"));
+      tr.appendChild(el("td","",money(num(c.arv))));
+      tr.appendChild(el("td","",money(num(c.reparacion))));
+      tr.appendChild(el("td","",money(k.mao)));
+      tr.appendChild(el("td",k.gan===null?"":(k.gan>=0?"pos":"neg"),money(k.gan)));
+      var tv=el("td"); tv.appendChild(el("span","pill "+k.v,k.t)); tr.appendChild(tv);
+      var ts=el("td"), sel=el("select"); sel.setAttribute("aria-label","Estado de "+(c.direccion||"la casa"));
+      Object.keys(ESTADOS).forEach(function(e){var o=el("option","",ESTADOS[e]); o.value=e; if((c.estado||"nueva")===e)o.selected=true; sel.appendChild(o)});
+      sel.disabled=!canWrite;
+      sel.addEventListener("change",function(){ write(col.doc(c.id).update({estado:sel.value})) });
+      ts.appendChild(sel); tr.appendChild(ts);
+      var ta=el("td"), box=el("div","rowact");
+      var be=el("button","btn ghost small","Editar"); be.type="button"; be.addEventListener("click",function(){load(c)}); box.appendChild(be);
+      if(canWrite){
+        var bd=el("button","btn ghost small",pendingDel===c.id?"¿Borrar? Sí":"Borrar"); bd.type="button";
+        bd.addEventListener("click",function(){ if(pendingDel===c.id){pendingDel=null; write(col.doc(c.id).delete())} else {pendingDel=c.id; render()} });
+        box.appendChild(bd);
+      }
+      ta.appendChild(box); tr.appendChild(ta);
+      body.appendChild(tr);
+    });
+  }
+
+  function formData(){ var d={}; FIELDS.forEach(function(f){ var v=$(f).value.trim(); d[f]=NUM.indexOf(f)>=0?num(v):v }); return d }
+  function live(){
+    var k=calc(formData());
+    $("vPill").className="pill "+k.v; $("vPill").textContent=k.t;
+    $("vMao").textContent=money(k.mao);
+    $("vGan").textContent=money(k.gan); $("vGan").className=k.gan===null?"":(k.gan>=0?"pos":"neg");
+    $("vRoi").textContent=k.roi===null?"–":Math.round(k.roi*100)+"%";
+    $("vPsf").textContent=k.psf?money(k.psf):"–"; $("vApsf").textContent=k.apsf?money(k.apsf):"–";
+  }
+  function load(c){
+    editId=c.id; FIELDS.forEach(function(f){ $(f).value=(c[f]===null||c[f]===undefined)?(f==="costos_pct"?"10":""):c[f] });
+    if(!$("estado").value)$("estado").value="nueva";
+    $("formTitle").textContent="Editar casa"; $("save").textContent="Guardar cambios"; live();
+    $("f").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+  }
+  function reset(){ editId=null; $("f").reset(); $("formTitle").textContent="Analizar una casa"; $("save").textContent="Guardar casa"; $("msg").textContent=""; live() }
+  function note(t){ $("note").textContent=t||""; $("note").hidden=!t }
+  function readOnly(t){ canWrite=false; $("save").disabled=true; note(t); render() }
+  function write(p){
+    return p.catch(function(e){
+      if(e&&e.code==="invalid_argument") readOnly("Esta vista es de solo lectura: puedes usar la calculadora, pero no guardar cambios.");
+      else if(e&&e.code==="quota_exceeded") note("El tablero está lleno. Borra casas descartadas para guardar más.");
+      else note("No se pudo guardar el cambio. Inténtalo de nuevo en un momento.");
+      throw e;
+    });
+  }
+
+  $("f").addEventListener("input",live);
+  $("clear").addEventListener("click",reset);
+  $("f").addEventListener("submit",function(ev){
+    ev.preventDefault();
+    var d=formData();
+    if(!d.direccion){ $("msg").textContent="Escribe la dirección para guardar."; $("direccion").focus(); return }
+    if(!col){ $("msg").textContent="No se puede guardar en esta vista."; return }
+    $("save").disabled=true;
+    var p;
+    if(editId){ p=col.doc(editId).update(d) }
+    else { d.creada=new Date().toISOString(); d.origen="manual"; p=col.add(d) }
+    write(p).then(function(){ reset(); $("msg").textContent="Guardada." },function(){}).then(function(){ if(canWrite)$("save").disabled=false });
+  });
+  $("filters").addEventListener("click",function(ev){
+    var b=ev.target.closest("button"); if(!b)return; filtro=b.dataset.f;
+    Array.prototype.forEach.call(this.children,function(x){x.setAttribute("aria-pressed",x===b?"true":"false")}); render();
+  });
+
+  live(); render();
+
+  function start(){
+    var use=window.claude&&window.claude.use;
+    if(!use){ loaded=true; readOnly("Abre esta página desde Claude para ver y guardar las casas. La calculadora funciona igual."); return }
+    window.claude.use("db").then(function(d){
+      if(!d){ loaded=true; readOnly("No se pudo conectar con las casas guardadas en esta vista. La calculadora funciona igual."); return }
+      db=d; col=db.collection("casas");
+      var timer=setTimeout(function(){ note(loaded?"Los datos pueden no estar al día.":"Todavía no se puede leer la lista de casas. Seguimos intentando.") },10000);
+      col.onSnapshot(function(s){
+        casas=s.docs.map(function(x){ var o=Object.assign({},x.data()); o.id=x.id; return o });
+        loaded=true;
+        if(!s.metadata.fromCache){ clearTimeout(timer); if(canWrite)note("") }
+        render();
+      },function(){ clearTimeout(timer); loaded=true; readOnly("Se perdió la conexión con las casas guardadas. Vuelve a abrir la página más tarde.") });
+    });
+  }
+  start();
+})();
+</script>
