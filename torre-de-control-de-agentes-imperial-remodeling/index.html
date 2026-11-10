@@ -2812,10 +2812,11 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       var T = THREE, i = a.i, g = new T.Group(), style = i % 3;
       var SK = SKINT[i % SKINT.length], skin = new T.MeshStandardMaterial({ color: SK, roughness: 0.72, metalness: 0, emissive: new T.Color(SK).multiplyScalar(0.62), emissiveIntensity: 0.75 });
       var hairM = new T.MeshStandardMaterial({ color: HAIR[(i * 3 + 1) % HAIR.length], roughness: 0.7, metalness: 0.02 });
-      var jacketM = new T.MeshStandardMaterial({ color: new T.Color(OUTFIT[i % OUTFIT.length]).multiplyScalar(0.62), roughness: 0.55, metalness: 0.08 });
-      var lapelM = new T.MeshStandardMaterial({ color: new T.Color(OUTFIT[i % OUTFIT.length]).multiplyScalar(0.4), roughness: 0.55, metalness: 0.08 });
+      /* uniforme de la compañía: negro azulado con dorado EVR y un acento del color de su área */
+      var jacketM = new T.MeshStandardMaterial({ color: 0x1a2230, roughness: 0.5, metalness: 0.15, emissive: 0x0a0f18, emissiveIntensity: 0.5 });
+      var lapelM = new T.MeshStandardMaterial({ color: OUTFIT[i % OUTFIT.length], roughness: 0.45, metalness: 0.1, emissive: new T.Color(OUTFIT[i % OUTFIT.length]).multiplyScalar(0.25), emissiveIntensity: 0.6 });
       var shirtM = new T.MeshStandardMaterial({ color: i % 4 === 1 ? 0xcfe3f5 : 0xf4f6f8, roughness: 0.6, metalness: 0 });
-      var pantsP = new T.MeshStandardMaterial({ color: PANTS[i % PANTS.length], roughness: 0.65, metalness: 0.05 });
+      var pantsP = new T.MeshStandardMaterial({ color: 0x161c26, roughness: 0.6, metalness: 0.1 });
       var shoeM = new T.MeshStandardMaterial({ color: i % 2 ? 0x2a1d16 : 0x15171c, roughness: 0.4, metalness: 0.2 });
       var mouthM = new T.MeshBasicMaterial({ color: 0x8a3a3a }), scleraM = new T.MeshBasicMaterial({ color: 0xf2f2ee }), irisM = new T.MeshBasicMaterial({ color: EYEC[i % EYEC.length] }), pupilM = new T.MeshBasicMaterial({ color: 0x050505 });
       var tieM = new T.MeshStandardMaterial({ color: [0x8b1e2d, 0x1f3b6b, 0x2d5a3d, 0x5a2d6b][i % 4], roughness: 0.45, metalness: 0.1 });
@@ -2824,15 +2825,16 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       function put(parts, mat, par, dy) { var m = new T.Mesh(mergeParts(parts, dy), mat); par.add(m); return m; }
       /* torso */
       v.body = new T.Group(); v.body.position.y = 0.95; g.add(v.body);
-      put([{ g: geo('c', 0.27, 0.215, 0.6, 28), y: 1.27, sz: 0.88 }, { g: geo('s', 0.105, 18, 14), x: -0.31, y: 1.52 }, { g: geo('s', 0.105, 18, 14), x: 0.31, y: 1.52 }], style === 1 ? shirtM : jacketM, v.body, 0.95);
+      put([{ g: geo('c', 0.27, 0.215, 0.6, 28), y: 1.27, sz: 0.88 }, { g: geo('s', 0.105, 18, 14), x: -0.31, y: 1.52 }, { g: geo('s', 0.105, 18, 14), x: 0.31, y: 1.52 }], jacketM, v.body, 0.95);
       put([{ g: geo('s', 0.215, 22, 14), y: 1.0, sy: 0.66, sz: 0.9 }], pantsP, v.body, 0.95);
       put([{ g: geo('c', 0.222, 0.222, 0.045, 28), y: 1.0, sz: 0.9 }], shoeM, v.body, 0.95);
       put([{ g: geo('b', 0.05, 0.04, 0.02), y: 1.0, z: 0.2 }], goldM, v.body, 0.95);
       put([{ g: geo('c', 0.062, 0.07, 0.17, 16), y: 1.66 }], skin, v.body, 0.95);
       put([{ g: geo('b', 0.085, 0.045, 0.02), x: -0.05, y: 1.62, z: 0.12, rz: 0.55 }, { g: geo('b', 0.085, 0.045, 0.02), x: 0.05, y: 1.62, z: 0.12, rz: -0.55 }, { g: geo('b', 0.12, 0.38, 0.015), y: 1.36, z: 0.205 }], shirtM, v.body, 0.95);
-      if (style !== 1) { put([{ g: geo('b', 0.075, 0.4, 0.02), x: -0.085, y: 1.38, z: 0.208, rz: 0.2 }, { g: geo('b', 0.075, 0.4, 0.02), x: 0.085, y: 1.38, z: 0.208, rz: -0.2 }], lapelM, v.body, 0.95); put([{ g: geo('b', 0.05, 0.33, 0.012), y: 1.33, z: 0.215 }, { g: geo('b', 0.065, 0.05, 0.016), y: 1.5, z: 0.212 }], tieM, v.body, 0.95); }
-      else { put([{ g: geo('t', 0.095, 0.007, 20, Math.PI), y: 1.5, z: 0.18, rz: Math.PI }, { g: geo('s', 0.022, 10, 8), y: 1.41, z: 0.2 }], goldM, v.body, 0.95); put([{ g: geo('b', 0.3, 0.3, 0.03), y: 1.06, z: 0.19 }], jacketM, v.body, 0.95); }
-      var bdg = new T.Mesh(new T.PlaneGeometry(0.085, 0.105), logoDecal); bdg.position.set(-0.12, 0.3, 0.226); v.body.add(bdg); v.detail2 = [bdg];
+      put([{ g: geo('t', 0.088, 0.016, 20), y: 1.6, rx: Math.PI / 2 }, { g: geo('b', 0.016, 0.55, 0.012), y: 1.3, z: 0.214 }, { g: geo('b', 0.035, 0.025, 0.014), y: 1.02, z: 0.2 }], goldM, v.body, 0.95);
+      put([{ g: geo('b', 0.42, 0.035, 0.02), y: 1.46, z: 0.206 }, { g: geo('b', 0.12, 0.022, 0.17), x: -0.3, y: 1.618 }, { g: geo('b', 0.12, 0.022, 0.17), x: 0.3, y: 1.618 }], lapelM, v.body, 0.95);
+      var bck = new T.Mesh(new T.PlaneGeometry(0.3, 0.3), logoDecal); bck.position.set(0, 0.36, -0.205); bck.rotation.y = Math.PI; v.body.add(bck);
+      var bdg = new T.Mesh(new T.PlaneGeometry(0.14, 0.14), logoDecal); bdg.position.set(-0.12, 0.33, 0.228); v.body.add(bdg); v.detail2 = [bdg, bck];
       put([{ g: geo('b', 0.07, 0.02, 0.012), x: -0.12, y: 1.37, z: 0.222 }], v.eyeMat, v.body, 0.95);
       /* cabeza humana (a escala de persona) */
       v.head = new T.Group(); v.head.position.set(0, 1.9, 0); v.head.scale.setScalar(0.6); g.add(v.head);
@@ -2859,9 +2861,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       /* brazos: saco, camisa, puño, mano con pulgar y dedos */
       v.arms = [-1, 1].map(function (s2) {
         var pa = new T.Group(); pa.position.set(s2 * 0.335, 1.5, 0);
-        put([{ g: geo('c', 0.075, 0.067, 0.32, 18), y: -0.17 }, { g: geo('s', 0.068, 14, 10), y: -0.33 }], style === 1 ? shirtM : jacketM, pa);
-        put([{ g: geo('c', 0.058, 0.05, 0.3, 16), y: -0.5 }], shirtM, pa);
-        put([{ g: geo('t', 0.054, 0.011, 16), y: -0.64, rx: Math.PI / 2 }], whiteM, pa);
+        put([{ g: geo('c', 0.075, 0.067, 0.32, 18), y: -0.17 }, { g: geo('s', 0.068, 14, 10), y: -0.33 }, { g: geo('c', 0.058, 0.05, 0.3, 16), y: -0.5 }], jacketM, pa);
+        put([{ g: geo('t', 0.054, 0.013, 16), y: -0.64, rx: Math.PI / 2 }], goldM, pa); put([{ g: geo('t', 0.073, 0.012, 16), y: -0.24, rx: Math.PI / 2 }], lapelM, pa);
+        var sp2 = new T.Mesh(new T.PlaneGeometry(0.09, 0.09), logoDecal); sp2.position.set(s2 * 0.077, -0.12, 0); sp2.rotation.y = s2 * Math.PI / 2; pa.add(sp2);
         put([{ g: geo('s', 0.062, 14, 10), y: -0.71, sy: 1.1, sz: 0.8 }, { g: geo('b', 0.075, 0.085, 0.032), y: -0.78, z: 0.0 }, { g: geo('s', 0.028, 8, 6), x: s2 * -0.055, y: -0.7, z: 0.04 }], skin, pa);
         if (s2 < 0) put([{ g: geo('t', 0.057, 0.008, 16), y: -0.6, rx: Math.PI / 2 }], goldM, pa);
         g.add(pa); pa.userData.s = s2; return pa;
@@ -2870,7 +2872,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       v.legs = []; v.knees = [];
       [-1, 1].forEach(function (s2) {
         var pl = new T.Group(); pl.position.set(s2 * 0.13, 0.95, 0);
-        put([{ g: geo('c', 0.1, 0.082, 0.46, 24), y: -0.23 }, { g: geo('s', 0.086, 16, 12), y: -0.46 }], pantsP, pl);
+        put([{ g: geo('c', 0.1, 0.082, 0.46, 24), y: -0.23 }, { g: geo('s', 0.086, 16, 12), y: -0.46 }], pantsP, pl); put([{ g: geo('b', 0.012, 0.44, 0.03), x: s2 * 0.094, y: -0.23 }], goldM, pl);
         var k = new T.Group(); k.position.set(0, -0.46, 0); pl.add(k);
         put([{ g: geo('c', 0.078, 0.058, 0.4, 22), y: -0.21 }], pantsP, k);
         put([{ g: geo('b', 0.14, 0.07, 0.24), y: -0.445, z: 0.04 }, { g: geo('s', 0.07, 14, 10), y: -0.445, z: 0.135, sy: 0.62, sz: 1.3 }, { g: geo('b', 0.14, 0.02, 0.28), y: -0.485, z: 0.05 }], shoeM, k);
@@ -3585,37 +3587,28 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       function addM(c, o) { return new T3.MeshBasicMaterial({ color: c, transparent: true, opacity: o == null ? 0.8 : o, blending: T3.AdditiveBlending, depthWrite: false, side: T3.DoubleSide, fog: false }); }
       var edgeM = new T3.LineBasicMaterial({ color: 0x7fe0ff, transparent: true, opacity: 0.8 });
       /* base */
-      var plinth = new T3.Mesh(new T3.BoxGeometry(17.0, 1.2, 14.6), darkM); plinth.position.y = 0.6; G.add(plinth);
+      var plinth = new T3.Mesh(new T3.CylinderGeometry(9.0, 9.6, 1.2, 36), darkM); plinth.position.y = 0.6; G.add(plinth);
       var baseRing = new T3.Mesh(new T3.TorusGeometry(11.5, 0.12, 6, 72), addM(0xffc94d, 0.85)); baseRing.rotation.x = Math.PI / 2; baseRing.position.y = 1.25; G.add(baseRing);
       var gl = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0x5cc8ff, transparent: true, opacity: 0.4, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); gl.scale.set(34, 34, 1); gl.position.y = 1.6; G.add(gl);
-      /* cuerpo rectangular de cristal como la torre principal, con pisos desfasados en zigzag, estructura exterior dorada y ventanas encendidas */
-      var GOLD = 0xffc94d, VIO = 0xa78bfa, FHa = 5.0, NF = 11, haX = 5.0, haZ = 4.1;
-      var wc = document.createElement('canvas'); wc.width = 256; wc.height = 128; var wg = wc.getContext('2d'); wg.fillStyle = 'rgba(8,24,38,.55)'; wg.fillRect(0, 0, 256, 128);
-      for (var wy = 0; wy < 4; wy++) for (var wx = 0; wx < 16; wx++) { if (Math.random() < 0.62) { wg.fillStyle = Math.random() < 0.7 ? 'rgba(255,214,120,.8)' : 'rgba(150,230,255,.8)'; wg.fillRect(wx * 16 + 2, wy * 30 + 8, 12, 18); } }
-      var wtex = new T3.CanvasTexture(wc); wtex.wrapS = wtex.wrapT = T3.RepeatWrapping;
-      var winM = new T3.MeshBasicMaterial({ map: wtex, transparent: true, opacity: 0.55, blending: T3.AdditiveBlending, depthWrite: false, fog: false });
-      var floorsG = new T3.Group(); G.add(floorsG);
-      for (var i = 0; i < NF; i++) {
-        var fg = new T3.Group(); fg.position.set((i % 2 ? 0.9 : -0.9), 1.2 + FHa * i, 0); fg.rotation.y = i * 0.045; floorsG.add(fg);
-        var slab = new T3.Mesh(new T3.BoxGeometry(2 * haX + 1.3, 0.3, 2 * haZ + 1.3), darkM); slab.position.y = 0.15; fg.add(slab);
-        var slE = new T3.LineSegments(new T3.EdgesGeometry(slab.geometry), new T3.LineBasicMaterial({ color: i % 2 ? VIO : GOLD, transparent: true, opacity: 0.95 })); slE.position.y = 0.15; fg.add(slE);
-        var gb = new T3.Mesh(new T3.BoxGeometry(2 * haX, FHa - 0.3, 2 * haZ), glassM); gb.position.y = 0.3 + (FHa - 0.3) / 2; fg.add(gb);
-        var ge = new T3.LineSegments(new T3.EdgesGeometry(gb.geometry), edgeM); ge.position.copy(gb.position); fg.add(ge);
-        var wf = new T3.Mesh(new T3.BoxGeometry(2 * haX + 0.04, FHa - 0.9, 2 * haZ + 0.04), winM); wf.position.y = 0.3 + (FHa - 0.3) / 2; wf.material = winM; fg.add(wf);
-        var led = new T3.Mesh(new T3.BoxGeometry(2 * haX + 0.08, 0.07, 2 * haZ + 0.08), addM(i % 3 === 1 ? VIO : GOLD, 0.9)); led.position.y = 0.3 + (FHa - 0.3) * 0.5; fg.add(led);
-      }
-      /* estructura exterior dorada: 4 columnas y cruces diagonales */
-      var cxo = haX + 1.5, czo = haZ + 1.5, Htot = 1.2 + FHa * NF;
-      function strut(p1, p2, rad, mat) { var d2 = p2.clone().sub(p1), len = d2.length(), m = new T3.Mesh(new T3.CylinderGeometry(rad, rad, len, 6), mat); m.position.copy(p1).add(p2).multiplyScalar(0.5); m.quaternion.setFromUnitVectors(new T3.Vector3(0, 1, 0), d2.normalize()); G.add(m); return m; }
-      var goldTube = addM(GOLD, 0.95), vioTube = addM(VIO, 0.9);
-      [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(function (c2) { strut(new T3.Vector3(c2[0] * cxo, 1.2, c2[1] * czo), new T3.Vector3(c2[0] * cxo, Htot, c2[1] * czo), 0.16, goldTube); });
-      for (var br = 0; br < NF; br += 2) { var yb0 = 1.2 + FHa * br, yb1 = 1.2 + FHa * Math.min(NF, br + 2);
-        [[-1, 1], [1, 1]].forEach(function (c3) { strut(new T3.Vector3(c3[0] * cxo, yb0, -czo), new T3.Vector3(-c3[0] * cxo, yb1, -czo), 0.07, vioTube); strut(new T3.Vector3(c3[0] * cxo, yb0, czo), new T3.Vector3(-c3[0] * cxo, yb1, czo), 0.07, vioTube); });
-        [[-1, 1], [1, 1]].forEach(function (c4) { strut(new T3.Vector3(-cxo, yb0, c4[0] * czo), new T3.Vector3(cxo, yb1, -c4[0] * czo), 0.07, vioTube); }); }
-      var core = new T3.Mesh(new T3.BoxGeometry(4.0, 4.6, 4.0), darkM); core.position.y = 58.6; G.add(core);
-      var coreE = new T3.LineSegments(new T3.EdgesGeometry(core.geometry), new T3.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0.9 })); coreE.position.copy(core.position); G.add(coreE);
-      var cone = new T3.Mesh(new T3.CylinderGeometry(6.4, 2.6, 1.7, 24), darkM); cone.position.y = 61.85; G.add(cone);
+      /* nave pequeña de extensión: casco con ventanillas encendidas, franjas doradas, 3 aletas, motor y cúpula de cristal en la cubierta */
+      var GOLD = 0xffc94d;
+      var hc = document.createElement('canvas'); hc.width = 256; hc.height = 256; var hg = hc.getContext('2d'); hg.fillStyle = '#c9d3dc'; hg.fillRect(0, 0, 256, 256); hg.strokeStyle = 'rgba(40,60,80,.5)'; hg.lineWidth = 2; for (var hy = 0; hy < 256; hy += 64) { hg.beginPath(); hg.moveTo(0, hy); hg.lineTo(256, hy); hg.stroke(); }
+      for (hy = 32; hy < 256; hy += 64) for (var hx2 = 16; hx2 < 256; hx2 += 32) { hg.fillStyle = '#1b2430'; hg.beginPath(); hg.arc(hx2, hy, 9, 0, 6.3); hg.fill(); hg.fillStyle = Math.random() < 0.75 ? '#ffd27a' : '#7fe0ff'; hg.beginPath(); hg.arc(hx2, hy, 6, 0, 6.3); hg.fill(); }
+      var htex = new T3.CanvasTexture(hc); htex.wrapS = htex.wrapT = T3.RepeatWrapping; htex.repeat.set(2, 7);
+      var shipM = new T3.MeshStandardMaterial({ map: htex, roughness: 0.35, metalness: 0.5, emissive: 0x1a2330, emissiveIntensity: 0.5 });
+      var bandM = new T3.MeshStandardMaterial({ color: 0xc9a84c, roughness: 0.3, metalness: 0.75, emissive: 0x3a2e0c, emissiveIntensity: 0.6 });
+      var hull = new T3.Mesh(new T3.CylinderGeometry(3.6, 4.2, 53.6, 28), shipM); hull.position.y = 30.2; G.add(hull);
+      [8, 17, 26, 35, 44, 53].forEach(function (yy) { var bnd = new T3.Mesh(new T3.CylinderGeometry(4.26 - (yy / 57) * 0.6, 4.26 - (yy / 57) * 0.6, 0.6, 28), bandM); bnd.position.y = yy; G.add(bnd); });
+      var lgA = new T3.Mesh(new T3.PlaneGeometry(4, 4), logoDecal); var la0 = Math.atan2(-az, -ax); lgA.position.set(Math.cos(la0) * 4.05, 22, Math.sin(la0) * 4.05); lgA.rotation.y = Math.PI / 2 - la0; G.add(lgA);
+      var fsh = new T3.Shape(); fsh.moveTo(0, 0); fsh.lineTo(5.0, -1.4); fsh.lineTo(5.0, 2.0); fsh.lineTo(0, 13); fsh.lineTo(0, 0); var fgeo = new T3.ExtrudeGeometry(fsh, { depth: 0.4, bevelEnabled: false }); fgeo.translate(0, 0, -0.2);
+      for (var fi = 0; fi < 3; fi++) { var fa = fi / 3 * Math.PI * 2 + 0.5, fm = new T3.Mesh(fgeo, darkM); fm.position.set(Math.cos(fa) * 3.9, 2.2, Math.sin(fa) * 3.9); fm.rotation.y = -fa; G.add(fm); var fe = new T3.LineSegments(new T3.EdgesGeometry(fgeo), new T3.LineBasicMaterial({ color: GOLD })); fe.position.copy(fm.position); fe.rotation.copy(fm.rotation); G.add(fe); }
+      var bellA = new T3.Mesh(new T3.CylinderGeometry(2.4, 3.4, 2.4, 22, 1, true), darkM); bellA.position.y = 2.2; G.add(bellA);
+      var aglow = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xff9a4d, transparent: true, opacity: 0.8, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); aglow.scale.set(10, 10, 1); aglow.position.y = 1.4; G.add(aglow);
+      var neckA = new T3.Mesh(new T3.CylinderGeometry(2.6, 3.4, 4.2, 24), shipM); neckA.position.y = 59.1; G.add(neckA);
+      var cone = new T3.Mesh(new T3.CylinderGeometry(6.4, 2.6, 1.7, 28), darkM); cone.position.y = 61.85; G.add(cone);
       var coneE = new T3.Mesh(new T3.TorusGeometry(4.5, 0.06, 6, 40), addM(GOLD, 0.9)); coneE.rotation.x = Math.PI / 2; coneE.position.y = 61.5; G.add(coneE);
+      var dome = new T3.Mesh(new T3.SphereGeometry(6.3, 32, 14, 0, Math.PI * 2, 0, Math.PI / 2), addM(0x9fe8ff, 0.1)); dome.position.y = deckY; G.add(dome);
+      var domeE = new T3.LineSegments(new T3.EdgesGeometry(new T3.SphereGeometry(6.32, 12, 5, 0, Math.PI * 2, 0, Math.PI / 2)), new T3.LineBasicMaterial({ color: 0x9fe8ff, transparent: true, opacity: 0.45 })); domeE.position.y = deckY; G.add(domeE);
       /* anillos giroscópicos */
       var gyros = [[10.2, 18, 0.0, 0.3, 0xffc94d], [9.4, 34, 0.5, -0.4, 0xa78bfa], [8.6, 50, -0.4, 0.6, 0xffc94d]].map(function (c) {
         var gm = new T3.Mesh(new T3.TorusGeometry(c[0], 0.06, 6, 100), addM(c[4], 0.75)); gm.position.y = c[1]; gm.rotation.x = Math.PI / 2 + c[2]; gm.userData.w = c[3]; G.add(gm); return gm;
@@ -3702,6 +3695,120 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         carry.forEach(function (c) { c.u += dt * 0.12; if (c.u > 1) c.u -= 1; c.s.position.set(-Lb / 2 + c.u * Lb, 0, 0); });
       }
       return { update: update, setProps: setProps, pos: { x: ax, z: az }, info: function () { return { x: ax, z: az, pins: pinList.length, bridge: Lb }; } };
+    })();
+
+
+    /* ---- La torre es una NAVE lista para despegar: cohetes laterales con aletas, cono de nariz, motores encendidos, torre de lanzamiento y vapor ---- */
+    var nave = (function () {
+      var T3 = THREE, G = new T3.Group(); scene.add(G);
+      function hullTex(win) {
+        var c = document.createElement('canvas'); c.width = 256; c.height = 512; var g = c.getContext('2d'); g.fillStyle = '#c9d3dc'; g.fillRect(0, 0, 256, 512);
+        g.strokeStyle = 'rgba(40,60,80,.55)'; g.lineWidth = 2; for (var y = 0; y < 512; y += 64) { g.beginPath(); g.moveTo(0, y); g.lineTo(256, y); g.stroke(); } for (var x = 0; x < 256; x += 64) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, 512); g.stroke(); }
+        g.fillStyle = 'rgba(40,60,80,.5)'; for (y = 8; y < 512; y += 64) for (x = 8; x < 256; x += 16) g.fillRect(x, y, 2, 2);
+        if (win) { for (y = 30; y < 512; y += 64) for (x = 20; x < 256; x += 40) { g.fillStyle = Math.random() < 0.7 ? '#ffd27a' : '#7fe0ff'; g.beginPath(); g.arc(x, y, 6, 0, 6.3); g.fill(); } }
+        g.fillStyle = '#c9a84c'; g.fillRect(0, 248, 256, 16);
+        var t = new T3.CanvasTexture(c); t.wrapS = t.wrapT = T3.RepeatWrapping; return t;
+      }
+      var hullM = new T3.MeshStandardMaterial({ map: hullTex(false), roughness: 0.35, metalness: 0.55, emissive: 0x1a2330, emissiveIntensity: 0.45 });
+      var darkHull = new T3.MeshStandardMaterial({ color: 0x1b2430, roughness: 0.4, metalness: 0.7, emissive: 0x0a1018, emissiveIntensity: 0.5 });
+      var goldBand = new T3.MeshStandardMaterial({ color: 0xc9a84c, roughness: 0.3, metalness: 0.75, emissive: 0x3a2e0c, emissiveIntensity: 0.6 });
+      function addM(c, o) { return new T3.MeshBasicMaterial({ color: c, transparent: true, opacity: o == null ? 0.8 : o, blending: T3.AdditiveBlending, depthWrite: false, side: T3.DoubleSide, fog: false }); }
+      /* cono de nariz sobre la corona (la antena y el logo de Jarvis siguen arriba) */
+      var nose = new T3.Mesh(new T3.CylinderGeometry(0.06, 1.414, 11, 4, 1), hullM); nose.rotation.y = Math.PI / 4; nose.scale.set(HX[2] - 3.5, 1, HZ[2] - 2.5); nose.position.y = TOP + CH + 3.4 + 5.5; G.add(nose);
+      var noseE = new T3.LineSegments(new T3.EdgesGeometry(nose.geometry), new T3.LineBasicMaterial({ color: 0xffc94d, transparent: true, opacity: 0.85 })); noseE.rotation.copy(nose.rotation); noseE.scale.copy(nose.scale); noseE.position.copy(nose.position); G.add(noseE);
+      /* cuatro cohetes en las esquinas, con aletas, franjas doradas, logo y motores */
+      var bx = HX[0] + 2.6, bz = HZ[0] + 2.6, engines = [], steam = [];
+      var finShape = new T3.Shape(); finShape.moveTo(0, 0); finShape.lineTo(5.2, -1.2); finShape.lineTo(5.2, 2.2); finShape.lineTo(0, 12); finShape.lineTo(0, 0);
+      var finGeo = new T3.ExtrudeGeometry(finShape, { depth: 0.35, bevelEnabled: false }); finGeo.translate(0, 0, -0.175);
+      [[1, 1], [-1, 1], [1, -1], [-1, -1]].forEach(function (c, ci) {
+        var x = c[0] * bx, z = c[1] * bz, ang = Math.atan2(z, x), B = new T3.Group(); B.position.set(x, 0, z); G.add(B);
+        var body = new T3.Mesh(new T3.CylinderGeometry(2.0, 2.0, 43.4, 24), hullM); body.position.y = 24.3; B.add(body);
+        var cone = new T3.Mesh(new T3.ConeGeometry(2.0, 6.5, 24), hullM); cone.position.y = 46 + 3.25; B.add(cone);
+        [8, 20, 34, 45].forEach(function (yy) { var band = new T3.Mesh(new T3.CylinderGeometry(2.06, 2.06, 0.7, 24), goldBand); band.position.y = yy; B.add(band); });
+        var bell = new T3.Mesh(new T3.CylinderGeometry(1.3, 2.1, 2.2, 20, 1, true), darkHull); bell.position.y = 1.5; B.add(bell);
+        var lg = new T3.Mesh(new T3.PlaneGeometry(3.0, 3.0), logoDecal); lg.position.set(Math.cos(ang) * 2.04, 28, Math.sin(ang) * 2.04); lg.rotation.y = Math.PI / 2 - ang; B.add(lg);
+        var fin = new T3.Mesh(finGeo, darkHull); fin.position.set(Math.cos(ang) * 1.9, 0.8, Math.sin(ang) * 1.9); fin.rotation.y = -ang; B.add(fin);
+        var finE = new T3.LineSegments(new T3.EdgesGeometry(finGeo), new T3.LineBasicMaterial({ color: 0xffc94d })); finE.position.copy(fin.position); finE.rotation.copy(fin.rotation); B.add(finE);
+        [12, 26, 40].forEach(function (yy) { var st = new T3.Mesh(new T3.BoxGeometry(0.3, 0.3, 3.6), darkHull); st.position.set(-c[0] * 1.6, yy, -c[1] * 1.6); st.rotation.y = Math.atan2(c[0], c[1]); B.add(st); });
+        var glow = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xff9a4d, transparent: true, opacity: 0.8, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); glow.scale.set(6, 6, 1); glow.position.y = 0.6; B.add(glow);
+        var flame = new T3.Mesh(new T3.ConeGeometry(1.25, 3.2, 16, 1, true), addM(0x7fd8ff, 0.55)); flame.rotation.x = Math.PI; flame.position.y = -0.2; B.add(flame);
+        engines.push({ glow: glow, flame: flame, ph: ci * 1.7 });
+        for (var k = 0; k < 5; k++) { var sm = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xe8f2f8, transparent: true, opacity: 0, depthWrite: false, fog: false })); sm.position.set(x, 0.5, z); G.add(sm); steam.push({ s: sm, x: x, z: z, t: (k / 5) * 6 + ci, ang: ang }); }
+      });
+      /* torre de lanzamiento con brazos hacia la nave */
+      var gx = -(HX[0] + 9.5), GH = TOP + CH + 10, gm = darkHull, post = 1.6;
+      [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(function (c) { var pm = new T3.Mesh(new T3.BoxGeometry(0.35, GH, 0.35), gm); pm.position.set(gx + c[0] * post, GH / 2, c[1] * post); G.add(pm); });
+      var brM = addM(0xff6a4d, 0.55); for (var yy = 0; yy < GH - 4; yy += 4) { [[-1, 1], [1, 1]].forEach(function (sd) { var br = new T3.Mesh(new T3.BoxGeometry(0.1, 5.6, 0.1), brM); br.position.set(gx, yy + 2, sd[0] * post); br.rotation.x = Math.PI / 4.4; G.add(br); var br2 = br.clone(); br2.position.set(gx + sd[0] * post, yy + 2, 0); br2.rotation.set(0, 0, Math.PI / 4.4); G.add(br2); }); }
+      [[30, -HX[1]], [57, -HX[2]]].forEach(function (q) { var L = Math.abs(gx) - Math.abs(q[1]) - post; var arm = new T3.Mesh(new T3.BoxGeometry(L, 0.8, 1.4), gm); arm.position.set(gx + post + L / 2, q[0], 0); G.add(arm); var tip = new T3.Mesh(new T3.BoxGeometry(L, 0.08, 1.45), addM(0xffc94d, 0.9)); tip.position.set(arm.position.x, q[0] + 0.42, 0); G.add(tip); });
+      var warn = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xff3a3a, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); warn.scale.set(4, 4, 1); warn.position.set(gx, GH + 1, 0); G.add(warn);
+      /* plataformas de lanzamiento en las esquinas: naves pequeñas despegan cada rato rumbo a la Tierra */
+      function miniRocket() {
+        var R = new T3.Group(), hm = new T3.MeshStandardMaterial({ map: hullTex(true), roughness: 0.35, metalness: 0.5, emissive: 0x1a2330, emissiveIntensity: 0.5 });
+        var b = new T3.Mesh(new T3.CylinderGeometry(1.1, 1.1, 8, 18), hm); b.position.y = 4.6; R.add(b);
+        var n = new T3.Mesh(new T3.ConeGeometry(1.1, 3.2, 18), hm); n.position.y = 10.2; R.add(n);
+        var bd = new T3.Mesh(new T3.CylinderGeometry(1.14, 1.14, 0.4, 18), goldBand); bd.position.y = 7.6; R.add(bd);
+        var lg2 = new T3.Mesh(new T3.PlaneGeometry(1.5, 1.5), logoDecal); lg2.position.set(0, 4.8, 1.12); R.add(lg2);
+        for (var f = 0; f < 3; f++) { var fa = f / 3 * Math.PI * 2, fn = new T3.Mesh(new T3.BoxGeometry(0.18, 2.6, 1.8), darkHull); fn.position.set(Math.cos(fa) * 1.4, 1.6, Math.sin(fa) * 1.4); fn.rotation.y = -fa + Math.PI / 2; R.add(fn); }
+        var bl = new T3.Mesh(new T3.CylinderGeometry(0.7, 1.0, 1.0, 14, 1, true), darkHull); bl.position.y = 0.5; R.add(bl);
+        var fl = new T3.Mesh(new T3.ConeGeometry(0.9, 5, 14, 1, true), addM(0xffb24d, 0.85)); fl.rotation.x = Math.PI; fl.position.y = -2.2; R.add(fl);
+        var fl2 = new T3.Mesh(new T3.ConeGeometry(0.45, 3, 12, 1, true), addM(0xffffff, 0.9)); fl2.rotation.x = Math.PI; fl2.position.y = -1.3; R.add(fl2);
+        var gw = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xffa94d, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); gw.scale.set(7, 7, 1); gw.position.y = -0.6; R.add(gw);
+        return { g: R, fl: fl, fl2: fl2, gw: gw };
+      }
+      var pads = [], cands = [];
+      [45, 135, 225, 315].forEach(function (deg) {
+        var best = null; for (var dd = 46; dd <= 90 && !best; dd += 2) for (var off = 0; off <= 24 && !best; off += 6) for (var sg = -1; sg <= 1 && !best; sg += 2) {
+          var a0 = (deg + sg * off) * Math.PI / 180, x0 = Math.cos(a0) * dd, z0 = Math.sin(a0) * dd, ok = true;
+          for (var bi = 0; ok && bi < BLDS.length; bi++) { var b0 = BLDS[bi], ddx = Math.max(Math.abs(x0 - b0.x) - b0.w / 2, 0), ddz = Math.max(Math.abs(z0 - b0.z) - b0.d / 2, 0); if (Math.hypot(ddx, ddz) < 5.5) ok = false; }
+          if (annex && Math.hypot(x0 - annex.pos.x, z0 - annex.pos.z) < 18) ok = false;
+          if (Math.abs(x0) < 5 || Math.abs(z0) < 5) ok = false;
+          if (ok) best = { x: x0, z: z0 };
+        }
+        if (best) cands.push(best);
+      });
+      cands.forEach(function (c, i) {
+        var P = new T3.Group(); P.position.set(c.x, 0, c.z); G.add(P);
+        var pad = new T3.Mesh(new T3.CylinderGeometry(4.2, 4.8, 0.6, 28), darkHull); pad.position.y = 0.3; P.add(pad);
+        var ring = new T3.Mesh(new T3.TorusGeometry(4.5, 0.09, 6, 48), addM(0xffc94d, 0.9)); ring.rotation.x = Math.PI / 2; ring.position.y = 0.65; P.add(ring);
+        var mr = miniRocket(); mr.g.position.set(c.x, 0.6, c.z); G.add(mr.g);
+        pads.push({ P: P, ring: ring, x: c.x, z: c.z, r: mr, phase: 'pad', t: 0, wait: 8 + i * 9 + Math.random() * 6, path: null, smoke: [] });
+      });
+      var trailN = 70, trailPos = new Float32Array(trailN * 3 * Math.max(1, pads.length)), trailCol = new Float32Array(trailN * 3 * Math.max(1, pads.length)), trailAge = new Float32Array(trailN * Math.max(1, pads.length)).fill(99), trailHead = pads.map(function () { return 0; });
+      var tGeo = new T3.BufferGeometry(); tGeo.setAttribute('position', new T3.BufferAttribute(trailPos, 3)); tGeo.setAttribute('color', new T3.BufferAttribute(trailCol, 3));
+      var trail = new T3.Points(tGeo, new T3.PointsMaterial({ map: GLOW, size: 4.5, vertexColors: true, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); trail.frustumCulled = false; G.add(trail);
+      var V = new T3.Vector3(), V2 = new T3.Vector3(), E = new T3.Vector3();
+      function earthDir(px, pz) {
+        try { if (planetObjs.memoria) { planetObjs.memoria.g.updateMatrixWorld(); planetObjs.memoria.g.getWorldPosition(E); return E.clone(); } } catch (e) {}
+        return new T3.Vector3(-1200, 300, -400);
+      }
+      function launch(pd) {
+        var e = earthDir(), p0 = new T3.Vector3(pd.x, 0.6, pd.z), dir = e.clone().sub(p0).normalize(), far = p0.clone().addScaledVector(dir, 900);
+        pd.path = new T3.CubicBezierCurve3(p0, p0.clone().add(new T3.Vector3(0, 140, 0)), p0.clone().add(new T3.Vector3(0, 200, 0)).addScaledVector(dir, 200), far);
+        pd.phase = 'ignite'; pd.t = 0; if (window.__evrLog && Math.random() < 0.35) window.__evrLog('🚀 Despegó una nave rumbo a la Tierra', 'oport');
+      }
+      var launches = 0;
+      function update(dt, t, tier) {
+        G.visible = true; if (window.__evrTest && window.__evrTest.liftSpeed) dt *= window.__evrTest.liftSpeed;
+        engines.forEach(function (en) { var f = 0.75 + 0.25 * Math.sin(t * 13 + en.ph) * Math.sin(t * 7.1 + en.ph * 2); en.glow.material.opacity = 0.45 + 0.4 * f; en.flame.scale.set(1, 0.7 + 0.5 * f, 1); });
+        warn.material.opacity = Math.sin(t * 4) > 0 ? 1 : 0.15; nose.rotation.y = Math.PI / 4;
+        steam.forEach(function (sm) { sm.t += dt; var q = (sm.t % 6) / 6, rr = 1.5 + q * 7; sm.s.position.set(sm.x + Math.cos(sm.ang + sm.t * 0.2) * rr * 0.6, 0.5 + q * 9, sm.z + Math.sin(sm.ang + sm.t * 0.2) * rr * 0.6); var sc = 3 + q * 11; sm.s.scale.set(sc, sc, 1); sm.s.material.opacity = tier >= 2 ? 0 : 0.28 * Math.sin(q * Math.PI); });
+        pads.forEach(function (pd, pi) {
+          var mr = pd.r, base = pi * trailN;
+          pd.ring.material.opacity = pd.phase === 'ignite' ? (Math.sin(t * 12) > 0 ? 1 : 0.2) : 0.6 + 0.3 * Math.sin(t * 2 + pi);
+          if (pd.phase === 'pad') { mr.fl.visible = mr.fl2.visible = false; mr.gw.material.opacity = 0.25 + 0.1 * Math.sin(t * 3 + pi); pd.wait -= dt; if (pd.wait <= 0) launch(pd); }
+          else if (pd.phase === 'ignite') { pd.t += dt; mr.fl.visible = mr.fl2.visible = true; var k = Math.min(1, pd.t / 2.2); mr.fl.scale.set(1, 0.4 + k, 1); mr.gw.material.opacity = 0.6 + 0.4 * Math.random(); mr.g.position.x = pd.x + (Math.random() - 0.5) * 0.08 * k; if (pd.t > 2.4) { pd.phase = 'flight'; pd.t = 0; launches++; } }
+          else if (pd.phase === 'flight') {
+            pd.t += dt; var u = Math.min(1, Math.pow(pd.t / 16, 1.6)); pd.path.getPoint(u, V); pd.path.getTangent(Math.min(0.999, u + 0.001), V2);
+            mr.g.position.copy(V); mr.g.quaternion.setFromUnitVectors(new T3.Vector3(0, 1, 0), V2.normalize());
+            mr.fl.scale.set(1, 1.2 + 0.3 * Math.random(), 1); mr.gw.material.opacity = 0.9; var sc2 = u > 0.75 ? Math.max(0.05, 1 - (u - 0.75) / 0.25) : 1; mr.g.scale.setScalar(sc2);
+            var h = trailHead[pi]; trailHead[pi] = (h + 1) % trailN; var j = base + h; trailPos[j * 3] = V.x - V2.x * 2; trailPos[j * 3 + 1] = V.y - V2.y * 2; trailPos[j * 3 + 2] = V.z - V2.z * 2; trailAge[j] = 0;
+            if (u >= 1) { pd.phase = 'pad'; pd.wait = 22 + Math.random() * 20; mr.g.position.set(pd.x, 0.6, pd.z); mr.g.quaternion.identity(); mr.g.scale.setScalar(1); }
+          }
+          for (var q = 0; q < trailN; q++) { var jj = base + q; trailAge[jj] += dt; var aa = trailAge[jj], c2 = aa > 3 ? 0 : (1 - aa / 3); trailCol[jj * 3] = c2 * 1.0; trailCol[jj * 3 + 1] = c2 * 0.75; trailCol[jj * 3 + 2] = c2 * 0.5; }
+        });
+        tGeo.attributes.position.needsUpdate = true; tGeo.attributes.color.needsUpdate = true;
+      }
+      return { update: update, info: function () { return { pads: pads.length, launches: launches, phases: pads.map(function (p) { return p.phase; }).join(',') }; }, launchNow: function () { var pd = pads.filter(function (p) { return p.phase === 'pad'; })[0]; if (pd) { pd.wait = 0; return true; } return false; } };
     })();
 
     /* ---- Tráfico: autos autónomos y tranvías/maglev modernos sobre calles, puentes y anillos ---- */
@@ -4435,6 +4542,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (skyFx) skyFx.update(sdt, clockT, tier, tier < 2);
       if (traffic) traffic.update(sdt, tier);
       if (annex) annex.update(clockT, dt, tier);
+      if (nave) nave.update(dt, clockT, tier);
       shipFx.update(dt, clockT, tier); liftFx.update(dt, clockT);
       if (hoverA && hoverA.v && hoverA.v.ghost > 0.45) { hoverRing.visible = true; hoverRing.position.y = hoverA.floorY - FH / 2 + 0.25; hoverRing.scale.set(hxOf(hoverA.i) / HX[0], 1, hzOf(hoverA.i) / HZ[0]); hoverRing.material.opacity = 0.45 + 0.3 * Math.sin(clockT * 5); } else hoverRing.visible = false;
       logo.rotation.y += sdt * 1.1; logoRing.rotation.y += sdt * 0.8;
@@ -4511,6 +4619,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       trafficInfo: function () { return traffic.counts(); },
       setProps: function (l) { if (annex) annex.setProps(l); },
       annexInfo: function () { return annex ? annex.info() : null; },
+      naveInfo: function () { return nave ? nave.info() : null; },
+      launchNow: function () { return nave ? nave.launchNow() : false; },
       health: function () { return { tier: tier, cine: CINE.on, glLost: glLost, frameErrs: frameErrs }; },
       toggleSpeed: function () { speedMul = reduce ? 0.3 : (speedMul < 0.8 ? 1 : 0.55); return speedMul < 0.8 ? 'lenta' : 'normal'; }
     };

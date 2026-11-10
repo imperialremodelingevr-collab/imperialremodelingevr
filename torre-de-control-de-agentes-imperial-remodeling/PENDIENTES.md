@@ -61,3 +61,8 @@
 - Anexo EVR rediseñado: torre rectangular de cristal como la principal (11 pisos desfasados en zigzag, ventanas encendidas, estructura exterior dorada con cruces, corona tipo plato con la cubierta y la mesa holográfica).
 - Oficinas por dentro: botón «Entrar a la oficina» (tarjeta del agente y «Vista interior»), con barra ◀ ▶ para pasar de oficina en oficina y «Salir» (o Esc). Escritorio con 3 monitores con pantallas propias de su rol, teclado, ratón, lámpara, teléfono, plantas; estante con libros, archiveros, perchero, bebedero, sofá con mesa, pizarra con notas, reloj, luces de techo. Jarvis: «entra a la oficina de Cotizaciones» / «sal de la oficina».
 - Voz en el teléfono: botón «Probar voz» (pestaña Sistema) y aviso «Toca aquí para activar la voz» en pantallas táctiles; si el navegador no deja hablar dice el motivo (sin voces, modo silencio, otra app) y a dónde abrirla.
+- [x] La torre ahora es una nave lista para despegar: cono de proa, 4 propulsores en las esquinas con aletas, bandas doradas y llamas encendidas, torre de lanzamiento con brazos y luz de aviso, y vapor en la base. A través del cristal se siguen viendo los trabajadores en sus oficinas.
+- [x] Uniforme de la compañía para las personas: chaqueta oscura con cuello y cierre dorados, franja del color de su área, logo EVR en el pecho, la espalda y los hombros.
+- [x] El anexo de Propiedades es una nave pequeña conectada al piso 12 (ventanillas iluminadas, aletas, motor, cúpula de cristal sobre la mesa holográfica del mapa).
+- [x] Plataformas en las 4 esquinas de la ciudad: cada 20–40 s despega una nave rumbo a la Tierra con estela de fuego y vuelve a cargarse.
+- [ ] Revisar en tu teléfono que la nave y los despegues se vean fluidos (en teléfono la calidad baja automáticamente).
