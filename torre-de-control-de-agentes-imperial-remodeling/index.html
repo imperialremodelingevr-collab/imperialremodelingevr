@@ -252,11 +252,11 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 #voLine.show { display: block; }
 .jarvis { position: absolute; left: var(--gutter-l); top: 92px; bottom: 64px; width: 340px; display: flex; flex-direction: column; background: rgba(5, 10, 16, 0.94); backdrop-filter: blur(8px); border: 1px solid rgba(92, 200, 255, 0.4); box-shadow: 0 0 40px rgba(92, 200, 255, 0.16); z-index: 7; }
 .jarvis[hidden] { display: none; }
-.vohint { position: absolute; left: 50%; top: 96px; transform: translateX(-50%); z-index: 10; padding: 9px 14px; border: 1px solid #ffc94d; background: rgba(5, 10, 16, 0.95); color: #ffe29a; font-size: 13px; border-radius: 20px; box-shadow: 0 0 22px rgba(255, 201, 77, 0.35); animation: vhpulse 1.6s ease-in-out infinite; }
+.vohint { position: absolute; left: 50%; bottom: 172px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); text-align: center; z-index: 10; padding: 9px 14px; border: 1px solid #ffc94d; background: rgba(5, 10, 16, 0.95); color: #ffe29a; font-size: 13px; border-radius: 20px; box-shadow: 0 0 22px rgba(255, 201, 77, 0.35); animation: vhpulse 1.6s ease-in-out infinite; }
 .vohint[hidden] { display: none; } @keyframes vhpulse { 50% { box-shadow: 0 0 34px rgba(255, 201, 77, 0.7); } }
 .officebar { position: absolute; left: 50%; bottom: 74px; transform: translateX(-50%); z-index: 9; display: flex; gap: 8px; align-items: center; padding: 6px 10px; background: rgba(5, 10, 16, 0.92); border: 1px solid rgba(92, 255, 230, 0.5); box-shadow: 0 0 24px rgba(92, 255, 230, 0.18); font-size: 12px; white-space: nowrap; }
 .officebar[hidden] { display: none; } .officebar span { min-width: 150px; text-align: center; color: #bffcf0; }
-@media (max-width: 860px) { .officebar { bottom: 118px; max-width: calc(100% - 16px); } .officebar span { min-width: 90px; overflow: hidden; text-overflow: ellipsis; } }
+@media (max-width: 860px) { .officebar { bottom: 14px; max-width: calc(100% - 16px); } .officebar span { min-width: 90px; overflow: hidden; text-overflow: ellipsis; } #alert .am { display: none; } #app.office .card, #app.office .tools, #app.office .strip, #app.office .lift, #app.office .rdock, #app.office .roster { display: none !important; } }
 .hpip { position: absolute; left: 530px; top: 120px; width: 220px; z-index: 8; background: rgba(3, 9, 15, 0.92); border: 1px solid rgba(92, 255, 230, 0.55); box-shadow: 0 0 28px rgba(92, 255, 230, 0.25), inset 0 0 22px rgba(92, 255, 230, 0.12); border-radius: 4px; overflow: hidden; }
 .hpip[hidden] { display: none; }
 .hpip .hv { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #02070c; }
@@ -1614,7 +1614,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     bar.hidden = !errs.length;
     if (!errs.length) return;
     var a = errs[0];
-    setHtml($('#alertText'), '<strong>' + TIERS[aid(a).t].dot + ' ' + TIERS[aid(a).t].n + ': ' + aid(a).e + ' ' + esc(a.name) + ' dejó de funcionar</strong> hace ' + mins(Date.now() - a.errorAt) + ' min. ' + esc(a.msg) + (errs.length > 1 ? ' (+' + (errs.length - 1) + ' más)' : ''));
+    setHtml($('#alertText'), '<strong>' + TIERS[aid(a).t].dot + ' ' + TIERS[aid(a).t].n + ': ' + aid(a).e + ' ' + esc(a.name) + ' dejó de funcionar</strong><span class="am"> hace ' + mins(Date.now() - a.errorAt) + ' min. ' + esc(a.msg) + '</span>' + (errs.length > 1 ? ' (+' + (errs.length - 1) + ' más)' : ''));
     $('#alertFix').onclick = function () { fixAgent(a); };
     $('#alertMute').onclick = function () { errs.forEach(function (x) { x.acked = true; }); toast('Alarma silenciada hasta que algo cambie'); };
     $('#alertSee').onclick = function () { select(a.id); };
@@ -1651,7 +1651,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
 
   function select(id, fromTour) { if (OFFICE && !fromTour) { enterOffice(id); return; } if (!fromTour) { stopTour(); if (JT.on) jarvisTour(false); } ackCall(byId(id)); selected = id; selectedProject = null; selectedPlanet = null; if (scene3d) scene3d.focus(byId(id), !!fromTour); refresh(); }
   var OFFICE = null;
-  function renderOfficeBar() { var b = $('#officeBar'); if (!b) return; b.hidden = !OFFICE; var a = OFFICE && byId(OFFICE); $('#obName').textContent = a ? 'Oficina · ' + a.name : ''; }
+  function renderOfficeBar() { var b = $('#officeBar'); if (!b) return; $('#app').classList.toggle('office', !!OFFICE); b.hidden = !OFFICE; var a = OFFICE && byId(OFFICE); $('#obName').textContent = a ? 'Oficina · ' + a.name : ''; }
   function enterOffice(id) {
     var a = byId(id); if (!a) return false; stopTour(); if (JT.on) jarvisTour(false);
     OFFICE = id; if (selected !== id) { ackCall(a); selected = id; selectedProject = null; selectedPlanet = null; if (scene3d) scene3d.focus(a, true); refresh(); }
