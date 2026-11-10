@@ -276,6 +276,8 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .props iframe { width: 100%; height: 300px; border: 1px solid var(--line); background: #0b1118; } .props .pnums { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; } .props .pnums span { opacity: 0.85; }
 .props .pbtn { display: flex; flex-wrap: wrap; gap: 6px; } .props .pform { display: grid; gap: 6px; padding: 10px 12px; border-top: 1px solid var(--line); } .props .pform input { width: 100%; }
 .props a.btn { text-decoration: none; color: inherit; } .props a.btn.primary { color: #04121c; }
+.props .pver { border: 1px solid; padding: 8px 10px; display: grid; gap: 6px; background: rgba(255, 255, 255, 0.03); }
+.props .pcalc { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; } .props .pcalc label { display: grid; gap: 2px; font-size: 11px; opacity: 0.85; } .props .pcalc input { width: 130px; }
 .props .pnote { font-size: 12px; opacity: 0.85; line-height: 1.45; margin: 0; }
 @media (max-width: 860px) { .props { inset: 56px 6px 56px 6px; } .props .pbody { grid-template-columns: 1fr; grid-template-rows: 130px 1fr; } .props .plist { border-right: 0; border-bottom: 1px solid var(--line); } .props iframe { height: 240px; } }
 .sysrow { display: grid; grid-template-columns: 12px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); } .sysrow b { display: block; font-weight: 500; font-size: 13px; } .sysrow span { display: block; font-size: 12px; line-height: 1.4; color: var(--muted); margin-top: 2px; }
@@ -848,7 +850,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var al = alerts(), work = AGENTS.filter(function (a) { return a.status === 'working'; }).length, pend = (TASKS || []).filter(function (t) { return !t.done; }).length, bi = (INBOX || []).length;
     var t = (welcome ? 'Bienvenido, jefe. Torre de control de Imperial Remodeling en línea. ' : '') + work + ' agentes trabajando. ';
     t += al.length ? (al.length === 1 ? 'Un agente necesita ayuda: ' : al.length + ' agentes necesitan ayuda: ') + al.map(function (a) { return a.name; }).join(', ') + '. ' : 'Sin alertas. ';
-    return t + 'Tienes ' + pend + ' tareas pendientes y ' + bi + ' elementos en la bandeja.';
+    return t + 'Tienes ' + pend + ' tareas pendientes y ' + bi + ' elementos en la bandeja.' + (pendingProps().length ? ' Oportunidades tiene ' + pendingProps().length + ' propiedades sin confirmar: dime si son reales y están off-market.' : '');
   }
   function voiceHelp(a) {
     if (!a) return;
@@ -969,7 +971,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       { name: 'pause_agent', description: 'Pone un agente en pausa.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (a.status !== 'idle') togglePause(a); return a.name + ' en pausa'; } },
       { name: 'resume_agent', description: 'Reanuda un agente en pausa.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (a.status === 'idle') togglePause(a); return a.name + ' reanudado'; } },
       { name: 'create_task', description: 'Crea una tarea programada interna para un agente. minutes = en cuántos minutos corre la primera vez; repeat_minutes = cada cuántos minutos se repite (0 = una sola vez).', inputSchema: { type: 'object', properties: { agent: { type: 'string' }, title: { type: 'string' }, minutes: { type: 'number' }, repeat_minutes: { type: 'number' } }, required: ['agent', 'title'] }, execute: function (i) { var a = need(i), t = String(i.title || '').slice(0, 120); if (!t) throw new Error('Falta el título'); addTask({ title: t, agent: a.id, every: Math.max(0, Math.round(+i.repeat_minutes || 0)), at: Date.now() + Math.max(1, Math.round(+i.minutes || 60)) * 60000 }); return 'Tarea creada para ' + a.name + ': ' + t; } },
-      { name: 'list_properties', description: 'Lista las propiedades que encontró el agente Oportunidades, con dirección exacta, precio y estado.', execute: function () { return PROPS.length ? propSummary() : 'Aún no hay propiedades guardadas.'; } },
+      { name: 'confirm_property', description: 'Registra la confirmación que el dueño acaba de dar, en esta conversación y con sus palabras, sobre si una propiedad es real y si está off-market. Úsala SOLO si el dueño lo dijo explícitamente; si no, pregúntale. result: real_off (real y off-market), real_mls (real pero está en el MLS) o no_real.', inputSchema: { type: 'object', properties: { address: { type: 'string' }, result: { type: 'string' } }, required: ['address', 'result'] }, execute: function (i) { var q = normV((i && i.address) || ''), res = String((i && i.result) || ''); if (!VER[res] || res === 'pendiente') throw new Error('result debe ser real_off, real_mls o no_real'); var x = PROPS.filter(function (y) { return q && normV(propFull(y)).indexOf(q) > -1; })[0]; if (!x) throw new Error('No encontré esa propiedad'); saveProp(x, { verif: res, verifAt: Date.now(), verifBy: 'Ernesto (por voz/chat)' }); logEvent('Propiedad ' + x.addr + ': ' + VER[res].t.toLowerCase() + ' (confirmado por el dueño)', 'oport', 'ok'); return propFull(x) + ': ' + VER[res].t; } },
+      { name: 'list_properties', description: 'Lista las propiedades que encontró el agente Oportunidades, con dirección exacta, precio y estado.', execute: function () { return PROPS.length ? propSummary() + (pendingProps().length ? ' | Pregúntale al dueño si las ' + pendingProps().length + ' sin confirmar son reales y están off-market.' : '') : 'Aún no hay propiedades guardadas.'; } },
       { name: 'show_property_map', description: 'Abre el mapa de una propiedad (por dirección o parte de ella) y devuelve su dirección exacta.', inputSchema: { type: 'object', properties: { address: { type: 'string' } } }, execute: function (i) { var q = normV((i && i.address) || ''); var x = PROPS.filter(function (y) { return !q || normV(propFull(y)).indexOf(q) > -1; })[0] || PROPS[0]; if (!x) throw new Error('No hay propiedades guardadas'); openProps(x.id); return 'Mapa abierto: ' + propFull(x); } },
       { name: 'save_memory_note', description: 'Guarda una nota en la memoria de la torre (reglas, procesos, preferencias del dueño).', inputSchema: { type: 'object', properties: { title: { type: 'string' }, body: { type: 'string' }, kind: { type: 'string', description: 'Regla, Proceso, Cliente, Decisión, Preferencia o Nota' } }, required: ['title', 'body'] }, execute: function (i) { var rec = { title: String(i.title || '').slice(0, 100), body: String(i.body || '').slice(0, 1500), kind: MEM_KINDS.indexOf(i.kind) > -1 ? i.kind : 'Nota', tags: [], pinned: false, source: 'jarvis', createdAt: Date.now(), updatedAt: Date.now() }; if (!rec.title || !rec.body) throw new Error('Falta título o texto'); if (DB) DB.collection('memory').add(rec).catch(fail); else { rec.id = 'm' + (++localId); MEMORY.push(rec); renderMemory(); } logEvent('Jarvis guardó la nota “' + rec.title + '”', '', 'mem'); refresh(); return 'Nota guardada'; } },
       { name: 'add_improvement', description: 'Anota una mejora para una sección de la torre en la lista de mejoras del dueño.', inputSchema: { type: 'object', properties: { section: { type: 'string' }, title: { type: 'string' }, detail: { type: 'string' } }, required: ['section', 'title'] }, execute: function (i) { addImprovement({ section: String(i.section || 'General').slice(0, 40), title: String(i.title || '').slice(0, 120), detail: String(i.detail || '').slice(0, 400), source: 'jarvis' }); return 'Mejora anotada'; } },
@@ -1407,6 +1410,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function needOf(a) {
     if (a.status === 'error') return a.msg || 'Dejé de responder y necesito que me ayudes.';
     if (a.status === 'warning') return a.msg || 'Voy lento, ¿me das una mano?';
+    if (a.id === 'oport' && pendingProps().length) { var pp = pendingProps().length; return 'Tengo ' + pp + (pp === 1 ? ' propiedad' : ' propiedades') + ' sin confirmar. ¿Me confirmas si son reales y si de verdad están off-market antes de tomarlas como oportunidad?'; }
     var rec = (INBOX || []).filter(function (x) { return x.agent === a.id; });
     if (rec.length) return rec.length === 1 ? 'Tengo un recado esperando tu decisión: ' + rec[0].title + '.' : 'Tengo ' + rec.length + ' recados esperando tu decisión.';
     return '';
@@ -1457,24 +1461,49 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
 
   var PROPS = [
-    { id: 'p1', addr: '1003 Garcia St', city: 'McKinney', state: 'TX', price: 140000, sqft: 1132, beds: 2, baths: 1, year: 1941, status: 'nueva', notes: 'Requiere remodelación importante, se vende tal como está, solo efectivo. Fuente: NTREIS 21308872. Verifica que siga disponible.', createdAt: 1793205600000 },
-    { id: 'p2', addr: '2624 Downing Dr', city: 'Plano', state: 'TX', price: 410000, sqft: 2474, beds: 4, baths: 2.5, year: 1975, status: 'nueva', notes: 'Se vende tal como está; techo de ~1 año. No detalla cuánta remodelación necesita: hay que verla. Fuente: NTREIS 21354016.', createdAt: 1793205600000 },
-    { id: 'p3', addr: '3508 Gatewood Ln', city: 'Plano', state: 'TX', price: 264900, sqft: 1368, beds: 3, baths: 2, status: 'nueva', notes: 'Investor special; cocina actualizada y techo nuevo, puede necesitar poco. Encaja menos con remodelación integral.', createdAt: 1793205600000 }
+    { id: 'p1', verif: 'pendiente', addr: '1003 Garcia St', city: 'McKinney', state: 'TX', price: 140000, sqft: 1132, beds: 2, baths: 1, year: 1941, status: 'nueva', notes: 'Requiere remodelación importante, se vende tal como está, solo efectivo. Fuente: NTREIS 21308872. Verifica que siga disponible.', createdAt: 1793205600000 },
+    { id: 'p2', verif: 'pendiente', addr: '2624 Downing Dr', city: 'Plano', state: 'TX', price: 410000, sqft: 2474, beds: 4, baths: 2.5, year: 1975, status: 'nueva', notes: 'Se vende tal como está; techo de ~1 año. No detalla cuánta remodelación necesita: hay que verla. Fuente: NTREIS 21354016.', createdAt: 1793205600000 },
+    { id: 'p3', verif: 'pendiente', addr: '3508 Gatewood Ln', city: 'Plano', state: 'TX', price: 264900, sqft: 1368, beds: 3, baths: 2, status: 'nueva', notes: 'Investor special; cocina actualizada y techo nuevo, puede necesitar poco. Encaja menos con remodelación integral.', createdAt: 1793205600000 }
   ], propSel = null, propOpen = false, PSTAT = ['nueva', 'me interesa', 'ver en persona', 'descartada'];
+  var VER = { pendiente: { t: 'SIN CONFIRMAR', e: '❓', c: '#5cc8ff' }, real_off: { t: 'REAL Y OFF-MARKET', e: '✅', c: '#ffc94d' }, real_mls: { t: 'REAL, PERO ESTÁ EN EL MERCADO', e: '🟣', c: '#a78bfa' }, no_real: { t: 'NO ES REAL / YA NO ESTÁ', e: '⛔', c: '#ff6a6a' } };
+  function verOf(x) { return VER[x && x.verif] ? x.verif : 'pendiente'; }
+  var CITIES_OK = ['plano', 'frisco', 'mckinney'];
+  function criteria(x) {
+    var n = [], ok = true, c = String(x.city || '').toLowerCase().replace(/[^a-z]/g, '');
+    if (CITIES_OK.indexOf(c) < 0) { ok = false; n.push('ciudad fuera de Plano/Frisco/McKinney'); }
+    if (x.sqft && (x.sqft < 1300 || x.sqft > 1700)) { ok = false; n.push(x.sqft + ' pies² (tu rango: 1,300–1,700)'); }
+    if (x.price && x.price > 300000) { ok = false; n.push(money(x.price) + ' (tope: $300,000)'); }
+    if (!x.sqft) n.push('falta pies²'); if (!x.price) n.push('falta precio');
+    return { ok: ok, notes: n };
+  }
+  function offerMax(x) { return x.arv && x.repair != null && x.repair !== '' ? Math.round(0.7 * x.arv - (+x.repair || 0)) : null; }
+  function pendingProps() { return PROPS.filter(function (x) { return verOf(x) === 'pendiente' && x.status !== 'descartada'; }); }
+  function verifyLinks(x) { var q = encodeURIComponent(x.addr + ' ' + x.city + ' TX'); return '<a class="btn" target="_blank" rel="noopener noreferrer" href="https://www.google.com/search?q=' + q + '+for+sale">¿Está en venta? (Google)</a><a class="btn" target="_blank" rel="noopener noreferrer" href="https://www.zillow.com/homes/' + encodeURIComponent(x.addr + ', ' + x.city + ', TX') + '_rb/">Zillow</a><a class="btn" target="_blank" rel="noopener noreferrer" href="https://www.google.com/search?q=Collin+CAD+property+' + q + '">Registro del condado</a>'; }
   function propFull(x) { return [x.addr, x.city, (x.state || 'TX') + (x.zip ? ' ' + x.zip : '')].filter(Boolean).join(', '); }
   function mapQ(x) { return encodeURIComponent(propFull(x)); }
   function money(n) { return n ? '$' + Math.round(n).toLocaleString('en-US') : '—'; }
   function skillsOf(id) { return (MEMORY || []).filter(function (m) { return (m.tags || []).indexOf('skill:' + id) > -1; }); }
-  function propSummary() { return PROPS.filter(function (x) { return x.status !== 'descartada'; }).slice(0, 12).map(function (x) { return propFull(x) + ' (' + money(x.price) + (x.sqft ? ', ' + x.sqft + ' pies²' : '') + (x.beds ? ', ' + x.beds + ' rec' : '') + ', estado: ' + (x.status || 'nueva') + ')'; }).join('; '); }
+  function propSummary() { return PROPS.filter(function (x) { return x.status !== 'descartada'; }).slice(0, 12).map(function (x) { return propFull(x) + ' (' + money(x.price) + (x.sqft ? ', ' + x.sqft + ' pies²' : '') + (x.beds ? ', ' + x.beds + ' rec' : '') + ', estado: ' + (x.status || 'nueva') + ', verificación: ' + VER[verOf(x)].t + (criteria(x).ok ? '' : ', fuera de criterios') + ')'; }).join('; '); }
   function renderProps() {
+    if (scene3d && scene3d.setProps) scene3d.setProps(PROPS);
     var el = $('#props'); if (!propOpen) { el.hidden = true; return; } el.hidden = false;
     var cur = PROPS.filter(function (x) { return x.id === propSel; })[0] || PROPS[0]; if (cur) propSel = cur.id;
-    var list = PROPS.map(function (x) { return '<button class="pitem" data-psel="' + esc(x.id) + '" aria-current="' + (cur && cur.id === x.id) + '" type="button"><b>' + esc(x.addr) + '</b><small>' + esc(x.city) + ' · ' + money(x.price) + ' · ' + esc(x.status || 'nueva') + '</small></button>'; }).join('') || '<p class="pnote" style="padding:12px">Aún no hay propiedades. Agrega una dirección abajo o espera la búsqueda diaria.</p>';
+    var list = PROPS.map(function (x) { return '<button class="pitem" data-psel="' + esc(x.id) + '" aria-current="' + (cur && cur.id === x.id) + '" type="button"><b>' + esc(x.addr) + '</b><small>' + VER[verOf(x)].e + ' ' + esc(x.city) + ' · ' + money(x.price) + ' · ' + esc(x.status || 'nueva') + '</small></button>'; }).join('') || '<p class="pnote" style="padding:12px">Aún no hay propiedades. Agrega una dirección abajo o espera la búsqueda diaria.</p>';
     var det = '<p class="pnote">Elige una propiedad para ver su dirección exacta y el mapa.</p>';
     if (cur) {
       var q = mapQ(cur);
       det = '<h3 style="margin:0;font-size:16px">' + esc(propFull(cur)) + '</h3>' +
         '<div class="pnums"><span><b>' + money(cur.price) + '</b></span>' + (cur.sqft ? '<span>' + cur.sqft + ' pies²' + (cur.price ? ' · $' + Math.round(cur.price / cur.sqft) + '/pie²' : '') + '</span>' : '') + (cur.beds ? '<span>' + cur.beds + ' recámaras</span>' : '') + (cur.baths ? '<span>' + cur.baths + ' baños</span>' : '') + (cur.year ? '<span>Año ' + cur.year + '</span>' : '') + '</div>' +
+        (function () {
+          var v = verOf(cur), V = VER[v], cr = criteria(cur), om = offerMax(cur);
+          return '<div class="pver" style="border-color:' + V.c + '"><b style="color:' + V.c + '">' + V.e + ' ' + V.t + '</b>' +
+            (v === 'pendiente' ? '<p class="pnote">Nada de esto es una oportunidad hasta que tú confirmes que la casa es <b>real</b> y que de verdad está <b>off-market</b> (no está en el MLS). Yo no puedo verificarlo por ti: revisa con los enlaces y dime.</p>' : '<p class="pnote">Confirmado por ti' + (cur.verifAt ? ' el ' + new Date(cur.verifAt).toLocaleDateString('es-US') : '') + '. Si algo cambió, vuelve a marcarla.</p>') +
+            '<div class="pbtn">' + verifyLinks(cur) + '</div>' +
+            '<div class="pbtn"><button class="btn primary" data-pverif="real_off" type="button">✅ Real y off-market</button><button class="btn" data-pverif="real_mls" type="button">🟣 Real, pero en el MLS</button><button class="btn" data-pverif="no_real" type="button">⛔ No es real / ya no está</button></div></div>' +
+            '<p class="pnote">' + (cr.ok ? '✔ Cumple tus criterios (Plano, Frisco o McKinney · 1,300–1,700 pies² · hasta $300,000).' : '⚠ Fuera de tus criterios: ' + cr.notes.join('; ') + '.') + (cr.ok && cr.notes.length ? ' Falta: ' + cr.notes.join(', ') + '.' : '') + '</p>' +
+            '<form class="pcalc" data-pcalc autocomplete="off"><label>Valor ya remodelada (ARV)<input name="arv" type="number" min="0" step="1000" value="' + (cur.arv || '') + '" placeholder="ej. 420000"></label><label>Reparaciones<input name="repair" type="number" min="0" step="500" value="' + (cur.repair != null ? cur.repair : '') + '" placeholder="ej. 55000"></label><button class="btn" type="submit">Calcular</button></form>' +
+            '<p class="pnote">' + (om != null ? '<b>Oferta máxima: ' + money(Math.max(0, om)) + '</b> (70% del ARV − reparaciones)' + (cur.price ? (om >= cur.price ? ' · ✔ el precio de lista cabe' : ' · ✖ el precio de lista pasa por ' + money(cur.price - om)) : '') + '. Son números que tú pones; Claude no los inventa.' : 'Pon el ARV y las reparaciones para ver la oferta máxima (regla del 70%).') + '</p>';
+        })() +
         (cur.notes ? '<p class="pnote">' + esc(cur.notes) + '</p>' : '') +
         '<iframe title="Mapa de ' + esc(propFull(cur)) + '" loading="lazy" referrerpolicy="no-referrer" src="https://maps.google.com/maps?q=' + q + '&z=17&output=embed"></iframe>' +
         '<p class="pnote">Si el mapa no carga aquí, usa «Abrir en Google Maps».</p>' +
@@ -1493,7 +1522,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var a = byId('oport'); function show(t) { PROP_ANS[x.id] = t; var p = $('#props .aans'); if (!p) { renderProps(); p = $('#props .aans'); } if (p) p.textContent = t; }
     if (!SAMPLE) { show('Aquí no puedo consultar a Claude. Datos que tengo: ' + propFull(x) + ', ' + money(x.price) + '. ' + (x.notes || '')); return; }
     var sk = skillsOf('oport').map(function (m) { return m.title + ': ' + m.body; }).join(' | ');
-    var prompt = 'Eres «Oportunidades», agente de Imperial Remodeling (remodelación en Dallas–Fort Worth). Propiedad: ' + propFull(x) + ', precio ' + money(x.price) + ', ' + (x.sqft || '?') + ' pies², ' + (x.beds || '?') + ' rec, ' + (x.baths || '?') + ' baños, año ' + (x.year || '?') + '. Notas: ' + (x.notes || 'ninguna') + '. Skills que el dueño te enseñó: ' + (sk || 'ninguna') + '. Responde en español, máximo 5 líneas, en primera persona, solo con estos datos; no inventes precios de obra ni valores de reventa: si faltan, di qué dato necesitas. Nunca prometas contactar a nadie ni enviar nada sin aprobación del dueño.\n\nPregunta del dueño: ' + String(q).slice(0, 200);
+    var prompt = 'Eres «Oportunidades», agente de Imperial Remodeling (remodelación en Dallas–Fort Worth). Propiedad: ' + propFull(x) + ', precio ' + money(x.price) + ', ' + (x.sqft || '?') + ' pies², ' + (x.beds || '?') + ' rec, ' + (x.baths || '?') + ' baños, año ' + (x.year || '?') + '. Notas: ' + (x.notes || 'ninguna') + '. Skills que el dueño te enseñó: ' + (sk || 'ninguna') + '. Estado de verificación: ' + VER[verOf(x)].t + (x.arv ? '; ARV del dueño ' + money(x.arv) : '') + '. REGLA: no llames «oportunidad» a nada que el dueño no haya confirmado como real y off-market; si está sin confirmar, pídele que lo confirme. Responde en español, máximo 5 líneas, en primera persona, solo con estos datos; no inventes precios de obra ni valores de reventa: si faltan, di qué dato necesitas. Nunca prometas contactar a nadie ni enviar nada sin aprobación del dueño.\n\nPregunta del dueño: ' + String(q).slice(0, 200);
     show('Pensando…');
     SAMPLE(prompt, { onText: function (o) { var p = $('#props .aans'); if (p) p.textContent = o.text; } }).then(function (rr) { var t = (rr && rr.text) || 'No tengo respuesta ahora.'; show(t); if (a) addUsage('oport', est(prompt), est(t), 'pregunta sobre propiedad'); }).catch(function () { show('No pude consultar a Claude ahora.'); });
   }
@@ -1502,10 +1531,12 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (b.hasAttribute('data-pclose')) { propOpen = false; renderProps(); }
     else if (b.dataset.psel) { propSel = b.dataset.psel; renderProps(); }
     else if (b.dataset.pstat && cur) saveProp(cur, { status: b.dataset.pstat });
+    else if (b.dataset.pverif && cur) { saveProp(cur, { verif: b.dataset.pverif, verifAt: Date.now(), verifBy: 'Ernesto' }); logEvent('Propiedad ' + cur.addr + ': ' + VER[b.dataset.pverif].t.toLowerCase() + ' (confirmado por ti)', 'oport', 'ok'); toast(VER[b.dataset.pverif].e + ' ' + VER[b.dataset.pverif].t); if (b.dataset.pverif === 'real_off') { ackCall(byId('oport')); } }
     else if (b.hasAttribute('data-pcopy') && cur) { var t = propFull(cur); try { navigator.clipboard.writeText(t).then(function () { toast('Dirección copiada'); }, function () { toast(t); }); } catch (er) { toast(t); } }
   });
   $('#props').addEventListener('submit', function (e) {
     e.preventDefault(); var f = e.target;
+    if (f.hasAttribute('data-pcalc')) { var cur0 = PROPS.filter(function (x) { return x.id === propSel; })[0]; if (cur0) { var fd = f.elements; saveProp(cur0, { arv: +fd.arv.value || 0, repair: fd.repair.value === '' ? null : +fd.repair.value }); } return; }
     if (f.hasAttribute('data-pask')) { var inp = f.querySelector('input'), q = inp.value.trim(), cur = PROPS.filter(function (x) { return x.id === propSel; })[0]; if (q && cur) { inp.value = ''; askProp(cur, q); } return; }
     if (f.hasAttribute('data-padd')) {
       var ins = f.querySelectorAll('input'), line = ins[0].value.trim(); if (!line) { ins[0].focus(); return; }
@@ -1525,7 +1556,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var br = agentBrief(a);
     if (!SAMPLE) { var t0 = 'Aquí no puedo consultar a Claude, pero esto es lo que sé. ' + br.speech; show(t0); voiceSay(a, t0, null, false, true); return; }
     var mine = openTasks().filter(function (t) { return t.agent === a.id; }).slice(0, 4).map(function (t) { return t.title; }).join('; ');
-    var prompt = 'Eres «' + a.name + '», agente de la Torre de Control de Imperial Remodeling (remodelación en Dallas–Fort Worth). Tu función: ' + a.role + ' Estado: ' + LBL[a.status] + '. Haciendo ahora: ' + a.act + '. ' + br.doing + ' Tareas próximas: ' + (mine || 'ninguna') + '. Responde en primera persona, en español, máximo 4 líneas, solo con lo que sabes; si no lo sabes, dilo. Nunca prometas enviar ni contestar nada a terceros sin la aprobación del dueño.' + (skillsOf(a.id).length ? ' Skills que el dueño te enseñó (úsalas): ' + skillsOf(a.id).slice(0, 8).map(function (m) { return m.body; }).join(' | ') + '.' : '') + (a.id === 'oport' && PROPS.length ? ' Propiedades que tienes ahora (con dirección exacta): ' + propSummary() + '. Si te piden una dirección, dala completa y ofrece abrir el mapa.' : '') + '\n\nPregunta del dueño: ' + String(q).slice(0, 200);
+    var prompt = 'Eres «' + a.name + '», agente de la Torre de Control de Imperial Remodeling (remodelación en Dallas–Fort Worth). Tu función: ' + a.role + ' Estado: ' + LBL[a.status] + '. Haciendo ahora: ' + a.act + '. ' + br.doing + ' Tareas próximas: ' + (mine || 'ninguna') + '. Responde en primera persona, en español, máximo 4 líneas, solo con lo que sabes; si no lo sabes, dilo. Nunca prometas enviar ni contestar nada a terceros sin la aprobación del dueño.' + (skillsOf(a.id).length ? ' Skills que el dueño te enseñó (úsalas): ' + skillsOf(a.id).slice(0, 8).map(function (m) { return m.body; }).join(' | ') + '.' : '') + (a.id === 'oport' && PROPS.length ? ' Propiedades que tienes ahora (con dirección exacta): ' + propSummary() + '. Si te piden una dirección, dala completa y ofrece abrir el mapa. SIEMPRE recuerda confirmar con el dueño si cada casa es real y está off-market (hay ' + pendingProps().length + ' sin confirmar); nunca presentes algo sin confirmar como oportunidad.' : '') + '\n\nPregunta del dueño: ' + String(q).slice(0, 200);
     show('Pensando…');
     SAMPLE(prompt, { onText: function (o) { var p = $('#card .aans'); if (p && selected === a.id) p.textContent = o.text; } }).then(function (r) { var t = (r && r.text) || 'No tengo respuesta ahora.'; show(t); addUsage(a.id, est(prompt), est(t), 'pregunta al agente'); voiceSay(a, t, null, false, true); }).catch(function () { show('No pude consultar a Claude ahora. Inténtalo otra vez.'); });
   }
@@ -3343,6 +3374,130 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       return { root: root, bridges: bridgeGroup, update: update, count: count, pods: pods.length, lanes: lanesOut };
     })();
 
+
+    /* ---- Anexo EVR · Propiedades: torre futurista donde trabaja Oportunidades, con mapa holográfico de todas las casas ---- */
+    var annex = (function () {
+      var T3 = THREE, oport = AGENTS.filter(function (x) { return x.id === 'oport'; })[0]; if (!oport) return null;
+      var R0 = 5.4, deckY = oport.y - 0.2, best = null, dist, k, ax = -26, az = -26;
+      for (dist = 31; dist <= 52 && !best; dist += 1.5) for (k = 0; k < 24 && !best; k++) {
+        var an0 = (k * 15 + 7.5) * Math.PI / 180, x0 = Math.cos(an0) * dist, z0 = Math.sin(an0) * dist, okp = true;
+        if (Math.abs(x0) < HX[0] + 9 && Math.abs(z0) < HZ[0] + 9) okp = false;
+        if (Math.abs(x0) < 11 || Math.abs(z0) < 11) okp = false;
+        for (var bi = 0; okp && bi < BLDS.length; bi++) { var b0 = BLDS[bi], dx0 = Math.max(Math.abs(x0 - b0.x) - b0.w / 2, 0), dz0 = Math.max(Math.abs(z0 - b0.z) - b0.d / 2, 0); if (Math.hypot(dx0, dz0) < R0 + 4) okp = false; }
+        if (okp) best = { x: x0, z: z0 };
+      }
+      if (best) { ax = best.x; az = best.z; }
+      var G = new T3.Group(); G.position.set(ax, 0, az); scene.add(G);
+      var glassM = new T3.MeshStandardMaterial({ color: 0x0c2233, roughness: 0.15, metalness: 0.85, emissive: 0x0b5a86, emissiveIntensity: 0.55, transparent: true, opacity: 0.92 });
+      var darkM = new T3.MeshStandardMaterial({ color: 0x0a1622, roughness: 0.3, metalness: 0.8, emissive: 0x123a55, emissiveIntensity: 0.5 });
+      function addM(c, o) { return new T3.MeshBasicMaterial({ color: c, transparent: true, opacity: o == null ? 0.8 : o, blending: T3.AdditiveBlending, depthWrite: false, side: T3.DoubleSide, fog: false }); }
+      var edgeM = new T3.LineBasicMaterial({ color: 0x7fe0ff, transparent: true, opacity: 0.8 });
+      /* base */
+      var plinth = new T3.Mesh(new T3.CylinderGeometry(7.4, 8.4, 1.2, 6), darkM); plinth.position.y = 0.6; G.add(plinth);
+      var baseRing = new T3.Mesh(new T3.TorusGeometry(8.7, 0.12, 6, 72), addM(0x5cffe6, 0.85)); baseRing.rotation.x = Math.PI / 2; baseRing.position.y = 1.25; G.add(baseRing);
+      var gl = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0x5cc8ff, transparent: true, opacity: 0.4, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); gl.scale.set(34, 34, 1); gl.position.y = 1.6; G.add(gl);
+      /* cuerpo helicoidal de 9 niveles hexagonales con anillos de color */
+      var ringCols = [0x5cc8ff, 0xa78bfa, 0xffc94d];
+      for (var i = 0; i < 9; i++) {
+        var rb = 5.1 - i * 0.2, seg = new T3.Mesh(new T3.CylinderGeometry(rb - 0.2, rb, 6.2, 6), glassM); seg.position.y = 1.2 + 6.2 * i + 3.1; seg.rotation.y = i * 0.17; G.add(seg);
+        var eg = new T3.LineSegments(new T3.EdgesGeometry(seg.geometry), edgeM); eg.position.copy(seg.position); eg.rotation.copy(seg.rotation); G.add(eg);
+        var rg = new T3.Mesh(new T3.TorusGeometry(rb - 0.05, 0.07, 6, 6), addM(ringCols[i % 3], 0.9)); rg.rotation.x = Math.PI / 2; rg.rotation.z = i * 0.17; rg.position.y = 1.2 + 6.2 * (i + 1); G.add(rg);
+        for (var wq = 0; wq < 6; wq++) { var win = new T3.Mesh(new T3.PlaneGeometry(0.9, 2.2), addM(i % 2 ? 0xffd27a : 0x9fe8ff, 0.55)); var wa = wq / 6 * Math.PI * 2 + seg.rotation.y + 0.52; win.position.set(Math.sin(wa) * (rb - 0.62), seg.position.y, Math.cos(wa) * (rb - 0.62)); win.rotation.y = wa; G.add(win); }
+      }
+      [0, 2.094, 4.188].forEach(function (b0, bi2) {
+        var pts = []; for (var t = 0; t <= 1.0001; t += 0.02) { var ang2 = b0 + t * 1.53, rr = 5.35 - t * 1.75; pts.push(new T3.Vector3(Math.sin(ang2) * rr, 1.2 + t * 55.8, Math.cos(ang2) * rr)); }
+        G.add(new T3.Mesh(new T3.TubeGeometry(new T3.CatmullRomCurve3(pts), 90, 0.1, 5, false), addM(bi2 === 1 ? 0xa78bfa : 0x5cffe6, 0.9)));
+      });
+      var neck = new T3.Mesh(new T3.CylinderGeometry(2.2, 2.6, 4.4, 12), darkM); neck.position.y = 59.2; G.add(neck);
+      var cone = new T3.Mesh(new T3.CylinderGeometry(6.4, 2.4, 1.7, 24), darkM); cone.position.y = 61.85; G.add(cone);
+      /* anillos giroscópicos */
+      var gyros = [[8.8, 18, 0.0, 0.35, 0x5cc8ff], [7.7, 34, 0.5, -0.5, 0xa78bfa], [6.7, 50, -0.4, 0.7, 0xffc94d]].map(function (c) {
+        var gm = new T3.Mesh(new T3.TorusGeometry(c[0], 0.06, 6, 100), addM(c[4], 0.75)); gm.position.y = c[1]; gm.rotation.x = Math.PI / 2 + c[2]; gm.userData.w = c[3]; G.add(gm); return gm;
+      });
+      /* cubierta de observación */
+      var deck = new T3.Mesh(new T3.CylinderGeometry(6.4, 6.4, 0.3, 48), darkM); deck.position.y = deckY - 0.15; G.add(deck);
+      var rim = new T3.Mesh(new T3.TorusGeometry(6.4, 0.1, 6, 72), addM(0x5cffe6, 0.95)); rim.rotation.x = Math.PI / 2; rim.position.y = deckY + 0.02; G.add(rim);
+      var gcv = document.createElement('canvas'); gcv.width = gcv.height = 256; var gg = gcv.getContext('2d'); gg.strokeStyle = 'rgba(92,255,230,.55)'; gg.lineWidth = 2; for (var gr = 1; gr <= 5; gr++) { gg.beginPath(); gg.arc(128, 128, gr * 24, 0, 6.3); gg.stroke(); } for (var ga = 0; ga < 16; ga++) { gg.beginPath(); gg.moveTo(128, 128); gg.lineTo(128 + Math.cos(ga * 0.3927) * 126, 128 + Math.sin(ga * 0.3927) * 126); gg.stroke(); }
+      var floorG = new T3.Mesh(new T3.CircleGeometry(6.3, 48), new T3.MeshBasicMaterial({ map: new T3.CanvasTexture(gcv), transparent: true, opacity: 0.55, blending: T3.AdditiveBlending, depthWrite: false, fog: false })); floorG.rotation.x = -Math.PI / 2; floorG.position.y = deckY + 0.03; G.add(floorG);
+      var wall = new T3.Mesh(new T3.CylinderGeometry(6.3, 6.3, 1.1, 48, 1, true), addM(0x7fe0ff, 0.16)); wall.position.y = deckY + 0.55; G.add(wall);
+      var wallTop = new T3.Mesh(new T3.TorusGeometry(6.3, 0.05, 6, 72), addM(0x9fe8ff, 0.9)); wallTop.rotation.x = Math.PI / 2; wallTop.position.y = deckY + 1.1; G.add(wallTop);
+      /* corona de costillas y antena */
+      for (var j = 0; j < 6; j++) {
+        var ja2 = j / 6 * Math.PI * 2, cv0 = new T3.QuadraticBezierCurve3(new T3.Vector3(Math.cos(ja2) * 6.2, deckY, Math.sin(ja2) * 6.2), new T3.Vector3(Math.cos(ja2) * 3.4, deckY + 8.5, Math.sin(ja2) * 3.4), new T3.Vector3(0, deckY + 14.5, 0));
+        G.add(new T3.Mesh(new T3.TubeGeometry(cv0, 30, 0.1, 5, false), addM(j % 2 ? 0xa78bfa : 0x5cffe6, 0.8)));
+      }
+      var spire = new T3.Mesh(new T3.CylinderGeometry(0.05, 0.35, 11, 8), new T3.MeshBasicMaterial({ color: 0xdff4ff })); spire.position.y = deckY + 20; G.add(spire);
+      var beacon = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xffc94d, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); beacon.scale.set(9, 9, 1); beacon.position.y = deckY + 26; G.add(beacon);
+      var sg = document.createElement('canvas'); sg.width = 640; sg.height = 160; var sc = sg.getContext('2d'); sc.textAlign = 'center'; sc.fillStyle = '#e8fbff'; sc.shadowColor = '#5cffe6'; sc.shadowBlur = 18; sc.font = '600 52px sans-serif'; sc.fillText('ANEXO EVR', 320, 66); sc.font = '500 34px sans-serif'; sc.fillStyle = '#ffd27a'; sc.shadowColor = '#ffb020'; sc.fillText('PROPIEDADES · OFF-MARKET', 320, 118);
+      var sign = new T3.Sprite(new T3.SpriteMaterial({ map: new T3.CanvasTexture(sg), transparent: true, depthWrite: false, depthTest: false, blending: T3.AdditiveBlending, fog: false })); sign.scale.set(17, 4.25, 1); sign.position.y = deckY + 31; sign.renderOrder = 12; G.add(sign);
+      /* mesa holográfica con el mapa de las tres ciudades */
+      var table = new T3.Group(); table.position.y = deckY; G.add(table);
+      var ped = new T3.Mesh(new T3.CylinderGeometry(1.5, 2.0, 0.9, 24), darkM); ped.position.y = 0.45; table.add(ped);
+      var pr = new T3.Mesh(new T3.TorusGeometry(1.6, 0.05, 6, 48), addM(0x5cffe6, 0.95)); pr.rotation.x = Math.PI / 2; pr.position.y = 0.92; table.add(pr);
+      var beam = new T3.Mesh(new T3.CylinderGeometry(3.9, 0.3, 1.35, 32, 1, true), addM(0x5cffe6, 0.07)); beam.position.y = 1.58; table.add(beam);
+      var mc = document.createElement('canvas'); mc.width = mc.height = 512; var mg = mc.getContext('2d');
+      mg.fillStyle = 'rgba(4,28,44,.78)'; mg.beginPath(); mg.arc(256, 256, 250, 0, 6.3); mg.fill(); mg.strokeStyle = 'rgba(92,255,230,.7)'; mg.lineWidth = 3; for (var q = 1; q <= 5; q++) { mg.beginPath(); mg.arc(256, 256, q * 50, 0, 6.3); mg.stroke(); }
+      mg.lineWidth = 1.5; for (var qa = 0; qa < 24; qa++) { mg.beginPath(); mg.moveTo(256, 256); mg.lineTo(256 + Math.cos(qa * 0.2618) * 250, 256 + Math.sin(qa * 0.2618) * 250); mg.stroke(); }
+      var SECT = { plano: [0.9, 'PLANO', '#7fe0ff'], frisco: [-1.2, 'FRISCO', '#c7b3ff'], mckinney: [3.0, 'McKINNEY', '#ffd27a'] };
+      Object.keys(SECT).forEach(function (kk) { var sct = SECT[kk], a0 = sct[0]; mg.fillStyle = sct[2]; mg.globalAlpha = 0.12; mg.beginPath(); mg.moveTo(256, 256); mg.arc(256, 256, 248, a0 - 1.0, a0 + 1.0); mg.closePath(); mg.fill(); mg.globalAlpha = 1; mg.font = '600 30px sans-serif'; mg.textAlign = 'center'; mg.shadowColor = sct[2]; mg.shadowBlur = 10; mg.fillText(sct[1], 256 + Math.cos(a0) * 214, 264 + Math.sin(a0) * 214); mg.shadowBlur = 0; });
+      var mapM = new T3.Mesh(new T3.CircleGeometry(4.0, 64), new T3.MeshBasicMaterial({ map: new T3.CanvasTexture(mc), transparent: true, opacity: 0.6, blending: T3.AdditiveBlending, depthWrite: false, side: T3.DoubleSide, fog: false })); mapM.rotation.x = -Math.PI / 2; mapM.position.y = 2.25; table.add(mapM);
+      var mapRim = new T3.Mesh(new T3.TorusGeometry(4.0, 0.04, 6, 80), addM(0x9fe8ff, 0.6)); mapRim.rotation.x = Math.PI / 2; mapRim.position.y = 2.25; table.add(mapRim);
+      var sweep = new T3.Mesh(new T3.PlaneGeometry(4.0, 0.12), addM(0x5cffe6, 0.55)); sweep.rotation.x = -Math.PI / 2; sweep.position.y = 2.27; var sweepG = new T3.Group(); sweepG.position.y = 0; sweepG.add(sweep); sweep.position.x = 2.0; table.add(sweepG);
+      var pinsG = new T3.Group(); pinsG.position.y = 2.25; table.add(pinsG);
+      /* tablero informativo */
+      var bc = document.createElement('canvas'); bc.width = 1024; bc.height = 400; var btex = new T3.CanvasTexture(bc);
+      var board = new T3.Mesh(new T3.PlaneGeometry(8.2, 3.2), new T3.MeshBasicMaterial({ map: btex, transparent: true, blending: T3.AdditiveBlending, depthWrite: false, side: T3.DoubleSide, fog: false }));
+      var baseAng = Math.atan2(-az, -ax); board.position.set(-Math.cos(baseAng) * 5.7, deckY + 3.3, -Math.sin(baseAng) * 5.7); board.rotation.y = Math.atan2(Math.cos(baseAng), Math.sin(baseAng)) + Math.PI; G.add(board);
+      var PCOL = { pendiente: 0x5cc8ff, real_off: 0xffc94d, real_mls: 0xa78bfa, no_real: 0xff6a6a }, pinSig = '', pinList = [];
+      function hash(sx) { var h = 7; for (var c = 0; c < sx.length; c++) h = (h * 31 + sx.charCodeAt(c)) % 9973; return h / 9973; }
+      function drawBoard(cnt, n) {
+        var g = bc.getContext('2d'); g.clearRect(0, 0, 1024, 400); g.strokeStyle = 'rgba(92,255,230,.85)'; g.lineWidth = 4; g.strokeRect(6, 6, 1012, 388); g.fillStyle = 'rgba(4,22,34,.55)'; g.fillRect(8, 8, 1008, 384);
+        g.textAlign = 'left'; g.fillStyle = '#9fe8ff'; g.font = '600 40px sans-serif'; g.fillText('OPORTUNIDADES · PLANO · FRISCO · McKINNEY', 36, 66); g.fillStyle = '#ffffff'; g.font = '700 92px sans-serif'; g.fillText(String(n), 36, 170); g.font = '500 34px sans-serif'; g.fillStyle = '#bfeaff'; g.fillText(n === 1 ? 'propiedad en el mapa' : 'propiedades en el mapa', 140, 168);
+        var rows = [['real_off', 'REAL Y OFF-MARKET'], ['pendiente', 'SIN CONFIRMAR'], ['real_mls', 'REAL, PERO EN EL MLS'], ['no_real', 'NO ES REAL']];
+        rows.forEach(function (rw, ri) { var yy = 222 + ri * 38, col = '#' + ('000000' + PCOL[rw[0]].toString(16)).slice(-6); g.fillStyle = col; g.beginPath(); g.arc(50, yy - 11, 11, 0, 6.3); g.fill(); g.fillStyle = '#e8fbff'; g.font = '500 30px sans-serif'; g.fillText((cnt[rw[0]] || 0) + '  ' + rw[1], 76, yy); });
+        g.fillStyle = '#ffd27a'; g.font = '500 24px sans-serif'; g.fillText('Nada es oportunidad hasta que tú confirmes que es real y off-market.', 36, 382); btex.needsUpdate = true;
+      }
+      drawBoard({}, 0);
+      function setProps(list) {
+        var sig = list.map(function (x) { return x.id + (x.verif || '') + (x.status || '') + (x.city || '') + x.addr; }).join('|'); if (sig === pinSig) return; pinSig = sig;
+        for (var pi = pickables.length - 1; pi >= 0; pi--) if (pickables[pi].userData.prop) pickables.splice(pi, 1);
+        while (pinsG.children.length) { var ch = pinsG.children.pop(); ch.traverse(function (o) { if (o.geometry) o.geometry.dispose(); if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } }); }
+        pinList = []; var cnt = {};
+        list.forEach(function (pp) {
+          var v = verOf(pp), disc = pp.status === 'descartada', col = disc ? 0x667788 : PCOL[v]; cnt[v] = (cnt[v] || 0) + 1;
+          var sect = SECT[String(pp.city || '').toLowerCase().replace(/[^a-z]/g, '')], h1 = hash(pp.id + 'a'), h2 = hash(pp.id + 'b'), an1 = (sect ? sect[0] : 2.0 + h2 * 4) + (h1 - 0.5) * 1.5, rad = sect ? 1.3 + h2 * 2.0 : 3.5;
+          var g = new T3.Group(); g.position.set(Math.cos(an1) * rad, 0, Math.sin(an1) * rad);
+          var big = v === 'real_off' && !disc, hgt = big ? 1.5 : 1.0;
+          var stem = new T3.Mesh(new T3.CylinderGeometry(0.03, 0.03, hgt, 6), addM(col, 0.9)); stem.position.y = hgt / 2; g.add(stem);
+          var gem = new T3.Mesh(new T3.OctahedronGeometry(big ? 0.3 : 0.2), new T3.MeshBasicMaterial({ color: col, fog: false })); gem.position.y = hgt + 0.2; g.add(gem);
+          var halo = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: col, transparent: true, opacity: 0.7, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); halo.scale.set(big ? 1.8 : 1.1, big ? 1.8 : 1.1, 1); halo.position.y = hgt + 0.2; g.add(halo);
+          var lc = document.createElement('canvas'); lc.width = 320; lc.height = 72; var lx = lc.getContext('2d'); lx.textAlign = 'center'; lx.font = '600 34px sans-serif'; lx.fillStyle = '#ffffff'; lx.shadowColor = '#000'; lx.shadowBlur = 6; lx.fillText(pp.addr.length > 16 ? pp.addr.slice(0, 15) + '…' : pp.addr, 160, 36); lx.font = '500 24px sans-serif'; lx.fillStyle = '#' + ('000000' + col.toString(16)).slice(-6); lx.fillText(v === 'real_off' ? 'OFF-MARKET ✔' : v === 'pendiente' ? 'sin confirmar' : v === 'real_mls' ? 'en el MLS' : 'no real', 160, 64);
+          var lab = new T3.Sprite(new T3.SpriteMaterial({ map: new T3.CanvasTexture(lc), transparent: true, depthWrite: false, depthTest: false, fog: false })); lab.scale.set(2.5, 0.56, 1); lab.position.y = hgt + 0.85; lab.renderOrder = 13; g.add(lab);
+          var hb = new T3.Mesh(new T3.SphereGeometry(0.6, 8, 6), new T3.MeshBasicMaterial({ visible: false })); hb.position.y = hgt * 0.7; hb.userData.prop = { id: pp.id }; g.add(hb); pickables.push(hb);
+          pinsG.add(g); pinList.push({ g: g, gem: gem, halo: halo, hgt: hgt, ph: h1 * 6.28, v: v, disc: disc });
+        });
+        drawBoard(cnt, list.length);
+      }
+      /* pasarela de cristal entre el piso 12 de la torre y la cubierta del anexo */
+      var d = new T3.Vector3(ax, 0, az), L0 = d.length(); d.normalize();
+      var hxr = HX[2] + 0.6, hzr = HZ[2] + 0.6, tt = Math.min(hxr / Math.max(Math.abs(d.x), 1e-4), hzr / Math.max(Math.abs(d.z), 1e-4)), st = d.clone().multiplyScalar(tt), en = new T3.Vector3(ax, 0, az).addScaledVector(d, -6.2), Lb = st.distanceTo(en);
+      var BG = new T3.Group(); BG.position.set((st.x + en.x) / 2, deckY + 1.6, (st.z + en.z) / 2); BG.rotation.y = -Math.atan2(d.z, d.x); scene.add(BG);
+      var tube = new T3.Mesh(new T3.CylinderGeometry(1.9, 1.9, Lb, 14, 1, true), addM(0x7fe0ff, 0.17)); tube.rotation.z = Math.PI / 2; BG.add(tube);
+      var bdeck = new T3.Mesh(new T3.BoxGeometry(Lb, 0.25, 2.6), darkM); bdeck.position.y = -1.6; BG.add(bdeck);
+      [-1, 1].forEach(function (sd) { var ln = new T3.Mesh(new T3.BoxGeometry(Lb, 0.07, 0.07), addM(0x5cffe6, 0.95)); ln.position.set(0, -1.45, sd * 1.25); BG.add(ln); var ln2 = new T3.Mesh(new T3.BoxGeometry(Lb, 0.05, 0.05), addM(0xa78bfa, 0.8)); ln2.position.set(0, 1.9, sd * 0.5); BG.add(ln2); });
+      for (var rbp = 1; rbp < Math.floor(Lb / 3.2); rbp++) { var rbm = new T3.Mesh(new T3.TorusGeometry(1.9, 0.04, 5, 28), addM(0x9fe8ff, 0.7)); rbm.rotation.y = Math.PI / 2; rbm.position.x = -Lb / 2 + rbp * 3.2; BG.add(rbm); }
+      for (var pil = 1; pil < Math.floor(Lb / 12); pil++) { var px = st.x + d.x * pil * 12, pz = st.z + d.z * pil * 12, pyl = new T3.Mesh(new T3.CylinderGeometry(0.35, 0.5, deckY + 0.3, 8), darkM); pyl.position.set(px, (deckY - 0.1) / 2, pz); scene.add(pyl); }
+      var carry = []; for (var cp = 0; cp < 3; cp++) { var cs = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: cp % 2 ? 0xffc94d : 0x9fe8ff, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); cs.scale.set(2.4, 2.4, 1); BG.add(cs); carry.push({ s: cs, u: cp / 3 }); }
+      oport.annex = { x: ax, z: az, r: 2.55, baseAng: baseAng + 0.0, camAng: Math.atan2(az, ax) };
+      function update(t, dt, tier) {
+        gyros.forEach(function (gm, i) { gm.rotation.z += gm.userData.w * dt; gm.visible = tier < 2; });
+        baseRing.material.opacity = 0.6 + 0.35 * Math.sin(t * 2.2); sweepG.rotation.y = -t * 0.9; beam.material.opacity = 0.06 + 0.03 * Math.sin(t * 3); beacon.material.opacity = 0.65 + 0.35 * Math.sin(t * 3.4);
+        pinList.forEach(function (pn) { var pulse = pn.disc ? 0.3 : pn.v === 'real_off' ? 0.7 + 0.3 * Math.sin(t * 5 + pn.ph) : 0.55 + 0.25 * Math.sin(t * 2.4 + pn.ph); pn.halo.material.opacity = pulse; pn.gem.position.y = pn.hgt + 0.2 + Math.sin(t * 1.6 + pn.ph) * 0.07; pn.halo.position.y = pn.gem.position.y; pn.gem.rotation.y += dt * 1.8; });
+        carry.forEach(function (c) { c.u += dt * 0.12; if (c.u > 1) c.u -= 1; c.s.position.set(-Lb / 2 + c.u * Lb, 0, 0); });
+      }
+      return { update: update, setProps: setProps, pos: { x: ax, z: az }, info: function () { return { x: ax, z: az, pins: pinList.length, bridge: Lb }; } };
+    })();
+
     /* ---- Tráfico: autos autónomos y tranvías/maglev modernos sobre calles, puentes y anillos ---- */
     var traffic = (function () {
       var T3 = THREE, UPv = new T3.Vector3(0, 1, 0), dum = new T3.Object3D(); dum.rotation.order = 'YZX';
@@ -3687,7 +3842,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     canvas.addEventListener('pointerup', function (e) {
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
-      if (wasTap) { var ud = hit(e); if (ud && ud.jarvis) { unlockAudio(); if (!$('#jarvis').hidden) jarvisClose(); else jarvisOpen(false); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
+      if (wasTap) { var ud = hit(e); if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { unlockAudio(); if (!$('#jarvis').hidden) jarvisClose(); else jarvisOpen(false); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
     canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; });
@@ -3700,6 +3855,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       var jvp = new THREE.Vector3(); if (ray.ray.intersectSphere(jvHit.clone().applyMatrix4(tower.matrixWorld), jvp)) return { jarvis: true };
       for (var q = 0; q < r.length; q++) {
         var ud = r[q].object.userData;
+        if (ud.prop) return ud;
         if (ud.meteor) { if (ray.ray.distanceToPoint(ud.meteor.g.position) <= (ud.meteor.gold ? 8 : 6)) return ud; continue; }
         if (ud.agent && !ud.floor) { if (!robot && ud.agent.v.ghost > 0.45) robot = ud; continue; }
         if (!first) { if (ud.floor) { var o = ray.ray.origin, dr = ray.ray.direction, hd = dr.x * dr.x + dr.z * dr.z, tc = hd > 1e-9 ? -(o.x * dr.x + o.z * dr.z) / hd : 0, yc = o.y + dr.y * Math.max(0, tc), fa = AGENTS[Math.max(0, Math.min(N - 1, Math.floor((yc - Y0) / FH)))], bd = 9, pv = new THREE.Vector3();
@@ -3888,7 +4044,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
           else if (st === 'warning') { v.walk = true; v.timer = 5; }
           else { v.walk = false; v.timer = 6 + rnd() * 5; v.pose = ['look', 'think', 'stretch', 'rest'][Math.floor(rnd() * 4)]; }
         }
-        var wantSeat = (st === 'working' || st === 'idle'), seatWalk = 0;
+        var wantSeat = (st === 'working' || st === 'idle') && !a.annex, seatWalk = 0;
         var dA = Math.atan2(Math.sin(a.deskAng - a.ang), Math.cos(a.deskAng - a.ang));
         if (wantSeat) {
           if (Math.abs(dA) > 0.05 && v.seat < 0.02) { a.ang += Math.sign(dA) * Math.min(Math.abs(dA), 0.6 * dt); seatWalk = 1; v.rad += (a.R - v.rad) * Math.min(1, dt * 3); }
@@ -3910,6 +4066,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         else if (v.vel > 0.02) { var pd = (Math.cos(v.pace || 0) >= 0 ? 1 : -1) * a.dir; yaw = Math.atan2(-pd * sz, pd * cx); }
         else if (working) yaw = Math.atan2(-cx, -sz);
         else yaw = Math.atan2(cx, sz);
+        if (a.annex) { var an2 = a.annex, pa2 = an2.baseAng + Math.sin(v.pace || 0) * 0.6; rb.position.set(an2.x + Math.cos(pa2) * an2.r, a.y - 0.16 + (legW > 0.05 ? Math.abs(Math.sin(clockT * 7)) * 0.05 * legW : 0), an2.z + Math.sin(pa2) * an2.r); yaw = greeting ? Math.atan2(camP.x - rb.position.x, camP.z - rb.position.z) : Math.atan2(an2.x - rb.position.x, an2.z - rb.position.z); }
         var dyaw = yaw - rb.rotation.y; dyaw = Math.atan2(Math.sin(dyaw), Math.cos(dyaw)); rb.rotation.y += dyaw * Math.min(1, dt * 3);
         rb.rotation.z = st === 'error' ? Math.sin(clockT * 16) * 0.05 : 0;
         rb.scale.setScalar(sel ? 2.1 : 1.9);
@@ -4053,6 +4210,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       });
       if (skyFx) skyFx.update(sdt, clockT, tier, tier < 2);
       if (traffic) traffic.update(sdt, tier);
+      if (annex) annex.update(clockT, dt, tier);
       shipFx.update(dt, clockT, tier); liftFx.update(dt, clockT);
       if (hoverA && hoverA.v && hoverA.v.ghost > 0.45) { hoverRing.visible = true; hoverRing.position.y = hoverA.floorY - FH / 2 + 0.25; hoverRing.scale.set(hxOf(hoverA.i) / HX[0], 1, hzOf(hoverA.i) / HZ[0]); hoverRing.material.opacity = 0.45 + 0.3 * Math.sin(clockT * 5); } else hoverRing.visible = false;
       logo.rotation.y += sdt * 1.1; logoRing.rotation.y += sdt * 0.8;
@@ -4072,7 +4230,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
 
     return {
       applyVisual: applyVisual,
-      focus: function (a, fromTour) { cam.gtx = Math.cos(a.deskAng) * 4.5; cam.gtz = Math.sin(a.deskAng) * 4.5; cam.gty = a.y + 2; cam.gph = 1.3; cam.follow = a; cam.gr = window.innerWidth > 860 ? 44 : 58; if (!fromTour) { a.v.lastGreet = -99; greetAgent(a); } },
+      focus: function (a, fromTour) { if (a.annex) { cam.gtx = a.annex.x; cam.gtz = a.annex.z; cam.gty = a.y + 1.6; cam.gph = 1.25; cam.follow = { deskAng: a.annex.camAng }; cam.gr = window.innerWidth > 860 ? 36 : 50; if (!fromTour) { a.v.lastGreet = -99; greetAgent(a); } return; } cam.gtx = Math.cos(a.deskAng) * 4.5; cam.gtz = Math.sin(a.deskAng) * 4.5; cam.gty = a.y + 2; cam.gph = 1.3; cam.follow = a; cam.gr = window.innerWidth > 860 ? 44 : 58; if (!fromTour) { a.v.lastGreet = -99; greetAgent(a); } },
       home: function () { cam.gtx = 0; cam.gtz = 0; cam.gty = HOME.ty; cam.gr = HOME.r; cam.gph = 1.42; cam.follow = null; },
       setHolo: function (on) { HOLO.on = !!on; holoG.visible = HOLO.on; },
       handMove: function (dth, dph, zf, dty) {
@@ -4120,6 +4278,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       toggleCine: function () { CINE.want = !CINE.want; if (!CINE.want) CINE.on = false; cineUpdate(); layout(); return CINE.want; },
       cineOn: function () { return CINE.on; },
       trafficInfo: function () { return traffic.counts(); },
+      setProps: function (l) { if (annex) annex.setProps(l); },
+      annexInfo: function () { return annex ? annex.info() : null; },
       health: function () { return { tier: tier, cine: CINE.on, glLost: glLost, frameErrs: frameErrs }; },
       toggleSpeed: function () { speedMul = reduce ? 0.3 : (speedMul < 0.8 ? 1 : 0.55); return speedMul < 0.8 ? 'lenta' : 'normal'; }
     };
@@ -4234,7 +4394,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (window.console) console.error('3D ' + (err && err.stack || err));
     setFlat(true, 'Tu navegador no pudo iniciar el 3D. Esta es la versión simplificada de la torre.');
   }
-  refresh(true); renderHolo();
+  refresh(true); renderHolo(); if (scene3d && scene3d.setProps) scene3d.setProps(PROPS);
   applyUi(); syncScene(); renderProjects(); renderPosts(); renderMemory(); connectDb(); connectSample(); connectRoom();
   if (location.hash === '#tareas') tab('tasks');
 

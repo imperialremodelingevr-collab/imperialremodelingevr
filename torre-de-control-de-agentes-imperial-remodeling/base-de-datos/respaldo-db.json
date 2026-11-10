@@ -1919,7 +1919,8 @@
    "beds": 2,
    "baths": 1,
    "year": 1941,
-   "status": "nueva"
+   "status": "nueva",
+   "verif": "pendiente"
   },
   "p2": {
    "addr": "2624 Downing Dr",
@@ -1930,7 +1931,8 @@
    "beds": 4,
    "baths": 2.5,
    "year": 1975,
-   "status": "nueva"
+   "status": "nueva",
+   "verif": "pendiente"
   },
   "p3": {
    "addr": "3508 Gatewood Ln",
@@ -1940,7 +1942,8 @@
    "sqft": 1368,
    "beds": 3,
    "baths": 2,
-   "status": "nueva"
+   "status": "nueva",
+   "verif": "pendiente"
   },
   "p4": {
    "addr": "2605 FM 546",
@@ -1950,14 +1953,56 @@
    "beds": 3,
    "baths": 2,
    "year": 1940,
-   "status": "nueva"
+   "status": "nueva",
+   "verif": "pendiente"
   },
   "p5": {
    "addr": "1018 N College St",
    "city": "McKinney",
    "state": "TX",
    "price": 245000,
-   "status": "nueva"
+   "status": "nueva",
+   "verif": "pendiente"
+  },
+  "p13": {
+   "addr": "3361 P Ave",
+   "city": "Plano",
+   "state": "TX",
+   "zip": "75074",
+   "price": 265000,
+   "sqft": 1501,
+   "status": "nueva",
+   "verif": "pendiente"
+  },
+  "p14": {
+   "addr": "3912 Denham Way",
+   "city": "Plano",
+   "state": "TX",
+   "zip": "75023",
+   "price": 289900,
+   "sqft": 1451,
+   "status": "nueva",
+   "verif": "pendiente"
+  },
+  "p15": {
+   "addr": "2118 Chippendale Dr",
+   "city": "McKinney",
+   "state": "TX",
+   "zip": "75071",
+   "price": 300000,
+   "sqft": 1426,
+   "status": "nueva",
+   "verif": "pendiente"
+  },
+  "p16": {
+   "addr": "7781 Ruellia Road",
+   "city": "McKinney",
+   "state": "TX",
+   "zip": "75071",
+   "price": 289000,
+   "sqft": 1407,
+   "status": "nueva",
+   "verif": "pendiente"
   }
  }
 }
