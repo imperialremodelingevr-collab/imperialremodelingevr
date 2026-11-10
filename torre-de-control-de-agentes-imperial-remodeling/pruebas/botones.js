@@ -33,7 +33,7 @@ const results=[];
   await p.route('https://cdnjs.cloudflare.com/**', r => r.fulfill({ path: 'npm/package/build/three.min.js', contentType: 'application/javascript' }));
   await p.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
   await p.addInitScript(init); await p.addInitScript("window.__EVR_TEST__=true; window.__evrTest={icpt:true}; try{var _m=window.matchMedia;window.matchMedia=function(q){var r=_m.call(window,q);if(/reduced-motion/.test(q))return {matches:true,addListener(){},removeEventListener(){},addEventListener(){}};return r;}}catch(e){}");
-  let html = fs.readFileSync('site/index.html','utf8').replace('<head>','<head><meta name="viewport" content="width=device-width,initial-scale=1">').replace("applyUi(); syncScene();","window.__scene=scene3d; window.__sel=select; applyUi(); syncScene();");
+  let html = fs.readFileSync('site/index.html','utf8').replace('<head>','<head><meta name="viewport" content="width=device-width,initial-scale=1">').replace("applyUi(); syncScene();","window.__scene=scene3d; window.__sel=select; window.__byId=byId; applyUi(); syncScene();");
   fs.writeFileSync('site/func.html', html);
   await p.goto('http://127.0.0.1:8766/func.html', { waitUntil: 'commit', timeout: 120000 });
   const W=(ms)=>p.waitForTimeout(ms); await W(22000);
