@@ -86,4 +86,10 @@
   - Descarta solo las vendidas o fuera de criterio (con el motivo), y las puedes ver con «Ver descartadas por el agente».
   - Solo te avisa en la bandeja las de puntaje 60 o más. Confirmar «real y off-market» sigue siendo solo tuyo.
   - Red de la nube: se permitieron www.redfin.com y www.hudhomestore.gov, pero Redfin bloquea el acceso automático, así que el agente usa la búsqueda web.
+- [x] La torre te llama «Nesty» (bienvenida, saludos y Jarvis) y los robots que necesitan ayuda te llaman «Hey bro».
+- [x] Reactor de fusión IA en una isla industrial flotante a la orilla de la ciudad (zona de bots, separada de la comunidad de agentes):
+  - Cúpula de cristal con tokamak, bobinas doradas y plasma cuya potencia sube con los agentes que están trabajando.
+  - Dos torres de enfriamiento con vapor, y un conducto de energía elevado con pulsos de luz hasta la torre.
+  - Zona de obra con andamios, grúa y 4 bots soldando. Cada módulo que terminan enciende un nodo más de la red de energía en las azoteas, así que la ciudad va creciendo.
+  - Se toca en 3D o con «☢ Reactor de energía» en Más herramientas, y Jarvis responde a «estado del reactor».
 - [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.

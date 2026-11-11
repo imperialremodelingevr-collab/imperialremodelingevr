@@ -485,6 +485,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <button class="btn extra" id="btnHolo" type="button">Holograma: encendido</button>
       <button class="btn extra" id="btnMap" type="button">Mapa de la ciudad</button>
       <button class="btn extra" id="btnSky" type="button">Mirar al cielo</button>
+      <button class="btn extra" id="btnReactor" type="button">☢ Reactor de energía</button>
       <button class="btn extra" id="btnInside" type="button">Vista interior</button>
       <button class="btn extra" id="btnQuality" type="button">Calidad: automática</button>
       <button class="btn extra" id="btnRestart3d" type="button">Reiniciar vista 3D</button>
@@ -923,7 +924,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   setInterval(renderVoHint, 2000);
   function briefingText(welcome) {
     var al = alerts(), work = AGENTS.filter(function (a) { return a.status === 'working'; }).length, pend = (TASKS || []).filter(function (t) { return !t.done; }).length, bi = (INBOX || []).length;
-    var t = (welcome ? 'Bienvenido, jefe. Torre de control de Imperial Remodeling en línea. ' : '') + work + ' agentes trabajando. ';
+    var t = (welcome ? 'Bienvenido, Nesty. Torre de control de Imperial Remodeling en línea. ' : '') + work + ' agentes trabajando. ';
     t += al.length ? (al.length === 1 ? 'Un agente necesita ayuda: ' : al.length + ' agentes necesitan ayuda: ') + al.map(function (a) { return a.name; }).join(', ') + '. ' : 'Sin alertas. ';
     return t + 'Tienes ' + pend + ' tareas pendientes y ' + bi + ' elementos en la bandeja.' + (pendingProps().length ? ' Oportunidades tiene ' + pendingProps().length + ' propiedades sin confirmar: dime si son reales y están off-market.' : '');
   }
@@ -960,6 +961,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (/\b(sal|salir|salte|sacame|deja|dejar)\b/.test(n) && /\b(caminar|camina|recorrido)\b/.test(n)) { exitWalk(); return 'Dejé de caminar.'; }
     if (WALKING && /\b(llevame|guiame|gps|ir con|ve con|llevar)\b/.test(n)) { var ga = /\b(anexo|nave)\b/.test(n) ? byId('oport') : findAgentV(n); if (ga && scene3d) { scene3d.gpsTo(ga.id, true); return 'GPS: te llevo con ' + ga.name + '.'; } }
     if (/\b(camina|caminar|caminemos|recorrer|recorre|recorrido|pasear|pasea)\b/.test(n)) { var wa = /\b(anexo|nave)\b/.test(n) ? byId('oport') : (findAgentV(n) || (selected && byId(selected)) || byId('cotiz')); enterWalk(wa.id); return 'Caminando por ' + (wa.annex ? 'la nave anexo' : 'el piso de ' + wa.name) + '.'; }
+    if (/\b(reactor|generador|nuclear|energia)\b/.test(n)) { if (scene3d && scene3d.focusReactor) scene3d.focusReactor(); return reactorText(); }
     if (/\b(sal|salir|salte|sacame)\b/.test(n) && /\boficina\b/.test(n)) { exitOffice(); return 'Salí de la oficina.'; }
     if (/\b(entra|entrar|entrame|metete|llevame|pasame)\b/.test(n) && /\b(oficina|adentro|dentro)\b/.test(n)) { var oa = findAgentV(n) || (selected && byId(selected)) || byId('cotiz'); enterOffice(oa.id); return 'Entrando a la oficina de ' + oa.name + '.'; }
     if (/\b(vista interior|adentro|escritorios)\b/.test(n)) { $('#btnInside').click(); return 'Vista interior.'; }
@@ -1030,7 +1032,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
 
   /* ---------- Jarvis conversacional: Claude con herramientas dentro de la torre ---------- */
   var JCHAT = { turns: [], ctl: null, busy: false, tools: false, hands: false };
-  var JRULES = 'Eres Jarvis, el agente principal de la Torre de Control de Agentes de Imperial Remodeling (remodelación en Dallas–Fort Worth, dueño: Ernesto). Hablas en español, de forma cálida y directa; tus respuestas se leen en voz alta, así que usa frases cortas, sin listas largas ni formato Markdown (máximo 5 frases). Puedes consultar el estado de la torre y actuar con tus herramientas: enfocar un agente, abrir una sección, reiniciar o pausar agentes, crear tareas, guardar notas en la memoria y anotar mejoras. Después de actuar, di en una frase qué hiciste. REGLAS: nunca envíes ni contestes nada a clientes, correos, redes ni terceros; no apruebes recados de la bandeja ni toques cobros: para eso guía al dueño al botón correspondiente (abre la sección y dile cuál tocar). No inventes datos: si no lo sabes, dilo y ofrece revisarlo. Si una orden es ambigua, pregunta una sola cosa.';
+  var JRULES = 'Eres Jarvis, el agente principal de la Torre de Control de Agentes de Imperial Remodeling (remodelación en Dallas–Fort Worth, dueño: Ernesto; llámalo siempre «Nesty»). Hablas en español, de forma cálida y directa; tus respuestas se leen en voz alta, así que usa frases cortas, sin listas largas ni formato Markdown (máximo 5 frases). Puedes consultar el estado de la torre y actuar con tus herramientas: enfocar un agente, abrir una sección, reiniciar o pausar agentes, crear tareas, guardar notas en la memoria y anotar mejoras. Después de actuar, di en una frase qué hiciste. REGLAS: nunca envíes ni contestes nada a clientes, correos, redes ni terceros; no apruebes recados de la bandeja ni toques cobros: para eso guía al dueño al botón correspondiente (abre la sección y dile cuál tocar). No inventes datos: si no lo sabes, dilo y ofrece revisarlo. Si una orden es ambigua, pregunta una sola cosa.';
   function agentFrom(txt) { var n = normV(txt), a = null; AGENTS.forEach(function (x) { if (!a && (x.id === n || normV(x.name) === n)) a = x; }); return a || findAgentV(n) || AGENTS.filter(function (x) { return n && normV(x.name).indexOf(n) > -1; })[0] || null; }
   function jarvisState() {
     var r = jarvisReport(), L = ['Agentes:'];
@@ -1051,6 +1053,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       { name: 'exit_office', description: 'Sale de la oficina y vuelve a la vista de la torre.', execute: function () { exitOffice(); return 'Salí de la oficina'; } },
       { name: 'walk_floor', description: 'Activa el modo caminar en primera persona en el piso de un agente (o en la nave anexo de Oportunidades) para recorrerlo a pie; sin agente usa el seleccionado.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } } }, execute: function (i) { var a = (i && i.agent) ? need(i) : ((selected && byId(selected)) || byId('cotiz')); enterWalk(a.id); return 'Caminando por el piso de ' + a.name; } },
       { name: 'walk_gps', description: 'GPS interior: dentro del modo caminar, traza la ruta (elevador incluido) hasta un agente y te lleva caminando con él.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (!WALKING) enterWalk(byId('cotiz').id); if (scene3d) scene3d.gpsTo(a.id, true); return 'GPS en camino hacia ' + a.name; } },
+      { name: 'reactor_status', description: 'Estado del reactor de fusión IA que da energía a la ciudad: potencia, módulos armados por los bots y nodos de la red encendidos. Enfoca la cámara en el reactor.', execute: function () { if (scene3d && scene3d.focusReactor) scene3d.focusReactor(); return reactorText(); } },
       { name: 'exit_walk', description: 'Sale del modo caminar y vuelve a la vista de la torre.', execute: function () { exitWalk(); return 'Dejé de caminar'; } },
       { name: 'open_section', description: 'Abre una sección del panel: bandeja, tareas, obras, publicaciones, tokens, memoria, estructura, asistente o sistema.', inputSchema: { type: 'object', properties: { section: { type: 'string' } }, required: ['section'] }, execute: function (i) { var k = SECTIONS_TAB[normV(i && i.section)]; if (!k) throw new Error('Sección desconocida'); panelOpen = true; zen = false; applyUi(); tab(k); return 'Abrí ' + TAB_TITLES[k]; } },
       { name: 'restart_agent', description: 'Reinicia un agente que esté con falla o lento (acción interna de la torre).', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (a.status !== 'error' && a.status !== 'warning') return a.name + ' ya está bien, no hace falta reiniciarlo.'; fixAgent(a); return 'Reiniciando ' + a.name; } },
@@ -1116,7 +1119,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function jarvisBrief(auto) {
     var quiet = PREFS.jarvis === false, r = quiet ? jarvisReport() : jarvisOpen(false), sn = sinceText(), N = AGENTS.length, work = AGENTS.filter(function (a) { return a.status === 'working'; }).length;
     VOICE.briefed = true;
-    var txt = 'Bienvenido, jefe. ' + work + ' de ' + N + ' agentes están trabajando. ' + sn.text + ' ' + (r.watch.length ? 'Tienes ' + r.watch.length + (r.watch.length === 1 ? ' asunto' : ' asuntos') + ' que requieren atención; te los muestro en la torre.' : 'No hay nada urgente.');
+    var txt = 'Bienvenido, Nesty. ' + work + ' de ' + N + ' agentes están trabajando. ' + sn.text + ' ' + (r.watch.length ? 'Tienes ' + r.watch.length + (r.watch.length === 1 ? ' asunto' : ' asuntos') + ' que requieren atención; te los muestro en la torre.' : 'No hay nada urgente.');
     PREFS.snap = sn.snap; PREFS.lastSeen = Date.now(); savePrefs();
     var an = $('#jaAns'); if (an && !quiet) { an.hidden = false; an.textContent = 'Jarvis: ' + txt; }
     voiceSay(null, txt, function () { if (r.watch.length && !quiet && !$('#jarvis').hidden) jarvisTour(true); });
@@ -1136,7 +1139,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
   function jarvisGreet(r) {
     var h = new Date().getHours(), hi = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches', w = r.watch || [];
-    return hi + ', Ernesto. Aquí estoy. ' + (w.length ? (w.length === 1 ? 'Una cosa requiere tu atención: ' : w.length + ' cosas requieren tu atención. La primera: ') + w[0].t + ' ' : 'Todo marcha bien en la torre. ') + '¿En qué te ayudo? Te escucho.';
+    return hi + ', Nesty. Aquí estoy. ' + (w.length ? (w.length === 1 ? 'Una cosa requiere tu atención: ' : w.length + ' cosas requieren tu atención. La primera: ') + w[0].t + ' ' : 'Todo marcha bien en la torre. ') + '¿En qué te ayudo? Te escucho.';
   }
   function jarvisWake() {
     unlockAudio(); try { if (TTS) TTS.resume(); } catch (e) {}
@@ -1539,9 +1542,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function callout(a) {
     var need = needOf(a); if (!need || !scene3d || !scene3d.callout) return false;
     CALLS.per[a.id] = Date.now(); CALLS.last = Date.now(); a.calling = true; a.callSig = need;
-    scene3d.callout(a, '¡Hey, jefe! ' + need); whistle();
-    if (document.hidden && ALARM.notify) desktopNotify('Hey, jefe: ' + a.name, need);
-    if (VOICE.on) voiceSay(a, 'Hey, jefe. ' + need, null, true);
+    scene3d.callout(a, '¡Hey bro! ' + need); whistle();
+    if (document.hidden && ALARM.notify) desktopNotify('Hey bro: ' + a.name, need);
+    if (VOICE.on) voiceSay(a, 'Hey bro. ' + need, null, true);
     logEvent(a.name + ' te llamó: ' + need, a.id, 'call'); return true;
   }
   function ackCall(a) { if (a && a.calling) { a.calling = false; a.ackSig = a.callSig; } }
@@ -1893,8 +1896,14 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     pad.addEventListener('pointermove', function (e) { if (e.pointerId === pid) set(e); });
     pad.addEventListener('pointerup', end); pad.addEventListener('pointercancel', end);
   })();
+  function reactorText() {
+    var r = scene3d && scene3d.reactorInfo && scene3d.reactorInfo(); if (!r) return 'El reactor no está disponible en esta vista.';
+    return 'Reactor de fusión IA al ' + r.power + '% de potencia, impulsado por ' + r.working + ' de ' + r.total + ' agentes trabajando. Los bots de obra han armado ' + r.built + ' módulo' + (r.built === 1 ? '' : 's') + ' (el siguiente va al ' + r.progress + '%) y la red de energía ya enciende ' + r.nodes + ' de ' + r.totalNodes + ' nodos de la ciudad.';
+  }
+  function reactorTap() { var t = reactorText(); toast('☢ ' + t); if (VOICE.on) voiceSay(null, t); if (scene3d && scene3d.focusReactor) scene3d.focusReactor(); }
   function exitOffice() { if (!OFFICE) return; var id = OFFICE; OFFICE = null; if (scene3d && scene3d.setOffice) scene3d.setOffice(null); renderOfficeBar(); if (scene3d && byId(id)) scene3d.focus(byId(id), true); }
   function stepOffice(d) { if (!OFFICE) return; var i = (byId(OFFICE).i + d + AGENTS.length) % AGENTS.length; enterOffice(AGENTS[i].id); }
+  $('#btnReactor').onclick = function () { stopTour(); reactorTap(); };
   $('#obPrev').onclick = function () { stepOffice(-1); }; $('#obNext').onclick = function () { stepOffice(1); }; $('#obExit').onclick = exitOffice;
   document.addEventListener('keydown', function (e) { if (OFFICE && e.key === 'Escape') { e.stopPropagation(); exitOffice(); } }, true);
   function deselect() { $('#app').classList.remove('wtalk'); $('#app').classList.remove('wcard'); OFFICE = null; if (scene3d && scene3d.setOffice) scene3d.setOffice(null); renderOfficeBar(); stopTour(); selected = null; selectedProject = null; selectedPlanet = null; if (scene3d) scene3d.home(); refresh(); }
@@ -4043,9 +4052,131 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         });
         tGeo.attributes.position.needsUpdate = true; tGeo.attributes.color.needsUpdate = true;
       }
-      return { update: update, info: function () { return { pads: pads.length, launches: launches, phases: pads.map(function (p) { return p.phase; }).join(',') }; }, launchNow: function () { var pd = pads.filter(function (p) { return p.phase === 'pad'; })[0]; if (pd) { pd.wait = 0; return true; } return false; } };
+      return { update: update, padPos: pads.map(function (p) { return { x: p.x, z: p.z }; }), info: function () { return { pads: pads.length, launches: launches, phases: pads.map(function (p) { return p.phase; }).join(',') }; }, launchNow: function () { var pd = pads.filter(function (p) { return p.phase === 'pad'; })[0]; if (pd) { pd.wait = 0; return true; } return false; } };
     })();
 
+
+    /* ---- Reactor de fusión IA: genera la energía de la ciudad; los bots de obra lo arman y amplían la red ---- */
+    var reactor = null; try { reactor = (function () {
+      var T3 = THREE, best = null, padP = (nave && nave.padPos) || [];
+      for (var dd = LIM + 44; dd <= LIM + 44 && !best; dd += 6) for (var k = 0; k < 36 && !best; k++) {
+        var a0 = (k * 10 + 205) * Math.PI / 180, x0 = Math.cos(a0) * dd, z0 = Math.sin(a0) * dd, ok = true;
+        if (Math.abs(x0) < 14 || Math.abs(z0) < 14) ok = false;
+        for (var bi = 0; ok && bi < BLDS.length; bi++) { var b0 = BLDS[bi], ddx = Math.max(Math.abs(x0 - b0.x) - b0.w / 2, 0), ddz = Math.max(Math.abs(z0 - b0.z) - b0.d / 2, 0); if (Math.hypot(ddx, ddz) < 21) ok = false; }
+        if (ok && annex && Math.hypot(x0 - annex.pos.x, z0 - annex.pos.z) < 40) ok = false;
+        for (var pq = 0; ok && pq < padP.length; pq++) if (Math.hypot(x0 - padP[pq].x, z0 - padP[pq].z) < 30) ok = false;
+        if (ok) best = { x: x0, z: z0 };
+      }
+      if (!best) { var af = 205 * Math.PI / 180; best = { x: Math.cos(af) * (LIM + 44), z: Math.sin(af) * (LIM + 44) }; }
+      var RX = best.x, RZ = best.z, G = new T3.Group(); G.position.set(RX, 0, RZ); scene.add(G);
+      /* isla industrial flotante fuera de la ciudad, unida por una calzada de luz */
+      var under = new T3.Mesh(new T3.CylinderGeometry(20, 6, 14, 40, 1, true), new T3.MeshStandardMaterial({ color: 0x0d1823, roughness: 0.5, metalness: 0.7, emissive: 0x08202e, emissiveIntensity: 0.6 })); under.position.y = -7; G.add(under);
+      var uGlow = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0x5cffe6, transparent: true, opacity: 0.55, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); uGlow.scale.set(26, 26, 1); uGlow.position.y = -15; G.add(uGlow);
+      var inward = new T3.Vector3(-RX, 0, -RZ).normalize(), cwLen = Math.hypot(RX, RZ) - 20 - (LIM + 6), cw = new T3.Group(); cw.position.set(inward.x * (20 + cwLen / 2), 0.5, inward.z * (20 + cwLen / 2)); cw.rotation.y = -Math.atan2(inward.z, inward.x); G.add(cw);
+      var cwDeck = new T3.Mesh(new T3.BoxGeometry(cwLen + 2, 0.5, 6), new T3.MeshStandardMaterial({ color: 0x15222e, roughness: 0.4, metalness: 0.7 })); cw.add(cwDeck);
+      [-2.8, 2.8].forEach(function (zz) { var rl = new T3.Mesh(new T3.BoxGeometry(cwLen + 2, 0.12, 0.12), new T3.MeshBasicMaterial({ color: 0x5cffe6, fog: false })); rl.position.set(0, 0.35, zz); cw.add(rl); });
+      function addM(c, o) { return new T3.MeshBasicMaterial({ color: c, transparent: true, opacity: o == null ? 0.8 : o, blending: T3.AdditiveBlending, depthWrite: false, side: T3.DoubleSide, fog: false }); }
+      var hullM = new T3.MeshStandardMaterial({ color: 0x18242f, roughness: 0.35, metalness: 0.8, emissive: 0x0b2234, emissiveIntensity: 0.6 });
+      var plateM = new T3.MeshStandardMaterial({ color: 0xc9d3dc, roughness: 0.45, metalness: 0.5, emissive: 0x1a2330, emissiveIntensity: 0.4 });
+      var goldM2 = new T3.MeshStandardMaterial({ color: 0xc9a84c, roughness: 0.3, metalness: 0.8, emissive: 0x3a2e0c, emissiveIntensity: 0.6 });
+      /* plataforma y anillo de seguridad */
+      var base = new T3.Mesh(new T3.CylinderGeometry(19, 20, 1.0, 48), hullM); base.position.y = 0.5; G.add(base);
+      var ringS = new T3.Mesh(new T3.TorusGeometry(19.6, 0.12, 6, 96), addM(0xffc94d, 0.9)); ringS.rotation.x = Math.PI / 2; ringS.position.y = 1.05; G.add(ringS);
+      for (var hz = 0; hz < 16; hz++) { var ha = hz / 16 * Math.PI * 2, st = new T3.Mesh(new T3.BoxGeometry(1.6, 0.06, 0.5), new T3.MeshBasicMaterial({ color: hz % 2 ? 0x111111 : 0xffc94d, fog: false })); st.position.set(Math.cos(ha) * 18.4, 1.03, Math.sin(ha) * 18.4); st.rotation.y = -ha; G.add(st); }
+      /* núcleo: cúpula de contención con tokamak y plasma */
+      var core = new T3.Group(); core.position.set(-3, 1, 0); G.add(core);
+      var podium = new T3.Mesh(new T3.CylinderGeometry(7.4, 8.2, 2.2, 40), plateM); podium.position.y = 1.1; core.add(podium);
+      var dome = new T3.Mesh(new T3.SphereGeometry(7.2, 40, 18, 0, Math.PI * 2, 0, Math.PI / 2), addM(0x7fe0ff, 0.12)); dome.position.y = 2.2; core.add(dome);
+      var domeE = new T3.LineSegments(new T3.EdgesGeometry(new T3.SphereGeometry(7.25, 16, 6, 0, Math.PI * 2, 0, Math.PI / 2)), new T3.LineBasicMaterial({ color: 0x9fe8ff, transparent: true, opacity: 0.5 })); domeE.position.y = 2.2; core.add(domeE);
+      var tok = new T3.Mesh(new T3.TorusGeometry(3.6, 1.15, 18, 64), hullM); tok.rotation.x = Math.PI / 2; tok.position.y = 3.6; core.add(tok);
+      var coils = []; for (var ci = 0; ci < 16; ci++) { var ca = ci / 16 * Math.PI * 2, cl = new T3.Mesh(new T3.TorusGeometry(1.45, 0.16, 6, 20), goldM2); cl.position.set(Math.cos(ca) * 3.6, 3.6, Math.sin(ca) * 3.6); cl.rotation.y = -ca; core.add(cl); coils.push(cl); }
+      var plasma = new T3.Mesh(new T3.TorusGeometry(3.6, 0.55, 12, 80), addM(0xff9a4d, 0.9)); plasma.rotation.x = Math.PI / 2; plasma.position.y = 3.6; core.add(plasma);
+      var plasma2 = new T3.Mesh(new T3.TorusGeometry(3.6, 0.3, 10, 80), addM(0x9fe8ff, 0.9)); plasma2.rotation.x = Math.PI / 2; plasma2.position.y = 3.6; core.add(plasma2);
+      var coreGlow = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xffb066, transparent: true, opacity: 0.8, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); coreGlow.scale.set(22, 22, 1); coreGlow.position.y = 4; core.add(coreGlow);
+      var pillar = new T3.Mesh(new T3.CylinderGeometry(0.35, 0.35, 60, 12, 1, true), addM(0x9fe8ff, 0.25)); pillar.position.y = 32; core.add(pillar);
+      /* torres de enfriamiento hiperbólicas con vapor */
+      var hp = []; for (var hi = 0; hi <= 12; hi++) { var yy = hi / 12 * 17, w = 4.2 - 1.9 * Math.sin(hi / 12 * Math.PI * 0.9); hp.push(new T3.Vector2(w, yy)); }
+      var towerGeo = new T3.LatheGeometry(hp, 36), steam = [];
+      var tcv = document.createElement('canvas'); tcv.width = 64; tcv.height = 256; var tg = tcv.getContext('2d'); tg.fillStyle = '#d7dee5'; tg.fillRect(0, 0, 64, 256); tg.fillStyle = '#ffc94d'; tg.fillRect(0, 196, 64, 14); tg.fillStyle = '#b9c3cc'; for (var ty = 0; ty < 256; ty += 16) tg.fillRect(0, ty, 64, 1);
+      var towerM = new T3.MeshStandardMaterial({ map: new T3.CanvasTexture(tcv), roughness: 0.7, metalness: 0.1, side: T3.DoubleSide, emissive: 0x111820, emissiveIntensity: 0.5 });
+      [[9.5, -7.5], [9.5, 7.5]].forEach(function (q, qi) {
+        var tw = new T3.Mesh(towerGeo, towerM); tw.position.set(q[0], 1, q[1]); G.add(tw);
+        var lip = new T3.Mesh(new T3.TorusGeometry(3.5, 0.18, 6, 36), addM(0xffc94d, 0.8)); lip.rotation.x = Math.PI / 2; lip.position.set(q[0], 18, q[1]); G.add(lip);
+        for (var sm = 0; sm < 6; sm++) { var sp = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xffffff, transparent: true, opacity: 0.25, depthWrite: false, fog: false })); G.add(sp); steam.push({ s: sp, x: q[0], z: q[1], t: sm * 1.1 + qi * 0.5 }); }
+      });
+      /* zona de obra: módulo en construcción, andamios, grúa y bots */
+      var zone = new T3.Group(); zone.position.set(-6, 1, -13); G.add(zone);
+      var zb = new BoxBuf(); [[-3.2, -3.2], [3.2, -3.2], [-3.2, 3.2], [3.2, 3.2]].forEach(function (q) { zb.add(q[0], 4.5, q[1], 0.18, 9, 0.18, 0); }); [2.5, 5.5, 8.5].forEach(function (yy) { zb.add(0, yy, -3.2, 6.6, 0.12, 0.12, 0); zb.add(0, yy, 3.2, 6.6, 0.12, 0.12, 0); zb.add(-3.2, yy, 0, 0.12, 0.12, 6.6, 0); zb.add(3.2, yy, 0, 0.12, 0.12, 6.6, 0); });
+      zone.add(zb.mesh(new T3.MeshBasicMaterial({ color: 0xffb84d, fog: false })));
+      var modG = new T3.CylinderGeometry(2.4, 2.6, 8, 24); modG.translate(0, 4, 0); var module = new T3.Mesh(modG, plateM); zone.add(module);
+      var modTop = new T3.Mesh(new T3.TorusGeometry(2.45, 0.08, 6, 32), addM(0x5cffe6, 0.95)); modTop.rotation.x = Math.PI / 2; zone.add(modTop);
+      var crane = new T3.Group(); crane.position.set(6.5, 0, 2.5); zone.add(crane);
+      var cmast = new BoxBuf(); cmast.add(0, 8, 0, 0.6, 16, 0.6, 0); crane.add(cmast.mesh(new T3.MeshStandardMaterial({ color: 0xffc94d, roughness: 0.5, metalness: 0.4 })));
+      var jib = new T3.Group(); jib.position.y = 16; crane.add(jib);
+      var jb = new BoxBuf(); jb.add(-4, 0, 0, 13, 0.45, 0.45, 0); jb.add(2.5, -0.4, 0, 1.6, 1.2, 1.2, 0); jib.add(jb.mesh(new T3.MeshStandardMaterial({ color: 0xffc94d, roughness: 0.5, metalness: 0.4 })));
+      var cable = new T3.Mesh(new T3.CylinderGeometry(0.03, 0.03, 1, 4), new T3.MeshBasicMaterial({ color: 0x222222 })); jib.add(cable);
+      var cargo = new T3.Mesh(new T3.BoxGeometry(1.4, 1.0, 1.4), goldM2); jib.add(cargo);
+      var bots = [];
+      function makeBot(i) {
+        var b = new T3.Group(), body = new T3.Mesh(new T3.SphereGeometry(0.42, 14, 10), new T3.MeshStandardMaterial({ color: 0xf2f5f8, roughness: 0.3, metalness: 0.4 })); b.add(body);
+        var eye = new T3.Mesh(new T3.SphereGeometry(0.15, 10, 8), new T3.MeshBasicMaterial({ color: 0x5cffe6 })); eye.position.set(0.3, 0.05, 0); b.add(eye);
+        var band = new T3.Mesh(new T3.TorusGeometry(0.43, 0.04, 6, 24), goldM2); band.rotation.x = Math.PI / 2; b.add(band);
+        var ant = new T3.Mesh(new T3.CylinderGeometry(0.02, 0.02, 0.4, 4), new T3.MeshBasicMaterial({ color: 0xffc94d })); ant.position.y = 0.6; b.add(ant);
+        var rot = []; [[0.55, 0.55], [-0.55, 0.55], [0.55, -0.55], [-0.55, -0.55]].forEach(function (q) { var r = new T3.Mesh(new T3.CircleGeometry(0.28, 12), addM(0x9fe8ff, 0.35)); r.rotation.x = -Math.PI / 2; r.position.set(q[0], 0.35, q[1]); b.add(r); rot.push(r); });
+        var torch = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0x9fe8ff, transparent: true, opacity: 0, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); torch.scale.set(1.6, 1.6, 1); torch.position.set(0, -0.5, 0); b.add(torch);
+        zone.add(b); return { g: b, torch: torch, ph: i * 1.7, r: 3.6 + (i % 2) * 0.8, h: 2.5 + i * 1.6 };
+      }
+      for (var bq = 0; bq < 4; bq++) bots.push(makeBot(bq));
+      /* conducto de energía elevado hasta la torre (nave) con pulsos */
+      var tgt = new T3.Vector3(-RX, 0, -RZ).normalize(), endP = new T3.Vector3(tgt.x * 0.0, 0, 0), towerEdge = new T3.Vector3(-RX, 0, -RZ).setLength(Math.hypot(RX, RZ) - 22);
+      var c0 = new T3.Vector3(-3, 9, 0), c3 = towerEdge.clone().setY(4.5), mid = c0.clone().lerp(c3, 0.5).setY(82);
+      var curve = new T3.CatmullRomCurve3([c0, c0.clone().lerp(c3, 0.15).setY(60), mid, c0.clone().lerp(c3, 0.85).setY(62), c3]);
+      var CPTS = curve.getSpacedPoints(240); var conduit = new T3.Mesh(new T3.TubeGeometry(curve, 80, 0.35, 8, false), addM(0x5cffe6, 0.35)); G.add(conduit);
+      var conduitCore = new T3.Mesh(new T3.TubeGeometry(curve, 80, 0.12, 6, false), addM(0xffffff, 0.6)); G.add(conduitCore);
+      var pulses = []; for (var pp = 0; pp < 8; pp++) { var ps = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: pp % 2 ? 0xffc94d : 0x9fe8ff, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); ps.scale.set(3, 3, 1); G.add(ps); pulses.push({ s: ps, u: pp / 8 }); }
+      for (var py = 1; py < 4; py++) { var pt = curve.getPoint(py / 4), pyl = new T3.Mesh(new T3.CylinderGeometry(0.4, 0.7, pt.y, 8), hullM); pyl.position.set(pt.x, pt.y / 2, pt.z); G.add(pyl); }
+      /* letrero */
+      var sc = document.createElement('canvas'); sc.width = 768; sc.height = 192; var sg = sc.getContext('2d'); sg.textAlign = 'center'; sg.fillStyle = '#fff2c4'; sg.shadowColor = '#ffb066'; sg.shadowBlur = 20; sg.font = '700 60px sans-serif'; sg.fillText('☢ REACTOR DE FUSIÓN IA', 384, 78); sg.font = '500 36px sans-serif'; sg.fillStyle = '#bfeaff'; sg.fillText('EVR · energía de la ciudad · zona de bots', 384, 140);
+      var sign = new T3.Sprite(new T3.SpriteMaterial({ map: new T3.CanvasTexture(sc), transparent: true, depthWrite: false, fog: false })); sign.scale.set(24, 6, 1); sign.position.set(-3, 23, 0); G.add(sign);
+      /* hitbox para tocar el reactor */
+      var hb = new T3.Mesh(new T3.CylinderGeometry(19, 19, 20, 12), new T3.MeshBasicMaterial({ visible: false })); hb.position.y = 10; hb.userData.reactor = true; G.add(hb); pickables.push(hb);
+      /* red de energía: nodos en azoteas que se encienden conforme los bots terminan módulos */
+      var nodes = BLDS.filter(function (b) { return !b.port; }).map(function (b) { return { b: b, d: Math.hypot(b.x - RX, b.z - RZ) }; }).sort(function (a, b) { return a.d - b.d; }).slice(0, 30);
+      var nodeObjs = nodes.map(function (n) {
+        var g = new T3.Group(); g.position.set(n.b.x, n.b.top + 0.2, n.b.z); scene.add(g);
+        var pyl = new T3.Mesh(new T3.CylinderGeometry(0.12, 0.25, 3.2, 6), hullM); pyl.position.y = 1.6; g.add(pyl);
+        var orb = new T3.Mesh(new T3.SphereGeometry(0.45, 12, 8), new T3.MeshBasicMaterial({ color: 0x223040, fog: false })); orb.position.y = 3.4; g.add(orb);
+        var gl = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0x5cffe6, transparent: true, opacity: 0, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); gl.scale.set(6, 6, 1); gl.position.y = 3.4; g.add(gl);
+        return { g: g, orb: orb, gl: gl, on: false, ph: Math.random() * 6 };
+      });
+      var built = 0; try { built = Math.max(0, Math.min(999, parseInt(localStorage.getItem('evr.reactor') || '0', 10) || 0)); } catch (e) {}
+      var buildT = 0, power = 60;
+      function lit() { return Math.min(nodeObjs.length, 4 + built); }
+      function refreshNodes() { var L = lit(); nodeObjs.forEach(function (n, i) { n.on = i < L; n.orb.material.color.setHex(n.on ? 0xbffcf0 : 0x223040); }); }
+      refreshNodes();
+      function update(dt, t, tier) {
+        var work = AGENTS.filter(function (a) { return a.status === 'working'; }).length, err = AGENTS.filter(function (a) { return a.status === 'error'; }).length;
+        var target = Math.max(25, Math.min(100, 45 + 55 * work / Math.max(1, AGENTS.length) - err * 4)); power += (target - power) * Math.min(1, dt * 0.5);
+        var pk = power / 100, spin = 0.6 + 2.4 * pk;
+        plasma.rotation.z += dt * spin; plasma2.rotation.z -= dt * spin * 1.3;
+        plasma.material.opacity = 0.55 + 0.35 * pk + 0.1 * Math.sin(t * 9); plasma2.material.opacity = 0.5 + 0.4 * Math.abs(Math.sin(t * 4.7));
+        coreGlow.material.opacity = 0.45 + 0.45 * pk + 0.08 * Math.sin(t * 13); coreGlow.scale.setScalar(18 + 8 * pk);
+        pillar.material.opacity = 0.12 + 0.2 * pk * (0.7 + 0.3 * Math.sin(t * 6));
+        steam.forEach(function (sm) { sm.t += dt; var q = (sm.t % 6.6) / 6.6; sm.s.position.set(sm.x + Math.sin(sm.t * 0.4) * q * 2, 18 + q * 16, sm.z + Math.cos(sm.t * 0.3) * q * 2); var s2 = 4 + q * 12; sm.s.scale.set(s2, s2, 1); sm.s.material.opacity = tier >= 2 ? 0 : 0.3 * Math.sin(q * Math.PI); });
+        pulses.forEach(function (p) { p.u += dt * (0.08 + 0.18 * pk); if (!(p.u >= 0)) p.u = 0; p.u = p.u % 1; var ix = Math.min(CPTS.length - 1, Math.floor(p.u * (CPTS.length - 1))); p.s.position.copy(CPTS[ix]); });
+        conduit.material.opacity = 0.22 + 0.2 * pk;
+        /* obra: el módulo crece; al terminar se enciende un nodo más de la red */
+        buildT += dt * (0.025 + 0.05 * pk) * ((window.__evrTest && window.__evrTest.liftSpeed) || 1);
+        if (buildT >= 1) { buildT = 0; built++; try { localStorage.setItem('evr.reactor', String(built)); } catch (e) {} refreshNodes(); if (window.__evrLog && Math.random() < 0.5) window.__evrLog('☢ Los bots terminaron un módulo del reactor · red de energía: ' + lit() + ' nodos', 'reportes'); }
+        module.scale.y = Math.max(0.02, buildT); modTop.position.y = 8 * module.scale.y + 0.05; modTop.material.opacity = 0.6 + 0.4 * Math.sin(t * 6);
+        jib.rotation.y = Math.sin(t * 0.25) * 1.1; var cl = 6 + 4 * Math.sin(t * 0.5); cable.scale.y = cl; cable.position.set(-8, -cl / 2, 0); cargo.position.set(-8, -cl - 0.6, 0);
+        bots.forEach(function (b, i) { var a = t * (0.6 + i * 0.12) + b.ph; b.g.position.set(Math.cos(a) * b.r, b.h + Math.sin(t * 2 + i) * 0.3 + 8 * module.scale.y * 0.5, Math.sin(a) * b.r); b.g.rotation.y = -a + Math.PI; var weld = Math.sin(t * 7 + i * 2) > 0.3; b.torch.material.opacity = weld ? 0.6 + 0.4 * Math.random() : 0; b.g.visible = tier < 3; });
+        nodeObjs.forEach(function (n) { n.gl.material.opacity = n.on ? 0.45 + 0.35 * Math.sin(t * 2.4 + n.ph) * pk + 0.2 : 0; });
+        ringS.material.opacity = 0.6 + 0.3 * Math.sin(t * 2);
+      }
+      function info() { var work = AGENTS.filter(function (a) { return a.status === 'working'; }).length; return { x: RX, z: RZ, power: Math.round(power), built: built, nodes: lit(), totalNodes: nodeObjs.length, working: work, total: AGENTS.length, progress: Math.round(buildT * 100) }; }
+      return { update: update, info: info, pos: { x: RX, z: RZ }, boost: function () { buildT = 0.999; return true; } };
+    })(); } catch (rxErr) { reactor = null; if (window.console) console.warn('reactor', rxErr); }
     /* ---- Tráfico: autos autónomos y tranvías/maglev modernos sobre calles, puentes y anillos ---- */
     var traffic = (function () {
       var T3 = THREE, UPv = new T3.Vector3(0, 1, 0), dum = new T3.Object3D(); dum.rotation.order = 'YZX';
@@ -4408,7 +4539,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (WALK.on) { walkPtr('up', e); return; }
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
-      if (wasTap) { var ud = hit(e); if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
+      if (wasTap) { var ud = hit(e); if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
     canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; wdrag = null; });
@@ -4519,8 +4650,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     function greetAgent(a) {
       var v = a.v, st = a.status; if (clockT - v.lastGreet < 3) return; v.lastGreet = clockT;
       AGENTS.forEach(function (o) { if (o !== a) { o.v.sayUntil = 0; o.v.greetEnd = 0; } });
-      var hi = ['¡Hola!', '¡Buenas!', '¡Qué gusto verte!', '¡Hola, jefe!'][Math.floor(Math.random() * 4)], act = a.act.charAt(0).toLowerCase() + a.act.slice(1);
-      if (st === 'error') v.sayText = '¡Necesito ayuda! ' + (a.msg || 'Dejé de responder.');
+      var hi = ['¡Hola!', '¡Buenas!', '¡Qué gusto verte!', '¡Hola, Nesty!'][Math.floor(Math.random() * 4)], act = a.act.charAt(0).toLowerCase() + a.act.slice(1);
+      if (st === 'error') v.sayText = '¡Hey bro, necesito ayuda! ' + (a.msg || 'Dejé de responder.');
       else if (st === 'warning') v.sayText = hi + ' Soy ' + a.name + '. Voy un poco lento, pero sigo trabajando.';
       else if (st === 'working') { v.sayText = hi + ' Soy ' + a.name + '. Ahora estoy ' + (act.indexOf('ando') > -1 || act.indexOf('iendo') > -1 ? act : 'con: ' + act) + '.'; }
       else v.sayText = hi + ' Soy ' + a.name + '. No tengo pendientes, avísame si me necesitas.';
@@ -4783,6 +4914,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (traffic) traffic.update(sdt, tier);
       if (annex) annex.update(clockT, dt, tier);
       if (nave) nave.update(dt, clockT, tier);
+      if (reactor) reactor.update(dt, clockT, tier);
       shipFx.update(dt, clockT, tier); liftFx.update(dt, clockT);
       if (hoverA && hoverA.v && hoverA.v.ghost > 0.45) { hoverRing.visible = true; hoverRing.position.y = hoverA.floorY - FH / 2 + 0.25; hoverRing.scale.set(hxOf(hoverA.i) / HX[0], 1, hzOf(hoverA.i) / HZ[0]); hoverRing.material.opacity = 0.45 + 0.3 * Math.sin(clockT * 5); } else hoverRing.visible = false;
       logo.rotation.y += sdt * 1.1; logoRing.rotation.y += sdt * 0.8;
@@ -5082,6 +5214,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       setProps: function (l) { if (annex) annex.setProps(l); },
       annexInfo: function () { return annex ? annex.info() : null; },
       naveInfo: function () { return nave ? nave.info() : null; },
+      reactorInfo: function () { return reactor ? reactor.info() : null; },
+      reactorBoost: function () { return reactor ? reactor.boost() : false; },
+      focusReactor: function () { if (!reactor) return false; cam.follow = null; cam.gtx = reactor.pos.x; cam.gtz = reactor.pos.z; cam.gty = 10; cam.gph = 1.18; cam.gr = window.innerWidth > 860 ? 80 : 105; cam.th = Math.atan2(reactor.pos.z, reactor.pos.x) + Math.PI - 0.45; return true; },
       launchNow: function () { return nave ? nave.launchNow() : false; },
       health: function () { return { tier: tier, cine: CINE.on, glLost: glLost, frameErrs: frameErrs }; },
       toggleSpeed: function () { speedMul = reduce ? 0.3 : (speedMul < 0.8 ? 1 : 0.55); return speedMul < 0.8 ? 'lenta' : 'normal'; }
