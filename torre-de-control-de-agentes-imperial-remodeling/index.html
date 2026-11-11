@@ -1585,7 +1585,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     { id: 'p1', verif: 'pendiente', addr: '1003 Garcia St', city: 'McKinney', state: 'TX', price: 140000, sqft: 1132, beds: 2, baths: 1, year: 1941, status: 'nueva', notes: 'Requiere remodelación importante, se vende tal como está, solo efectivo. Fuente: NTREIS 21308872. Verifica que siga disponible.', createdAt: 1793205600000 },
     { id: 'p2', verif: 'pendiente', addr: '2624 Downing Dr', city: 'Plano', state: 'TX', price: 410000, sqft: 2474, beds: 4, baths: 2.5, year: 1975, status: 'nueva', notes: 'Se vende tal como está; techo de ~1 año. No detalla cuánta remodelación necesita: hay que verla. Fuente: NTREIS 21354016.', createdAt: 1793205600000 },
     { id: 'p3', verif: 'pendiente', addr: '3508 Gatewood Ln', city: 'Plano', state: 'TX', price: 264900, sqft: 1368, beds: 3, baths: 2, status: 'nueva', notes: 'Investor special; cocina actualizada y techo nuevo, puede necesitar poco. Encaja menos con remodelación integral.', createdAt: 1793205600000 }
-  ], propSel = null, propOpen = false, PSTAT = ['nueva', 'me interesa', 'ver en persona', 'descartada'];
+  ], propSel = null, propOpen = false, PSTAT = ['nueva', 'me interesa', 'ver en persona', 'en espera', 'descartada'];
   var VER = { pendiente: { t: 'SIN CONFIRMAR', e: '❓', c: '#5cc8ff' }, real_off: { t: 'REAL Y OFF-MARKET', e: '✅', c: '#ffc94d' }, real_mls: { t: 'REAL, PERO ESTÁ EN EL MERCADO', e: '🟣', c: '#a78bfa' }, no_real: { t: 'NO ES REAL / YA NO ESTÁ', e: '⛔', c: '#ff6a6a' } };
   function verOf(x) { return VER[x && x.verif] ? x.verif : 'pendiente'; }
   var CITIES_OK = ['plano', 'frisco', 'mckinney'];
