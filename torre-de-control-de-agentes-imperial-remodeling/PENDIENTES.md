@@ -80,4 +80,10 @@
   - Jarvis: «llévame con Cobros», «guíame al anexo».
 - [x] Jarvis siempre responde al abrirlo (te saluda y te dice lo más importante) y pide permiso del micrófono para escucharte enseguida. Si el micrófono está bloqueado, te lo dice y puedes escribirle.
 - [x] Al tocar a una persona se detecta su cuerpo real, no el de la persona del piso de arriba.
+- [x] Oportunidades busca y descarta solo (lun–sáb 8:23 y 15:23, hora de Chicago):
+  - Busca en Zillow, Redfin, Realtor, Homes.com, HAR, subastas, HUD, HomePath, FSBO, etc., y verifica cada dirección en qué plataformas aparece y con qué estado.
+  - Guarda en cada casa: días en el mercado, estado (activa / pendiente / vendida / fuera del mercado), fuentes con enlace, puntaje de posibilidad de compra (0–100), ARV / reparación / oferta máxima estimados con comparables, posibilidades de compra y estrategias de valor.
+  - Descarta solo las vendidas o fuera de criterio (con el motivo), y las puedes ver con «Ver descartadas por el agente».
+  - Solo te avisa en la bandeja las de puntaje 60 o más. Confirmar «real y off-market» sigue siendo solo tuyo.
+  - Red de la nube: se permitieron www.redfin.com y www.hudhomestore.gov, pero Redfin bloquea el acceso automático, así que el agente usa la búsqueda web.
 - [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.

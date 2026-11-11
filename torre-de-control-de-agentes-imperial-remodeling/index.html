@@ -263,6 +263,15 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .walkmap { position: absolute; left: 12px; bottom: 74px; width: 200px; height: 150px; z-index: 9; background: rgba(5, 10, 16, 0.82); border: 1px solid rgba(92, 255, 230, 0.45); }
 .walkhint { position: absolute; left: 50%; top: 118px; transform: translateX(-50%); z-index: 9; padding: 6px 12px; background: rgba(5, 10, 16, 0.85); color: #cfeff8; font-size: 12px; border: 1px solid rgba(92, 255, 230, 0.35); max-width: calc(100% - 24px); text-align: center; transition: opacity 1.2s; }
 .walkhint.fade { opacity: 0; pointer-events: none; }
+.pai { margin: 10px 0; padding: 10px 12px; border: 1px solid rgba(92, 255, 230, 0.4); background: rgba(92, 255, 230, 0.05); }
+.pai h4 { margin: 0 0 6px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #5cffe6; }
+.pai .row { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 4px 0; }
+.pai .tag { display: inline-block; padding: 2px 8px; border: 1px solid currentColor; font-size: 11px; }
+.pai ul { margin: 4px 0 0; padding-left: 18px; }
+.pai .pscore { font-size: 20px; font-weight: 700; color: #ffc94d; }
+.pitem .dom { float: right; font-size: 11px; color: #ffc94d; }
+.pitem.adisc { opacity: .5; }
+.pfilter { display: flex; gap: 6px; align-items: center; padding: 6px 10px; font-size: 12px; }
 .walkgps { position: absolute; left: 50%; top: 64px; transform: translateX(-50%); z-index: 10; display: flex; gap: 8px; align-items: center; padding: 6px 10px; background: rgba(5, 10, 16, 0.92); border: 1px solid rgba(92, 255, 230, 0.55); box-shadow: 0 0 22px rgba(92, 255, 230, 0.16); font-size: 12px; max-width: calc(100% - 24px); }
 .walkgps[hidden], .wscreen[hidden] { display: none; }
 .walkgps select { background: #07141f; color: #dff7ff; border: 1px solid rgba(92, 255, 230, 0.45); padding: 6px 8px; font: inherit; max-width: 220px; }
@@ -1596,16 +1605,36 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function money(n) { return n ? '$' + Math.round(n).toLocaleString('en-US') : '—'; }
   function skillsOf(id) { return (MEMORY || []).filter(function (m) { return (m.tags || []).indexOf('skill:' + id) > -1; }); }
   function propSummary() { return PROPS.filter(function (x) { return x.status !== 'descartada'; }).slice(0, 12).map(function (x) { return propFull(x) + ' (' + money(x.price) + (x.sqft ? ', ' + x.sqft + ' pies²' : '') + (x.beds ? ', ' + x.beds + ' rec' : '') + ', estado: ' + (x.status || 'nueva') + ', verificación: ' + VER[verOf(x)].t + (criteria(x).ok ? '' : ', fuera de criterios') + ')'; }).join('; '); }
+  var MKT = { activa: ['En venta (activa)', '#7dffb0'], pendiente: ['Pendiente / bajo contrato', '#ffb84d'], vendida: ['Vendida', '#ff6a6a'], fuera_del_mercado: ['Fuera del mercado', '#c7b3ff'], no_encontrada: ['Sin anuncio encontrado', '#8fb4d6'] };
+  var PROP_SHOW_DISC = false;
+  function httpsUrl(u) { u = String(u || ''); return /^https:\/\/[^\s"<>]+$/i.test(u) ? u : ''; }
+  function propScore(x) { var n = Number(x.score); return isFinite(n) ? Math.max(0, Math.min(100, Math.round(n))) : -1; }
+  function propDom(x) { var m = x.mkt || {}, d = Number(m.dom); if (isFinite(d) && d >= 0) { if (m.checkedAt) d += Math.max(0, Math.floor((Date.now() - m.checkedAt) / 864e5)); return d; } if (m.listedAt) { var t = Date.parse(m.listedAt); if (isFinite(t)) return Math.max(0, Math.floor((Date.now() - t) / 864e5)); } return -1; }
+  function agentDisc(x) { return x.status === 'descartada' && x.autoDiscard; }
+  function propResearch(cur) {
+    var m = cur.mkt || {}, mk = MKT[m.status], dom = propDom(cur), sc = propScore(cur), e = cur.est || {}, srcs = Array.isArray(m.sources) ? m.sources.slice(0, 8) : [], st = Array.isArray(cur.strategies) ? cur.strategies.slice(0, 6) : [];
+    if (!mk && dom < 0 && sc < 0 && !st.length && !cur.buy && !cur.autoDiscard) return '<div class="pai"><h4>Investigación del agente</h4><p class="pnote">Todavía sin investigar. La búsqueda diaria revisará en qué portales aparece, cuánto lleva en el mercado y qué estrategia conviene.</p></div>';
+    var h = '<div class="pai"><h4>Investigación del agente' + (m.checkedAt ? ' · revisada ' + new Date(m.checkedAt).toLocaleDateString('es-US') : '') + '</h4>';
+    if (cur.autoDiscard) h += '<p class="pnote" style="color:#ff9a8a">⛔ El agente la descartó: ' + esc(cur.autoDiscard.why || 'sin motivo') + '. Si no estás de acuerdo, cambia su estado.</p>';
+    h += '<div class="row">' + (mk ? '<span class="tag" style="color:' + mk[1] + '">' + mk[0] + '</span>' : '') + (dom >= 0 ? '<span><b>' + dom + '</b> día' + (dom === 1 ? '' : 's') + ' en el mercado' + (m.listedAt ? ' (desde ' + esc(m.listedAt) + ')' : '') + '</span>' : '') + (sc >= 0 ? '<span>Posibilidad de compra <span class="pscore">' + sc + '</span>/100</span>' : '') + '</div>';
+    if (cur.scoreWhy) h += '<p class="pnote">' + esc(cur.scoreWhy) + '</p>';
+    if (cur.buy) h += '<p class="pnote"><b>Posibilidades de compra:</b> ' + esc(cur.buy) + '</p>';
+    if (e.arv || e.rehab || e.maxOffer) h += '<div class="row">' + (e.arv ? '<span>ARV estimado: <b>' + money(e.arv) + '</b></span>' : '') + (e.rehab ? '<span>Reparación estimada: <b>' + money(e.rehab) + '</b></span>' : '') + (e.maxOffer ? '<span>Oferta máx. estimada: <b>' + money(e.maxOffer) + '</b></span>' : '') + '</div><p class="pnote">Estimados del agente con comparables públicos' + (e.basis ? ': ' + esc(e.basis) : '') + '. Tus números de abajo mandan.</p>';
+    if (st.length) h += '<p class="pnote" style="margin-bottom:0"><b>Estrategias de valor:</b></p><ul>' + st.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>';
+    if (srcs.length) h += '<p class="pnote" style="margin-bottom:0"><b>Dónde aparece:</b></p><ul>' + srcs.map(function (q) { var u = httpsUrl(q.url), lab = esc(q.name || 'Fuente') + (q.status ? ' · ' + esc(q.status) : '') + (q.price ? ' · ' + money(q.price) : ''); return '<li>' + (u ? '<a target="_blank" rel="noopener noreferrer" href="' + esc(u) + '">' + lab + '</a>' : lab) + '</li>'; }).join('') + '</ul>';
+    return h + '</div>';
+  }
   function renderProps() {
     if (scene3d && scene3d.setProps) scene3d.setProps(PROPS);
     var el = $('#props'); if (!propOpen) { el.hidden = true; return; } el.hidden = false;
     var cur = PROPS.filter(function (x) { return x.id === propSel; })[0] || PROPS[0]; if (cur) propSel = cur.id;
-    var list = PROPS.map(function (x) { return '<button class="pitem" data-psel="' + esc(x.id) + '" aria-current="' + (cur && cur.id === x.id) + '" type="button"><b>' + esc(x.addr) + '</b><small>' + VER[verOf(x)].e + ' ' + esc(x.city) + ' · ' + money(x.price) + ' · ' + esc(x.status || 'nueva') + '</small></button>'; }).join('') || '<p class="pnote" style="padding:12px">Aún no hay propiedades. Agrega una dirección abajo o espera la búsqueda diaria.</p>';
+    var nDisc = PROPS.filter(agentDisc).length, view = PROPS.filter(function (x) { return PROP_SHOW_DISC || !agentDisc(x) || (cur && cur.id === x.id); }).slice().sort(function (a2, b2) { var d1 = agentDisc(a2) ? 1 : 0, d2 = agentDisc(b2) ? 1 : 0; if (d1 !== d2) return d1 - d2; return propScore(b2) - propScore(a2) || (b2.createdAt || 0) - (a2.createdAt || 0); });
+    var list = (nDisc ? '<label class="pfilter"><input type="checkbox" data-pshowdisc' + (PROP_SHOW_DISC ? ' checked' : '') + '> Ver ' + nDisc + ' descartada' + (nDisc === 1 ? '' : 's') + ' por el agente</label>' : '') + view.map(function (x) { var dm = propDom(x), sc = propScore(x), mk = MKT[(x.mkt || {}).status]; return '<button class="pitem' + (agentDisc(x) ? ' adisc' : '') + '" data-psel="' + esc(x.id) + '" aria-current="' + (cur && cur.id === x.id) + '" type="button">' + (dm >= 0 ? '<span class="dom">' + dm + ' d</span>' : '') + '<b>' + esc(x.addr) + '</b><small>' + VER[verOf(x)].e + ' ' + esc(x.city) + ' · ' + money(x.price) + ' · ' + esc(x.status || 'nueva') + (sc >= 0 ? ' · ★ ' + sc : '') + (mk ? ' · ' + mk[0] : '') + '</small></button>'; }).join('') || '<p class="pnote" style="padding:12px">Aún no hay propiedades. Agrega una dirección abajo o espera la búsqueda diaria.</p>';
     var det = '<p class="pnote">Elige una propiedad para ver su dirección exacta y el mapa.</p>';
     if (cur) {
       var q = mapQ(cur);
       det = '<h3 style="margin:0;font-size:16px">' + esc(propFull(cur)) + '</h3>' +
-        '<div class="pnums"><span><b>' + money(cur.price) + '</b></span>' + (cur.sqft ? '<span>' + cur.sqft + ' pies²' + (cur.price ? ' · $' + Math.round(cur.price / cur.sqft) + '/pie²' : '') + '</span>' : '') + (cur.beds ? '<span>' + cur.beds + ' recámaras</span>' : '') + (cur.baths ? '<span>' + cur.baths + ' baños</span>' : '') + (cur.year ? '<span>Año ' + cur.year + '</span>' : '') + '</div>' +
+        '<div class="pnums"><span><b>' + money(cur.price) + '</b></span>' + (cur.sqft ? '<span>' + cur.sqft + ' pies²' + (cur.price ? ' · $' + Math.round(cur.price / cur.sqft) + '/pie²' : '') + '</span>' : '') + (cur.beds ? '<span>' + cur.beds + ' recámaras</span>' : '') + (cur.baths ? '<span>' + cur.baths + ' baños</span>' : '') + (cur.year ? '<span>Año ' + cur.year + '</span>' : '') + '</div>' + propResearch(cur) +
         (function () {
           var v = verOf(cur), V = VER[v], cr = criteria(cur), om = offerMax(cur);
           return '<div class="pver" style="border-color:' + V.c + '"><b style="color:' + V.c + '">' + V.e + ' ' + V.t + '</b>' +
@@ -1628,13 +1657,14 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       '<form class="pform" data-padd autocomplete="off"><input type="text" maxlength="140" placeholder="Agregar dirección exacta: 123 Main St, Plano, TX 75074" aria-label="Dirección exacta"><input type="text" maxlength="200" placeholder="Precio y notas (opcional): 250000 · necesita cocina y techo" aria-label="Notas"><button class="btn primary" type="submit">Agregar propiedad</button></form>');
   }
   var PROP_ANS = {};
+  $('#props').addEventListener('change', function (e) { var t = e.target; if (t && t.hasAttribute && t.hasAttribute('data-pshowdisc')) { PROP_SHOW_DISC = !!t.checked; renderProps(); } });
   function openProps(id) { propOpen = true; if (id) propSel = id; renderProps(); }
   function saveProp(x, patch) { Object.assign(x, patch); if (DB) DB.doc('properties/' + x.id).update(patch).catch(fail); renderProps(); }
   function askProp(x, q) {
     var a = byId('oport'); function show(t) { PROP_ANS[x.id] = t; var p = $('#props .aans'); if (!p) { renderProps(); p = $('#props .aans'); } if (p) p.textContent = t; }
     if (!SAMPLE) { show('Aquí no puedo consultar a Claude. Datos que tengo: ' + propFull(x) + ', ' + money(x.price) + '. ' + (x.notes || '')); return; }
     var sk = skillsOf('oport').map(function (m) { return m.title + ': ' + m.body; }).join(' | ');
-    var prompt = 'Eres «Oportunidades», agente de Imperial Remodeling (remodelación en Dallas–Fort Worth). Propiedad: ' + propFull(x) + ', precio ' + money(x.price) + ', ' + (x.sqft || '?') + ' pies², ' + (x.beds || '?') + ' rec, ' + (x.baths || '?') + ' baños, año ' + (x.year || '?') + '. Notas: ' + (x.notes || 'ninguna') + '. Skills que el dueño te enseñó: ' + (sk || 'ninguna') + '. Estado de verificación: ' + VER[verOf(x)].t + (x.arv ? '; ARV del dueño ' + money(x.arv) : '') + '. REGLA: no llames «oportunidad» a nada que el dueño no haya confirmado como real y off-market; si está sin confirmar, pídele que lo confirme. Responde en español, máximo 5 líneas, en primera persona, solo con estos datos; no inventes precios de obra ni valores de reventa: si faltan, di qué dato necesitas. Nunca prometas contactar a nadie ni enviar nada sin aprobación del dueño.\n\nPregunta del dueño: ' + String(q).slice(0, 200);
+    var prompt = 'Eres «Oportunidades», agente de Imperial Remodeling (remodelación en Dallas–Fort Worth). Propiedad: ' + propFull(x) + ', precio ' + money(x.price) + ', ' + (x.sqft || '?') + ' pies², ' + (x.beds || '?') + ' rec, ' + (x.baths || '?') + ' baños, año ' + (x.year || '?') + '. Notas: ' + (x.notes || 'ninguna') + '. Skills que el dueño te enseñó: ' + (sk || 'ninguna') + '. Estado de verificación: ' + VER[verOf(x)].t + (x.arv ? '; ARV del dueño ' + money(x.arv) : '') + (x.mkt ? '; mercado: ' + ((MKT[x.mkt.status] || [''])[0]) + (propDom(x) >= 0 ? ', ' + propDom(x) + ' días' : '') : '') + (x.est && x.est.arv ? '; ARV estimado por el agente ' + money(x.est.arv) : '') + (x.buy ? '; compra: ' + String(x.buy).slice(0, 200) : '') + (Array.isArray(x.strategies) ? '; estrategias: ' + x.strategies.slice(0, 4).join(' | ').slice(0, 400) : '') + '. REGLA: no llames «oportunidad» a nada que el dueño no haya confirmado como real y off-market; si está sin confirmar, pídele que lo confirme. Responde en español, máximo 5 líneas, en primera persona, solo con estos datos; no inventes precios de obra ni valores de reventa: si faltan, di qué dato necesitas. Nunca prometas contactar a nadie ni enviar nada sin aprobación del dueño.\n\nPregunta del dueño: ' + String(q).slice(0, 200);
     show('Pensando…');
     SAMPLE(prompt, { onText: function (o) { var p = $('#props .aans'); if (p) p.textContent = o.text; } }).then(function (rr) { var t = (rr && rr.text) || 'No tengo respuesta ahora.'; show(t); if (a) addUsage('oport', est(prompt), est(t), 'pregunta sobre propiedad'); }).catch(function () { show('No pude consultar a Claude ahora.'); });
   }
