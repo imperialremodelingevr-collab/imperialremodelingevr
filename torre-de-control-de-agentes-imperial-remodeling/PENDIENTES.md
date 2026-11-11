@@ -66,3 +66,11 @@
 - [x] El anexo de Propiedades es una nave pequeña conectada al piso 12 (ventanillas iluminadas, aletas, motor, cúpula de cristal sobre la mesa holográfica del mapa).
 - [x] Plataformas en las 4 esquinas de la ciudad: cada 20–40 s despega una nave rumbo a la Tierra con estela de fuego y vuelve a cargarse.
 - [ ] Revisar en tu teléfono que la nave y los despegues se vean fluidos (en teléfono la calidad baja automáticamente).
+- [x] Modo «🚶 Caminar»: entras a pie a cualquier piso de la torre y a la nave anexo, en primera persona.
+  - Computadora: W A S D o flechas para caminar, arrastrar para mirar, clic en el piso para ir ahí, E para hablar, R / F para subir o bajar de piso, Esc para salir.
+  - Teléfono: círculo (joystick) para caminar, arrastrar para mirar, tocar el piso para ir ahí, tocar a una persona para hablar.
+  - Plano del piso en vivo (dónde estás tú, el escritorio y cada persona por color de estado), ▲ ▼ para cambiar de piso como elevador, «Ir al anexo» y la pasarela de cristal del piso 12 se pueden caminar.
+  - Al acercarte a alguien aparece «Hablar con …»: te saluda, dice lo que está haciendo y abre su ficha con sus tareas.
+  - Ni las paredes ni las personas se atraviesan. El tablero de propiedades del anexo se lee bien desde adentro.
+  - También por voz o texto a Jarvis: «camina por el piso de Correo», «recorre la nave», «deja de caminar».
+- [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.

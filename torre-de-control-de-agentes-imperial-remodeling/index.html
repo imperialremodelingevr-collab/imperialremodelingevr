@@ -255,6 +255,16 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .vohint { position: absolute; left: 50%; bottom: 172px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); text-align: center; z-index: 10; padding: 9px 14px; border: 1px solid #ffc94d; background: rgba(5, 10, 16, 0.95); color: #ffe29a; font-size: 13px; border-radius: 20px; box-shadow: 0 0 22px rgba(255, 201, 77, 0.35); animation: vhpulse 1.6s ease-in-out infinite; }
 .vohint[hidden] { display: none; } @keyframes vhpulse { 50% { box-shadow: 0 0 34px rgba(255, 201, 77, 0.7); } }
 .officebar { position: absolute; left: 50%; bottom: 74px; transform: translateX(-50%); z-index: 9; display: flex; gap: 8px; align-items: center; padding: 6px 10px; background: rgba(5, 10, 16, 0.92); border: 1px solid rgba(92, 255, 230, 0.5); box-shadow: 0 0 24px rgba(92, 255, 230, 0.18); font-size: 12px; white-space: nowrap; }
+.walkbar { position: absolute; left: 50%; bottom: 128px; transform: translateX(-50%); z-index: 10; display: flex; gap: 6px; align-items: center; padding: 6px 8px; background: rgba(5, 10, 16, 0.92); border: 1px solid rgba(255, 201, 77, 0.55); box-shadow: 0 0 24px rgba(255, 201, 77, 0.18); font-size: 12px; white-space: nowrap; max-width: calc(100% - 16px); }
+.walkbar span { min-width: 170px; text-align: center; color: #ffe7a8; overflow: hidden; text-overflow: ellipsis; }
+.walkbar[hidden], .walkpad[hidden], .walkmap[hidden], .walkhint[hidden] { display: none; }
+.walkpad { position: absolute; left: 18px; bottom: 130px; width: 120px; height: 120px; border-radius: 50%; border: 1px solid rgba(92, 255, 230, 0.55); background: rgba(5, 10, 16, 0.38); z-index: 10; touch-action: none; }
+.walkpad .knob { position: absolute; left: 50%; top: 50%; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%; background: rgba(92, 255, 230, 0.35); border: 1px solid #5cffe6; pointer-events: none; }
+.walkmap { position: absolute; left: 12px; bottom: 74px; width: 200px; height: 150px; z-index: 9; background: rgba(5, 10, 16, 0.82); border: 1px solid rgba(92, 255, 230, 0.45); }
+.walkhint { position: absolute; left: 50%; top: 64px; transform: translateX(-50%); z-index: 9; padding: 6px 12px; background: rgba(5, 10, 16, 0.85); color: #cfeff8; font-size: 12px; border: 1px solid rgba(92, 255, 230, 0.35); max-width: calc(100% - 24px); text-align: center; transition: opacity 1.2s; }
+.walkhint.fade { opacity: 0; pointer-events: none; }
+#app.walk .strip, #app.walk .lift, #app.walk .roster, #app.walk #officeBar { display: none !important; }
+@media (max-width: 860px) { .walkbar { bottom: 14px; gap: 4px; padding: 5px 6px; } .walkbar span { min-width: 60px; max-width: 112px; } .walkbar .btn { padding-left: 8px; padding-right: 8px; } .walkmap { left: auto; right: 8px; bottom: auto; top: 300px; width: 132px; height: 99px; } .walkpad { bottom: 74px; left: auto; right: 16px; } .walkhint { top: 250px; } #app.walk.wtalk .walkpad, #app.walk.wtalk .walkmap { display: none !important; } #app.walk .tools, #app.walk .rdock, #app.walk .card { display: none !important; } #app.walk.wtalk .card { display: block !important; } }
 .officebar[hidden] { display: none; } .officebar span { min-width: 150px; text-align: center; color: #bffcf0; }
 @media (max-width: 860px) { .officebar { bottom: 14px; max-width: calc(100% - 16px); } .officebar span { min-width: 90px; overflow: hidden; text-overflow: ellipsis; } #alert .am { display: none; } #app.office .card, #app.office .tools, #app.office .strip, #app.office .lift, #app.office .rdock, #app.office .roster { display: none !important; } }
 .hpip { position: absolute; left: 530px; top: 120px; width: 220px; z-index: 8; background: rgba(3, 9, 15, 0.92); border: 1px solid rgba(92, 255, 230, 0.55); box-shadow: 0 0 28px rgba(92, 255, 230, 0.25), inset 0 0 22px rgba(92, 255, 230, 0.12); border-radius: 4px; overflow: hidden; }
@@ -433,6 +443,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     <div class="tools">
       <button class="btn" id="btnHome" type="button">Torre completa</button>
       <button class="btn extra" id="btnTour" type="button">Recorrido: apagado</button>
+      <button class="btn" id="btnWalk" type="button" title="Recorre a pie cada piso de la torre y la nave anexo">🚶 Caminar</button>
       <button class="btn" id="btnMore" type="button">Más herramientas</button>
       <button class="btn mobonly" id="btnUp" type="button" aria-label="Piso arriba">▲</button>
       <button class="btn mobonly" id="btnDown" type="button" aria-label="Piso abajo">▼</button>
@@ -591,7 +602,11 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   <div class="htip" id="htip" hidden></div>
   <div class="holofx" aria-hidden="true"></div>
   <button class="vohint" id="voHint" type="button" hidden>🔊 Toca aquí para activar la voz de Jarvis</button>
-  <div class="officebar" id="officeBar" hidden role="group" aria-label="Vista de oficina"><button class="btn" id="obPrev" type="button" aria-label="Oficina anterior">◀</button><span id="obName"></span><button class="btn" id="obNext" type="button" aria-label="Oficina siguiente">▶</button><button class="btn primary" id="obExit" type="button">Salir de la oficina</button></div>
+  <div class="officebar" id="officeBar" hidden role="group" aria-label="Vista de oficina"><button class="btn" id="obPrev" type="button" aria-label="Oficina anterior">◀</button><span id="obName"></span><button class="btn" id="obNext" type="button" aria-label="Oficina siguiente">▶</button><button class="btn" id="obWalk" type="button">Caminar</button><button class="btn primary" id="obExit" type="button">Salir de la oficina</button></div>
+  <div class="walkbar" id="walkBar" hidden role="group" aria-label="Modo caminar"><button class="btn" id="wkDown" type="button" aria-label="Bajar un piso">▼</button><span id="wkName"></span><button class="btn" id="wkUp" type="button" aria-label="Subir un piso">▲</button><button class="btn" id="wkAnnex" type="button">Ir al anexo</button><button class="btn primary" id="wkTalk" type="button" hidden>Hablar</button><button class="btn" id="wkExit" type="button">Salir</button></div>
+  <div class="walkpad" id="walkPad" hidden aria-hidden="true"><div class="knob" id="walkKnob"></div></div>
+  <canvas class="walkmap" id="walkMap" width="200" height="150" hidden aria-label="Plano del piso"></canvas>
+  <div class="walkhint" id="walkHint" hidden></div>
   <section class="hpip" id="hpip" hidden aria-label="Control con las manos"><div class="hv"><video id="hVid" playsinline muted></video><canvas id="hCan" width="320" height="240"></canvas></div><div class="hm"><span id="hMsg">Iniciando cámara…</span><button id="hOff" type="button">Apagar</button></div><div class="hh" id="hHelp"></div></section>
   <section class="props" id="props" hidden aria-label="Propiedades y mapa"></section>
   <div class="toast" id="toast" role="status"></div>
@@ -906,6 +921,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (/\b(reanuda|reanudar|continua)\b/.test(n)) { var ar = findAgentV(n); if (!ar) return '¿A cuál agente reanudo?'; if (ar.status === 'idle') togglePause(ar); return ar.name + ' reanudado.'; }
     if (/\b(silencia|silencio|callate|calla)\b/.test(n)) { alerts().forEach(function (x) { x.acked = true; }); return 'Alarmas silenciadas.'; }
     if (/\b(aprueba|aprobar|acepta|aceptar)\b/.test(n)) { tab('inbox'); return 'Abrí la bandeja. Confirma con el botón de cada elemento; no envío nada sin tu toque.'; }
+    if (/\b(sal|salir|salte|sacame|deja|dejar)\b/.test(n) && /\b(caminar|camina|recorrido)\b/.test(n)) { exitWalk(); return 'Dejé de caminar.'; }
+    if (/\b(camina|caminar|caminemos|recorrer|recorre|recorrido|pasear|pasea)\b/.test(n)) { var wa = /\b(anexo|nave)\b/.test(n) ? byId('oport') : (findAgentV(n) || (selected && byId(selected)) || byId('cotiz')); enterWalk(wa.id); return 'Caminando por ' + (wa.annex ? 'la nave anexo' : 'el piso de ' + wa.name) + '.'; }
     if (/\b(sal|salir|salte|sacame)\b/.test(n) && /\boficina\b/.test(n)) { exitOffice(); return 'Salí de la oficina.'; }
     if (/\b(entra|entrar|entrame|metete|llevame|pasame)\b/.test(n) && /\b(oficina|adentro|dentro)\b/.test(n)) { var oa = findAgentV(n) || (selected && byId(selected)) || byId('cotiz'); enterOffice(oa.id); return 'Entrando a la oficina de ' + oa.name + '.'; }
     if (/\b(vista interior|adentro|escritorios)\b/.test(n)) { $('#btnInside').click(); return 'Vista interior.'; }
@@ -995,6 +1012,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       { name: 'test_voice', description: 'Prueba la voz de Jarvis en este dispositivo y reporta si el navegador la dejó hablar.', execute: function () { voiceTest(); return 'Probando la voz; revisa el aviso en pantalla.'; } },
       { name: 'enter_office', description: 'Entra a la oficina de un agente para ver su escritorio, monitores y detalles por dentro; sin agente usa el seleccionado.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } } }, execute: function (i) { var a = (i && i.agent) ? need(i) : ((selected && byId(selected)) || byId('cotiz')); enterOffice(a.id); return 'Dentro de la oficina de ' + a.name; } },
       { name: 'exit_office', description: 'Sale de la oficina y vuelve a la vista de la torre.', execute: function () { exitOffice(); return 'Salí de la oficina'; } },
+      { name: 'walk_floor', description: 'Activa el modo caminar en primera persona en el piso de un agente (o en la nave anexo de Oportunidades) para recorrerlo a pie; sin agente usa el seleccionado.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } } }, execute: function (i) { var a = (i && i.agent) ? need(i) : ((selected && byId(selected)) || byId('cotiz')); enterWalk(a.id); return 'Caminando por el piso de ' + a.name; } },
+      { name: 'exit_walk', description: 'Sale del modo caminar y vuelve a la vista de la torre.', execute: function () { exitWalk(); return 'Dejé de caminar'; } },
       { name: 'open_section', description: 'Abre una sección del panel: bandeja, tareas, obras, publicaciones, tokens, memoria, estructura, asistente o sistema.', inputSchema: { type: 'object', properties: { section: { type: 'string' } }, required: ['section'] }, execute: function (i) { var k = SECTIONS_TAB[normV(i && i.section)]; if (!k) throw new Error('Sección desconocida'); panelOpen = true; zen = false; applyUi(); tab(k); return 'Abrí ' + TAB_TITLES[k]; } },
       { name: 'restart_agent', description: 'Reinicia un agente que esté con falla o lento (acción interna de la torre).', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (a.status !== 'error' && a.status !== 'warning') return a.name + ' ya está bien, no hace falta reiniciarlo.'; fixAgent(a); return 'Reiniciando ' + a.name; } },
       { name: 'pause_agent', description: 'Pone un agente en pausa.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (a.status !== 'idle') togglePause(a); return a.name + ' en pausa'; } },
@@ -1485,7 +1504,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       '<div class="mine"><small>Próximas tareas</small>' + (mine.length ? '<ul>' + mine.map(function (t) { return '<li><time>' + clock(t.at) + '</time><span>' + esc(t.title) + '</span></li>'; }).join('') + '</ul>' : '<p>Sin tareas programadas.</p>') + '</div>' +
       '<form class="ask" data-cask="' + esc(a.id) + '" autocomplete="off"><input type="text" maxlength="160" placeholder="Pregúntale a ' + esc(a.name) + '…" aria-label="Pregúntale a ' + esc(a.name) + '"><button class="btn primary" type="submit">Preguntar</button></form>' + (AGENT_ANS[a.id] ? '<p class="aans">' + esc(AGENT_ANS[a.id]) + '</p>' : '') +
       '<form class="ask" data-cskill="' + esc(a.id) + '" autocomplete="off"><input type="text" maxlength="300" placeholder="Enséñale una skill o regla…" aria-label="Enseñar una skill a ' + esc(a.name) + '"><button class="btn" type="submit">Enseñar</button></form>' + (skillsOf(a.id).length ? '<p class="role">Skills aprendidas: ' + skillsOf(a.id).length + ' · última: ' + esc(skillsOf(a.id).slice(-1)[0].body.slice(0, 70)) + '</p>' : '') +
-      '<div class="btns"><button class="btn primary" data-cin type="button">Entrar a la oficina</button>' + (a.id === 'oport' ? '<button class="btn primary" data-cprops type="button">Propiedades y mapa (' + PROPS.length + ')</button>' : '') + main + ((INBOX || []).some(function (x) { return x.agent === a.id; }) ? '<button class="btn primary" data-copen="inbox" type="button">Atender mis recados</button>' : '') + '<button class="btn" data-cadd type="button">Asignar tarea</button>' + (a.id === 'publica' ? '<button class="btn" data-copen="posts" type="button">Publicaciones</button><button class="btn" data-copen="tokens" type="button">Tokens</button>' : '') + '</div>');
+      '<div class="btns"><button class="btn primary" data-cin type="button">Entrar a la oficina</button><button class="btn primary" data-cwalk type="button">Caminar por ' + (a.annex ? 'la nave' : 'este piso') + '</button>' + (a.id === 'oport' ? '<button class="btn primary" data-cprops type="button">Propiedades y mapa (' + PROPS.length + ')</button>' : '') + main + ((INBOX || []).some(function (x) { return x.agent === a.id; }) ? '<button class="btn primary" data-copen="inbox" type="button">Atender mis recados</button>' : '') + '<button class="btn" data-cadd type="button">Asignar tarea</button>' + (a.id === 'publica' ? '<button class="btn" data-copen="posts" type="button">Publicaciones</button><button class="btn" data-copen="tokens" type="button">Tokens</button>' : '') + '</div>');
     var br = agentBrief(a), bd = c.querySelector('[data-dyn="bdo"]'), bi = c.querySelector('[data-dyn="bimp"]'); if (bd) bd.textContent = br.doing; if (bi) bi.innerHTML = br.improve.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
     var dA = c.querySelector('[data-dyn="act"]'); if (dA) dA.textContent = a.act; var dS = c.querySelector('[data-dyn="sig"]'); if (dS) dS.textContent = sig;
   }
@@ -1604,6 +1623,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     else if (b.hasAttribute('data-cpause')) togglePause(a);
     else if (b.hasAttribute('data-cprops')) openProps();
     else if (b.hasAttribute('data-cin')) enterOffice(a.id);
+    else if (b.hasAttribute('data-cwalk')) enterWalk(a.id);
     else if (b.hasAttribute('data-cadd')) openForm(a.id);
     else if (b.dataset.copen) { panelOpen = true; zen = false; applyUi(); tab(b.dataset.copen); }
   });
@@ -1653,18 +1673,92 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   var OFFICE = null;
   function renderOfficeBar() { var b = $('#officeBar'); if (!b) return; $('#app').classList.toggle('office', !!OFFICE); b.hidden = !OFFICE; var a = OFFICE && byId(OFFICE); $('#obName').textContent = a ? 'Oficina · ' + a.name : ''; }
   function enterOffice(id) {
-    var a = byId(id); if (!a) return false; stopTour(); if (JT.on) jarvisTour(false);
+    var a = byId(id); if (!a) return false; if (WALKING) exitWalk(); stopTour(); if (JT.on) jarvisTour(false);
     OFFICE = id; if (selected !== id) { ackCall(a); selected = id; selectedProject = null; selectedPlanet = null; if (scene3d) scene3d.focus(a, true); refresh(); }
     if (window.innerWidth > 860) jarvisMini(true); if (window.innerWidth <= 860) panelOpen = false, applyUi();
     setTimeout(function () { if (scene3d && scene3d.setOffice && OFFICE === id) scene3d.setOffice(a); }, 150); renderOfficeBar(); return true;
   }
+  var WALKING = false, walkLast = { fl: -1, zone: '' }, WK_COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  function enterWalk(id, toAnnex) {
+    if (!scene3d || !scene3d.setWalk) { toast('El modo caminar necesita la vista 3D'); return false; }
+    if (OFFICE) { OFFICE = null; scene3d.setOffice(null); renderOfficeBar(); }
+    stopTour(); if (JT.on) jarvisTour(false);
+    var a = byId(id) || (selected && byId(selected)) || byId('cotiz') || AGENTS[0];
+    WALKING = true; walkLast = { fl: -1, zone: '' };
+    if (window.innerWidth <= 860) { panelOpen = false; applyUi(); }
+    scene3d.setWalk({ floor: a.i, annex: !!(toAnnex || a.id === 'oport') });
+    var app = $('#app'); app.classList.add('walk'); app.classList.remove('wtalk');
+    $('#walkBar').hidden = false; $('#walkMap').hidden = false; $('#walkPad').hidden = !WK_COARSE;
+    var h = $('#walkHint'); h.hidden = false; h.classList.remove('fade');
+    h.textContent = WK_COARSE ? 'Mueve el círculo para caminar · arrastra para mirar · toca el piso para ir ahí · toca a una persona para hablar · ▲ ▼ cambia de piso' : 'W A S D o flechas para caminar · arrastra para mirar · clic en el piso para ir ahí · E para hablar · R / F sube o baja de piso · Esc para salir';
+    clearTimeout(enterWalk.t); enterWalk.t = setTimeout(function () { if (WALKING) h.classList.add('fade'); }, 9000);
+    return true;
+  }
+  function exitWalk() {
+    if (!WALKING) return; WALKING = false; if (scene3d && scene3d.setWalk) scene3d.setWalk(null);
+    var app = $('#app'); app.classList.remove('walk'); app.classList.remove('wtalk');
+    ['#walkBar', '#walkMap', '#walkHint', '#walkPad'].forEach(function (q) { $(q).hidden = true; });
+  }
+  function walkTalkUi(id) { var a = byId(id); if (!a) return; select(id, true); $('#app').classList.add('wtalk'); if (window.innerWidth > 860) jarvisMini(true); }
+  function walkHud(w) {
+    if (!WALKING || !w) return; var a = byId(w.id), op = byId('oport');
+    var where = w.zone === 'anexo' ? 'Nave anexo · ' + (op ? op.name : 'Propiedades') : w.zone === 'puente' ? 'Pasarela al anexo' : 'Piso ' + (w.fl + 1) + ' · ' + (a ? a.name : '');
+    $('#wkName').textContent = where;
+    if (w.fl !== walkLast.fl || (w.zone === 'anexo') !== (walkLast.zone === 'anexo')) {
+      var who = w.zone === 'anexo' ? op : a;
+      toast(where + (who ? ' — ' + LBL[who.status] + (who.act ? ': ' + who.act : '') : ''));
+    }
+    $('#wkUp').disabled = w.fl >= w.n - 1; $('#wkDown').disabled = w.fl <= 0;
+    var inAnn = w.zone === 'anexo' || w.zone === 'puente';
+    var narrow = window.innerWidth <= 860; $('#wkAnnex').textContent = inAnn ? (narrow ? 'Torre' : 'Volver a la torre') : (narrow ? 'Anexo' : 'Ir al anexo');
+    var nb = $('#wkTalk'), na = w.near && byId(w.near); nb.hidden = !na; if (na) nb.textContent = narrow ? 'Hablar' : 'Hablar con ' + na.name;
+    if (!na && walkLast.near && $('#app').classList.contains('wtalk') && window.innerWidth <= 860) $('#app').classList.remove('wtalk');
+    walkLast = { fl: w.fl, zone: w.zone, near: w.near };
+    drawWalkMap(w);
+  }
+  function drawWalkMap(w) {
+    var c = $('#walkMap'); if (!c || c.hidden) return; var g = c.getContext('2d'), W = c.width, H = c.height;
+    var x0 = -w.hx, x1 = w.hx, z0 = -w.hz, z1 = w.hz;
+    if (w.ann) { x0 = Math.min(x0, w.ann.x - 7); x1 = Math.max(x1, w.ann.x + 7); z0 = Math.min(z0, w.ann.z - 7); z1 = Math.max(z1, w.ann.z + 7); }
+    var sc = Math.min((W - 16) / (x1 - x0), (H - 22) / (z1 - z0)), cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
+    function P(x, z) { return [W / 2 + (x - cx) * sc, 6 + (H - 16) / 2 + (z - cz) * sc]; }
+    g.clearRect(0, 0, W, H); g.lineWidth = 1.5;
+    var a = P(-w.hx, -w.hz); g.fillStyle = 'rgba(20,60,90,.45)'; g.fillRect(a[0], a[1], 2 * w.hx * sc, 2 * w.hz * sc); g.strokeStyle = '#5cc8ff'; g.strokeRect(a[0], a[1], 2 * w.hx * sc, 2 * w.hz * sc);
+    var cc = P(0, 0); g.fillStyle = '#bfe9ff'; g.beginPath(); g.arc(cc[0], cc[1], Math.max(2, 1.3 * sc), 0, 6.3); g.fill();
+    if (w.desk) { var d = P(w.desk.x, w.desk.z); g.fillStyle = '#ffc94d'; g.fillRect(d[0] - 1.4 * sc, d[1] - 0.6 * sc, 2.8 * sc, 1.2 * sc); }
+    if (w.ann) {
+      var s1 = P(w.ann.sx, w.ann.sz), e1 = P(w.ann.ex, w.ann.ez), an = P(w.ann.x, w.ann.z);
+      g.strokeStyle = 'rgba(92,255,230,.8)'; g.lineWidth = Math.max(2, 2.4 * sc); g.beginPath(); g.moveTo(s1[0], s1[1]); g.lineTo(e1[0], e1[1]); g.stroke(); g.lineWidth = 1.5;
+      g.fillStyle = 'rgba(20,60,90,.45)'; g.beginPath(); g.arc(an[0], an[1], 6.3 * sc, 0, 6.3); g.fill(); g.strokeStyle = '#5cffe6'; g.stroke();
+      g.fillStyle = '#5cffe6'; g.beginPath(); g.arc(an[0], an[1], 2 * sc, 0, 6.3); g.fill();
+    }
+    (w.ppl || []).forEach(function (p) { var q = P(p.x, p.z); g.fillStyle = p.st === 'error' ? '#ff5a5a' : p.st === 'warning' ? '#ffb84d' : '#7dffb0'; g.strokeStyle = '#03141f'; g.lineWidth = 1.5; g.beginPath(); g.arc(q[0], q[1], 4.6, 0, 6.3); g.fill(); g.stroke(); });
+    var me = P(w.x, w.z), yw = w.yaw; g.fillStyle = '#ffd27a'; g.strokeStyle = '#000'; g.lineWidth = 1; g.beginPath();
+    g.moveTo(me[0] + Math.cos(yw) * 8, me[1] + Math.sin(yw) * 8); g.lineTo(me[0] + Math.cos(yw + 2.5) * 5.5, me[1] + Math.sin(yw + 2.5) * 5.5); g.lineTo(me[0] + Math.cos(yw - 2.5) * 5.5, me[1] + Math.sin(yw - 2.5) * 5.5); g.closePath(); g.fill(); g.stroke();
+    g.fillStyle = '#cfeff8'; g.font = '600 11px sans-serif'; g.textAlign = 'left'; g.fillText(w.zone === 'torre' ? 'Piso ' + (w.fl + 1) + ' de ' + w.n : w.zone === 'anexo' ? 'Nave anexo' : 'Pasarela', 6, H - 5);
+  }
+  $('#wkUp').onclick = function () { if (scene3d && scene3d.walkStep) scene3d.walkStep(1); };
+  $('#wkDown').onclick = function () { if (scene3d && scene3d.walkStep) scene3d.walkStep(-1); };
+  $('#wkAnnex').onclick = function () { if (scene3d && scene3d.walkAnnex) scene3d.walkAnnex(); };
+  $('#wkTalk').onclick = function () { if (scene3d && scene3d.walkTalkNear) scene3d.walkTalkNear(); };
+  $('#wkExit').onclick = exitWalk;
+  $('#obWalk').onclick = function () { enterWalk(OFFICE || 'cotiz'); };
+  $('#btnWalk').onclick = function () { if (WALKING) { exitWalk(); return; } var ag = (selected && byId(selected)) || byId('cotiz'); enterWalk(ag.id); };
+  (function () {
+    var pad = $('#walkPad'), kn = $('#walkKnob'), pid = null;
+    function set(e) { var r = pad.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), m = r.width / 2 - 12, d = Math.hypot(dx, dy); if (d > m) { dx *= m / d; dy *= m / d; } kn.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; if (scene3d && scene3d.walkMove) scene3d.walkMove(dx / m, dy / m); }
+    function end(e) { if (e.pointerId !== pid) return; pid = null; kn.style.transform = ''; if (scene3d && scene3d.walkMove) scene3d.walkMove(0, 0); }
+    pad.addEventListener('pointerdown', function (e) { pid = e.pointerId; try { pad.setPointerCapture(pid); } catch (er) {} set(e); e.preventDefault(); });
+    pad.addEventListener('pointermove', function (e) { if (e.pointerId === pid) set(e); });
+    pad.addEventListener('pointerup', end); pad.addEventListener('pointercancel', end);
+  })();
   function exitOffice() { if (!OFFICE) return; var id = OFFICE; OFFICE = null; if (scene3d && scene3d.setOffice) scene3d.setOffice(null); renderOfficeBar(); if (scene3d && byId(id)) scene3d.focus(byId(id), true); }
   function stepOffice(d) { if (!OFFICE) return; var i = (byId(OFFICE).i + d + AGENTS.length) % AGENTS.length; enterOffice(AGENTS[i].id); }
   $('#obPrev').onclick = function () { stepOffice(-1); }; $('#obNext').onclick = function () { stepOffice(1); }; $('#obExit').onclick = exitOffice;
   document.addEventListener('keydown', function (e) { if (OFFICE && e.key === 'Escape') { e.stopPropagation(); exitOffice(); } }, true);
-  function deselect() { OFFICE = null; if (scene3d && scene3d.setOffice) scene3d.setOffice(null); renderOfficeBar(); stopTour(); selected = null; selectedProject = null; selectedPlanet = null; if (scene3d) scene3d.home(); refresh(); }
-  function selectProject(id) { if (OFFICE) { OFFICE = null; if (scene3d && scene3d.setOffice) scene3d.setOffice(null); renderOfficeBar(); } var p = PROJECTS.filter(function (x) { return x.id === id; })[0]; if (!p) return; stopTour(); selected = null; selectedPlanet = null; selectedProject = id; if (scene3d) scene3d.focusProject(p); refresh(); }
-  function selectPlanet(id) { if (OFFICE) { OFFICE = null; if (scene3d && scene3d.setOffice) scene3d.setOffice(null); renderOfficeBar(); } stopTour(); selected = null; selectedProject = null; selectedPlanet = id; if (scene3d) scene3d.focusPlanet(id); refresh(); }
+  function deselect() { $('#app').classList.remove('wtalk'); OFFICE = null; if (scene3d && scene3d.setOffice) scene3d.setOffice(null); renderOfficeBar(); stopTour(); selected = null; selectedProject = null; selectedPlanet = null; if (scene3d) scene3d.home(); refresh(); }
+  function selectProject(id) { if (WALKING) exitWalk(); if (OFFICE) { OFFICE = null; if (scene3d && scene3d.setOffice) scene3d.setOffice(null); renderOfficeBar(); } var p = PROJECTS.filter(function (x) { return x.id === id; })[0]; if (!p) return; stopTour(); selected = null; selectedPlanet = null; selectedProject = id; if (scene3d) scene3d.focusProject(p); refresh(); }
+  function selectPlanet(id) { if (WALKING) exitWalk(); if (OFFICE) { OFFICE = null; if (scene3d && scene3d.setOffice) scene3d.setOffice(null); renderOfficeBar(); } stopTour(); selected = null; selectedProject = null; selectedPlanet = id; if (scene3d) scene3d.focusPlanet(id); refresh(); }
   $('#btnHome').onclick = deselect;
   $('#btnTest').onclick = breakAgent;
   $('#btnCine').onclick = function () { if (!scene3d) return; var on = scene3d.toggleCine(); PREFS.cine = on; savePrefs(); $('#btnCine').textContent = 'Efectos cine: ' + (on ? 'sí' : 'no'); toast(on ? 'Efectos de cine activados' : 'Efectos de cine apagados'); };
@@ -3646,7 +3740,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       /* tablero informativo */
       var bc = document.createElement('canvas'); bc.width = 1024; bc.height = 400; var btex = new T3.CanvasTexture(bc);
       var board = new T3.Mesh(new T3.PlaneGeometry(8.2, 3.2), new T3.MeshBasicMaterial({ map: btex, transparent: true, blending: T3.AdditiveBlending, depthWrite: false, side: T3.DoubleSide, fog: false }));
-      var baseAng = Math.atan2(-az, -ax); board.position.set(-Math.cos(baseAng) * 5.7, deckY + 3.3, -Math.sin(baseAng) * 5.7); board.rotation.y = Math.atan2(Math.cos(baseAng), Math.sin(baseAng)) + Math.PI; G.add(board);
+      var baseAng = Math.atan2(-az, -ax); board.position.set(-Math.cos(baseAng) * 5.7, deckY + 3.3, -Math.sin(baseAng) * 5.7); board.rotation.y = Math.atan2(Math.cos(baseAng), Math.sin(baseAng)) + Math.PI; G.add(board); board.material.side = T3.FrontSide; var boardB = new T3.Mesh(board.geometry, board.material); boardB.position.copy(board.position); boardB.rotation.y = board.rotation.y + Math.PI; G.add(boardB);
       var PCOL = { pendiente: 0x5cc8ff, real_off: 0xffc94d, real_mls: 0xa78bfa, no_real: 0xff6a6a }, pinSig = '', pinList = [];
       function hash(sx) { var h = 7; for (var c = 0; c < sx.length; c++) h = (h * 31 + sx.charCodeAt(c)) % 9973; return h / 9973; }
       function drawBoard(cnt, n) {
@@ -3694,7 +3788,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         pinList.forEach(function (pn) { var pulse = pn.disc ? 0.3 : pn.v === 'real_off' ? 0.7 + 0.3 * Math.sin(t * 5 + pn.ph) : 0.55 + 0.25 * Math.sin(t * 2.4 + pn.ph); pn.halo.material.opacity = pulse; pn.gem.position.y = pn.hgt + 0.2 + Math.sin(t * 1.6 + pn.ph) * 0.07; pn.halo.position.y = pn.gem.position.y; pn.gem.rotation.y += dt * 1.8; });
         carry.forEach(function (c) { c.u += dt * 0.12; if (c.u > 1) c.u -= 1; c.s.position.set(-Lb / 2 + c.u * Lb, 0, 0); });
       }
-      return { update: update, setProps: setProps, pos: { x: ax, z: az }, info: function () { return { x: ax, z: az, pins: pinList.length, bridge: Lb }; } };
+      return { update: update, setProps: setProps, pos: { x: ax, z: az }, walk: { x: ax, z: az, sx: st.x, sz: st.z, ex: en.x, ez: en.z, y: deckY, fl: oport.i }, info: function () { return { x: ax, z: az, pins: pinList.length, bridge: Lb }; } };
     })();
 
 
@@ -4094,7 +4188,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     function applyShift(snap) {
       var w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
       var ja = window.innerWidth > 860 && !zen && $('#app').classList.contains('jaopen') && !$('#jarvis').classList.contains('mini'), anySel = !!(selected || selectedProject || selectedPlanet);
-      var t = ja ? (anySel ? 8 : 150) : (window.innerWidth > 860 && rosterOpen && !zen) ? (anySel ? -24 : 40) : 0;
+      var t = (WALK && WALK.on) ? 0 : ja ? (anySel ? 8 : 150) : (window.innerWidth > 860 && rosterOpen && !zen) ? (anySel ? -24 : 40) : 0;
       if (snap) SHIFT = t; else if (Math.abs(t - SHIFT) < 0.3) return; else SHIFT += (t - SHIFT) * 0.08;
       if (Math.abs(SHIFT) > 0.5) camera.setViewOffset(w, h, -SHIFT, 0, w, h); else camera.clearViewOffset();
       camera.updateProjectionMatrix();
@@ -4147,12 +4241,14 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
 
     var drag = null, ptrs = {}, pinch = 0;
     canvas.addEventListener('pointerdown', function (e) {
+      if (WALK.on) { walkPtr('down', e); return; }
       canvas.setPointerCapture(e.pointerId); ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
       drag = { x: e.clientX, y: e.clientY, moved: 0 }; cam.gph = null; cam.follow = null; stopTour();
       var ks = Object.keys(ptrs); if (ks.length === 2) pinch = Math.hypot(ptrs[ks[0]].x - ptrs[ks[1]].x, ptrs[ks[0]].y - ptrs[ks[1]].y);
     });
     var lastHover = 0;
     canvas.addEventListener('pointermove', function (e) {
+      if (WALK.on) { walkPtr('move', e); return; }
       if (!ptrs[e.pointerId]) {
         var nowH = performance.now(); if (nowH - lastHover < 70 || e.pointerType === 'touch') return; lastHover = nowH;
         var uh = hit(e); canvas.style.cursor = uh ? 'pointer' : ''; hoverA = uh && uh.agent ? uh.agent : null; if (uh && uh.jarvis) { canvas.style.cursor = 'pointer'; } var ht = $('#htip'); if (hoverA) { ht.textContent = hoverA.name + ' · ' + LBL[hoverA.status] + ' · toca para hablar'; ht.style.left = (e.clientX + 14) + 'px'; ht.style.top = (e.clientY + 14) + 'px'; ht.hidden = false; } else ht.hidden = true; return;
@@ -4168,13 +4264,14 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       cam.th -= dx * 0.0055; cam.ph = Math.min(1.6, Math.max(0.3, cam.ph - dy * 0.0045));
     });
     canvas.addEventListener('pointerup', function (e) {
+      if (WALK.on) { walkPtr('up', e); return; }
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
       if (wasTap) { var ud = hit(e); if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { unlockAudio(); if (!$('#jarvis').hidden) jarvisClose(); else jarvisOpen(false); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
-    canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; });
-    canvas.addEventListener('wheel', function (e) { e.preventDefault(); cam.gr = Math.min(460, Math.max(minR, cam.gr * (1 + e.deltaY * 0.0012))); }, { passive: false });
+    canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; wdrag = null; });
+    canvas.addEventListener('wheel', function (e) { e.preventDefault(); if (WALK.on) { walkNudge(-e.deltaY * 0.006); return; } cam.gr = Math.min(460, Math.max(minR, cam.gr * (1 + e.deltaY * 0.0012))); }, { passive: false });
 
     var ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
     function hit(e) {
@@ -4358,9 +4455,10 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (!isFinite(camera.position.x + camera.position.y + camera.position.z)) { resetCam(); camera.position.set(100, 80, 100); }
       if (camera.position.y < 4) camera.position.y = 4;
       camera.lookAt(cam.tx, cam.ty, cam.tz);
+      if (WALK.on) walkUpdate(dt);
 
       var selIdx = selected ? byId(selected).i : -1;
-      if (cam.r < 92) nearView = true; else if (cam.r > 118) nearView = false; if (window.__evrTest && window.__evrTest.seat) nearView = true;
+      if (cam.r < 92) nearView = true; else if (cam.r > 118) nearView = false; if (window.__evrTest && window.__evrTest.seat) nearView = true; if (WALK.on) nearView = true;
       AGENTS.forEach(function (a) {
         var v = a.v, st = a.status, rb = v.robot, sel = a.id === selected, tt = animT * 2 + v.t, working = st === 'working', camP = camera.position;
         v.ghost += (((selIdx >= 0 && a.i > selIdx) ? 0.08 : 1) - v.ghost) * Math.min(1, dt * 3); v.dim += (((hl && hl.indexOf(a.id) < 0) ? 0.2 : 1) - v.dim) * Math.min(1, dt * 3); var gh = v.ghost * v.dim; rb.visible = v.ghost > 0.45;
@@ -4560,8 +4658,141 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     }
     requestAnimationFrame(frame);
 
+
+    /* ---------- Modo caminar: recorrer a pie cada piso de la torre y la nave anexo ---------- */
+    var EYE = 3.0, WALK = { on: false, x: 0, z: 0, y: 10, ty: 10, yaw: 0, pitch: -0.06, fl: 0, keys: {}, jx: 0, jy: 0, go: null, zone: 'torre', near: null, nearT: 0, bob: 0, nudge: 0 };
+    var annexW = annex ? annex.walk : null, wdrag = null;
+    var wMark = new THREE.Mesh(new THREE.RingGeometry(0.5, 0.75, 28), new THREE.MeshBasicMaterial({ color: 0xffc94d, transparent: true, opacity: 0.9, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, fog: false }));
+    wMark.rotation.x = -Math.PI / 2; wMark.visible = false; scene.add(wMark);
+    function agentAt(i) { for (var q = 0; q < AGENTS.length; q++) if (AGENTS[q].i === i) return AGENTS[q]; return null; }
+    function wFloorOk(x, z, i) {
+      if (Math.abs(x) > hxOf(i) - 0.8 || Math.abs(z) > hzOf(i) - 0.8 || Math.hypot(x, z) < 1.7) return false;
+      var a = agentAt(i); if (a && !a.annex && Math.hypot(x - Math.cos(a.deskAng) * 7.05, z - Math.sin(a.deskAng) * 7.05) < 2.0) return false;
+      return true;
+    }
+    function wAnnexZone(x, z) {
+      if (!annexW || WALK.fl !== annexW.fl) return 0;
+      var dA = Math.hypot(x - annexW.x, z - annexW.z); if (dA < 5.9 && dA > 2.35) return 2;
+      var vx = annexW.ex - annexW.sx, vz = annexW.ez - annexW.sz, L = Math.hypot(vx, vz) || 1, u = ((x - annexW.sx) * vx + (z - annexW.sz) * vz) / (L * L);
+      if (u > -2.4 / L && u < 1 + 1.4 / L && Math.hypot(x - (annexW.sx + vx * u), z - (annexW.sz + vz * u)) < 1.05) return Math.hypot(x, z) < Math.hypot(annexW.sx, annexW.sz) - 0.2 ? 0 : 1;
+      return 0;
+    }
+    function wPeopleOk(x, z) { var fy = WALK.ty - EYE; for (var q = 0; q < AGENTS.length; q++) { var p = AGENTS[q].v.robot.position; if (Math.abs(p.y - fy) < 2.5 && Math.hypot(p.x - x, p.z - z) < 1.15) return false; } return true; }
+    function wOk(x, z) { return wOk0(x, z) && wPeopleOk(x, z); }
+    function wOk0(x, z) { if (annexW && WALK.fl === annexW.fl) { var dA = Math.hypot(x - annexW.x, z - annexW.z); if (dA < 5.9 && dA > 2.35) return true; var vx = annexW.ex - annexW.sx, vz = annexW.ez - annexW.sz, L = Math.hypot(vx, vz) || 1, u = ((x - annexW.sx) * vx + (z - annexW.sz) * vz) / (L * L); if (u > -2.4 / L && u < 1 + 1.4 / L && Math.hypot(x - (annexW.sx + vx * u), z - (annexW.sz + vz * u)) < 1.05) return true; } return wFloorOk(x, z, WALK.fl); }
+    function wSpawn(i) {
+      var a = agentAt(i), da = a ? a.deskAng : 0, c = Math.cos(da), hz = hzOf(i);
+      var tries = [[-c * 2.6, hz * 0.45], [-c * 4, 0], [c * 3.2, hz * 0.5], [0, hz * 0.6]];
+      for (var t = 0; t < tries.length; t++) if (wFloorOk(tries[t][0], tries[t][1], i)) { WALK.x = tries[t][0]; WALK.z = tries[t][1]; break; }
+      if (a && !a.annex) WALK.yaw = Math.atan2(Math.sin(da) * 7.05 - WALK.z, c * 7.05 - WALK.x); else WALK.yaw = Math.atan2(-WALK.z, -WALK.x);
+      WALK.pitch = -0.06;
+    }
+    function walkFloor(i, toAnnex, teleport) {
+      i = Math.max(0, Math.min(N - 1, i)); if (!agentAt(i)) return false;
+      WALK.fl = i; WALK.go = null; wMark.visible = false;
+      if (toAnnex && annexW) {
+        WALK.fl = annexW.fl; var dx = annexW.x - annexW.ex, dz = annexW.z - annexW.ez, dl = Math.hypot(dx, dz) || 1;
+        WALK.x = annexW.ex + dx / dl * 1.1; WALK.z = annexW.ez + dz / dl * 1.1; WALK.yaw = Math.atan2(dz, dx); WALK.pitch = -0.1;
+      } else if (teleport || !wOk(WALK.x, WALK.z)) wSpawn(WALK.fl);
+      WALK.nearT = 0; walkHeight(); if (teleport) WALK.y = WALK.ty;
+      return true;
+    }
+    function walkHeight() { var z2 = wAnnexZone(WALK.x, WALK.z); WALK.zone = z2 === 2 ? 'anexo' : z2 === 1 ? 'puente' : 'torre'; WALK.ty = z2 ? annexW.y + EYE + 0.07 : agentAt(WALK.fl).y + EYE; }
+    function walkInfo() {
+      var a = agentAt(WALK.fl), ppl = [], fy = WALK.ty - EYE;
+      AGENTS.forEach(function (o) { var p = o.v.robot.position; if (Math.abs(p.y - fy) < 2.6) ppl.push({ x: p.x, z: p.z, id: o.id, st: o.status }); });
+      return { on: WALK.on, fl: WALK.fl, id: a && a.id, zone: WALK.zone, near: WALK.near ? WALK.near.id : null, x: WALK.x, z: WALK.z, y: WALK.y, yaw: WALK.yaw, pitch: WALK.pitch, hx: hxOf(WALK.fl), hz: hzOf(WALK.fl), desk: a && !a.annex ? { x: Math.cos(a.deskAng) * 7.05, z: Math.sin(a.deskAng) * 7.05 } : null, ann: annexW && WALK.fl === annexW.fl ? annexW : null, ppl: ppl, n: N };
+    }
+    function walkTalk(a) {
+      if (!a) return;
+      var here = a.annex ? (annexW && WALK.fl === annexW.fl && WALK.zone !== 'torre') : a.i === WALK.fl;
+      if (!here) { walkFloor(a.i, !!a.annex, false); toast('Subiendo al piso de ' + a.name); return; }
+      a.v.lastGreet = -99; greetAgent(a); walkTalkUi(a.id);
+    }
+    function walkNudge(d) { WALK.nudge = Math.max(-3, Math.min(3, WALK.nudge + d)); }
+    function walkGoto(e) {
+      var rc = canvas.getBoundingClientRect(); ndc.set((e.clientX - rc.left) / rc.width * 2 - 1, -(e.clientY - rc.top) / rc.height * 2 + 1); ray.setFromCamera(ndc, camera);
+      var o = ray.ray.origin, d = ray.ray.direction, fy = WALK.ty - EYE; if (d.y > -0.02) return false;
+      var t = (fy - o.y) / d.y; if (t > 45) return false; var px = o.x + d.x * t, pz = o.z + d.z * t;
+      if (!wOk(px, pz)) return false; WALK.go = { x: px, z: pz }; wMark.position.set(px, fy + 0.06, pz); wMark.visible = true; return true;
+    }
+    function walkPtr(type, e) {
+      if (type === 'down') { try { canvas.setPointerCapture(e.pointerId); } catch (er) {} if (!wdrag) wdrag = { x: e.clientX, y: e.clientY, moved: 0, id: e.pointerId }; else wdrag.moved = 99; return; }
+      if (type === 'move') {
+        if (!wdrag || wdrag.id !== e.pointerId) { if (e.pointerType !== 'touch') { var uh = hit(e); canvas.style.cursor = uh && (uh.agent || uh.prop) ? 'pointer' : 'crosshair'; } return; }
+        var dx = e.clientX - wdrag.x, dy = e.clientY - wdrag.y; wdrag.x = e.clientX; wdrag.y = e.clientY; wdrag.moved += Math.abs(dx) + Math.abs(dy);
+        WALK.yaw -= dx * 0.005; WALK.pitch = Math.max(-1.1, Math.min(1.1, WALK.pitch + dy * 0.004)); return;
+      }
+      if (type === 'up') {
+        var w = wdrag; if (!w || w.id !== e.pointerId) return; wdrag = null; if (w.moved > 6) return;
+        var ud = hit(e); if (ud && ud.prop) { openProps(ud.prop.id); return; }
+        if (ud && ud.agent && !ud.floorHit) { walkTalk(ud.agent); return; }
+        if (!walkGoto(e) && ud && ud.agent && ud.agent.i !== WALK.fl) walkTalk(ud.agent);
+      }
+    }
+    window.addEventListener('keydown', function (e) {
+      if (!WALK.on) return; var tg = e.target; if (tg && (tg.tagName === 'INPUT' || tg.tagName === 'TEXTAREA' || tg.tagName === 'SELECT' || tg.isContentEditable)) return;
+      var k = (e.key || '').toLowerCase();
+      if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].indexOf(k) > -1) { WALK.keys[k] = true; WALK.go = null; wMark.visible = false; if (k !== 'shift') { e.preventDefault(); e.stopPropagation(); } return; }
+      if (k === 'e') { if (WALK.near) walkTalk(WALK.near); e.preventDefault(); e.stopPropagation(); return; }
+      if (k === 'r' || k === 'pageup') { walkFloor(WALK.fl + 1); e.preventDefault(); e.stopPropagation(); return; }
+      if (k === 'f' || k === 'pagedown') { walkFloor(WALK.fl - 1); e.preventDefault(); e.stopPropagation(); return; }
+      if (k === 'escape') { e.preventDefault(); e.stopPropagation(); exitWalk(); }
+    }, true);
+    window.addEventListener('keyup', function (e) { var k = (e.key || '').toLowerCase(); if (WALK.keys[k]) WALK.keys[k] = false; }, true);
+    window.addEventListener('blur', function () { WALK.keys = {}; });
+    function walkUpdate(dt) {
+      var K = WALK.keys, f = 0, s = 0, turn = 0;
+      if (K.w || K.arrowup) f += 1; if (K.s || K.arrowdown) f -= 1; if (K.a) s -= 1; if (K.d) s += 1; if (K.arrowleft) turn -= 1; if (K.arrowright) turn += 1;
+      f -= WALK.jy; s += WALK.jx; if (Math.abs(WALK.jx) > 0.6 && Math.abs(WALK.jy) < 0.5) { turn += WALK.jx * 0.9; s *= 0.4; }
+      if (window.__evrTest && window.__evrTest.walkF) f += window.__evrTest.walkF;
+      WALK.yaw += turn * dt * 1.8;
+      var spd = (K.shift ? 12 : 6) * dt, mx = 0, mz = 0, cy = Math.cos(WALK.yaw), sy = Math.sin(WALK.yaw);
+      if (WALK.nudge) { var nd = Math.sign(WALK.nudge) * Math.min(Math.abs(WALK.nudge), dt * 9); WALK.nudge -= nd; mx += cy * nd; mz += sy * nd; }
+      if (f || s) { WALK.go = null; wMark.visible = false; var n = Math.hypot(f, s); if (n > 1) { f /= n; s /= n; } mx += (cy * f - sy * s) * spd; mz += (sy * f + cy * s) * spd; }
+      else if (WALK.go) {
+        var gx = WALK.go.x - WALK.x, gz = WALK.go.z - WALK.z, gd = Math.hypot(gx, gz);
+        if (gd < 0.2) { WALK.go = null; wMark.visible = false; } else { mx = gx / gd * Math.min(spd, gd); mz = gz / gd * Math.min(spd, gd); var dyw = Math.atan2(gz, gx) - WALK.yaw; dyw = Math.atan2(Math.sin(dyw), Math.cos(dyw)); WALK.yaw += dyw * Math.min(1, dt * 3); }
+        wMark.material.opacity = 0.6 + 0.3 * Math.sin(clockT * 8); wMark.scale.setScalar(1 + 0.15 * Math.sin(clockT * 6));
+      }
+      if (mx || mz) {
+        var nx = WALK.x + mx, nz = WALK.z + mz, okf = wPeopleOk(WALK.x, WALK.z) ? wOk : wOk0;
+        if (okf(nx, nz)) { WALK.x = nx; WALK.z = nz; } else if (okf(nx, WALK.z)) WALK.x = nx; else if (okf(WALK.x, nz)) WALK.z = nz; else { WALK.go = null; wMark.visible = false; }
+        WALK.bob += Math.hypot(mx, mz) * 2.4;
+      }
+      walkHeight();
+      WALK.y += (WALK.ty - WALK.y) * Math.min(1, dt * 3.2);
+      var by = Math.sin(WALK.bob) * 0.06, cp = Math.cos(WALK.pitch);
+      camera.position.set(WALK.x, WALK.y + by, WALK.z);
+      camera.lookAt(WALK.x + cy * cp, WALK.y + by + Math.sin(WALK.pitch), WALK.z + sy * cp);
+      var wantFov = camera.aspect < 0.8 ? 80 : 68; if (Math.abs(camera.fov - wantFov) > 0.1) { camera.fov = wantFov; camera.updateProjectionMatrix(); }
+      cam.gtx = cam.tx = WALK.x; cam.gtz = cam.tz = WALK.z; cam.gty = cam.ty = WALK.y; cam.gr = cam.r = 3; cam.follow = null; cam.gph = null;
+      WALK.nearT -= dt;
+      if (WALK.nearT <= 0) {
+        WALK.nearT = 0.25; var best = null, bd = 4.6, fy = WALK.ty - EYE;
+        AGENTS.forEach(function (a) { var p = a.v.robot.position; if (Math.abs(p.y - fy) > 2.5) return; var d = Math.hypot(p.x - WALK.x, p.z - WALK.z); if (d < bd) { bd = d; best = a; } });
+        WALK.near = best; walkHud(walkInfo());
+      }
+    }
     return {
       applyVisual: applyVisual,
+      setWalk: function (o) {
+        if (!o) {
+          if (!WALK.on) return; WALK.on = false; WALK.keys = {}; WALK.go = null; WALK.jx = WALK.jy = 0; wMark.visible = false; wdrag = null; canvas.style.cursor = '';
+          camera.near = OFFICE_ON ? 0.15 : 0.5; layout(); camera.updateProjectionMatrix(); minR = OFFICE_ON ? 2.2 : 20;
+          var a = agentAt(WALK.fl); cam.follow = null; cam.gtx = 0; cam.gtz = 0; cam.gty = a ? a.y + 2 : HOME.ty; cam.r = cam.gr = window.innerWidth > 860 ? 46 : 60; cam.ph = cam.gph = 1.3; cam.th = WALK.yaw + Math.PI;
+          return;
+        }
+        WALK.on = true; WALK.keys = {}; camera.near = 0.12; camera.updateProjectionMatrix(); walkFloor(o.floor, !!o.annex, true); WALK.nearT = 0;
+      },
+      walkStep: function (d) { return walkFloor(WALK.fl + d); },
+      walkFloor: function (i, ann) { return walkFloor(i, ann, false); },
+      walkAnnex: function () { if (!annexW) return false; if (WALK.fl === annexW.fl && WALK.zone !== 'torre') return walkFloor(annexW.fl, false, true); return walkFloor(annexW.fl, true, false); },
+      walkMove: function (jx, jy) { WALK.jx = jx || 0; WALK.jy = jy || 0; },
+      walkTalkNear: function () { if (WALK.near) walkTalk(WALK.near); return WALK.near ? WALK.near.id : null; },
+      walkInfo: walkInfo,
+      walkTest: function (o) { if (o.keys) WALK.keys = o.keys; if (o.goto) { WALK.go = { x: o.goto[0], z: o.goto[1] }; } if (o.yaw != null) WALK.yaw = o.yaw; if (o.pitch != null) WALK.pitch = o.pitch; if (o.at) { WALK.x = o.at[0]; WALK.z = o.at[1]; } return walkInfo(); },
+      walkOk: function (x, z) { return wOk(x, z); },
       focus: function (a, fromTour) { if (a.annex) { cam.gtx = a.annex.x; cam.gtz = a.annex.z; cam.gty = a.y + 1.6; cam.gph = 1.25; cam.follow = { deskAng: a.annex.camAng }; cam.gr = window.innerWidth > 860 ? 36 : 50; if (!fromTour) { a.v.lastGreet = -99; greetAgent(a); } return; } cam.gtx = Math.cos(a.deskAng) * 4.5; cam.gtz = Math.sin(a.deskAng) * 4.5; cam.gty = a.y + 2; cam.gph = 1.3; cam.follow = a; cam.gr = window.innerWidth > 860 ? 44 : 58; if (!fromTour) { a.v.lastGreet = -99; greetAgent(a); } },
       home: function () { cam.gtx = 0; cam.gtz = 0; cam.gty = HOME.ty; cam.gr = HOME.r; cam.gph = 1.42; cam.follow = null; },
       setHolo: function (on) { HOLO.on = !!on; holoG.visible = HOLO.on; },
