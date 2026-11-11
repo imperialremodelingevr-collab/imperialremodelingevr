@@ -78,4 +78,6 @@
   - GPS interior: «¿a quién visitas?» + «Llévame». Flechas doradas en el piso, elevador de cristal en el centro de cada piso que sube o baja solo, y también te lleva por la pasarela a la nave anexo.
   - Pantalla holográfica de cada agente: qué está haciendo (con barra de avance), por qué, próximas tareas, cómo mejorar, habilidades, y un cuadro para preguntarle lo que quieras (responde con Claude si está disponible).
   - Jarvis: «llévame con Cobros», «guíame al anexo».
+- [x] Jarvis siempre responde al abrirlo (te saluda y te dice lo más importante) y pide permiso del micrófono para escucharte enseguida. Si el micrófono está bloqueado, te lo dice y puedes escribirle.
+- [x] Al tocar a una persona se detecta su cuerpo real, no el de la persona del piso de arriba.
 - [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.

@@ -1112,7 +1112,41 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var an = $('#jaAns'); if (an && !quiet) { an.hidden = false; an.textContent = 'Jarvis: ' + txt; }
     voiceSay(null, txt, function () { if (r.watch.length && !quiet && !$('#jarvis').hidden) jarvisTour(true); });
   }
-  $('#voJar').onclick = function () { unlockAudio(); if (!$('#jarvis').hidden) { jarvisClose(); return; } jarvisOpen(false); };
+  /* Jarvis siempre responde al abrirlo y pide el micrófono para escucharte */
+  function micReady(cb) {
+    if (!SR) { cb(false, 'nosr'); return; }
+    if (micPolicyBlocked()) { VOICE.micBlocked = true; renderVoice(); cb(false, 'policy'); return; }
+    if (VOICE.micOk && !VOICE.micBlocked) { cb(true); return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { cb(true); return; }
+    var done = false; function fin(ok, why) { if (done) return; done = true; cb(ok, why); }
+    try {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) { try { st.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {} VOICE.micOk = true; VOICE.micBlocked = false; PREFS.mic = true; savePrefs(); renderVoice(); fin(true); })
+        .catch(function (e) { var nm = e && e.name; if (nm === 'NotAllowedError' || nm === 'SecurityError') { VOICE.micBlocked = true; renderVoice(); fin(false, 'denied'); } else fin(false, 'nomic'); });
+    } catch (e) { fin(false, 'nomic'); }
+    setTimeout(function () { fin(false, 'wait'); }, 20000);
+  }
+  function jarvisGreet(r) {
+    var h = new Date().getHours(), hi = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches', w = r.watch || [];
+    return hi + ', Ernesto. Aquí estoy. ' + (w.length ? (w.length === 1 ? 'Una cosa requiere tu atención: ' : w.length + ' cosas requieren tu atención. La primera: ') + w[0].t + ' ' : 'Todo marcha bien en la torre. ') + '¿En qué te ayudo? Te escucho.';
+  }
+  function jarvisWake() {
+    unlockAudio(); try { if (TTS) TTS.resume(); } catch (e) {}
+    if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); }
+    if (VOICE.listening) stopListen();
+    var r = jarvisOpen(false), text = jarvisGreet(r), started = false;
+    function listenNow() { if (started || $('#jarvis').hidden) return; started = true; if (!VOICE.micBlocked) startListen(12000); }
+    micReady(function (ok, why) {
+      if (!ok) {
+        if (why === 'policy' || why === 'denied') { voiceSay(null, text.replace(' Te escucho.', ' Escríbeme en el cuadro; el micrófono está bloqueado aquí.')); micFallback(); }
+        else if (why === 'nosr') voiceSay(null, text.replace(' Te escucho.', ' Escríbeme en el cuadro; este navegador no reconoce voz.'));
+        else voiceSay(null, text.replace(' Te escucho.', ' Escríbeme en el cuadro o toca el micrófono.'));
+        return;
+      }
+      voiceSay(null, text, function () { setTimeout(listenNow, 250); });
+      setTimeout(listenNow, Math.min(15000, 1500 + text.length * 70));
+    });
+  }
+  $('#voJar').onclick = function () { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) { jarvisClose(); return; } jarvisWake(); };
   function jarvisMini(on) { var j = $('#jarvis'); if (j.hidden) return; j.classList.toggle('mini', on); $('#jaMini').textContent = on ? '+' : '–'; $('#jaMini').title = on ? 'Expandir' : 'Minimizar'; }
   $('#jaMini').onclick = function (e) { e.stopPropagation(); jarvisMini(!$('#jarvis').classList.contains('mini')); };
   $('#jarvis > header').onclick = function (e) { if (e.target.closest('button')) return; if ($('#jarvis').classList.contains('mini')) jarvisMini(false); };
@@ -3483,8 +3517,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       v.beamMat = new THREE.MeshBasicMaterial({ color: 0xff5a5f, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false });
       v.beam = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 36, 8, 1, true), v.beamMat); v.beam.visible = false; tower.add(v.beam);
       var hitMat = new THREE.MeshBasicMaterial({ visible: false });
-      var h1 = new THREE.Mesh(new THREE.SphereGeometry(1.5, 8, 6), hitMat), h2 = new THREE.Mesh(new THREE.BoxGeometry(hx * 2, FH, hz * 2), hitMat);
-      h1.position.y = 1.2; h2.position.y = yMid; h1.userData.agent = h2.userData.agent = a; h2.userData.floor = true; v.robot.add(h1); tower.add(h2); pickables.push(h1, h2);
+      var h1 = new THREE.Mesh(new THREE.SphereGeometry(1.15, 8, 6), hitMat), h2 = new THREE.Mesh(new THREE.BoxGeometry(hx * 2, FH, hz * 2), hitMat);
+      h1.position.y = 1.15; h2.position.y = yMid; h1.userData.agent = h2.userData.agent = a; h2.userData.floor = true; v.robot.add(h1); tower.add(h2); pickables.push(h1, h2);
       v.nextPulse = 1 + a.i * 0.4; v.t = rnd() * 10;
     });
     tower.add(railBuf.mesh(accentM));
@@ -4344,7 +4378,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (WALK.on) { walkPtr('up', e); return; }
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
-      if (wasTap) { var ud = hit(e); if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { unlockAudio(); if (!$('#jarvis').hidden) jarvisClose(); else jarvisOpen(false); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
+      if (wasTap) { var ud = hit(e); if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
     canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; wdrag = null; });
@@ -4353,18 +4387,19 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
     function hit(e) {
       var rc = canvas.getBoundingClientRect(); ndc.set((e.clientX - rc.left) / rc.width * 2 - 1, -((e.clientY - rc.top) / rc.height) * 2 + 1);
-      ray.setFromCamera(ndc, camera); var r = ray.intersectObjects(pickables, false), first = null, robot = null;
+      ray.setFromCamera(ndc, camera); var r = ray.intersectObjects(pickables, false), first = null, robot = null, rcands = [];
       var jvp = new THREE.Vector3(); if (ray.ray.intersectSphere(jvHit.clone().applyMatrix4(tower.matrixWorld), jvp)) return { jarvis: true };
       for (var q = 0; q < r.length; q++) {
         var ud = r[q].object.userData;
         if (ud.prop) return ud;
         if (ud.meteor) { if (ray.ray.distanceToPoint(ud.meteor.g.position) <= (ud.meteor.gold ? 8 : 6)) return ud; continue; }
-        if (ud.agent && !ud.floor) { if (!robot && ud.agent.v.ghost > 0.45) robot = ud; continue; }
+        if (ud.agent && !ud.floor) { if (ud.agent.v.ghost > 0.45) { rcands.push(ud); if (!robot) robot = ud; } continue; }
         if (!first) { if (ud.floor) { var o = ray.ray.origin, dr = ray.ray.direction, hd = dr.x * dr.x + dr.z * dr.z, tc = hd > 1e-9 ? -(o.x * dr.x + o.z * dr.z) / hd : 0, yc = o.y + dr.y * Math.max(0, tc), fa = AGENTS[Math.max(0, Math.min(N - 1, Math.floor((yc - Y0) / FH)))], bd = 9, pv = new THREE.Vector3();
           AGENTS.forEach(function (ag) { pv.copy(ag.v.robot.position); pv.y += 2.4; var dd = ray.ray.distanceToPoint(pv); if (dd < bd) { bd = dd; fa = ag; } });
           first = { agent: fa, floorHit: true }; } else first = ud; }
       }
       if (first && !first.floorHit) return first;
+      if (rcands.length > 1) { var bestR = null, bestD = 1e9; rcands.forEach(function (c) { var hs = ray.intersectObject(c.agent.v.robot, true); for (var q2 = 0; q2 < hs.length; q2++) { if (hs[q2].object.userData.agent) continue; if (hs[q2].distance < bestD) { bestD = hs[q2].distance; bestR = c; } break; } }); if (bestR) robot = bestR; }
       return robot || first || null;
     }
 
