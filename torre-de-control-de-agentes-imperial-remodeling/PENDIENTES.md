@@ -73,4 +73,9 @@
   - Al acercarte a alguien aparece «Hablar con …»: te saluda, dice lo que está haciendo y abre su ficha con sus tareas.
   - Ni las paredes ni las personas se atraviesan. El tablero de propiedades del anexo se lee bien desde adentro.
   - También por voz o texto a Jarvis: «camina por el piso de Correo», «recorre la nave», «deja de caminar».
+- [x] Entrar a cada piso es una habilidad de todos los agentes (guardada en la memoria de la torre como «Recorrido 3D con GPS interior»):
+  - Tocar exactamente a la persona o robot en la torre te mete a su piso, frente a él, y abre su pantalla.
+  - GPS interior: «¿a quién visitas?» + «Llévame». Flechas doradas en el piso, elevador de cristal en el centro de cada piso que sube o baja solo, y también te lleva por la pasarela a la nave anexo.
+  - Pantalla holográfica de cada agente: qué está haciendo (con barra de avance), por qué, próximas tareas, cómo mejorar, habilidades, y un cuadro para preguntarle lo que quieras (responde con Claude si está disponible).
+  - Jarvis: «llévame con Cobros», «guíame al anexo».
 - [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.
