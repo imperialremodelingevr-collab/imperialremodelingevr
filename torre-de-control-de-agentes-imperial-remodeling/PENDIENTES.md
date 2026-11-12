@@ -92,4 +92,11 @@
   - Dos torres de enfriamiento con vapor, y un conducto de energía elevado con pulsos de luz hasta la torre.
   - Zona de obra con andamios, grúa y 4 bots soldando. Cada módulo que terminan enciende un nodo más de la red de energía en las azoteas, así que la ciudad va creciendo.
   - Se toca en 3D o con «☢ Reactor de energía» en Más herramientas, y Jarvis responde a «estado del reactor».
+- [x] Oportunidades busca casas ANTES del MLS cada 4 horas, todos los días:
+  - Lee los avisos públicos de remate del Condado de Collin (`integraciones/collin_foreclosures.cjs`). Hoy hay 353 avisos, 77 de ellos en McKinney, Plano y Frisco.
+  - Revisa también remates por impuestos y del condestable, HUD, HomePath, subastas, FSBO, «coming soon» y herencias.
+  - Calcula la mejor oferta por casa y deja en la bandeja un borrador de carta al dueño. La carta NO se envía sin tu «sí».
+  - Cada casa antes del MLS muestra «🔔 Antes del MLS · subasta <fecha> (en N días)».
+  - «⬆ Importar lista CSV» sirve para las listas de PropStream u otras; el agente las investiga primero.
+  - PropStream es de pago ($99, $199 o $699 al mes). El agente no entra con contraseñas: si te suscribes, exportas el CSV y lo subes a la torre.
 - [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.
