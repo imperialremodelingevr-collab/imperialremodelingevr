@@ -117,6 +117,17 @@
     - preguntas al coach.
   - Recordatorios: tarea diaria 5:55 a. m. (Chicago) con rutina, menú y agua al teléfono; con la torre abierta, aviso de agua cada 90 min y el resumen del coach al entrar.
   - Jarvis: «cuál es mi rutina», «coach», «dieta».
+- [x] **Torre Bio-Fit** (tercera torre): el Coach se mudó del anexo a su propia torre futurista en una isla con puente de luz. Tiene niveles hexagonales que giran, doble hélice de ADN, corona con pulso cardiaco y planta baja con gimnasio y zona de recuperación (cápsulas, camilla, estación de hidratación y escáner corporal).
+  - El Coach ahora viste ropa deportiva: playera técnica turquesa, pants negros, tenis blancos, banda y muñequeras.
+  - Panel «🧬 Coach»: nuevo **Seguimiento** (registro de peso, gráfica, tendencia semanal y ajuste automático de calorías; IMC y grasa estimada), botón **Escaneo corporal** que anima el escáner en la torre, y **Tratamiento de recuperación** según tu objetivo, con casilla diaria.
+  - Tarea diaria 5:55 a. m.: ahora lee tu peso, sugiere ajustes y los domingos da un balance semanal.
+  - Es guía general de ejercicio, no consejo médico.
+- [x] **Dron EVR**: botón «🚁 Dron», tocar el dron estacionado junto a la torre o decirle a Jarvis «súbete al dron». Nesty va montado y la cámara lo sigue por detrás.
+  - Computadora: W S avanzar, A D girar, E Q subir y bajar, Shift turbo, arrastrar para apuntar, clic o Espacio para disparar, Esc para bajar.
+  - Teléfono: círculo para volar, ▲ ▼ altura, 🔥 Disparar, ⚡ Turbo; tocar la pantalla también dispara.
+  - Blancos: 14 drones de práctica rojos (hologramas) que explotan y reaparecen; marcador, altura y velocidad en pantalla; asistencia de puntería cerca de la mira. No choca con edificios ni la torre.
+- [x] **Guerra entre dos planetas** en el fondo Espacio: planeta rojo contra planeta azul, con escudos que destellan, naves en órbita, misiles con estela, intercepciones, rayos láser entre naves y explosiones. Botón «⚔ Guerra» en el dron apunta hacia allá; Jarvis: «muéstrame la guerra».
+
   - Es guía general, no consejo médico.
 - [ ] REVISAR: la tarea «Ili calls to calendar» (desactivada) tiene una llave de Bland.ai escrita en sus instrucciones. Revocarla en Bland.ai y quitarla de la tarea.
 - [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.
