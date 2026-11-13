@@ -108,5 +108,15 @@
   - Cada vez que abres a Jarvis te dice otra frase.
   - El agente de Oportunidades agrega una frase de bienes raíces al saludarte.
   - La EVR TV de cada piso muestra la frase del día.
+- [x] Gimnasio EVR en la planta baja de la nave anexo, con el **Coach EVR** (instructor con uniforme, banda y silbato) que hace jumping jacks y sentadillas y explica en su pantalla la rutina del día.
+  - El panel «🏋 Coach» tiene tus datos y tres objetivos: ganar músculo, recuperación e hidratación (bajar retención de líquidos), o quemar grasa. Arma:
+    - calorías, proteína, carbohidratos, grasa y agua;
+    - rutina semanal de 3 a 6 días con series;
+    - menú del día de 5 comidas (7 menús que rotan);
+    - checklist (entrenamiento, comidas, sueño), vasos de agua y racha;
+    - preguntas al coach.
+  - Recordatorios: tarea diaria 5:55 a. m. (Chicago) con rutina, menú y agua al teléfono; con la torre abierta, aviso de agua cada 90 min y el resumen del coach al entrar.
+  - Jarvis: «cuál es mi rutina», «coach», «dieta».
+  - Es guía general, no consejo médico.
 - [ ] REVISAR: la tarea «Ili calls to calendar» (desactivada) tiene una llave de Bland.ai escrita en sus instrucciones. Revocarla en Bland.ai y quitarla de la tarea.
 - [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.

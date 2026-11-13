@@ -265,6 +265,27 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .walkhint.fade { opacity: 0; pointer-events: none; }
 .quotecard { position: absolute; left: 50%; top: 64px; transform: translateX(-50%); z-index: 12; width: min(560px, calc(100% - 24px)); padding: 12px 40px 12px 16px; background: linear-gradient(135deg, rgba(40, 30, 6, 0.95), rgba(8, 16, 26, 0.95)); border: 1px solid #c9a84c; box-shadow: 0 0 30px rgba(201, 168, 76, 0.35); color: #fff4d6; transition: opacity .9s, transform .9s; }
 .quotecard[hidden] { display: none; }
+.coachp { position: absolute; inset: 70px 16px 60px 16px; max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; background: #060a0f; border: 1px solid rgba(255, 201, 77, 0.55); box-shadow: 0 0 50px rgba(255, 201, 77, 0.18); z-index: 11; overflow: hidden; color: #e8f2f8; }
+.coachp[hidden] { display: none; }
+.coachp header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid rgba(255, 201, 77, 0.3); background: linear-gradient(90deg, rgba(201, 168, 76, 0.18), transparent); }
+.coachp header h2 { margin: 0; font-size: 15px; flex: 1; letter-spacing: .04em; }
+.coachp .cbody { flex: 1; overflow: auto; padding: 12px 14px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-content: start; }
+.coachp .ccard { border: 1px solid rgba(92, 200, 255, 0.28); background: rgba(10, 22, 34, 0.7); padding: 10px 12px; }
+.coachp .ccard h3 { margin: 0 0 6px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #ffc94d; }
+.coachp .wide { grid-column: 1 / -1; }
+.coachp form.cform { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.coachp form.cform label { display: grid; gap: 3px; font-size: 11px; opacity: .9; }
+.coachp form.cform input, .coachp form.cform select { width: 100%; background: #07141f; color: #fff; border: 1px solid rgba(92, 255, 230, 0.35); padding: 6px; font: inherit; }
+.coachp .goals { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; }
+.coachp .goals label { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid rgba(255, 201, 77, 0.4); cursor: pointer; }
+.coachp .macros { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; } .coachp .macros b { color: #ffd27a; font-size: 18px; }
+.coachp ul { margin: 4px 0; padding-left: 18px; } .coachp li { margin: 2px 0; }
+.coachp .chk { display: flex; flex-wrap: wrap; gap: 6px; }
+.coachp .chk label { display: flex; align-items: center; gap: 6px; padding: 5px 8px; border: 1px solid rgba(92, 200, 255, 0.3); }
+.coachp .water { display: flex; align-items: center; gap: 8px; } .coachp .water i { display: inline-block; width: 14px; height: 20px; border: 1px solid #5cc8ff; border-radius: 0 0 4px 4px; } .coachp .water i.on { background: #5cc8ff; }
+.coachp .note { font-size: 11px; opacity: .75; }
+.coachp .cans { white-space: pre-wrap; border-left: 2px solid #ffc94d; padding: 6px 10px; background: rgba(255, 201, 77, 0.07); }
+@media (max-width: 860px) { .coachp { inset: 56px 6px 56px 6px; } .coachp .cbody { grid-template-columns: minmax(0, 1fr); } .coachp form.cform { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .quotecard.out { opacity: 0; transform: translateX(-50%) translateY(-8px); }
 .quotecard b { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #ffc94d; margin-bottom: 4px; }
 .quotecard p { margin: 0; font-size: 15px; line-height: 1.45; }
@@ -488,6 +509,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <button class="btn" id="btnHome" type="button">Torre completa</button>
       <button class="btn extra" id="btnTour" type="button">Recorrido: apagado</button>
       <button class="btn" id="btnWalk" type="button" title="Recorre a pie cada piso de la torre y la nave anexo">🚶 Caminar</button>
+      <button class="btn" id="btnCoach" type="button" title="Gimnasio del anexo: rutina, dieta y recordatorios">🏋 Coach</button>
       <button class="btn" id="btnMore" type="button">Más herramientas</button>
       <button class="btn mobonly" id="btnUp" type="button" aria-label="Piso arriba">▲</button>
       <button class="btn mobonly" id="btnDown" type="button" aria-label="Piso abajo">▼</button>
@@ -657,6 +679,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   <section class="wscreen" id="walkScreen" hidden aria-live="polite" aria-label="Pantalla del agente"></section>
   <section class="hpip" id="hpip" hidden aria-label="Control con las manos"><div class="hv"><video id="hVid" playsinline muted></video><canvas id="hCan" width="320" height="240"></canvas></div><div class="hm"><span id="hMsg">Iniciando cámara…</span><button id="hOff" type="button">Apagar</button></div><div class="hh" id="hHelp"></div></section>
   <section class="props" id="props" hidden aria-label="Propiedades y mapa"></section>
+  <section class="coachp" id="coachP" hidden aria-label="Coach EVR: rutina y dieta"></section>
   <div class="toast" id="toast" role="status"></div>
 </div>
 
@@ -999,6 +1022,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function voiceCommand(n) {
     var aw = VOICE.awaiting;
     if (!aw && WALKING && /\b(caminadora|correr|corre|pesas|ejercicio|estirar|estirate|yoga|sientate|sentarme|descansar)\b/.test(n) && scene3d && scene3d.gymGo) { var kd = /\b(pesas)\b/.test(n) ? 'lift' : /\b(estirar|estirate|yoga)\b/.test(n) ? 'mat' : /\b(sientate|sentarme|descansar)\b/.test(n) ? 'sit' : 'run'; return scene3d.gymGo(kd) ? 'Listo, a ' + ({ run: 'correr en la caminadora', lift: 'hacer pesas', mat: 'estirarte en la estera', sit: 'descansar en el sillón' })[kd] + '.' : 'Aquí no hay zona de bienestar.'; }
+    if (!aw && /\b(coach|entrenador|instructor|rutina|dieta|gimnasio|gym)\b/.test(n)) { openCoach(true); var ct = coachToday(); return ct ? 'Hoy toca ' + ct.name + '. Tu meta: ' + ct.prot + ' gramos de proteína y ' + ct.water + ' litros de agua.' : 'Abrí al coach: dime tu objetivo y armamos tu plan.'; }
     if (!aw && /\b(reactor|generador|nuclear)\b/.test(n)) { if (scene3d && scene3d.focusReactor) scene3d.focusReactor(); return reactorText(); }
     if (aw) {
       if (/\b(si|dale|claro|hazlo|adelante|reinicia|reiniciala|reinicialo|corrige|corrigelo|ok|okey|de acuerdo|por favor)\b/.test(n)) { VOICE.awaiting = null; aw.yes(); return ''; }
@@ -1117,6 +1141,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       { name: 'exit_office', description: 'Sale de la oficina y vuelve a la vista de la torre.', execute: function () { exitOffice(); return 'Salí de la oficina'; } },
       { name: 'walk_floor', description: 'Activa el modo caminar en primera persona en el piso de un agente (o en la nave anexo de Oportunidades) para recorrerlo a pie; sin agente usa el seleccionado.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } } }, execute: function (i) { var a = (i && i.agent) ? need(i) : ((selected && byId(selected)) || byId('cotiz')); enterWalk(a.id); return 'Caminando por el piso de ' + a.name; } },
       { name: 'walk_gps', description: 'GPS interior: dentro del modo caminar, traza la ruta (elevador incluido) hasta un agente y te lleva caminando con él.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (!WALKING) enterWalk(byId('cotiz').id); if (scene3d) scene3d.gpsTo(a.id, true); return 'GPS en camino hacia ' + a.name; } },
+      { name: 'coach_today', description: 'Abre el Coach EVR (gimnasio del anexo) y devuelve la rutina, el menú y el agua de hoy si ya hay plan.', execute: function () { openCoach(true); var t = coachToday(); return t ? 'Hoy: ' + t.name + ' (' + t.ex.join(', ') + '). Menú: ' + t.menu.join(' | ') + '. ' + t.kcal + ' kcal, ' + t.prot + ' g proteína, ' + t.water + ' L agua.' : 'Aún no hay plan: pide a Nesty que llene sus datos en el panel del coach.'; } },
       { name: 'reactor_status', description: 'Estado del reactor de fusión IA que da energía a la ciudad: potencia, módulos armados por los bots y nodos de la red encendidos. Enfoca la cámara en el reactor.', execute: function () { if (scene3d && scene3d.focusReactor) scene3d.focusReactor(); return reactorText(); } },
       { name: 'exit_walk', description: 'Sale del modo caminar y vuelve a la vista de la torre.', execute: function () { exitWalk(); return 'Dejé de caminar'; } },
       { name: 'open_section', description: 'Abre una sección del panel: bandeja, tareas, obras, publicaciones, tokens, memoria, estructura, asistente o sistema.', inputSchema: { type: 'object', properties: { section: { type: 'string' } }, required: ['section'] }, execute: function (i) { var k = SECTIONS_TAB[normV(i && i.section)]; if (!k) throw new Error('Sección desconocida'); panelOpen = true; zen = false; applyUi(); tab(k); return 'Abrí ' + TAB_TITLES[k]; } },
@@ -2008,6 +2033,138 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     return 'Reactor de fusión IA al ' + r.power + '% de potencia, impulsado por ' + r.working + ' de ' + r.total + ' agentes trabajando. Los bots de obra han armado ' + r.built + ' módulo' + (r.built === 1 ? '' : 's') + ' (el siguiente va al ' + r.progress + '%) y la red de energía ya enciende ' + r.nodes + ' de ' + r.totalNodes + ' nodos de la ciudad.';
   }
   function reactorTap() { var t = reactorText(); toast('☢ ' + t); if (VOICE.on) voiceSay(null, t); if (scene3d && scene3d.focusReactor) scene3d.focusReactor(); }
+
+  /* ---------- Coach EVR: instructor del gimnasio del anexo (rutina, dieta y recordatorios) ---------- */
+  var FIT = { plan: null, log: {}, sub: false, ans: '' };
+  function fitKey(d) { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function fitLoad() {
+    if (FIT.sub) return; FIT.sub = true;
+    try { var L = JSON.parse(localStorage.getItem('evr.fit') || 'null'); if (L && L.plan) { FIT.plan = L.plan; FIT.log = L.log || {}; } } catch (e) {}
+    if (DB) { try { DB.collection('fitness').onSnapshot(function (snap) { snap.docs.forEach(function (d) { var x = d.data(); if (d.id === 'plan') FIT.plan = x; else if (/^log_/.test(d.id)) FIT.log[d.id.slice(4)] = x; }); renderCoach(); }); } catch (e) {} }
+  }
+  function fitSave(id, data) { try { localStorage.setItem('evr.fit', JSON.stringify({ plan: FIT.plan, log: FIT.log })); } catch (e) {} if (DB) { try { DB.doc('fitness/' + id).set(JSON.parse(JSON.stringify(data))).catch(fail); } catch (e) {} } }
+  var GOALS = { musculo: 'Ganar músculo', recuperacion: 'Recuperación e hidratación (bajar retención de líquidos)', quemar: 'Ejercicio y quemar grasa' };
+  var EX = {
+    full_a: ['Sentadilla con barra', 'Press de banca', 'Remo con barra', 'Press militar con mancuernas', 'Plancha 45 s'],
+    full_b: ['Peso muerto rumano', 'Jalón al pecho', 'Press inclinado con mancuernas', 'Zancadas caminando', 'Elevación de piernas'],
+    upper: ['Press de banca', 'Remo con mancuerna', 'Press militar', 'Jalón al pecho', 'Curl de bíceps', 'Extensión de tríceps en polea'],
+    lower: ['Sentadilla con barra', 'Peso muerto rumano', 'Prensa de piernas', 'Curl femoral', 'Elevación de talones', 'Plancha 45 s'],
+    push: ['Press de banca', 'Press inclinado con mancuernas', 'Press militar', 'Elevaciones laterales', 'Fondos o tríceps en polea'],
+    pull: ['Dominadas o jalón al pecho', 'Remo con barra', 'Remo con mancuerna', 'Face pull', 'Curl de bíceps'],
+    legs: ['Sentadilla con barra', 'Peso muerto rumano', 'Zancadas', 'Prensa de piernas', 'Elevación de talones', 'Abdominales'],
+    cardio: ['Caminadora inclinada 20 min', 'Circuito: 3 vueltas de sentadilla, flexiones, remo con mancuerna y burpees (40 s cada uno)', 'Cuerda de batalla 6 × 30 s', 'Estiramiento 10 min'],
+    recup: ['Caminata a paso firme 30–40 min', 'Movilidad de cadera y hombros 10 min', 'Sentadilla y remo ligeros 2 × 15', 'Piernas elevadas 10 min', 'Estiramiento y respiración 10 min'],
+    rest: ['Descanso activo: caminata 20–30 min y estiramiento']
+  };
+  var SPLITS = { 3: ['full_a', 'rest', 'full_b', 'rest', 'full_a', 'rest', 'rest'], 4: ['upper', 'lower', 'rest', 'upper', 'lower', 'rest', 'rest'], 5: ['push', 'pull', 'legs', 'rest', 'upper', 'lower', 'rest'], 6: ['push', 'pull', 'legs', 'push', 'pull', 'legs', 'rest'] };
+  var SNAME = { full_a: 'Cuerpo completo A', full_b: 'Cuerpo completo B', upper: 'Tren superior', lower: 'Tren inferior', push: 'Empuje (pecho, hombro, tríceps)', pull: 'Jalón (espalda, bíceps)', legs: 'Pierna y abdomen', cardio: 'Cardio y circuito', recup: 'Recuperación activa', rest: 'Descanso activo' };
+  var MENUS = [
+    ['Avena con leche, plátano y 3 huevos revueltos', 'Yogur griego con nueces', 'Pechuga de pollo a la plancha, arroz, frijoles y ensalada', 'Licuado de proteína con fresas', 'Salmón con papa al horno y brócoli'],
+    ['Tortillas de maíz con huevo, frijoles y aguacate', 'Manzana con crema de cacahuate', 'Carne magra con arroz integral y verduras', 'Requesón (cottage) con piña', 'Tacos de pescado con repollo'],
+    ['Pan integral con huevo y queso, naranja', 'Licuado de proteína con avena', 'Pollo en fajitas con tortillas de maíz y pico de gallo', 'Yogur griego con granola', 'Pavo molido con calabacita y arroz'],
+    ['Omelette de claras y espinaca con pan integral', 'Plátano y almendras', 'Atún con pasta integral y verduras', 'Huevo cocido y zanahorias', 'Pechuga de pollo con camote y ejotes'],
+    ['Avena con proteína y moras', 'Queso panela con pepino', 'Arrachera magra con nopales, frijoles y arroz', 'Licuado de proteína con plátano', 'Tilapia con arroz y ensalada'],
+    ['Chilaquiles al horno con pollo y huevo', 'Yogur griego con miel', 'Pozole de pollo con mucha verdura', 'Nueces y una fruta', 'Omelette de 3 huevos con champiñones'],
+    ['Hot cakes de avena y claras con fruta', 'Licuado de proteína', 'Pollo asado con arroz, frijoles y ensalada', 'Requesón con fruta', 'Caldo de res con verduras y tortillas']
+  ];
+  function makePlan(p) {
+    var kg = p.lb * 0.4536, cm = (p.ft * 12 + p.inch) * 2.54, bmr = 10 * kg + 6.25 * cm - 5 * p.age + (p.sex === 'm' ? -161 : 5), act = 1.35 + p.days * 0.05, tdee = bmr * act;
+    var kcal = Math.round((tdee + (p.goal === 'musculo' ? 300 : p.goal === 'quemar' ? -450 : 0)) / 10) * 10;
+    var protG = Math.round(kg * (p.goal === 'musculo' ? 2.0 : p.goal === 'quemar' ? 1.9 : 1.6)), fatG = Math.round(kcal * 0.27 / 9), carbG = Math.max(50, Math.round((kcal - protG * 4 - fatG * 9) / 4));
+    var waterL = Math.round((kg * 0.035 + 0.5 + (p.goal === 'recuperacion' ? 0.5 : 0)) * 10) / 10;
+    var days = Math.max(3, Math.min(6, p.days)), week = SPLITS[days].slice();
+    if (p.goal === 'quemar') week = week.map(function (d, i) { return d === 'rest' && i % 2 === 1 ? 'cardio' : d; });
+    if (p.goal === 'recuperacion') week = week.map(function (d, i) { return i % 2 ? 'recup' : (d === 'rest' ? 'recup' : d); });
+    var sets = p.goal === 'musculo' ? (p.level === 'principiante' ? '3 × 10–12' : '4 × 8–12') : p.goal === 'quemar' ? '3 × 12–15 (descanso 45 s)' : '2 × 15 ligero';
+    return { p: p, kcal: kcal, protG: protG, fatG: fatG, carbG: carbG, waterL: waterL, week: week, sets: sets, weekNames: week.map(function (k) { return SNAME[k]; }), weekEx: week.map(function (k) { return EX[k]; }), menus: MENUS, goalName: GOALS[p.goal], createdAt: Date.now(), updatedAt: Date.now() };
+  }
+  function planToday(plan, d) {
+    d = d || new Date(); var wd = (d.getDay() + 6) % 7, key = plan.week[wd], menu = MENUS[(Math.floor(d.getTime() / 864e5)) % MENUS.length];
+    return { key: key, name: SNAME[key], ex: EX[key] || [], menu: menu, wd: wd };
+  }
+  function coachToday() {
+    if (!FIT.plan) return null; var t = planToday(FIT.plan), lg = FIT.log[fitKey()] || {};
+    return { name: t.name, ex: t.ex, menu: t.menu, kcal: FIT.plan.kcal, prot: FIT.plan.protG, water: FIT.plan.waterL, glasses: lg.water || 0, glassesGoal: Math.ceil(FIT.plan.waterL / 0.25), done: !!lg.workout };
+  }
+  function drawCoachScreen(c) {
+    var g = c.getContext('2d'), W = c.width, H = c.height, t = coachToday();
+    g.fillStyle = '#05121c'; g.fillRect(0, 0, W, H); g.strokeStyle = '#ffc94d'; g.lineWidth = 6; g.strokeRect(3, 3, W - 6, H - 6);
+    g.fillStyle = '#ffc94d'; g.font = '700 40px sans-serif'; g.textAlign = 'left'; g.fillText('COACH EVR · HOY', 24, 56);
+    g.fillStyle = '#ffffff'; g.font = '600 30px sans-serif';
+    if (!t) { g.fillText('Toca al coach para crear tu plan:', 24, 130); g.fillText('músculo · recuperación · quemar grasa', 24, 180); g.fillStyle = '#bfeaff'; g.font = '500 24px sans-serif'; g.fillText('Rutina + dieta + agua + recordatorios diarios', 24, 240); return; }
+    g.fillText('🏋 ' + t.name + (t.done ? '  ✅' : ''), 24, 116); g.font = '500 22px sans-serif'; g.fillStyle = '#d7ecff';
+    t.ex.slice(0, 5).forEach(function (e, i) { g.fillText('• ' + e, 34, 156 + i * 32); });
+    g.fillStyle = '#ffd27a'; g.font = '600 26px sans-serif'; g.fillText(t.kcal + ' kcal · ' + t.prot + ' g proteína', 24, 336);
+    g.fillStyle = '#5cc8ff'; g.fillText('💧 ' + t.glasses + ' / ' + t.glassesGoal + ' vasos (' + t.water + ' L)', 24, 380);
+    g.fillStyle = '#bffcf0'; g.font = '500 20px sans-serif'; g.fillText('💡 ' + quoteOfDay().slice(0, 60) + (quoteOfDay().length > 60 ? '…' : ''), 24, 418);
+  }
+  function renderCoach() {
+    var el = $('#coachP'); if (!el || el.hidden) return; var fe = document.activeElement; if (fe && fe.closest && fe.closest('#coachP form') && fe.tagName !== 'BUTTON') return;
+    var P0 = (FIT.plan && FIT.plan.p) || { lb: 180, ft: 5, inch: 9, age: 35, sex: 'h', level: 'intermedio', days: 4, goal: 'musculo' };
+    var form = '<div class="ccard wide"><h3>Tus datos</h3><form class="cform" data-cplan autocomplete="off">' +
+      '<label>Peso (lb)<input name="lb" type="number" min="80" max="500" value="' + P0.lb + '"></label>' +
+      '<label>Estatura (pies)<input name="ft" type="number" min="4" max="7" value="' + P0.ft + '"></label>' +
+      '<label>Pulgadas<input name="inch" type="number" min="0" max="11" value="' + P0.inch + '"></label>' +
+      '<label>Edad<input name="age" type="number" min="15" max="90" value="' + P0.age + '"></label>' +
+      '<label>Sexo<select name="sex"><option value="h"' + (P0.sex === 'h' ? ' selected' : '') + '>Hombre</option><option value="m"' + (P0.sex === 'm' ? ' selected' : '') + '>Mujer</option></select></label>' +
+      '<label>Nivel<select name="level">' + ['principiante', 'intermedio', 'avanzado'].map(function (l) { return '<option' + (P0.level === l ? ' selected' : '') + '>' + l + '</option>'; }).join('') + '</select></label>' +
+      '<label>Días por semana<select name="days">' + [3, 4, 5, 6].map(function (d) { return '<option' + (+P0.days === d ? ' selected' : '') + '>' + d + '</option>'; }).join('') + '</select></label>' +
+      '<label>Hora de entrenar<input name="hour" type="time" value="' + esc(P0.hour || '18:00') + '"></label>' +
+      '<div class="goals">' + Object.keys(GOALS).map(function (k) { return '<label><input type="radio" name="goal" value="' + k + '"' + (P0.goal === k ? ' checked' : '') + '> ' + esc(GOALS[k]) + '</label>'; }).join('') + '</div>' +
+      '<button class="btn primary" type="submit" style="grid-column:1/-1">' + (FIT.plan ? 'Actualizar mi plan' : 'Crear mi plan') + '</button></form>' +
+      '<p class="note">Guía general de ejercicio y nutrición, no consejo médico. Si tienes alguna condición de salud, hinchazón persistente o tomas medicamentos, consulta a tu médico antes de empezar.</p></div>';
+    var body = form;
+    if (FIT.plan) {
+      var pl = FIT.plan, t = planToday(pl), lg = FIT.log[fitKey()] || {}, gGoal = Math.ceil(pl.waterL / 0.25), glasses = lg.water || 0, meals = lg.meals || [];
+      var streak = 0; for (var k = 0; k < 60; k++) { var d0 = new Date(Date.now() - k * 864e5), L = FIT.log[fitKey(d0)]; if (L && (L.workout || (planToday(pl, d0).key === 'rest'))) streak++; else if (k > 0) break; }
+      body += '<div class="ccard"><h3>Hoy · ' + esc(t.name) + '</h3><ul>' + t.ex.map(function (e) { return '<li>' + esc(e) + (t.key === 'rest' || t.key === 'recup' || t.key === 'cardio' ? '' : ' — ' + esc(pl.sets)) + '</li>'; }).join('') + '</ul>' +
+        '<div class="chk"><label><input type="checkbox" data-cw' + (lg.workout ? ' checked' : '') + '> Entrenamiento hecho</label><label><input type="checkbox" data-cs' + (lg.sleep ? ' checked' : '') + '> Dormí 7–9 h</label></div><p class="note">Racha: ' + streak + ' día' + (streak === 1 ? '' : 's') + ' seguidos · Hora de entrenar: ' + esc(pl.p.hour || '18:00') + '</p></div>' +
+        '<div class="ccard"><h3>Números del día</h3><div class="macros"><span><b>' + pl.kcal + '</b> kcal</span><span><b>' + pl.protG + '</b> g proteína</span><span><b>' + pl.carbG + '</b> g carbohidratos</span><span><b>' + pl.fatG + '</b> g grasa</span></div>' +
+        '<p>💧 Agua: <b>' + pl.waterL + ' L</b> (' + Math.round(pl.waterL * 33.8) + ' oz) = ' + gGoal + ' vasos de 250 ml</p><div class="water">' + Array.apply(null, Array(gGoal)).map(function (_, i) { return '<i class="' + (i < glasses ? 'on' : '') + '"></i>'; }).join('') + ' <button class="btn" type="button" data-cwater>+1 vaso</button></div>' +
+        (pl.p.goal === 'recuperacion' ? '<p class="note">Para bajar la retención de líquidos: menos sal (máx. ~2,300 mg de sodio), más potasio (plátano, aguacate, espinaca, frijoles), poco alcohol y procesados, camina a diario y duerme bien.</p>' : '') + '</div>' +
+        '<div class="ccard"><h3>Menú de hoy</h3><ul>' + ['Desayuno', 'Colación', 'Comida', 'Colación', 'Cena'].map(function (n, i) { return '<li><label><input type="checkbox" data-cmeal="' + i + '"' + (meals[i] ? ' checked' : '') + '> <b>' + n + ':</b> ' + esc(t.menu[i]) + '</label></li>'; }).join('') + '</ul><p class="note">Reparte la proteína en las 5 comidas (~' + Math.round(pl.protG / 5) + ' g cada una). Ajusta porciones para llegar a tus calorías.</p></div>' +
+        '<div class="ccard"><h3>Tu semana</h3><ul>' + ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map(function (n, i) { return '<li' + (i === t.wd ? ' style="color:#ffd27a"' : '') + '>' + n + ': ' + esc(SNAME[pl.week[i]]) + '</li>'; }).join('') + '</ul></div>' +
+        '<div class="ccard"><h3>Recordatorios</h3><ul><li>6:30 — vaso de agua y desayuno</li><li>10:00 — colación + 500 ml de agua</li><li>13:00 — comida</li><li>16:00 — colación + 500 ml de agua</li><li>' + esc(pl.p.hour || '18:00') + ' — entrenamiento: ' + esc(t.name) + '</li><li>20:00 — cena</li><li>22:30 — a dormir</li></ul><p class="note">Con la torre abierta el coach te recuerda tomar agua cada 90 min, y cada mañana te llega al teléfono la rutina y el menú del día.</p></div>' +
+        '<div class="ccard wide"><h3>Pregúntale al coach</h3><form class="ask" data-cask2 autocomplete="off" style="display:flex;gap:6px"><input type="text" maxlength="300" placeholder="Ej.: ¿qué ceno si entreno tarde? ¿cómo hago bien la sentadilla?" style="flex:1"><button class="btn primary" type="submit">Preguntar</button></form>' + (FIT.ans ? '<p class="cans">' + esc(FIT.ans) + '</p>' : '') + '</div>';
+    }
+    setHtml(el, '<header><h2>🏋 Coach EVR · Gimnasio del anexo</h2><button class="btn" type="button" data-cfocus>Ver el gimnasio</button><button class="btn" type="button" data-cx2 aria-label="Cerrar">×</button></header><div class="cbody">' + body + '</div>');
+  }
+  function openCoach(focus) { fitLoad(); $('#coachP').hidden = false; renderCoach(); if (focus && scene3d && scene3d.focusCoach) scene3d.focusCoach(); var t = coachToday(); var msg = t ? 'Hey Nesty, hoy toca ' + t.name + '. Meta: ' + t.prot + ' gramos de proteína y ' + t.water + ' litros de agua. ¡Vamos!' : 'Hola Nesty, soy tu coach. Dime tu objetivo y armo tu rutina y tu dieta.'; if (VOICE.on) voiceSay(null, msg); toast('🏋 Coach: ' + msg); }
+  function closeCoach() { $('#coachP').hidden = true; }
+  function fitLogToday(patch) { var k = fitKey(), L = Object.assign({}, FIT.log[k] || {}, patch, { updatedAt: Date.now() }); FIT.log[k] = L; fitSave('log_' + k, L); renderCoach(); }
+  $('#coachP').addEventListener('submit', function (e) {
+    e.preventDefault(); var f = e.target;
+    if (f.hasAttribute('data-cplan')) {
+      var E2 = f.elements, gsel = f.querySelector('input[name=goal]:checked');
+      var p = { lb: Math.max(80, Math.min(500, +E2.lb.value || 180)), ft: Math.max(4, Math.min(7, +E2.ft.value || 5)), inch: Math.max(0, Math.min(11, +E2.inch.value || 0)), age: Math.max(15, Math.min(90, +E2.age.value || 35)), sex: E2.sex.value === 'm' ? 'm' : 'h', level: ['principiante', 'intermedio', 'avanzado'].indexOf(E2.level.value) > -1 ? E2.level.value : 'intermedio', days: Math.max(3, Math.min(6, +E2.days.value || 4)), hour: /^\d{2}:\d{2}$/.test(E2.hour.value) ? E2.hour.value : '18:00', goal: gsel && GOALS[gsel.value] ? gsel.value : 'musculo' };
+      FIT.plan = makePlan(p); fitSave('plan', FIT.plan); renderCoach(); var t = coachToday(); toast('🏋 Plan listo: ' + FIT.plan.kcal + ' kcal, ' + FIT.plan.protG + ' g de proteína, ' + FIT.plan.waterL + ' L de agua. Hoy: ' + t.name);
+      logEvent('Coach EVR creó tu plan: ' + GOALS[p.goal], 'reportes', 'ok'); return;
+    }
+    if (f.hasAttribute('data-cask2')) {
+      var inp = f.querySelector('input'), q = inp.value.trim(); if (!q) return; inp.value = '';
+      if (!SAMPLE) { FIT.ans = 'Aquí no puedo consultar a Claude. Revisa tu plan arriba: rutina, menú y agua del día.'; renderCoach(); return; }
+      var pl = FIT.plan, t = pl ? planToday(pl) : null;
+      var prompt = 'Eres «Coach EVR», entrenador personal de Ernesto («Nesty»), dueño de Imperial Remodeling. Hablas en español, motivador y concreto, máximo 6 líneas. ' + (pl ? 'Su plan: objetivo ' + GOALS[pl.p.goal] + ', ' + pl.p.lb + ' lb, ' + pl.p.age + ' años, nivel ' + pl.p.level + ', ' + pl.p.days + ' días por semana, ' + pl.kcal + ' kcal, ' + pl.protG + ' g proteína, ' + pl.waterL + ' L de agua. Hoy toca: ' + t.name + ' (' + t.ex.join(', ') + '). ' : '') + 'Da solo guía general de ejercicio y nutrición; no diagnostiques ni recetes medicamentos ni suplementos riesgosos; si hay dolor, lesión, hinchazón persistente o una condición de salud, recomienda ver a un médico. Pregunta: ' + q;
+      FIT.ans = 'Pensando…'; renderCoach();
+      SAMPLE(prompt, { onText: function (o) { FIT.ans = o.text; var pa = $('#coachP .cans'); if (pa) pa.textContent = o.text; } }).then(function (r) { FIT.ans = (r && r.text) || 'Sin respuesta ahora.'; renderCoach(); if (VOICE.on) voiceSay(null, FIT.ans); }).catch(function () { FIT.ans = 'No pude consultar a Claude ahora.'; renderCoach(); });
+    }
+  });
+  $('#coachP').addEventListener('change', function (e) {
+    var t = e.target; if (!t || !t.hasAttribute) return;
+    if (t.hasAttribute('data-cw')) fitLogToday({ workout: !!t.checked });
+    else if (t.hasAttribute('data-cs')) fitLogToday({ sleep: !!t.checked });
+    else if (t.hasAttribute('data-cmeal')) { var m = ((FIT.log[fitKey()] || {}).meals || [false, false, false, false, false]).slice(); m[+t.getAttribute('data-cmeal')] = !!t.checked; fitLogToday({ meals: m }); }
+  });
+  $('#coachP').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.hasAttribute('data-cx2')) closeCoach();
+    else if (b.hasAttribute('data-cfocus')) { closeCoach(); if (scene3d && scene3d.focusCoach) scene3d.focusCoach(); }
+    else if (b.hasAttribute('data-cwater')) { var w = ((FIT.log[fitKey()] || {}).water || 0) + 1; fitLogToday({ water: w }); var goal = FIT.plan ? Math.ceil(FIT.plan.waterL / 0.25) : 12; toast(w >= goal ? '💧 ¡Meta de agua cumplida, Nesty!' : '💧 ' + w + ' de ' + goal + ' vasos'); }
+  });
+  $('#btnCoach').onclick = function () { stopTour(); openCoach(true); };
+  /* recordatorios mientras la torre está abierta: agua cada 90 min y saludo del coach al entrar */
+  setTimeout(function () { fitLoad(); setTimeout(function () { var t = coachToday(); if (t) showQuote('Hoy toca ' + t.name + ' · ' + t.kcal + ' kcal · ' + t.prot + ' g proteína · ' + t.water + ' L de agua', '🏋 Coach EVR'); }, 16000); }, 1500);
+  setInterval(function () { if (document.hidden || !FIT.plan) return; var t = coachToday(); if (t && t.glasses < t.glassesGoal) toast('💧 Coach: toma un vaso de agua (' + t.glasses + ' de ' + t.glassesGoal + ' hoy)'); }, 90 * 60 * 1000);
   function exitOffice() { if (!OFFICE) return; var id = OFFICE; OFFICE = null; if (scene3d && scene3d.setOffice) scene3d.setOffice(null); renderOfficeBar(); if (scene3d && byId(id)) scene3d.focus(byId(id), true); }
   function stepOffice(d) { if (!OFFICE) return; var i = (byId(OFFICE).i + d + AGENTS.length) % AGENTS.length; enterOffice(AGENTS[i].id); }
   $('#btnReactor').onclick = function () { stopTour(); reactorTap(); };
@@ -4106,13 +4263,63 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       for (var pil = 1; pil < Math.floor(Lb / 12); pil++) { var px = st.x + d.x * pil * 12, pz = st.z + d.z * pil * 12, pyl = new T3.Mesh(new T3.CylinderGeometry(0.35, 0.5, deckY + 0.3, 8), darkM); pyl.position.set(px, (deckY - 0.1) / 2, pz); scene.add(pyl); }
       var carry = []; for (var cp = 0; cp < 3; cp++) { var cs = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: cp % 2 ? 0xffc94d : 0x9fe8ff, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); cs.scale.set(2.4, 2.4, 1); BG.add(cs); carry.push({ s: cs, u: cp / 3 }); }
       oport.annex = { x: ax, z: az, r: 2.55, baseAng: baseAng + 0.0, camAng: Math.atan2(az, ax) };
+
+      /* ---- Planta baja del anexo: GIMNASIO EVR con el Coach (instructor) ---- */
+      var CG = new T3.Group(); G.add(CG); var GY = 1.22, SG = 1.35, coachScr = null, coach = null, coachV = {}, coachSpots = [];
+      (function () {
+        var gl2 = new T3.Mesh(new T3.CylinderGeometry(9.3, 9.3, 5.4, 56, 1, true), addM(0x9fe8ff, 0.1)); gl2.position.y = GY + 2.7; CG.add(gl2);
+        [GY + 0.05, GY + 5.4].forEach(function (yy) { var rr = new T3.Mesh(new T3.TorusGeometry(9.3, 0.07, 6, 96), addM(0xffc94d, 0.95)); rr.rotation.x = Math.PI / 2; rr.position.y = yy; CG.add(rr); });
+        for (var mu = 0; mu < 24; mu++) { var ma = mu / 24 * Math.PI * 2, ml = new T3.Mesh(new T3.BoxGeometry(0.08, 5.4, 0.08), new T3.MeshBasicMaterial({ color: 0x7fe0ff, transparent: true, opacity: 0.45 })); ml.position.set(Math.cos(ma) * 9.3, GY + 2.7, Math.sin(ma) * 9.3); CG.add(ml); }
+        var fl = new T3.Mesh(new T3.RingGeometry(3.6, 9.2, 64), new T3.MeshStandardMaterial({ color: 0x14181e, roughness: 0.85, metalness: 0.1, side: T3.DoubleSide })); fl.rotation.x = -Math.PI / 2; fl.position.y = GY + 0.01; CG.add(fl);
+        var lane = new T3.Mesh(new T3.RingGeometry(6.9, 7.1, 64), addM(0x5cffe6, 0.6)); lane.rotation.x = -Math.PI / 2; lane.position.y = GY + 0.03; CG.add(lane);
+        function part(ang, r, build) { var g = new T3.Group(); g.position.set(Math.cos(ang) * r, GY, Math.sin(ang) * r); g.rotation.y = -ang + Math.PI / 2; CG.add(g); build(g); return g; }
+        function bx(g, x, y, z, w, h, d, c) { var m = new T3.Mesh(new T3.BoxGeometry(w * SG, h * SG, d * SG), new T3.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0.3 })); m.position.set(x * SG, y * SG, z * SG); g.add(m); return m; }
+        var steel = 0x9aa7b3, dark = 0x1c222b, gold = 0xc9a84c;
+        /* sector 1: dos caminadoras */
+        [1.25, 1.85].forEach(function (aa) { part(aa, 7.4, function (g) { bx(g, 0, 0.2, 0, 3.0, 0.28, 1.1, dark); var bt = new T3.Mesh(new T3.PlaneGeometry(2.6 * SG, 0.9 * SG), new T3.MeshStandardMaterial({ map: GYM.beltTex, roughness: 0.9 })); bt.rotation.x = -Math.PI / 2; bt.position.y = 0.36 * SG; g.add(bt); bx(g, 1.4, 1.15, -0.5, 0.1, 1.9, 0.1, steel); bx(g, 1.4, 1.15, 0.5, 0.1, 1.9, 0.1, steel); bx(g, 1.45, 2.1, 0, 0.25, 0.5, 1.2, 0x20262e); }); });
+        /* sector 2: rack de sentadilla, banco y mancuernas */
+        part(3.35, 7.3, function (g) { [-0.8, 0.8].forEach(function (z) { bx(g, -0.6, 1.2, z, 0.12, 2.4, 0.12, steel); bx(g, 0.6, 1.2, z, 0.12, 2.4, 0.12, steel); }); bx(g, 0, 2.4, 0, 1.4, 0.1, 1.8, steel); var bar = new T3.Mesh(new T3.CylinderGeometry(0.05 * SG, 0.05 * SG, 2.4 * SG, 10), new T3.MeshStandardMaterial({ color: 0xd7dee5, metalness: 0.9, roughness: 0.2 })); bar.rotation.x = Math.PI / 2; bar.position.set(0, 1.55 * SG, 0); g.add(bar); [-1, 1].forEach(function (z) { var pl = new T3.Mesh(new T3.CylinderGeometry(0.4 * SG, 0.4 * SG, 0.14 * SG, 20), new T3.MeshStandardMaterial({ color: 0x1a1d22 })); pl.rotation.x = Math.PI / 2; pl.position.set(0, 1.55 * SG, z * SG); g.add(pl); }); bx(g, 0, 0.03, 0, 2.0, 0.06, 2.2, 0x111418); });
+        part(3.95, 7.1, function (g) { bx(g, 0, 0.55, 0, 2.2, 0.2, 0.6, 0x2a2f37); bx(g, 0, 0.68, 0, 2.15, 0.08, 0.56, gold); bx(g, -0.85, 0.25, 0, 0.12, 0.5, 0.5, steel); bx(g, 0.85, 0.25, 0, 0.12, 0.5, 0.5, steel); });
+        part(2.75, 7.8, function (g) { bx(g, 0, 0.5, 0, 2.6, 1.0, 0.5, 0x2b313a); for (var k = 0; k < 5; k++) { var dbm = new T3.Mesh(new T3.CylinderGeometry(0.12 * SG, 0.12 * SG, 0.42 * SG, 12), new T3.MeshStandardMaterial({ color: k % 2 ? gold : 0x1a1d22, metalness: 0.5 })); dbm.rotation.x = Math.PI / 2; dbm.position.set((-1 + k * 0.5) * SG, 1.05 * SG, 0); g.add(dbm); } });
+        /* sector 3: estera de estiramiento, cuerda de batalla y pantalla del coach */
+        part(5.45, 7.0, function (g) { var mt = new T3.Mesh(new T3.PlaneGeometry(2.6 * SG, 1.0 * SG), new T3.MeshStandardMaterial({ map: GYM.matTex, roughness: 0.9 })); mt.rotation.x = -Math.PI / 2; mt.rotation.z = Math.PI / 2; mt.position.y = 0.05; g.add(mt); var ball = new T3.Mesh(new T3.SphereGeometry(0.42 * SG, 16, 12), new T3.MeshStandardMaterial({ color: 0xff7a59 })); ball.position.set(1.6 * SG, 0.42 * SG, 0.6 * SG); g.add(ball); });
+        part(6.05, 7.6, function (g) { bx(g, 0, 0.25, 0, 0.3, 0.5, 0.3, steel); var rope = new T3.Mesh(new T3.TorusGeometry(1.0 * SG, 0.06 * SG, 6, 24, Math.PI), new T3.MeshStandardMaterial({ color: 0x3b3326 })); rope.rotation.x = Math.PI / 2; rope.position.set(-1.0 * SG, 0.06, 0); g.add(rope); });
+        coachScr = document.createElement('canvas'); coachScr.width = 768; coachScr.height = 432; var ctex = new T3.CanvasTexture(coachScr);
+        part(4.65, 8.55, function (g) { var sc = new T3.Mesh(new T3.PlaneGeometry(3.6 * SG, 2.0 * SG), new T3.MeshBasicMaterial({ map: ctex, side: T3.DoubleSide })); sc.position.set(0, 2.6 * SG, 0); sc.rotation.y = Math.PI; g.add(sc); bx(g, 0, 2.6, 0.06, 3.75, 2.15, 0.06, 0x0b0e12); bx(g, 0, 0.75, -0.8, 1.6, 0.08, 0.7, 0x2a2018); bx(g, 0, 0.37, -0.8, 0.12, 0.74, 0.12, steel); });
+        coachScr.tex = ctex;
+        /* letrero exterior */
+        var lc = document.createElement('canvas'); lc.width = 640; lc.height = 140; var lg = lc.getContext('2d'); lg.fillStyle = 'rgba(8,16,26,.92)'; lg.fillRect(0, 0, 640, 140); lg.strokeStyle = '#ffc94d'; lg.lineWidth = 5; lg.strokeRect(3, 3, 634, 134); lg.textAlign = 'center'; lg.fillStyle = '#ffc94d'; lg.font = '700 54px sans-serif'; lg.fillText('🏋 GIMNASIO EVR', 320, 66); lg.fillStyle = '#bfeaff'; lg.font = '500 32px sans-serif'; lg.fillText('Coach · rutina · dieta · recordatorios', 320, 114);
+        var sg2 = new T3.Sprite(new T3.SpriteMaterial({ map: new T3.CanvasTexture(lc), transparent: true, depthWrite: false })); sg2.scale.set(12, 2.6, 1); var inA = Math.atan2(-az, -ax); sg2.position.set(Math.cos(inA) * 11.5, GY + 7.2, Math.sin(inA) * 11.5); CG.add(sg2);
+        /* el coach: persona con uniforme EVR, banda en la frente y silbato */
+        coachV = {}; coach = buildPerson(coachV, 0xffc94d, { id: 'coach', i: 2 });
+        var band = new T3.Mesh(new T3.TorusGeometry(0.43, 0.06, 8, 32), new T3.MeshStandardMaterial({ color: 0xff7a59 })); band.rotation.x = Math.PI / 2; band.position.y = 0.32; coachV.head.add(band);
+        var wh = new T3.Mesh(new T3.CylinderGeometry(0.04, 0.04, 0.14, 10), new T3.MeshStandardMaterial({ color: 0xffc94d, metalness: 0.8, roughness: 0.2 })); wh.rotation.z = Math.PI / 2; wh.position.set(0.08, 1.38, 0.24); coach.add(wh);
+        coach.scale.setScalar(1.9); coach.position.set(Math.cos(5.0) * 6.6, GY, Math.sin(5.0) * 6.6); CG.add(coach);
+        var chb = new T3.Mesh(new T3.CylinderGeometry(1.2, 1.2, 4.2, 10), new T3.MeshBasicMaterial({ visible: false })); chb.position.y = 2.1; chb.userData.coach = true; coach.add(chb); pickables.push(chb);
+        var ghb = new T3.Mesh(new T3.CylinderGeometry(9.4, 9.4, 5.6, 16, 1, true), new T3.MeshBasicMaterial({ visible: false, side: T3.DoubleSide })); ghb.position.y = GY + 2.8; ghb.userData.coach = true; CG.add(ghb); pickables.push(ghb);
+        coachSpots = [{ a: 5.0, r: 6.6, act: 'jacks' }, { a: 4.65, r: 7.0, act: 'talk' }, { a: 5.45, r: 6.4, act: 'squat' }];
+      })();
+      var coachT = 0, coachI = 0, coachScrT = 0;
+      function coachUpdate(t, dt) {
+        if (!coach) return; var v2 = coachV, sp = coachSpots[coachI], tx = Math.cos(sp.a) * sp.r, tz = Math.sin(sp.a) * sp.r, dx = tx - coach.position.x, dz = tz - coach.position.z, d = Math.hypot(dx, dz), walk = d > 0.15;
+        coachT += dt; if (!walk && coachT > 9) { coachT = 0; coachI = (coachI + 1) % coachSpots.length; }
+        if (walk) { var st2 = Math.min(d, dt * 2.2); coach.position.x += dx / d * st2; coach.position.z += dz / d * st2; coach.rotation.y = Math.atan2(dx, dz); }
+        else coach.rotation.y += (Math.atan2(-coach.position.x, -coach.position.z) + Math.PI - coach.rotation.y) * Math.min(1, dt * 2);
+        var ph = t * 7, act = walk ? 'walk' : sp.act;
+        if (v2.legs) v2.legs.forEach(function (l, i) { l.rotation.x = act === 'walk' ? Math.sin(ph + i * Math.PI) * 0.5 : act === 'squat' ? -0.9 * Math.max(0, Math.sin(t * 2.4)) : act === 'jacks' ? 0 : 0; l.rotation.z = act === 'jacks' ? (i ? -1 : 1) * 0.25 * Math.max(0, Math.sin(t * 6)) : 0; });
+        if (v2.knees) v2.knees.forEach(function (k) { k.rotation.x = act === 'squat' ? 1.6 * Math.max(0, Math.sin(t * 2.4)) : act === 'walk' ? Math.max(0, Math.sin(ph)) * 0.4 : 0; });
+        coach.position.y = GY - (act === 'squat' ? 0.55 * Math.max(0, Math.sin(t * 2.4)) : 0) + (act === 'jacks' ? Math.abs(Math.sin(t * 6)) * 0.12 : 0);
+        if (v2.arms) { var L2 = v2.arms[0], R2 = v2.arms[1]; if (act === 'jacks') { L2.rotation.z = -0.3 - 2.3 * Math.max(0, Math.sin(t * 6)); R2.rotation.z = 0.3 + 2.3 * Math.max(0, Math.sin(t * 6)); L2.rotation.x = R2.rotation.x = 0; } else if (act === 'squat') { L2.rotation.x = R2.rotation.x = -1.5; L2.rotation.z = -0.1; R2.rotation.z = 0.1; } else if (act === 'talk') { R2.rotation.x = -0.9 + Math.sin(t * 4) * 0.3; R2.rotation.z = 0.4; L2.rotation.x = -0.3; L2.rotation.z = -0.2; } else { L2.rotation.x = -Math.sin(ph) * 0.5; R2.rotation.x = Math.sin(ph) * 0.5; L2.rotation.z = -0.1; R2.rotation.z = 0.1; } }
+        coachScrT -= dt; if (coachScrT <= 0 && coachScr) { coachScrT = 4; try { drawCoachScreen(coachScr); coachScr.tex.needsUpdate = true; } catch (e) {} }
+      }
       function update(t, dt, tier) {
+        coachUpdate(t, dt);
         gyros.forEach(function (gm, i) { gm.rotation.z += gm.userData.w * dt; gm.visible = tier < 2; });
         baseRing.material.opacity = 0.6 + 0.35 * Math.sin(t * 2.2); sweepG.rotation.y = -t * 0.9; beam.material.opacity = 0.06 + 0.03 * Math.sin(t * 3); beacon.material.opacity = 0.65 + 0.35 * Math.sin(t * 3.4);
         pinList.forEach(function (pn) { var pulse = pn.disc ? 0.3 : pn.v === 'real_off' ? 0.7 + 0.3 * Math.sin(t * 5 + pn.ph) : 0.55 + 0.25 * Math.sin(t * 2.4 + pn.ph); pn.halo.material.opacity = pulse; pn.gem.position.y = pn.hgt + 0.2 + Math.sin(t * 1.6 + pn.ph) * 0.07; pn.halo.position.y = pn.gem.position.y; pn.gem.rotation.y += dt * 1.8; });
         carry.forEach(function (c) { c.u += dt * 0.12; if (c.u > 1) c.u -= 1; c.s.position.set(-Lb / 2 + c.u * Lb, 0, 0); });
       }
-      return { update: update, setProps: setProps, pos: { x: ax, z: az }, walk: { x: ax, z: az, sx: st.x, sz: st.z, ex: en.x, ez: en.z, y: deckY, fl: oport.i }, info: function () { return { x: ax, z: az, pins: pinList.length, bridge: Lb }; } };
+      return { update: update, setProps: setProps, pos: { x: ax, z: az }, coachInfo: function () { return { spot: coachI, x: coach ? coach.position.x + ax : 0, z: coach ? coach.position.z + az : 0 }; }, walk: { x: ax, z: az, sx: st.x, sz: st.z, ex: en.x, ez: en.z, y: deckY, fl: oport.i }, info: function () { return { x: ax, z: az, pins: pinList.length, bridge: Lb }; } };
     })();
 
 
@@ -4713,7 +4920,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (WALK.on) { walkPtr('up', e); return; }
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
-      if (wasTap) { var ud = hit(e); if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.gym) { var ga0 = agentAt(ud.gym.fl); if (ga0) { enterWalk(ga0.id); setTimeout(function () { var F0 = GYM.floors[ud.gym.fl]; if (F0 && WALK.on) { var ge0 = F0.eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]; gymStart(ge0); } }, 400); } return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
+      if (wasTap) { var ud = hit(e); if (ud && ud.coach) { openCoach(true); return; } if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.gym) { var ga0 = agentAt(ud.gym.fl); if (ga0) { enterWalk(ga0.id); setTimeout(function () { var F0 = GYM.floors[ud.gym.fl]; if (F0 && WALK.on) { var ge0 = F0.eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]; gymStart(ge0); } }, 400); } return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
     canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; wdrag = null; });
@@ -5198,6 +5405,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (type === 'up') {
         var w = wdrag; if (!w || w.id !== e.pointerId) return; wdrag = null; if (w.moved > 6) return;
         var ud = hit(e); if (ud && ud.prop) { openProps(ud.prop.id); return; }
+        if (ud && ud.coach) { openCoach(false); return; }
         if (ud && ud.gym) { if (ud.gym.fl === WALK.fl && Math.hypot(ud.gym.x - WALK.x, ud.gym.z - WALK.z) < 6) { var ge = (GYM.floors[WALK.fl].eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]); gymStart(ge); } else { WALK.go = { x: ud.gym.x, z: ud.gym.z + (ud.gym.z > 0 ? -1.6 : 1.6) }; } return; }
         if (ud && ud.agent && !ud.floorHit) { walkTalk(ud.agent); return; }
         if (!walkGoto(e) && ud && ud.agent && ud.agent.i !== WALK.fl) walkTalk(ud.agent);
@@ -5470,6 +5678,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       annexInfo: function () { return annex ? annex.info() : null; },
       naveInfo: function () { return nave ? nave.info() : null; },
       reactorInfo: function () { return reactor ? reactor.info() : null; },
+      focusCoach: function () { if (!annex) return false; cam.follow = null; cam.gtx = annex.pos.x; cam.gtz = annex.pos.z; cam.gty = 4.5; cam.gph = 1.22; cam.gr = window.innerWidth > 860 ? 30 : 42; return true; },
+      coachInfo: function () { return annex && annex.coachInfo ? annex.coachInfo() : null; },
       reactorBoost: function () { return reactor ? reactor.boost() : false; },
       focusReactor: function () { if (!reactor) return false; cam.follow = null; cam.gtx = reactor.pos.x; cam.gtz = reactor.pos.z; cam.gty = 10; cam.gph = 1.18; cam.gr = window.innerWidth > 860 ? 80 : 105; cam.th = Math.atan2(reactor.pos.z, reactor.pos.x) + Math.PI - 0.45; return true; },
       launchNow: function () { return nave ? nave.launchNow() : false; },
