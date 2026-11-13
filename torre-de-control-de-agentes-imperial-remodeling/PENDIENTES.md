@@ -127,6 +127,13 @@
   - Teléfono: círculo para volar, ▲ ▼ altura, 🔥 Disparar, ⚡ Turbo; tocar la pantalla también dispara.
   - Blancos: 14 drones de práctica rojos (hologramas) que explotan y reaparecen; marcador, altura y velocidad en pantalla; asistencia de puntería cerca de la mira. No choca con edificios ni la torre.
 - [x] **Guerra entre dos planetas** en el fondo Espacio: planeta rojo contra planeta azul, con escudos que destellan, naves en órbita, misiles con estela, intercepciones, rayos láser entre naves y explosiones. Botón «⚔ Guerra» en el dron apunta hacia allá; Jarvis: «muéstrame la guerra».
+- [x] **Laboratorio EVR · Fábrica de agentes** (isla propia con puente): línea de ensamblaje con brazos robóticos que arman robots (piernas, torso, cabeza, pintura y prueba), chispas de soldadura, bahía de reparación, cámara de pruebas, ingeniero con bata y goggles, y pantalla gigante con las noticias del día.
+  - Panel «🧪 Lab»: noticias de IA y de economía con enlace a la fuente y qué significan para el negocio; taller de robots (los que tienen falla primero, con diagnóstico); fábrica de agentes («¿Qué necesitamos automatizar?» propone solo lo que hace falta, con conexiones de solo lectura y pruebas antes de activar; tú apruebas o descartas); pregúntale al ingeniero.
+  - Tarea diaria 6:20 a. m. (Chicago): busca 5 noticias de IA y 5 de economía, las guarda en el laboratorio y te manda el resumen al teléfono. Los lunes revisa si hace falta un agente nuevo (máximo 1 propuesta; nada se activa sin tu «sí»).
+  - Jarvis: «abre el laboratorio», «cuáles son las noticias».
+- [x] **Voz de hombre más natural**: Jarvis elige la mejor voz de hombre en español (prefiere las «Natural/Online/Mejorada»); cada especialidad tiene su propia voz cuando el equipo trae varias, y su propio ritmo y tono. Selector «Voz de Jarvis» en Sistema y comando «cambia la voz».
+  - Las palabras se marcan mientras habla, en la burbuja de voz y en el recuadro donde aparece la respuesta (Jarvis, pantallas de agentes, Coach y Laboratorio).
+  - Las voces dependen del navegador: en la computadora, Microsoft Edge trae voces naturales de hombre (Jorge, Gerardo, Alonso); en iPhone se descarga «Jorge (mejorada)» en Ajustes › Accesibilidad › Contenido leído › Voces.
 
   - Es guía general, no consejo médico.
 - [ ] REVISAR: la tarea «Ili calls to calendar» (desactivada) tiene una llave de Bland.ai escrita en sus instrucciones. Revocarla en Bland.ai y quitarla de la tarea.

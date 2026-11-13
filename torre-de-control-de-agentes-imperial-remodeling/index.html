@@ -280,6 +280,25 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .drpad .knob { position: absolute; left: 50%; top: 50%; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%; background: rgba(255, 61, 240, 0.35); border: 1px solid #ff3df0; pointer-events: none; }
 .drhint { position: absolute; left: 50%; top: 158px; transform: translateX(-50%); z-index: 9; padding: 6px 12px; background: rgba(5, 10, 16, 0.85); color: #f6d9ff; font-size: 12px; border: 1px solid rgba(255, 61, 240, 0.35); max-width: calc(100% - 24px); text-align: center; transition: opacity 1.2s; }
 .drhint.fade { opacity: 0; pointer-events: none; }
+
+.kara .kwd { opacity: .55; transition: opacity .12s, background-color .12s; border-radius: 3px; }
+.kara .kwd.kd { opacity: 1; }
+.kara .kwd.kw { opacity: 1; color: #fff; background: rgba(255, 201, 77, 0.4); box-shadow: 0 0 0 2px rgba(255, 201, 77, 0.4); }
+#voLine.kara { max-height: 7.2em; overflow: auto; }
+.vozsel { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; } .vozsel select { max-width: 230px; background: #07141f; color: #fff; border: 1px solid rgba(92, 255, 230, 0.35); padding: 5px; font: inherit; }
+.coachp.labp { border-color: rgba(92, 255, 230, 0.55); box-shadow: 0 0 50px rgba(92, 255, 230, 0.16); }
+.coachp.labp header { background: linear-gradient(90deg, rgba(92, 255, 230, 0.16), transparent); border-bottom-color: rgba(92, 255, 230, 0.3); }
+.coachp.labp .ccard h3 { color: #5cffe6; }
+.coachp.labp .news { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.coachp.labp .news li { border-left: 2px solid #5cffe6; padding: 2px 0 2px 8px; }
+.coachp.labp .news li.eco { border-left-color: #ffc94d; }
+.coachp.labp .news a { color: #e9fbff; font-weight: 600; text-decoration: none; } .coachp.labp .news a:hover { text-decoration: underline; }
+.coachp.labp .news small { display: block; opacity: .7; font-size: 11px; } .coachp.labp .news p { margin: 2px 0 0; font-size: 12px; color: #bfeaff; }
+.coachp.labp .bots { display: grid; gap: 6px; } .coachp.labp .bot { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid rgba(92, 200, 255, 0.25); }
+.coachp.labp .bot b { flex: 1; font-weight: 600; } .coachp.labp .bot i { width: 10px; height: 10px; border-radius: 50%; background: #3ddc84; flex: none; } .coachp.labp .bot i[data-s="warning"] { background: #ffc94d; } .coachp.labp .bot i[data-s="error"] { background: #ff5a5f; } .coachp.labp .bot i[data-s="idle"] { background: #6f8fff; }
+.coachp.labp .spec { border: 1px solid rgba(255, 201, 77, 0.35); padding: 8px 10px; margin-top: 8px; } .coachp.labp .spec h4 { margin: 0 0 4px; font-size: 13px; color: #ffd27a; }
+.coachp.labp .spec .st { font-size: 11px; padding: 1px 6px; border: 1px solid currentColor; margin-left: 6px; } .coachp.labp .spec .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+@media (max-width: 860px) { .vozsel select { max-width: 160px; } }
 #app.drone .strip, #app.drone .lift, #app.drone .roster, #app.drone #officeBar, #app.drone .card, #app.drone #quoteCard { display: none !important; }
 @media (max-width: 860px) { .drtop { top: 58px; gap: 8px; padding: 5px 8px; font-size: 11px; } .drtop .drwar { display: none; } .drbar { bottom: 14px; gap: 4px; padding: 5px 6px; } .drbar .btn { padding-left: 8px; padding-right: 8px; } .drpad { bottom: 74px; } .drhint { top: 96px; } #app.drone .stats, #app.drone .tools, #app.drone .rdock { display: none !important; } }
 .quotecard { position: absolute; left: 50%; top: 64px; transform: translateX(-50%); z-index: 12; width: min(560px, calc(100% - 24px)); padding: 12px 40px 12px 16px; background: linear-gradient(135deg, rgba(40, 30, 6, 0.95), rgba(8, 16, 26, 0.95)); border: 1px solid #c9a84c; box-shadow: 0 0 30px rgba(201, 168, 76, 0.35); color: #fff4d6; transition: opacity .9s, transform .9s; }
@@ -529,6 +548,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <button class="btn extra" id="btnTour" type="button">Recorrido: apagado</button>
       <button class="btn" id="btnWalk" type="button" title="Recorre a pie cada piso de la torre y la nave anexo">🚶 Caminar</button>
       <button class="btn" id="btnDrone" type="button" title="Monta el dron EVR: vuela por la ciudad, dispara a los drones de práctica y mira la guerra entre planetas">🚁 Dron</button>
+      <button class="btn" id="btnLab" type="button" title="Laboratorio EVR: arma y repara agentes, propone automatizaciones y trae noticias de IA y economía">🧪 Lab</button>
       <button class="btn" id="btnCoach" type="button" title="Torre Bio-Fit: rutina, dieta, tratamiento y seguimiento">🧬 Coach</button>
       <button class="btn" id="btnMore" type="button">Más herramientas</button>
       <button class="btn mobonly" id="btnUp" type="button" aria-label="Piso arriba">▲</button>
@@ -655,7 +675,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <div id="dbInv"></div>
     </div>
     <div class="list" id="sys" role="tabpanel" hidden>
-      <div class="tbar"><button class="btn primary" id="sysRun" type="button">Verificar ahora</button><button class="btn" id="sysFix" type="button">Reparar datos</button><button class="btn" id="sysBack" type="button">Descargar respaldo</button><button class="btn" id="sysVoice" type="button">Probar voz</button></div>
+      <div class="tbar"><button class="btn primary" id="sysRun" type="button">Verificar ahora</button><button class="btn" id="sysFix" type="button">Reparar datos</button><button class="btn" id="sysBack" type="button">Descargar respaldo</button><button class="btn" id="sysVoice" type="button">Probar voz</button><label class="vozsel">Voz de Jarvis <select id="sysVoz" aria-label="Voz de Jarvis"></select></label></div>
+      <p class="note" id="sysVozNote"></p>
       <p class="note" id="sysNote"></p>
       <div id="sysList"></div>
       <p class="sec">Mejoras por sección</p>
@@ -707,6 +728,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   <section class="hpip" id="hpip" hidden aria-label="Control con las manos"><div class="hv"><video id="hVid" playsinline muted></video><canvas id="hCan" width="320" height="240"></canvas></div><div class="hm"><span id="hMsg">Iniciando cámara…</span><button id="hOff" type="button">Apagar</button></div><div class="hh" id="hHelp"></div></section>
   <section class="props" id="props" hidden aria-label="Propiedades y mapa"></section>
   <section class="coachp" id="coachP" hidden aria-label="Coach EVR: rutina y dieta"></section>
+  <section class="coachp labp" id="labP" hidden aria-label="Laboratorio EVR: fábrica de agentes y noticias"></section>
   <div class="toast" id="toast" role="status"></div>
 </div>
 
@@ -985,7 +1007,46 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     t.textContent = 'Voz: ' + (VOICE.on ? 'sí' : 'no'); t.classList.toggle('on', VOICE.on);
     m.textContent = VOICE.listening ? 'Escuchando…' : 'Hablar'; m.classList.toggle('rec', VOICE.listening); m.title = VOICE.micBlocked ? 'Micrófono bloqueado: escribe tus órdenes en el cuadro de Jarvis' : 'Háblale a la torre';
   }
-  function pickVoice(a) { try { var vs = (TTS && TTS.getVoices()) || [], es = vs.filter(function (v) { return /^es/i.test(v.lang); }); if (!es.length) return null; var loc = es.filter(function (v) { return v.localService; }), pool = loc.length ? loc : es, us = pool.filter(function (v) { return /^es[-_](US|MX)/i.test(v.lang); }); return (us.length ? us : pool)[0]; } catch (e) { return null; } }
+  var VOZ = { pick: (function () { try { return localStorage.getItem('evr.voz') || ''; } catch (e) { return ''; } })() };
+  /* estilo de voz por especialidad: [velocidad, tono] */
+  var VSTYLE = { jarvis: [1.0, 0.92], cotiz: [0.98, 0.9], cliente: [1.0, 0.96], correo: [1.02, 0.93], proyectos: [0.97, 0.88], leads: [1.05, 0.95], citas: [1.0, 0.96], social: [1.07, 1.0], cobros: [0.95, 0.86], resenas: [1.0, 0.94], reportes: [0.97, 0.9], publica: [1.05, 0.98], oport: [1.02, 0.9], coach: [1.06, 0.96], lab: [0.99, 0.9] };
+  var MALE_RE = /jorge|diego|juan|pablo|[aá]lvaro|ra[uú]l|carlos|enrique|andr[eé]s|gerardo|tom[aá]s|alonso|mateo|emilio|jos[eé]|luciano|federico|arnau|dar[ií]o|gonzalo|manuel|ricardo|eddy|reed|rocko|grandpa|lorenzo|hombre|\bmale\b|masculin/i;
+  var FEMALE_RE = /paulina|m[oó]nica|helena|laura|sabina|dalia|elvira|luc[ií]a|marisol|paloma|camila|female|mujer|conchita|pen[eé]lope|lupe|\bmia\b|ximena|renata|valentina|beatriz|esperanza|elena|isabela|salom[eé]|catalina|ang[eé]lica|\bflo\b|sandy|shelley|grandma|google espa[nñ]ol/i;
+  function isMaleV(v) { return !!v && MALE_RE.test(v.name || '') && !FEMALE_RE.test(v.name || ''); }
+  function voiceScore(v) { var n = v.name || '', sc = 0; if (isMaleV(v)) sc += 8; if (FEMALE_RE.test(n)) sc -= 8; if (/natural|neural|online|premium|enhanced|mejorad|siri/i.test(n)) sc += 5; if (/^es[-_](MX|US)/i.test(v.lang)) sc += 2; else if (/^es[-_]/i.test(v.lang)) sc += 1; return sc; }
+  function esVoices() { try { return ((TTS && TTS.getVoices()) || []).filter(function (v) { return /^es/i.test(v.lang); }).sort(function (a, b) { return voiceScore(b) - voiceScore(a); }); } catch (e) { return []; } }
+  function maleVoices() { return esVoices().filter(isMaleV); }
+  function pickVoice(a) {
+    try {
+      var es = esVoices(); if (!es.length) return null;
+      var chosen = VOZ.pick ? es.filter(function (v) { return v.name === VOZ.pick; })[0] : null, males = maleVoices();
+      if (!a || a.id === 'jarvis') return chosen || es[0];
+      /* cada especialidad con su propia voz de hombre cuando el equipo trae varias */
+      if (males.length > 1) { var pool = males.filter(function (v) { return !chosen || v.name !== chosen.name; }); if (!pool.length) pool = males; return pool[(a.i || 0) % pool.length]; }
+      return chosen || es[0];
+    } catch (e) { return null; }
+  }
+  function voiceTune(a, vo) { var st = VSTYLE[a ? a.id : 'jarvis'] || VSTYLE.jarvis, male = isMaleV(vo); return { rate: st[0], pitch: male ? Math.max(0.8, Math.min(1.1, 1 + (st[1] - 0.92) * 0.8)) : Math.max(0.6, st[1] * 0.8) }; }
+  /* palabras marcadas mientras habla (en el aviso de voz y en el recuadro donde aparece el texto) */
+  var KARA = { groups: [], t: null };
+  function karaWrap(el, text, prefix) {
+    var html = prefix || '', re = /(\S+)(\s*)/g, m;
+    while ((m = re.exec(text))) html += '<span class="kwd" data-o="' + m.index + '">' + esc(m[1]) + '</span>' + esc(m[2]);
+    el.innerHTML = html; el.classList.add('kara'); return [].slice.call(el.querySelectorAll('.kwd'));
+  }
+  function karaStart(text, who) {
+    clearInterval(KARA.t); KARA.groups = []; var tt = text.trim();
+    var vl = $('#voLine'); if (vl) KARA.groups.push({ el: vl, sp: karaWrap(vl, text, who ? '<b>' + esc(who) + ':</b> ' : ''), cur: -1 });
+    ['#jaAns', '#walkScreen .wsans', '#coachP .cans', '#labP .cans'].forEach(function (q) { [].forEach.call(document.querySelectorAll(q), function (el) { if (!el.closest('[hidden]') && el.textContent.trim() === tt) KARA.groups.push({ el: el, sp: karaWrap(el, text, ''), cur: -1 }); }); });
+  }
+  function karaMark(g) {
+    KARA.groups.forEach(function (G) {
+      if (!G.el.isConnected) return; var sp = G.sp, cur = -1; for (var i = 0; i < sp.length; i++) { if (+sp[i].getAttribute('data-o') <= g) cur = i; else break; }
+      if (cur === G.cur) return; for (var j = 0; j < sp.length; j++) { sp[j].classList.toggle('kd', j < cur); sp[j].classList.toggle('kw', j === cur); } G.cur = cur;
+      if (cur >= 0 && G.el.scrollHeight > G.el.clientHeight + 4) { var r0 = sp[cur].getBoundingClientRect(), rb = G.el.getBoundingClientRect(), top = r0.top - rb.top + G.el.scrollTop; if (top > G.el.scrollTop + G.el.clientHeight - 28 || top < G.el.scrollTop) G.el.scrollTop = Math.max(0, top - G.el.clientHeight / 3); }
+    });
+  }
+  function karaEnd() { clearInterval(KARA.t); KARA.groups.forEach(function (G) { G.sp.forEach(function (x) { x.classList.remove('kw'); x.classList.add('kd'); }); }); }
   function voiceSay(a, text, done, low, intr) {
     text = String(text || ''); var who = a ? a.name : 'Jarvis';
     if (VOICE.on || VOICE.listening) voiceLine(text, who);
@@ -993,16 +1054,21 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     try {
       if (low && (TTS.speaking || TTS.pending)) { if (done) done(); return; }
       var go = function () {
+        karaStart(text, who); var from = 0;
         var parts = text.replace(/[✉🔊]/g, '').match(/[^.!?¡¿]+[.!?]*/g) || [text], chunks = [], cur = '';
         parts.forEach(function (p) { if ((cur + p).length > 150 && cur) { chunks.push(cur); cur = p; } else cur += p; }); if (cur.trim()) chunks.push(cur);
         if (!chunks.length) { if (done) done(); return; }
-        var vo = pickVoice(a);
+        var vo = pickVoice(a), tune = voiceTune(a, vo);
         chunks.forEach(function (c, i) {
-          var last = i === chunks.length - 1, fin = function () { if (last && done) { var d = done; done = null; d(); } };
+          var off = text.indexOf(c.trim(), from); if (off < 0) off = from; else from = off + c.trim().length;
+          var last = i === chunks.length - 1, fin = function () { if (last) karaEnd(); if (last && done) { var d = done; done = null; d(); } };
           (function speakOne(lvl) {
             var useVoice = lvl === 0, u = new SpeechSynthesisUtterance(c.trim()); if (lvl < 2) u.lang = 'es-US'; if (vo && useVoice) { u.voice = vo; u.lang = vo.lang; }
-            u.rate = a ? 0.96 + (a.i % 4) * 0.03 : 1; u.pitch = a ? 0.85 + (a.i % 6) * 0.07 : 1; u.volume = 1;
-            u.onstart = function () { VOICE.heard = true; }; u.onend = fin;
+            u.rate = tune.rate; u.pitch = tune.pitch; u.volume = 1;
+            var gotB = false;
+            u.onstart = function () { VOICE.heard = true; var t0 = Date.now(); clearInterval(KARA.t); KARA.t = setInterval(function () { if (!gotB) karaMark(off + (Date.now() - t0) / 1000 * 14.5 * u.rate); }, 110); };
+            u.onboundary = function (ev) { if (ev && ev.name && ev.name !== 'word') return; gotB = true; karaMark(off + ((ev && ev.charIndex) || 0)); };
+            u.onend = fin;
             u.onerror = function (ev) {
               var er = ev && ev.error;
               if (er === 'not-allowed' && !VOICE.heard) { VDIAG.state = 'bloqueada'; VOICE.pend = { a: a, text: text }; voiceLine('Toca la pantalla una vez para que Jarvis te hable.', 'Jarvis'); fin(); return; }
@@ -1024,7 +1090,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function voiceReport(t, st) { VDIAG.last = t; VDIAG.state = st; VDIAG.t = Date.now(); voiceLine(t, 'Voz'); toast(t.slice(0, 90)); var out = $('#jaAns'); if (out && !$('#jarvis').hidden) chatShow(t); renderSys(); renderVoHint(); }
   function voiceTest() {
     unlockAudio(); if (!TTS) { voiceReport('✗ ' + voiceReason(), 'bad'); return; }
-    var started = false, ended = false, u = new SpeechSynthesisUtterance('Prueba de voz. Si me escuchas, Jarvis ya puede hablarte.'); u.lang = 'es-US'; u.volume = 1; var vo = pickVoice(null); if (vo) { u.voice = vo; u.lang = vo.lang; }
+    var started = false, ended = false, u = new SpeechSynthesisUtterance('Prueba de voz. Si me escuchas, Jarvis ya puede hablarte.'); u.lang = 'es-US'; u.volume = 1; var vo = pickVoice(null); if (vo) { u.voice = vo; u.lang = vo.lang; var tn = voiceTune(null, vo); u.rate = tn.rate; u.pitch = tn.pitch; }
     u.onstart = function () { started = true; VOICE.heard = true; VOICE.unlocked = true; voiceReport('✓ La voz arrancó. Si no la oyes, sube el volumen multimedia y quita el modo silencio. ' + (inAppWebview() ? 'Estás dentro de otra app: si sigue muda, ábrela en Chrome o Safari.' : ''), 'ok'); };
     u.onend = function () { ended = true; };
     u.onerror = function (ev) { var er = ev && ev.error; voiceReport('✗ La voz falló (' + (er || 'error') + '). ' + (er === 'not-allowed' ? 'El navegador la bloqueó: toca la pantalla y vuelve a probar. ' : '') + voiceReason(), 'bad'); };
@@ -1073,6 +1139,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (/\b(reanuda|reanudar|continua)\b/.test(n)) { var ar = findAgentV(n); if (!ar) return '¿A cuál agente reanudo?'; if (ar.status === 'idle') togglePause(ar); return ar.name + ' reanudado.'; }
     if (/\b(silencia|silencio|callate|calla)\b/.test(n)) { alerts().forEach(function (x) { x.acked = true; }); return 'Alarmas silenciadas.'; }
     if (/\b(aprueba|aprobar|acepta|aceptar)\b/.test(n)) { tab('inbox'); return 'Abrí la bandeja. Confirma con el botón de cada elemento; no envío nada sin tu toque.'; }
+    if (/\b(cambia|cambiar|otra|siguiente)\b/.test(n) && /\bvoz\b/.test(n)) return cycleVoz();
+    if (/\b(laboratorio|fabrica|ingeniero|taller)\b/.test(n)) { openLab(true); return 'Abrí el laboratorio: noticias, taller de robots y fábrica de agentes.'; }
+    if (/\bnoticias?\b/.test(n)) { labLoad(); var na = labItems('ai').slice(0, 2), ne = labItems('eco').slice(0, 2); if (!na.length && !ne.length) return 'Todavía no hay noticias guardadas; el ingeniero las trae cada mañana a las 6:20.'; return 'Noticias de IA: ' + na.map(function (x) { return x.t; }).join('. ') + '. Economía: ' + ne.map(function (x) { return x.t; }).join('. ') + '.'; }
     if (/\b(dron|drone|drones)\b/.test(n)) { if (/\b(sal|salir|baja|bajar|bajame|deja|dejar|aterriza)\b/.test(n)) { exitDrone(); return 'Aterrizamos el dron.'; } enterDrone(); return 'Despegando el dron, Nesty. Vuela con W A S D y dispara con clic.'; }
     if (/\bguerra\b/.test(n)) { if (scene3d && scene3d.focusWar) scene3d.focusWar(); return 'Mira al cielo: el planeta rojo y el planeta azul están en guerra, con misiles, escudos y explosiones. Súbete al dron para verla de cerca.'; }
     if (/\b(sal|salir|salte|sacame|deja|dejar)\b/.test(n) && /\b(caminar|camina|recorrido)\b/.test(n)) { exitWalk(); return 'Dejé de caminar.'; }
@@ -2185,8 +2254,83 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     }
     setHtml(el, '<header><h2>🧬 Coach EVR · Torre Bio-Fit</h2><button class="btn" type="button" data-cfocus>Ver la torre Bio-Fit</button><button class="btn" type="button" data-cx2 aria-label="Cerrar">×</button></header><div class="cbody">' + body + '</div>');
   }
-  function openCoach(focus) { fitLoad(); $('#coachP').hidden = false; renderCoach(); if (focus && scene3d && scene3d.focusCoach) scene3d.focusCoach(); var t = coachToday(); var msg = t ? 'Bienvenido a la torre Bio-Fit, Nesty. Hoy toca ' + t.name + '. Meta: ' + t.prot + ' gramos de proteína y ' + t.water + ' litros de agua. ¡Vamos!' : 'Bienvenido a la torre Bio-Fit, Nesty. Soy tu coach: dime tu objetivo y armo tu rutina, tu dieta y tu tratamiento.'; if (VOICE.on) voiceSay(null, msg); toast('🏋 Coach: ' + msg); }
+  function openCoach(focus) { fitLoad(); if ($('#labP')) $('#labP').hidden = true; $('#coachP').hidden = false; renderCoach(); if (focus && scene3d && scene3d.focusCoach) scene3d.focusCoach(); var t = coachToday(); var msg = t ? 'Bienvenido a la torre Bio-Fit, Nesty. Hoy toca ' + t.name + '. Meta: ' + t.prot + ' gramos de proteína y ' + t.water + ' litros de agua. ¡Vamos!' : 'Bienvenido a la torre Bio-Fit, Nesty. Soy tu coach: dime tu objetivo y armo tu rutina, tu dieta y tu tratamiento.'; if (VOICE.on) voiceSay(null, msg); toast('🏋 Coach: ' + msg); }
   function closeCoach() { $('#coachP').hidden = true; }
+  /* ---- Laboratorio EVR: fábrica de agentes, taller de reparación y noticias de IA y economía ---- */
+  var LAB = { news: null, specs: [], sub: false, ans: '', diag: {}, busy: false };
+  function labLoad() {
+    if (LAB.sub) return; LAB.sub = true;
+    try { var L = JSON.parse(localStorage.getItem('evr.lab') || 'null'); if (L) { LAB.news = L.news || null; LAB.specs = L.specs || []; } } catch (e) {}
+    if (DB) { try { DB.collection('lab').onSnapshot(function (snap) { snap.docs.forEach(function (d) { var x = d.data(); if (d.id === 'news') LAB.news = JSON.parse(JSON.stringify(x)); else if (d.id === 'specs') LAB.specs = Array.isArray(x.list) ? JSON.parse(JSON.stringify(x.list)) : []; }); labCache(); labToScene(); renderLab(); }); } catch (e) {} }
+    labToScene();
+  }
+  function labCache() { try { localStorage.setItem('evr.lab', JSON.stringify({ news: LAB.news, specs: LAB.specs })); } catch (e) {} }
+  function labSaveSpecs() { labCache(); labToScene(); if (DB) { try { DB.doc('lab/specs').set(JSON.parse(JSON.stringify({ list: LAB.specs, updatedAt: Date.now() }))).catch(fail); } catch (e) {} } }
+  function labItems(k) { var n = LAB.news || {}, arr = Array.isArray(n[k]) ? n[k] : []; return arr.filter(function (x) { return x && x.t; }).slice(0, 8); }
+  function labToScene() {
+    if (!scene3d || !scene3d.labNews) return;
+    var L = labItems('ai').slice(0, 4).map(function (x) { return { k: 'IA', t: x.t }; }).concat(labItems('eco').slice(0, 3).map(function (x) { return { k: 'ECON', t: x.t }; }));
+    scene3d.labNews(L, LAB.news && LAB.news.date ? LAB.news.date : '');
+    var on = LAB.specs.filter(function (x) { return x.status === 'aprobada'; })[0] || LAB.specs[0]; scene3d.labSpec(on ? on.nombre : '');
+  }
+  function safeUrl(u) { u = String(u || ''); return /^https:\/\/[^\s"'<>]+$/i.test(u) ? u : ''; }
+  function newsList(k) {
+    var it = labItems(k); if (!it.length) return '<p class="note">El ingeniero trae las noticias cada mañana a las 6:20 a. m. (Chicago). Aún no hay noticias guardadas.</p>';
+    return '<ul class="news">' + it.map(function (x) { var u = safeUrl(x.url); return '<li class="' + (k === 'eco' ? 'eco' : '') + '">' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(x.t) + '</a>' : '<b>' + esc(x.t) + '</b>') + '<small>' + esc(x.src || '') + '</small>' + (x.why ? '<p>' + esc(x.why) + '</p>' : '') + '</li>'; }).join('') + '</ul>';
+  }
+  var SPST = { propuesta: 'Propuesta', aprobada: 'Aprobada para armar', armando: 'En el taller', descartada: 'Descartada' };
+  function renderLab() {
+    var el = $('#labP'); if (!el || el.hidden) return; var fe = document.activeElement; if (fe && fe.closest && fe.closest('#labP form') && fe.tagName !== 'BUTTON') return;
+    var nd = LAB.news && LAB.news.date ? ' · ' + esc(LAB.news.date) : '';
+    var bots = AGENTS.slice().sort(function (x, y) { var w = { error: 0, warning: 1 }; return (w[x.status] == null ? 2 : w[x.status]) - (w[y.status] == null ? 2 : w[y.status]); }).map(function (a) { var bad = a.status === 'warning' || a.status === 'error', dg = LAB.diag[a.id]; return '<div class="bot"><i data-s="' + esc(a.status) + '"></i><b>' + esc(a.name) + '</b><span class="note">' + esc(LBL[a.status] || a.status) + '</span>' + (bad ? '<button class="btn" type="button" data-ldiag="' + esc(a.id) + '">🔧 Diagnosticar</button>' : '') + '</div>' + (dg ? '<p class="cans">' + esc(dg) + '</p>' : ''); }).join('');
+    var nBad = AGENTS.filter(function (a) { return a.status === 'warning' || a.status === 'error'; }).length;
+    var specs = LAB.specs.length ? LAB.specs.map(function (x, i) { return '<div class="spec"><h4>' + esc(x.nombre) + '<span class="st">' + esc(SPST[x.status] || x.status || 'Propuesta') + '</span></h4><p>' + esc(x.objetivo || '') + '</p>' + (x.por_que ? '<p class="note">Por qué: ' + esc(x.por_que) + '</p>' : '') + (x.automatiza && x.automatiza.length ? '<ul>' + x.automatiza.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') + (x.conexiones ? '<p class="note">Conexiones (solo lectura): ' + esc([].concat(x.conexiones).join(', ')) + '</p>' : '') + (x.pruebas ? '<p class="note">Pruebas antes de activar: ' + esc([].concat(x.pruebas).join(' · ')) + '</p>' : '') + '<div class="row">' + (x.status !== 'aprobada' ? '<button class="btn primary" type="button" data-lapr="' + i + '">Aprobar para armar</button>' : '') + (x.status !== 'descartada' ? '<button class="btn" type="button" data-ldesc="' + i + '">Descartar</button>' : '') + '<button class="btn" type="button" data-ldel="' + i + '">Quitar</button></div></div>'; }).join('') : '<p class="note">Sin propuestas guardadas. El ingeniero solo propone un agente nuevo cuando hay trabajo que se repite y que ningún agente cubre.</p>';
+    var body = '<div class="ccard"><h3>🤖 Noticias de IA' + nd + '</h3>' + newsList('ai') + '</div>' +
+      '<div class="ccard"><h3>📈 Noticias de economía' + nd + '</h3>' + newsList('eco') + (LAB.news && LAB.news.resumen ? '<p class="cans">' + esc(LAB.news.resumen) + '</p>' : '') + '</div>' +
+      '<div class="ccard"><h3>🔧 Taller de robots · ' + (nBad ? nBad + ' en reparación' : 'todos sanos') + '</h3><div class="bots">' + bots + '</div><p class="note">El diagnóstico solo propone pasos; nada se cambia ni se conecta sin tu «sí».</p></div>' +
+      '<div class="ccard"><h3>🧬 Fábrica de agentes</h3><p>Analizo tus tareas, recados y agentes y te propongo solo lo que hace falta para seguir delegando y automatizando.</p><button class="btn primary" type="button" data-lneed' + (LAB.busy ? ' disabled' : '') + '>' + (LAB.busy ? 'Analizando…' : '¿Qué necesitamos automatizar?') + '</button>' + specs + '</div>' +
+      '<div class="ccard wide"><h3>Pregúntale al ingeniero</h3><form class="ask" data-lask autocomplete="off" style="display:flex;gap:6px"><input type="text" maxlength="300" placeholder="Ej. ¿Qué noticia de IA me sirve para cotizar más rápido?" style="flex:1" aria-label="Pregunta para el ingeniero"><button class="btn primary" type="submit">Preguntar</button></form>' + (LAB.ans ? '<p class="cans">' + esc(LAB.ans) + '</p>' : '') + '</div>';
+    setHtml(el, '<header><h2>🧪 Laboratorio EVR · Fábrica de agentes</h2><button class="btn" type="button" data-lfocus>Ver el laboratorio</button><button class="btn" type="button" data-lx aria-label="Cerrar">×</button></header><div class="cbody">' + body + '</div>');
+  }
+  function openLab(focus) { labLoad(); closeCoach(); $('#labP').hidden = false; renderLab(); if (focus && scene3d && scene3d.focusLab) scene3d.focusLab(); var a = labItems('ai')[0], e = labItems('eco')[0]; var msg = 'Bienvenido al laboratorio, Nesty. ' + (a ? 'En IA: ' + a.t + '. ' : '') + (e ? 'En economía: ' + e.t + '. ' : 'Cada mañana te traigo noticias de IA y economía. ') + 'Aquí armamos y reparamos a tus agentes.'; voiceSay({ id: 'lab', name: 'Ingeniero', i: 4 }, msg, null, true); }
+  function closeLab() { $('#labP').hidden = true; }
+  function labCtx() { return AGENTS.map(function (a) { var tk = openTasks().filter(function (t) { return t.agent === a.id; }).length, rc = (INBOX || []).filter(function (x) { return x.agent === a.id; }).length; return a.name + ' (' + (a.role || a.id) + '; estado ' + (LBL[a.status] || a.status) + '; ' + tk + ' tareas abiertas; ' + rc + ' recados)'; }).join('\n'); }
+  var LAB_RULES = 'Reglas de Imperial Remodeling: nunca enviar ni contestar a clientes o terceros sin el «sí» de Nesty; acceso de solo lectura a sus cuentas; nunca pedir ni escribir contraseñas, tokens o llaves; toda habilidad o conexión se verifica antes de activarla (origen, qué ejecuta, qué puede tocar, secretos y pruebas) y si algo falla no se activa.';
+  $('#btnLab').onclick = function () { stopTour(); openLab(true); };
+  $('#labP').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.hasAttribute('data-lx')) { closeLab(); return; }
+    if (b.hasAttribute('data-lfocus')) { closeLab(); if (scene3d && scene3d.focusLab) scene3d.focusLab(); return; }
+    var i;
+    if (b.hasAttribute('data-lapr')) { i = +b.getAttribute('data-lapr'); if (LAB.specs[i]) { LAB.specs.forEach(function (x) { if (x.status === 'aprobada') x.status = 'propuesta'; }); LAB.specs[i].status = 'aprobada'; LAB.specs[i].aprobadaAt = Date.now(); labSaveSpecs(); renderLab(); toast('🧪 Aprobada para armar: ' + LAB.specs[i].nombre + '. Antes de activarla la verificamos y te pido tu «sí».'); } return; }
+    if (b.hasAttribute('data-ldesc')) { i = +b.getAttribute('data-ldesc'); if (LAB.specs[i]) { LAB.specs[i].status = 'descartada'; labSaveSpecs(); renderLab(); } return; }
+    if (b.hasAttribute('data-ldel')) { i = +b.getAttribute('data-ldel'); LAB.specs.splice(i, 1); labSaveSpecs(); renderLab(); return; }
+    if (b.hasAttribute('data-ldiag')) {
+      var a = byId(b.getAttribute('data-ldiag')); if (!a) return;
+      if (!SAMPLE) { LAB.diag[a.id] = 'Revisa su conexión en Sistema › Verificar ahora; si una cuenta venció, vuelve a conectarla desde su configuración.'; renderLab(); return; }
+      LAB.diag[a.id] = 'Diagnosticando…'; renderLab(); if (scene3d && scene3d.labRepair) scene3d.labRepair(a.name);
+      SAMPLE('Eres el ingeniero del Laboratorio EVR de Imperial Remodeling. Diagnostica al agente «' + a.name + '» (' + (a.role || '') + '). Estado: ' + (LBL[a.status] || a.status) + '. Actividad: ' + (a.act || '—') + '. ' + LAB_RULES + ' Da en español, máximo 5 líneas: causa probable y pasos concretos para que Nesty lo arregle. No inventes datos que no te di.').then(function (r) { LAB.diag[a.id] = (r && r.text) || 'Sin diagnóstico ahora.'; renderLab(); }).catch(function () { LAB.diag[a.id] = 'No pude consultar a Claude ahora.'; renderLab(); });
+      return;
+    }
+    if (b.hasAttribute('data-lneed')) {
+      if (!SAMPLE || !SAMPLE.json) { toast('Aquí no puedo consultar a Claude.'); return; }
+      LAB.busy = true; renderLab(); if (scene3d && scene3d.labRepair) scene3d.labRepair('Analizando');
+      SAMPLE.json('Eres el ingeniero del Laboratorio EVR de Imperial Remodeling (remodelación en Texas). Agentes actuales:\n' + labCtx() + '\nPropuestas ya guardadas: ' + (LAB.specs.map(function (x) { return x.nombre; }).join(', ') || 'ninguna') + '.\n' + LAB_RULES + '\nPropón de 0 a 3 agentes nuevos o mejoras SOLO si hay trabajo repetido que ningún agente cubre y que ayude a delegar o automatizar. Si no hace falta nada, responde una lista vacía. Responde SOLO JSON: {"propuestas":[{"nombre":"","objetivo":"","por_que":"","automatiza":["tarea"],"conexiones":["cuenta o servicio, solo lectura"],"pruebas":["prueba antes de activar"]}]}', { modelTier: 'default' }).then(function (r) {
+        LAB.busy = false; var L = (r && Array.isArray(r.propuestas)) ? r.propuestas : [];
+        L.slice(0, 3).forEach(function (x) { if (!x || !x.nombre) return; LAB.specs.push({ nombre: String(x.nombre).slice(0, 80), objetivo: String(x.objetivo || '').slice(0, 300), por_que: String(x.por_que || '').slice(0, 300), automatiza: [].concat(x.automatiza || []).slice(0, 6).map(function (t) { return String(t).slice(0, 140); }), conexiones: [].concat(x.conexiones || []).slice(0, 6).map(function (t) { return String(t).slice(0, 80); }), pruebas: [].concat(x.pruebas || []).slice(0, 5).map(function (t) { return String(t).slice(0, 140); }), status: 'propuesta', at: Date.now() }); });
+        LAB.specs = LAB.specs.slice(-12); labSaveSpecs(); renderLab(); toast(L.length ? '🧪 ' + L.length + ' propuesta(s) nuevas en la fábrica. Nada se activa sin tu «sí».' : '🧪 Por ahora no hace falta un agente nuevo: tu equipo cubre el trabajo.');
+      }).catch(function () { LAB.busy = false; renderLab(); toast('No pude consultar a Claude ahora.'); });
+    }
+  });
+  $('#labP').addEventListener('submit', function (e) {
+    var f = e.target.closest('[data-lask]'); if (!f) return; e.preventDefault(); var inp = f.querySelector('input'), q = inp.value.trim(); if (!q) return; inp.value = '';
+    if (!SAMPLE) { LAB.ans = 'Aquí no puedo consultar a Claude.'; renderLab(); return; }
+    var ctxN = labItems('ai').concat(labItems('eco')).map(function (x) { return '- ' + x.t + (x.why ? ' (' + x.why + ')' : ''); }).join('\n');
+    LAB.ans = 'Pensando…'; renderLab();
+    SAMPLE('Eres el ingeniero del Laboratorio EVR de Imperial Remodeling: armas y reparas agentes de IA, propones automatizaciones y sigues las noticias de IA y economía. Hablas con Ernesto («Nesty») en español, claro y práctico, máximo 6 líneas. Noticias del día:\n' + (ctxN || '(sin noticias guardadas)') + '\nAgentes:\n' + labCtx() + '\n' + LAB_RULES + ' No des consejo de inversión personalizado. Pregunta: ' + q, { onText: function (o) { LAB.ans = o.text; var pa = $('#labP .cans:last-of-type'); if (pa && pa.closest('form') === null) { var all = $('#labP').querySelectorAll('.wide .cans'); if (all.length) all[all.length - 1].textContent = o.text; } } }).then(function (r) { LAB.ans = (r && r.text) || 'Sin respuesta ahora.'; renderLab(); if (VOICE.on) voiceSay({ id: 'lab', name: 'Ingeniero', i: 4 }, LAB.ans); }).catch(function () { LAB.ans = 'No pude consultar a Claude ahora.'; renderLab(); });
+  });
+  setTimeout(function () { labLoad(); }, 4000);
+
   /* ---- Dron EVR: montar, volar y disparar ---- */
   var DRONING = false;
   function sfx(kind) {
@@ -2749,7 +2893,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
   var STC = { ok: 'working', warn: 'warning', bad: 'error', idle: 'idle' };
   function renderSys() {
-    if ($('#sys').hidden) return;
+    if ($('#sys').hidden) return; fillVoz();
     var C = sysChecks(), bad = C.filter(function (c) { return c.st === 'bad'; }).length, warn = C.filter(function (c) { return c.st === 'warn'; }).length;
     $('#sysNote').textContent = bad ? bad + ' punto(s) con falla y ' + warn + ' por revisar.' : warn ? warn + ' punto(s) por revisar; lo demás está bien.' : 'Todo está en orden.';
     setHtml($('#sysList'), C.map(function (c) { return '<div class="sysrow"><i class="dot" data-s="' + STC[c.st] + '"></i><div><b>' + esc(c.t) + '</b><span>' + esc(c.d) + '</span></div></div>'; }).join(''));
@@ -2758,6 +2902,14 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var open = C.filter(function (c) { return c.st === 'bad' || c.st === 'warn'; }).length; $('#bSys').textContent = open ? String(open) : ''; $('#bSys').hidden = !open;
   }
   $('#sysVoice').onclick = voiceTest;
+  function fillVoz() {
+    var sel = $('#sysVoz'); if (!sel) return; var es = esVoices(), males = maleVoices();
+    sel.innerHTML = '<option value="">Automática: ' + esc(es[0] ? es[0].name : 'la del navegador') + '</option>' + es.map(function (v) { return '<option value="' + esc(v.name) + '"' + (v.name === VOZ.pick ? ' selected' : '') + '>' + esc(v.name) + (isMaleV(v) ? ' · hombre' : '') + (/natural|neural|online|premium|enhanced|mejorad/i.test(v.name) ? ' · natural' : '') + '</option>'; }).join('');
+    $('#sysVozNote').textContent = !es.length ? 'Este navegador no trae voces en español.' : males.length ? 'Voces de hombre: ' + males.length + '. Cada especialidad usa una distinta y las palabras se marcan mientras habla.' : 'Este equipo no trae voces de hombre en español: uso la mejor disponible con tono más grave. En la computadora, Microsoft Edge trae voces naturales de hombre (Jorge, Gerardo, Alonso). En iPhone: Ajustes › Accesibilidad › Contenido leído › Voces › Español › descarga «Jorge (mejorada)».';
+  }
+  $('#sysVoz').onchange = function () { VOZ.pick = this.value; try { localStorage.setItem('evr.voz', VOZ.pick); } catch (e) {} var was = VOICE.on; VOICE.on = true; voiceSay(null, 'Hola Nesty, así suena mi voz ahora.', function () { VOICE.on = was; }, false, true); };
+  try { if (TTS && TTS.addEventListener) TTS.addEventListener('voiceschanged', fillVoz); } catch (e) {}
+  function cycleVoz() { var list = maleVoices(); if (list.length < 2) list = esVoices(); if (!list.length) return 'Este navegador no trae voces en español.'; var i = list.map(function (v) { return v.name; }).indexOf(VOZ.pick || ((pickVoice(null) || {}).name)); VOZ.pick = list[(i + 1) % list.length].name; try { localStorage.setItem('evr.voz', VOZ.pick); } catch (e) {} fillVoz(); return 'Listo, ahora hablo con la voz ' + VOZ.pick + '.'; }
   $('#sysRun').onclick = function () { renderSys(); toast('Sistema verificado'); };
   $('#sysFix').onclick = function () { var I = integrityIssues(); if (!I.length) { toast('Los datos están bien'); return; } I.forEach(function (x) { try { x.fix(); } catch (e) {} }); logEvent('Reparó ' + I.length + ' dato(s)', '', 'fix'); toast('Reparé ' + I.length + ' dato(s)'); renderSys(); refresh(); };
   $('#sysBack').onclick = function () {
@@ -4992,6 +5144,113 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       window.addEventListener('blur', function () { DR.keys = {}; DR.fire = false; });
       return { update: update, set: set, info: info, ptr: ptr, lookWar: lookWar, aimAt: function (x, y, z) { DR.yaw = Math.atan2(x - DR.pos.x, z - DR.pos.z); DR.pitch = Math.max(-0.55, Math.min(0.6, Math.atan2(y - DR.pos.y - 3, Math.hypot(x - DR.pos.x, z - DR.pos.z)))); return true; }, input: function (o) { if (!o) return; if (o.joy) DR.joy = { x: +o.joy.x || 0, y: +o.joy.y || 0 }; if (o.up != null) DR.up = +o.up || 0; if (o.turbo != null) DR.turbo = !!o.turbo; if (o.fire != null) { DR.fire = !!o.fire; if (o.fire && DR.cool <= 0) { DR.cool = 0.16; shoot(); } } } };
     })(); } catch (drErr) { drone = null; if (window.console) console.warn('drone', drErr); }
+
+    /* ---- Laboratorio EVR: fábrica que arma, prueba y repara robots-agentes; pantalla de noticias ---- */
+    var lab = null; try { lab = (function () {
+      var T3 = THREE, best = null, padP = (nave && nave.padPos) || [];
+      for (var k = 0; k < 36 && !best; k++) {
+        var a0 = (k * 10 + 60) * Math.PI / 180, dd = LIM + 42, x0 = Math.cos(a0) * dd, z0 = Math.sin(a0) * dd, ok = true;
+        for (var bi = 0; ok && bi < BLDS.length; bi++) { var b0 = BLDS[bi], ddx = Math.max(Math.abs(x0 - b0.x) - b0.w / 2, 0), ddz = Math.max(Math.abs(z0 - b0.z) - b0.d / 2, 0); if (Math.hypot(ddx, ddz) < 26) ok = false; }
+        if (ok && annex && Math.hypot(x0 - annex.pos.x, z0 - annex.pos.z) < 50) ok = false;
+        if (ok && reactor && Math.hypot(x0 - reactor.pos.x, z0 - reactor.pos.z) < 120) ok = false;
+        if (ok && fitTower && Math.hypot(x0 - fitTower.pos.x, z0 - fitTower.pos.z) < 120) ok = false;
+        for (var pq = 0; ok && pq < padP.length; pq++) if (Math.hypot(x0 - padP[pq].x, z0 - padP[pq].z) < 34) ok = false;
+        if (ok) best = { x: x0, z: z0 };
+      }
+      if (!best) { var af = 60 * Math.PI / 180; best = { x: Math.cos(af) * (LIM + 42), z: Math.sin(af) * (LIM + 42) }; }
+      var LX = best.x, LZ = best.z, G = new T3.Group(); G.position.set(LX, 0, LZ); G.rotation.y = Math.atan2(-LX, -LZ); scene.add(G);
+      function std(c, e, m, r) { return new T3.MeshStandardMaterial({ color: c, roughness: r == null ? 0.35 : r, metalness: m == null ? 0.6 : m, emissive: e || 0x000000, emissiveIntensity: 0.6 }); }
+      function add(c, o) { return new T3.MeshBasicMaterial({ color: c, transparent: true, opacity: o == null ? 0.85 : o, blending: T3.AdditiveBlending, depthWrite: false, fog: false, side: T3.DoubleSide }); }
+      function box(w, h, d, m, x, y, z, p) { var q = new T3.Mesh(new T3.BoxGeometry(w, h, d), m); q.position.set(x, y, z); (p || G).add(q); return q; }
+      var dark = std(0x10161f, 0x050a10, 0.7), steel = std(0x9aa7b3, 0, 0.8, 0.3), white = std(0xe9eef4, 0x1a2230, 0.2, 0.5), FY = 1.4;
+      /* isla y puente */
+      var isl = new T3.Mesh(new T3.CylinderGeometry(31, 33, 1.4, 8), dark); isl.position.y = 0.7; isl.rotation.y = Math.PI / 8; G.add(isl);
+      var ir = new T3.Mesh(new T3.TorusGeometry(31.2, 0.14, 6, 8), add(0x5cffe6, 0.95)); ir.rotation.x = Math.PI / 2; ir.rotation.z = Math.PI / 8; ir.position.y = 1.45; G.add(ir);
+      box(5.5, 0.3, 46, dark, 0, 0.5, 31 + 23); [-2.8, 2.8].forEach(function (o) { var e2 = box(0.16, 0.12, 46, add(o < 0 ? 0x5cffe6 : 0xffc94d, 0.95), o, 0.75, 31 + 23); });
+      /* nave de la fábrica: cristal con estructura y techo de dientes de sierra con luz */
+      var HW = 22, HD = 14, HH = 12;
+      var glass = new T3.Mesh(new T3.BoxGeometry(HW * 2, HH, HD * 2), new T3.MeshStandardMaterial({ color: 0x9fe8ff, transparent: true, opacity: 0.12, roughness: 0.05, metalness: 0.3, depthWrite: false, side: T3.DoubleSide })); glass.position.y = FY + HH / 2; G.add(glass);
+      var gEdge = new T3.LineSegments(new T3.EdgesGeometry(glass.geometry), new T3.LineBasicMaterial({ color: 0x5cffe6, transparent: true, opacity: 0.8 })); gEdge.position.y = FY + HH / 2; G.add(gEdge);
+      for (var cx = -HW; cx <= HW; cx += 11) [-HD, HD].forEach(function (cz) { box(0.5, HH, 0.5, steel, cx, FY + HH / 2, cz); });
+      for (var rt = 0; rt < 4; rt++) { var tooth = new T3.Mesh(new T3.CylinderGeometry(0.01, 1.6, HD * 2, 3, 1), new T3.MeshStandardMaterial({ color: 0x2a4a66, transparent: true, opacity: 0.35, roughness: 0.1, metalness: 0.5, depthWrite: false, side: T3.DoubleSide })); tooth.rotation.x = Math.PI / 2; tooth.rotation.y = Math.PI / 2; tooth.position.set(-HW + 5.5 + rt * 11, FY + HH + 0.7, 0); G.add(tooth); box(0.2, 0.2, HD * 2, add(0xffc94d, 0.9), -HW + 5.5 + rt * 11 + 1.3, FY + HH + 0.2, 0); }
+      var floor = new T3.Mesh(new T3.PlaneGeometry(HW * 2 - 1, HD * 2 - 1), std(0x18202b, 0x05080c, 0.4, 0.6)); floor.rotation.x = -Math.PI / 2; floor.position.y = FY + 0.02; G.add(floor);
+      /* línea de ensamblaje */
+      var bc = document.createElement('canvas'); bc.width = 128; bc.height = 32; var bg = bc.getContext('2d'); bg.fillStyle = '#1b222c'; bg.fillRect(0, 0, 128, 32); bg.fillStyle = '#2f3a48'; for (var bs = 0; bs < 128; bs += 16) bg.fillRect(bs, 0, 8, 32); bg.fillStyle = '#ffc94d'; bg.fillRect(0, 0, 128, 2); bg.fillRect(0, 30, 128, 2);
+      var btex = new T3.CanvasTexture(bc); btex.wrapS = T3.RepeatWrapping; btex.repeat.set(12, 1);
+      var belt = new T3.Mesh(new T3.BoxGeometry(38, 0.5, 3.2), [dark, dark, new T3.MeshStandardMaterial({ map: btex, roughness: 0.6 }), dark, dark, dark]); belt.position.set(0, FY + 1.3, -4); G.add(belt);
+      [-18, -6, 6, 18].forEach(function (lx) { box(0.4, 1.1, 2.8, steel, lx, FY + 0.55, -4); });
+      var ST = [-11, -3, 5, 13], arms = [], SN = ['Piernas', 'Torso', 'Cabeza', 'Pintura y prueba'];
+      ST.forEach(function (sx, si) {
+        var base = new T3.Group(); base.position.set(sx, FY, -8); G.add(base); box(1.4, 0.6, 1.4, dark, 0, 0.3, 0, base);
+        var yaw = new T3.Group(); yaw.position.y = 0.6; base.add(yaw); var s1 = new T3.Group(); s1.position.y = 0.4; yaw.add(s1);
+        box(0.45, 3.2, 0.45, std(0xffc94d, 0x332200, 0.5), 0, 1.6, 0, s1); var s2 = new T3.Group(); s2.position.y = 3.2; s1.add(s2);
+        box(0.35, 0.35, 3.2, std(0xe9eef4, 0, 0.5), 0, 0, 1.6, s2); var tip = new T3.Group(); tip.position.z = 3.2; s2.add(tip);
+        box(0.12, 0.6, 0.12, steel, -0.18, -0.3, 0, tip); box(0.12, 0.6, 0.12, steel, 0.18, -0.3, 0, tip);
+        var led = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0x5cffe6, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); led.scale.set(1.2, 1.2, 1); tip.add(led);
+        arms.push({ yaw: yaw, s1: s1, s2: s2, tip: tip, sx: sx, ph: si * 1.3 });
+        var lc = document.createElement('canvas'); lc.width = 256; lc.height = 64; var lg = lc.getContext('2d'); lg.fillStyle = 'rgba(5,10,16,0.85)'; lg.fillRect(0, 0, 256, 64); lg.fillStyle = '#5cffe6'; lg.font = '700 26px sans-serif'; lg.textAlign = 'center'; lg.fillText((si + 1) + ' · ' + SN[si], 128, 42);
+        var ls = new T3.Sprite(new T3.SpriteMaterial({ map: new T3.CanvasTexture(lc), transparent: true, depthWrite: false })); ls.scale.set(4.4, 1.1, 1); ls.position.set(sx, FY + 7.4, -8); G.add(ls);
+      });
+      /* robots que avanzan por la banda y se van armando */
+      var gold = std(0xc9a84c, 0x2a1d06, 0.7), raw = std(0x6b7785, 0, 0.6), bots = [];
+      for (var rb = 0; rb < 5; rb++) {
+        var g = new T3.Group(); G.add(g);
+        var legs = box(0.9, 1.0, 0.5, raw, 0, 0.5, 0, g), torso = box(1.2, 1.1, 0.8, raw, 0, 1.55, 0, g), head = box(0.8, 0.7, 0.7, raw, 0, 2.5, 0, g);
+        var eyes = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0x5cffe6, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); eyes.scale.set(0.9, 0.5, 1); eyes.position.set(0, 2.55, 0.4); g.add(eyes);
+        bots.push({ g: g, x: -18 + rb * 7.6, legs: legs, torso: torso, head: head, eyes: eyes });
+      }
+      /* bahía de reparación y cámara de pruebas */
+      var rep = new T3.Group(); rep.position.set(-12, FY, 7.5); G.add(rep); box(4.2, 1.0, 2.2, steel, 0, 0.5, 0, rep);
+      var patient = new T3.Group(); patient.position.set(0, 1.25, 0); patient.rotation.z = Math.PI / 2; rep.add(patient); box(0.9, 1.0, 0.5, gold, 0, -0.9, 0, patient); box(1.2, 1.1, 0.8, gold, 0, 0.15, 0, patient); box(0.8, 0.7, 0.7, gold, 0, 1.1, 0, patient);
+      var repLight = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xff5a5f, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); repLight.scale.set(2.2, 2.2, 1); repLight.position.set(0, 4.6, 0); rep.add(repLight); box(0.15, 4.4, 0.15, steel, 2.3, 2.2, 0, rep);
+      var repArm = new T3.Group(); repArm.position.set(2.3, 4.4, 0); rep.add(repArm); box(2.4, 0.25, 0.25, std(0xffc94d, 0x332200, 0.5), -1.2, 0, 0, repArm); var welder = new T3.Group(); welder.position.set(-2.4, -0.8, 0); repArm.add(welder); box(0.15, 1.4, 0.15, steel, 0, 0.5, 0, welder);
+      var test = new T3.Group(); test.position.set(12, FY, 7.5); G.add(test);
+      var tcyl = new T3.Mesh(new T3.CylinderGeometry(3.4, 3.4, 7, 32, 1, true), new T3.MeshStandardMaterial({ color: 0x9fe8ff, transparent: true, opacity: 0.16, depthWrite: false, side: T3.DoubleSide })); tcyl.position.y = 3.5; test.add(tcyl);
+      var tring = new T3.Mesh(new T3.TorusGeometry(3.4, 0.07, 6, 48), add(0x5cffe6)); tring.rotation.x = Math.PI / 2; test.add(tring);
+      var runner = new T3.Group(); test.add(runner); box(0.9, 1.0, 0.5, gold, 0, 0.5, 0, runner); box(1.2, 1.1, 0.8, gold, 0, 1.55, 0, runner); box(0.8, 0.7, 0.7, gold, 0, 2.5, 0, runner);
+      var rEyes = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0x7dff5c, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); rEyes.scale.set(0.9, 0.5, 1); rEyes.position.set(0, 2.55, 0.4); runner.add(rEyes);
+      /* pantalla gigante de noticias */
+      var nc = document.createElement('canvas'); nc.width = 1024; nc.height = 512; var ng = nc.getContext('2d'), ntex = new T3.CanvasTexture(nc), NEWS = { items: [], date: '', spec: '', tk: 0 };
+      function fit(t, w) { if (ng.measureText(t).width <= w) return t; while (t.length > 3 && ng.measureText(t + '…').width > w) t = t.slice(0, -1); return t + '…'; }
+      function drawNews() {
+        ng.fillStyle = '#04101a'; ng.fillRect(0, 0, 1024, 512); var gr = ng.createLinearGradient(0, 0, 1024, 0); gr.addColorStop(0, 'rgba(92,255,230,0.35)'); gr.addColorStop(1, 'rgba(255,201,77,0.2)'); ng.fillStyle = gr; ng.fillRect(0, 0, 1024, 70);
+        ng.fillStyle = '#e9fbff'; ng.font = '700 34px sans-serif'; ng.textAlign = 'left'; ng.fillText('🧪 LAB EVR · NOTICIAS DE IA Y ECONOMÍA', 24, 47); ng.textAlign = 'right'; ng.font = '500 24px sans-serif'; ng.fillText(NEWS.date || 'cada mañana 6:20', 1000, 46); ng.textAlign = 'left';
+        var L = NEWS.items.length ? NEWS.items : [{ k: 'IA', t: 'El ingeniero publica aquí las noticias de IA de cada mañana' }, { k: 'ECON', t: 'Y las de economía: tasas, vivienda y costos de construcción' }];
+        L.slice(0, 7).forEach(function (x, i) { var y = 112 + i * 52; ng.fillStyle = x.k === 'IA' ? '#5cffe6' : '#ffc94d'; ng.fillRect(24, y - 30, 92, 38); ng.fillStyle = '#04101a'; ng.font = '700 22px sans-serif'; ng.fillText(x.k, 34, y - 3); ng.fillStyle = '#e9fbff'; ng.font = '500 27px sans-serif'; ng.fillText(fit(x.t, 860), 132, y); });
+        ng.fillStyle = 'rgba(255,61,240,0.25)'; ng.fillRect(0, 468, 1024, 44); ng.fillStyle = '#ffd9fb'; ng.font = '600 24px sans-serif'; ng.fillText(fit(NEWS.spec ? '🔧 En la línea de ensamblaje: ' + NEWS.spec : '🔧 Línea de ensamblaje lista · taller de reparación · cámara de pruebas', 980), 24, 498);
+        ntex.needsUpdate = true;
+      }
+      drawNews();
+      var scr = new T3.Mesh(new T3.PlaneGeometry(20, 10), new T3.MeshBasicMaterial({ map: ntex, side: T3.DoubleSide })); scr.position.set(0, FY + 7.2, -HD + 0.4); G.add(scr);
+      var scr2 = scr.clone(); scr2.rotation.y = Math.PI; scr2.position.set(0, FY + 7.2, -HD - 0.4); G.add(scr2);
+      /* ingeniero con bata blanca y goggles */
+      var engV = {}, eng = null; try { eng = buildPerson(engV, 0x5cffe6, { id: 'lab', i: 4 }); eng.scale.setScalar(1.9);
+        var COAT = { 0x1a2230: 0xeef2f6, 0xf4f6f8: 0xeef2f6, 0xcfe3f5: 0xeef2f6, 0x161c26: 0x2a3a55, 0x8b1e2d: 0xeef2f6, 0x1f3b6b: 0xeef2f6, 0x2d5a3d: 0xeef2f6, 0x5a2d6b: 0xeef2f6 };
+        eng.traverse(function (o) { if (!o.isMesh || !o.material || !o.material.color || o.material.map) return; var hx = o.material.color.getHex(), to = COAT[hx]; if (to == null) return; o.material = o.material.clone(); o.material.color.setHex(to); if (o.material.emissive) o.material.emissive.setHex(to === 0xeef2f6 ? 0x2a3038 : 0x050a12); });
+        if (engV.head) { var gog = new T3.Mesh(new T3.TorusGeometry(0.17, 0.04, 6, 20), new T3.MeshStandardMaterial({ color: 0x5cffe6, emissive: 0x1a6a60 })); gog.position.set(0, 0.06, 0.17); gog.scale.set(1.4, 0.7, 1); engV.head.add(gog); }
+        eng.position.set(0, FY, 2); G.add(eng); } catch (ee) { eng = null; }
+      var ePts = [[-11, 0.6], [-3, 0.6], [5, 0.6], [13, 0.6], [12, 4], [-12, 4]], eI = 0, eWait = 2;
+      /* letrero y hitbox */
+      var sc0 = document.createElement('canvas'); sc0.width = 640; sc0.height = 140; var sg0 = sc0.getContext('2d'); sg0.fillStyle = 'rgba(5,10,16,0.85)'; sg0.fillRect(0, 0, 640, 140); sg0.strokeStyle = '#5cffe6'; sg0.lineWidth = 5; sg0.strokeRect(3, 3, 634, 134); sg0.fillStyle = '#e9fbff'; sg0.font = '700 54px sans-serif'; sg0.textAlign = 'center'; sg0.fillText('🧪 LAB EVR', 320, 64); sg0.fillStyle = '#5cffe6'; sg0.font = '500 30px sans-serif'; sg0.fillText('Fábrica de agentes · noticias IA', 320, 110);
+      var sign = new T3.Sprite(new T3.SpriteMaterial({ map: new T3.CanvasTexture(sc0), transparent: true, depthWrite: false })); sign.scale.set(20, 4.4, 1); sign.position.set(0, FY + HH + 6.5, 0); G.add(sign);
+      var hb = new T3.Mesh(new T3.BoxGeometry(HW * 2 + 2, HH + 4, HD * 2 + 2), new T3.MeshBasicMaterial({ visible: false })); hb.position.y = FY + HH / 2; hb.userData.lab = true; G.add(hb); pickables.push(hb);
+      var fxL = makeFX(0.5, 6, 260, G), sparkT = 0, wP = new T3.Vector3(), repT = 0;
+      function update(t, dt, tier) {
+        btex.offset.x -= dt * 0.35;
+        arms.forEach(function (A, i) { A.yaw.rotation.y = Math.sin(t * 1.2 + A.ph) * 0.35; A.s1.rotation.x = 0.35 + Math.sin(t * 2.1 + A.ph) * 0.18; A.s2.rotation.x = 0.9 + Math.sin(t * 2.1 + A.ph + 1) * 0.22; });
+        bots.forEach(function (B) { B.x += dt * 1.6; if (B.x > 19) B.x = -19; B.g.position.set(B.x, FY + 1.55, -4); var x = B.x; B.legs.visible = true; B.torso.visible = x > ST[1] - 2; B.head.visible = x > ST[2] - 2; B.eyes.visible = x > ST[3] - 2; var m = x > ST[3] ? gold : raw; if (B.torso.material !== m) { B.torso.material = m; B.head.material = m; B.legs.material = m; } });
+        sparkT -= dt; if (sparkT <= 0 && tier < 3) { sparkT = 0.18 + Math.random() * 0.25; var A = arms[Math.floor(Math.random() * arms.length)]; wP.set(A.sx + (Math.random() - 0.5), FY + 2.2, -4 + (Math.random() - 0.5)); fxL.boom(wP, Math.random() < 0.5 ? 0xffd27a : 0x5cffe6, 1.2, 14); }
+        repT += dt; var fixed = (repT % 8) > 5.5 || NEWS.rep > 0; repLight.material.color.setHex(fixed ? 0x3ddc84 : 0xff5a5f); welder.rotation.z = Math.sin(t * 6) * 0.25; repArm.rotation.y = Math.sin(t * 0.8) * 0.3; if (!fixed && Math.random() < dt * 6 && tier < 3) { welder.getWorldPosition(wP); G.worldToLocal(wP); wP.y -= 1.2; fxL.boom(wP, 0xffe08a, 1.0, 10); }
+        if (NEWS.rep > 0) NEWS.rep -= dt;
+        var ra = t * 1.4; runner.position.set(Math.cos(ra) * 1.6, Math.abs(Math.sin(t * 5)) * 0.5, Math.sin(ra) * 1.6); runner.rotation.y = -ra; tring.position.y = 0.3 + ((t * 0.5) % 1) * 6.6;
+        fxL.update(dt);
+        if (eng) { var tg = ePts[eI], tx = tg[0], tz = tg[1], dx = tx - eng.position.x, dz = tz - eng.position.z, dd = Math.hypot(dx, dz);
+          if (dd > 0.2) { var sp = Math.min(dd, dt * 2.2); eng.position.x += dx / dd * sp; eng.position.z += dz / dd * sp; eng.rotation.y = Math.atan2(dx, dz); (engV.legs || []).forEach(function (l, li) { l.rotation.x = Math.sin(t * 8 + li * Math.PI) * 0.5; }); }
+          else { (engV.legs || []).forEach(function (l) { l.rotation.x = 0; }); eWait -= dt; if (eWait <= 0) { eI = (eI + 1) % ePts.length; eWait = 2 + Math.random() * 2; } } }
+        NEWS.tk += dt; if (NEWS.tk > 30) { NEWS.tk = 0; drawNews(); }
+      }
+      return { update: update, pos: { x: LX, z: LZ }, setNews: function (items, date) { NEWS.items = (items || []).slice(0, 7); NEWS.date = date || ''; drawNews(); }, setSpec: function (n) { NEWS.spec = n || ''; drawNews(); }, repair: function (n) { NEWS.rep = 6; NEWS.spec = n ? 'Reparando: ' + n : NEWS.spec; drawNews(); }, info: function () { return { x: LX, z: LZ, news: NEWS.items.length, spec: NEWS.spec }; } };
+    })(); } catch (labErr) { lab = null; if (window.console) console.warn('lab', labErr); }
     /* ---- Tráfico: autos autónomos y tranvías/maglev modernos sobre calles, puentes y anillos ---- */
     var traffic = (function () {
       var T3 = THREE, UPv = new T3.Vector3(0, 1, 0), dum = new T3.Object3D(); dum.rotation.order = 'YZX';
@@ -5357,7 +5616,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (WALK.on) { walkPtr('up', e); return; }
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
-      if (wasTap) { var ud = hit(e); if (ud && ud.drone) { enterDrone(); return; } if (ud && ud.coach) { openCoach(true); return; } if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.gym) { var ga0 = agentAt(ud.gym.fl); if (ga0) { enterWalk(ga0.id); setTimeout(function () { var F0 = GYM.floors[ud.gym.fl]; if (F0 && WALK.on) { var ge0 = F0.eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]; gymStart(ge0); } }, 400); } return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
+      if (wasTap) { var ud = hit(e); if (ud && ud.drone) { enterDrone(); return; } if (ud && ud.lab) { openLab(false); return; } if (ud && ud.coach) { openCoach(true); return; } if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.gym) { var ga0 = agentAt(ud.gym.fl); if (ga0) { enterWalk(ga0.id); setTimeout(function () { var F0 = GYM.floors[ud.gym.fl]; if (F0 && WALK.on) { var ge0 = F0.eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]; gymStart(ge0); } }, 400); } return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
     canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; wdrag = null; });
@@ -5757,6 +6016,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (reactor) reactor.update(dt, clockT, tier);
       if (fitTower) fitTower.update(dt === 0 ? 0 : clockT, dt, tier);
       if (war) war.update(dt, clockT, tier);
+      if (lab) lab.update(clockT, dt, tier);
       shipFx.update(dt, clockT, tier); liftFx.update(dt, clockT);
       if (hoverA && hoverA.v && hoverA.v.ghost > 0.45) { hoverRing.visible = true; hoverRing.position.y = hoverA.floorY - FH / 2 + 0.25; hoverRing.scale.set(hxOf(hoverA.i) / HX[0], 1, hzOf(hoverA.i) / HZ[0]); hoverRing.material.opacity = 0.45 + 0.3 * Math.sin(clockT * 5); } else hoverRing.visible = false;
       logo.rotation.y += sdt * 1.1; logoRing.rotation.y += sdt * 0.8;
@@ -6121,6 +6381,11 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       focusCoach: function () { if (!fitTower) return false; cam.follow = null; cam.gtx = fitTower.pos.x; cam.gtz = fitTower.pos.z; cam.gty = 6; cam.gph = 1.2; cam.gr = window.innerWidth > 860 ? 40 : 56; cam.th = Math.atan2(-fitTower.pos.z, -fitTower.pos.x) + Math.PI + 0.35; return true; },
       focusFitTower: function () { if (!fitTower) return false; cam.follow = null; cam.gtx = fitTower.pos.x; cam.gtz = fitTower.pos.z; cam.gty = 30; cam.gph = 1.35; cam.gr = window.innerWidth > 860 ? 110 : 140; return true; },
       fitScan: function () { return fitTower ? fitTower.scan() : false; },
+      focusLab: function () { if (!lab) return false; cam.follow = null; cam.gtx = lab.pos.x; cam.gtz = lab.pos.z; cam.gty = 7; cam.gph = 1.12; cam.gr = window.innerWidth > 860 ? 62 : 86; cam.th = Math.atan2(-lab.pos.z, -lab.pos.x) + 0.25; return true; },
+      labNews: function (items, date) { if (lab) lab.setNews(items, date); },
+      labSpec: function (n) { if (lab) lab.setSpec(n); },
+      labRepair: function (n) { if (lab) lab.repair(n); },
+      labInfo: function () { return lab ? lab.info() : null; },
       setDrone: function (on) { if (!drone) return false; if (on && WALK.on) return false; return drone.set(!!on); },
       droneInput: function (o) { if (drone) drone.input(o); },
       droneInfo: function () { return drone ? drone.info() : null; },
