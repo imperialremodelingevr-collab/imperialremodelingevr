@@ -641,7 +641,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   <div class="holofx" aria-hidden="true"></div>
   <button class="vohint" id="voHint" type="button" hidden>🔊 Toca aquí para activar la voz de Jarvis</button>
   <div class="officebar" id="officeBar" hidden role="group" aria-label="Vista de oficina"><button class="btn" id="obPrev" type="button" aria-label="Oficina anterior">◀</button><span id="obName"></span><button class="btn" id="obNext" type="button" aria-label="Oficina siguiente">▶</button><button class="btn" id="obWalk" type="button">Caminar</button><button class="btn primary" id="obExit" type="button">Salir de la oficina</button></div>
-  <div class="walkbar" id="walkBar" hidden role="group" aria-label="Modo caminar"><button class="btn" id="wkDown" type="button" aria-label="Bajar un piso">▼</button><span id="wkName"></span><button class="btn" id="wkUp" type="button" aria-label="Subir un piso">▲</button><button class="btn" id="wkAnnex" type="button">Ir al anexo</button><button class="btn primary" id="wkTalk" type="button" hidden>Hablar</button><button class="btn" id="wkExit" type="button">Salir</button></div>
+  <div class="walkbar" id="walkBar" hidden role="group" aria-label="Modo caminar"><button class="btn" id="wkDown" type="button" aria-label="Bajar un piso">▼</button><span id="wkName"></span><button class="btn" id="wkUp" type="button" aria-label="Subir un piso">▲</button><button class="btn" id="wkAnnex" type="button">Ir al anexo</button><button class="btn primary" id="wkTalk" type="button" hidden>Hablar</button><button class="btn" id="wkUse" type="button" hidden>Usar</button><button class="btn" id="wkExit" type="button">Salir</button></div>
   <div class="walkpad" id="walkPad" hidden aria-hidden="true"><div class="knob" id="walkKnob"></div></div>
   <canvas class="walkmap" id="walkMap" width="200" height="150" hidden aria-label="Plano del piso"></canvas>
   <div class="walkhint" id="walkHint" hidden></div>
@@ -939,6 +939,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   var VTABS = [['bandeja', 'inbox'], ['tareas', 'tasks'], ['obras', 'projects'], ['tokens', 'tokens'], ['gastos', 'tokens'], ['memoria', 'mem'], ['estructura', 'struct'], ['grupos', 'struct'], ['asistente', 'asst']];
   function voiceCommand(n) {
     var aw = VOICE.awaiting;
+    if (!aw && WALKING && /\b(caminadora|correr|corre|pesas|ejercicio|estirar|estirate|yoga|sientate|sentarme|descansar)\b/.test(n) && scene3d && scene3d.gymGo) { var kd = /\b(pesas)\b/.test(n) ? 'lift' : /\b(estirar|estirate|yoga)\b/.test(n) ? 'mat' : /\b(sientate|sentarme|descansar)\b/.test(n) ? 'sit' : 'run'; return scene3d.gymGo(kd) ? 'Listo, a ' + ({ run: 'correr en la caminadora', lift: 'hacer pesas', mat: 'estirarte en la estera', sit: 'descansar en el sillón' })[kd] + '.' : 'Aquí no hay zona de bienestar.'; }
     if (!aw && /\b(reactor|generador|nuclear)\b/.test(n)) { if (scene3d && scene3d.focusReactor) scene3d.focusReactor(); return reactorText(); }
     if (aw) {
       if (/\b(si|dale|claro|hazlo|adelante|reinicia|reiniciala|reinicialo|corrige|corrigelo|ok|okey|de acuerdo|por favor)\b/.test(n)) { VOICE.awaiting = null; aw.yes(); return ''; }
@@ -1830,7 +1831,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (face) { setTimeout(function () { if (WALKING) { var w = scene3d.walkInfo(); walkTalkUi(a.id); } }, 250); }
     $('#walkBar').hidden = false; $('#walkMap').hidden = false; $('#walkPad').hidden = !WK_COARSE;
     var h = $('#walkHint'); h.hidden = false; h.classList.remove('fade');
-    h.textContent = WK_COARSE ? 'Mueve el círculo para caminar · arrastra para mirar · toca el piso para ir ahí · toca a una persona para hablar · ▲ ▼ cambia de piso' : 'W A S D o flechas para caminar · arrastra para mirar · clic en el piso para ir ahí · E para hablar · R / F sube o baja de piso · Esc para salir';
+    h.textContent = WK_COARSE ? 'Mueve el círculo para caminar · arrastra para mirar · toca el piso para ir ahí · toca a una persona para hablar · ▲ ▼ cambia de piso' : 'W A S D o flechas para caminar · arrastra para mirar · clic en el piso para ir ahí · E para hablar · Q para usar la caminadora, las pesas, la estera o el sillón · R / F sube o baja de piso · Esc para salir';
     clearTimeout(enterWalk.t); enterWalk.t = setTimeout(function () { if (WALKING) h.classList.add('fade'); }, 9000);
     return true;
   }
@@ -1898,7 +1899,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var gp = w.gps, gt = $('#wkGpsTxt'), ga = $('#wkArrow');
     if (gp) { gt.textContent = gp.label + (gp.dist > 0.8 ? ' · ' + Math.round(gp.dist) + ' m' : ''); ga.hidden = false; ga.style.transform = 'rotate(' + (gp.ang * 180 / Math.PI - 90) + 'deg)'; $('#wkGo').textContent = gp.auto ? 'Detener' : 'Llévame'; if ($('#wkDest').value !== gp.id) $('#wkDest').value = gp.id; }
     else { ga.hidden = true; $('#wkGo').textContent = 'Llévame'; if (walkLast.gps) { $('#wkDest').value = ''; gt.textContent = walkLast.gps.arrived ? 'Llegaste con ' + walkLast.gps.name : 'Elige a quién visitar'; } }
-    walkLast = { fl: w.fl, zone: w.zone, near: w.near, gps: gp ? { name: gp.name, arrived: gp.arrived } : (walkLast.gps && w.gpsDone ? walkLast.gps : null) };
+    var ub = $('#wkUse'), eqx = w.eq; ub.hidden = !eqx; if (eqx) { var ic = { run: '🏃', lift: '🏋', mat: '🧘', sit: '🪑' }[eqx.kind] || ''; ub.textContent = eqx.active ? '⏹ Terminar' : ic + ' ' + (narrow ? { run: 'Correr', lift: 'Pesas', mat: 'Estirar', sit: 'Sentarte' }[eqx.kind] : eqx.label); ub.classList.toggle('primary', !!eqx.active); }
+    var hh = $('#walkHint'); if (eqx && eqx.active) { hh.hidden = false; hh.classList.remove('fade'); hh.textContent = eqx.text + ' · arrastra para mirar · ⏹ Terminar o muévete para salir'; } else if (walkLast.eqActive) { hh.classList.add('fade'); }
+    walkLast = { eqActive: !!(eqx && eqx.active), fl: w.fl, zone: w.zone, near: w.near, gps: gp ? { name: gp.name, arrived: gp.arrived } : (walkLast.gps && w.gpsDone ? walkLast.gps : null) };
     drawWalkMap(w);
   }
   function drawWalkMap(w) {
@@ -1926,6 +1929,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   $('#wkDown').onclick = function () { if (scene3d && scene3d.walkStep) scene3d.walkStep(-1); };
   $('#wkAnnex').onclick = function () { if (scene3d && scene3d.walkAnnex) scene3d.walkAnnex(); };
   $('#wkTalk').onclick = function () { if (scene3d && scene3d.walkTalkNear) scene3d.walkTalkNear(); };
+  $('#wkUse').onclick = function () { if (scene3d && scene3d.gymToggle) scene3d.gymToggle(); };
   $('#wkExit').onclick = exitWalk;
   $('#obWalk').onclick = function () { enterWalk(OFFICE || 'cotiz'); };
   $('#btnWalk').onclick = function () { if (WALKING) { exitWalk(); return; } var ag = (selected && byId(selected)) || byId('cotiz'); enterWalk(ag.id); };
@@ -3482,6 +3486,72 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       var kc = document.createElement('canvas'); kc.width = 128; kc.height = 40; var kg = kc.getContext('2d'); kg.fillStyle = '#10151c'; kg.fillRect(0, 0, 128, 40); for (var kr = 0; kr < 4; kr++) for (var kk = 0; kk < 14; kk++) { kg.fillStyle = (kr + kk) % 5 === 0 ? '#3a8fb5' : '#2b3340'; kg.fillRect(3 + kk * 8.8, 3 + kr * 9, 7, 7); }
       var kb = new T.Mesh(new T.PlaneGeometry(0.6, 0.19), new T.MeshBasicMaterial({ map: new T.CanvasTexture(kc) })); kb.rotation.x = -Math.PI / 2; kb.position.set(-0.05, top + 0.03, -0.3); dk.add(kb); v.dDetail.push(kb);
     }
+
+    /* ---- Zona de bienestar en cada piso: caminadora, banco de pesas, estera de yoga, sillones y TV ---- */
+    var GYM = { floors: {}, spots: {}, belts: [], tvCanvas: null, tvTex: null, tvT: 0, consoleCanvas: null, consoleTex: null };
+    (function () {
+      var c = document.createElement('canvas'); c.width = 64; c.height = 64; var g = c.getContext('2d'); g.fillStyle = '#15181d'; g.fillRect(0, 0, 64, 64); g.fillStyle = '#2a2f37'; for (var y = 0; y < 64; y += 8) g.fillRect(0, y, 64, 3);
+      GYM.beltTex = new THREE.CanvasTexture(c); GYM.beltTex.wrapS = GYM.beltTex.wrapT = THREE.RepeatWrapping; GYM.beltTex.repeat.set(1, 5);
+      GYM.tvCanvas = document.createElement('canvas'); GYM.tvCanvas.width = 512; GYM.tvCanvas.height = 288; GYM.tvTex = new THREE.CanvasTexture(GYM.tvCanvas);
+      GYM.consoleCanvas = document.createElement('canvas'); GYM.consoleCanvas.width = 256; GYM.consoleCanvas.height = 128; GYM.consoleTex = new THREE.CanvasTexture(GYM.consoleCanvas);
+      var m = document.createElement('canvas'); m.width = 64; m.height = 256; var mg = m.getContext('2d'); var gr = mg.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#5cffe6'); gr.addColorStop(1, '#a78bfa'); mg.fillStyle = gr; mg.fillRect(0, 0, 64, 256); mg.fillStyle = 'rgba(255,255,255,.25)'; for (var yy = 12; yy < 256; yy += 24) mg.fillRect(6, yy, 52, 2);
+      GYM.matTex = new THREE.CanvasTexture(m);
+    })();
+    function drawGymScreens(t) {
+      var g = GYM.tvCanvas.getContext('2d'), W = 512, H = 288, work = AGENTS.filter(function (a) { return a.status === 'working'; }).length, idle = AGENTS.filter(function (a) { return a.status === 'idle'; }).length, al = AGENTS.filter(function (a) { return a.status === 'error' || a.status === 'warning'; }).length;
+      var bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, '#071827'); bg.addColorStop(1, '#14233a'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+      g.fillStyle = '#ffc94d'; g.font = '700 30px sans-serif'; g.textAlign = 'left'; g.fillText('EVR TV', 20, 42); g.fillStyle = '#9fd8f5'; g.font = '500 20px sans-serif'; g.fillText(new Date().toLocaleTimeString('es-US', { hour: '2-digit', minute: '2-digit' }), W - 110, 40);
+      g.fillStyle = '#ffffff'; g.font = '600 26px sans-serif'; g.fillText('Agentes trabajando: ' + work + ' de ' + AGENTS.length, 20, 100); g.fillText('En descanso: ' + idle, 20, 140); g.fillStyle = al ? '#ff8a7a' : '#7dffb0'; g.fillText(al ? al + ' necesitan ayuda' : 'Todo en orden', 20, 180);
+      var rx = reactor && reactor.info ? reactor.info() : null; g.fillStyle = '#ffd27a'; g.font = '500 22px sans-serif'; g.fillText(rx ? '☢ Reactor ' + rx.power + '% · ' + rx.nodes + ' nodos encendidos' : '☢ Reactor en línea', 20, 222);
+      var tick = ['Toma agua y estírate 🧘', 'Caminadora: 10 min = más energía ⚡', 'Hey bro, buen trabajo hoy 💪', 'Nesty: revisa la bandeja cuando puedas 📬'], tk = tick[Math.floor(t / 6) % tick.length]; g.fillStyle = 'rgba(92,255,230,.15)'; g.fillRect(0, 244, W, 44); g.fillStyle = '#bffcf0'; g.font = '500 22px sans-serif'; g.fillText(tk, 20 - ((t * 40) % 40), 274);
+      GYM.tvTex.needsUpdate = true;
+      var c = GYM.consoleCanvas.getContext('2d'), U = WALK && WALK.act ? WALK.act : null, sec = U ? Math.floor(clockT - U.t0) : 0;
+      c.fillStyle = '#04121c'; c.fillRect(0, 0, 256, 128); c.strokeStyle = '#5cffe6'; c.lineWidth = 4; c.strokeRect(2, 2, 252, 124); c.fillStyle = '#5cffe6'; c.font = '700 22px monospace'; c.textAlign = 'center'; c.fillText('EVR FIT', 128, 30);
+      c.fillStyle = '#ffffff'; c.font = '700 34px monospace'; c.fillText(U && U.kind === 'run' ? String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0') : '6.0 km/h', 128, 76); c.fillStyle = '#ffd27a'; c.font = '600 20px monospace'; c.fillText(U && U.kind === 'run' ? (sec * 6 / 3600).toFixed(2) + ' km · ' + Math.round(sec * 0.13) + ' kcal' : 'Listo para correr', 128, 110);
+      GYM.consoleTex.needsUpdate = true;
+    }
+    function buildGym(a, hx, hz, sx, y0) {
+      var T = THREE, v = a.v, parts = [], G = new T.Group(), S = 1.35, X = function (xo) { return -sx * xo; };
+      function P(cx, cz) { return { b: function (dx, y, dz, w, h, d, c) { parts.push({ g: new T.BoxGeometry(1, 1, 1), x: X(cx + dx * S), y: y0 + y * S, z: cz + dz * S, sx: w * S, sy: h * S, sz: d * S, c: new T.Color(c) }); }, c: function (dx, y, dz, r, h, c) { parts.push({ g: new T.CylinderGeometry(r * S, r * S, h * S, 14), x: X(cx + dx * S), y: y0 + y * S, z: cz + dz * S, c: new T.Color(c) }); }, s: function (dx, y, dz, r, c) { parts.push({ g: new T.SphereGeometry(r * S, 16, 12), x: X(cx + dx * S), y: y0 + y * S, z: cz + dz * S, c: new T.Color(c) }); } }; }
+      var zg = -(hz - 2.4), zl = hz - 2.9, dark = 0x1c222b, steel = 0x9aa7b3, gold = 0xc9a84c, accent = OUTFIT[a.i % OUTFIT.length];
+      var tx = 4.8, bx = 9.0, mx = 6.4, mz = zg + 2.9;
+      P(7.0, zg + 0.6).b(0, 0.015, 0, 6.4, 0.03, 3.4, 0x111418);
+      var t = P(tx, zg); t.b(0, 0.2, 0, 3.4, 0.28, 1.3, dark); t.b(-1.7, 0.35, 0, 0.25, 0.4, 1.3, 0x2b313a);
+      [-0.68, 0.68].forEach(function (dz) { t.b(1.55, 1.15, dz, 0.1, 1.9, 0.1, steel); t.b(0.9, 1.55, dz, 1.3, 0.08, 0.08, steel); }); t.b(1.6, 2.15, 0, 0.3, 0.55, 1.45, 0x20262e);
+      var bn = P(bx, zg); bn.b(0, 0.55, 0, 2.3, 0.2, 0.62, 0x2a2f37); bn.b(0, 0.68, 0, 2.25, 0.08, 0.58, accent); bn.b(-0.9, 0.25, 0, 0.12, 0.5, 0.5, steel); bn.b(0.9, 0.25, 0, 0.12, 0.5, 0.5, steel);
+      [-0.75, 0.75].forEach(function (dz) { bn.b(0.95, 1.05, dz, 0.12, 2.1, 0.12, steel); bn.b(0.95, 1.55, dz - Math.sign(dz) * 0.12, 0.16, 0.06, 0.24, gold); }); bn.b(0.95, 0.03, 0, 0.7, 0.06, 1.8, dark);
+      var db = P(bx - 0.2, zg + 2.0); db.b(0, 0.45, 0, 1.4, 0.9, 0.45, 0x2b313a); [-0.45, 0, 0.45].forEach(function (dx, i) { db.c(dx, 1.0, 0, 0.11, 0.4, i % 2 ? gold : 0x1a1d22); });
+      P(mx + 1.9, mz).s(0, 0.42, 0, 0.42, 0x5cc8ff);
+      [5.4, 7.9].forEach(function (cx2, i) { var col = i ? 0x3b4c6b : 0x5a3b6b, ch = P(cx2, zl); ch.b(0, 0.42, 0, 1.4, 0.3, 1.3, col); ch.b(0, 0.95, -0.6, 1.4, 0.9, 0.22, col); ch.b(-0.65, 0.65, 0, 0.16, 0.5, 1.3, col); ch.b(0.65, 0.65, 0, 0.16, 0.5, 1.3, col); ch.b(0, 0.12, 0, 1.2, 0.24, 1.1, 0x14171c); });
+      var tb = P(6.65, zl + 1.1); tb.b(0, 0.38, 0, 1.1, 0.06, 0.6, 0x2a2018); tb.c(0, 0.18, 0, 0.06, 0.36, 0x2a2018); tb.b(0, 0.44, 0, 0.25, 0.08, 0.18, 0xf4f6f8);
+      P(6.65, zl + 2.1).b(0, 0.5, 0, 2.2, 1.0, 0.45, 0x20262e);
+      var pt = P(9.6, zl + 1.6); pt.c(0, 0.3, 0, 0.28, 0.6, 0x9a5a3a); pt.s(0, 1.0, 0, 0.5, 0x3fae6a);
+      var mesh = new T.Mesh(cgeo(parts), new T.MeshStandardMaterial({ vertexColors: true, roughness: 0.6, metalness: 0.25, emissive: 0x05080c, emissiveIntensity: 0.45 })); G.add(mesh);
+      var btx = GYM.beltTex.clone(); btx.needsUpdate = true; var belt = new T.Mesh(new T.PlaneGeometry(3.0 * S, 1.0 * S), new T.MeshStandardMaterial({ map: btx, roughness: 0.9 })); belt.rotation.x = -Math.PI / 2; belt.rotation.z = Math.PI / 2; belt.position.set(X(tx), y0 + 0.35 * S, zg); G.add(belt);
+      var con = new T.Mesh(new T.PlaneGeometry(1.2 * S, 0.6 * S), new T.MeshBasicMaterial({ map: GYM.consoleTex, side: T.DoubleSide })); con.position.set(X(tx + 1.44 * S), y0 + 2.25 * S, zg); con.rotation.y = sx > 0 ? Math.PI / 2 : -Math.PI / 2; G.add(con);
+      var barY = y0 + 1.62 * S, bar = new T.Group(); bar.position.set(X(bx + 0.95 * S), barY, zg); G.add(bar);
+      var rod = new T.Mesh(new T.CylinderGeometry(0.05 * S, 0.05 * S, 2.4 * S, 10), new T.MeshStandardMaterial({ color: 0xd7dee5, metalness: 0.9, roughness: 0.25 })); rod.rotation.x = Math.PI / 2; bar.add(rod);
+      [-1.0, 1.0].forEach(function (dz) { var pl = new T.Mesh(new T.CylinderGeometry(0.38 * S, 0.38 * S, 0.12 * S, 20), new T.MeshStandardMaterial({ color: 0x1a1d22, metalness: 0.4, roughness: 0.5 })); pl.rotation.x = Math.PI / 2; pl.position.z = dz * S; bar.add(pl); var rim = new T.Mesh(new T.TorusGeometry(0.38 * S, 0.035 * S, 6, 24), new T.MeshBasicMaterial({ color: 0xc9a84c })); rim.position.z = (dz + Math.sign(dz) * 0.07) * S; bar.add(rim); });
+      var mat = new T.Mesh(new T.PlaneGeometry(0.9 * S, 2.6 * S), new T.MeshStandardMaterial({ map: GYM.matTex, roughness: 0.9 })); mat.rotation.x = -Math.PI / 2; mat.rotation.z = Math.PI / 2; mat.position.set(X(mx), y0 + 0.06, mz); G.add(mat);
+      var tv = new T.Mesh(new T.PlaneGeometry(2.6 * S, 1.46 * S), new T.MeshBasicMaterial({ map: GYM.tvTex })); tv.position.set(X(6.65), y0 + 1.95 * S, zl + 2.1 - 0.05); tv.rotation.y = Math.PI; G.add(tv);
+      var tvF = new T.Mesh(new T.BoxGeometry(2.75 * S, 1.6 * S, 0.08), new T.MeshStandardMaterial({ color: 0x0b0e12, metalness: 0.6, roughness: 0.3 })); tvF.position.set(X(6.65), y0 + 1.95 * S, zl + 2.1 + 0.05); G.add(tvF);
+      var lc = document.createElement('canvas'); lc.width = 512; lc.height = 96; var lg = lc.getContext('2d'); lg.fillStyle = 'rgba(8,16,26,.9)'; lg.fillRect(0, 0, 512, 96); lg.strokeStyle = '#5cffe6'; lg.lineWidth = 4; lg.strokeRect(2, 2, 508, 92); lg.fillStyle = '#5cffe6'; lg.font = '700 40px sans-serif'; lg.textAlign = 'center'; lg.fillText('ZONA DE BIENESTAR', 256, 62);
+      var sign = new T.Mesh(new T.PlaneGeometry(3.2, 0.6), new T.MeshBasicMaterial({ map: new T.CanvasTexture(lc), transparent: true, side: T.DoubleSide })); sign.position.set(X(7.0), y0 + 4.2, -(hz - 0.15)); G.add(sign);
+      [mesh, belt, con, bar, mat, tv, tvF, sign].forEach(function (o) { v.dDetail.push(o); });
+      tower.add(G);
+      var eq = [
+        { kind: 'run', label: 'Usar la caminadora', x: X(tx), z: zg, yaw: Math.atan2(-sx, 0), h: 0.5 * S, r: 1.7 * S },
+        { kind: 'lift', label: 'Hacer pesas en el banco', x: X(bx), z: zg, yaw: Math.atan2(sx, 0), h: 0.78 * S, r: 1.4 * S },
+        { kind: 'mat', label: 'Estirarte en la estera', x: X(mx), z: mz, yaw: Math.atan2(-sx, 0), h: 0.06, r: 1.3 * S },
+        { kind: 'sit', label: 'Sentarte en el sillón', x: X(5.4), z: zl, yaw: 0, h: 0.55 * S, r: 0.95 * S },
+        { kind: 'sit', label: 'Sentarte en el sillón', x: X(7.9), z: zl, yaw: 0, h: 0.55 * S, r: 0.95 * S }
+      ];
+      eq.forEach(function (e) { var hb = new T.Mesh(new T.BoxGeometry(e.r * 2, 2.4 * S, 1.6 * S), new T.MeshBasicMaterial({ visible: false })); hb.position.set(e.x, y0 + 1.2 * S, e.z); hb.userData.gym = { fl: a.i, kind: e.kind, label: e.label, x: e.x, z: e.z }; tower.add(hb); pickables.push(hb); e.y = y0; });
+      GYM.floors[a.i] = { S: S, eq: eq, belt: belt, bar: bar, barY: barY, tx: X(tx), zg: zg, y0: y0, obs: [{ x: X(tx), z: zg, r: 1.5 * S }, { x: X(bx + 0.4), z: zg, r: 1.4 * S }, { x: X(bx - 0.2), z: zg + 2.0, r: 0.9 * S }, { x: X(6.65), z: zl + 2.1, r: 1.3 * S }, { x: X(6.65), z: zl + 1.1, r: 0.7 * S }, { x: X(9.6), z: zl + 1.6, r: 0.6 * S }] };
+      var my = ['run', 'lift', 'mat', 'sit'][a.i % 4], spot = eq.filter(function (e) { return e.kind === my; })[0];
+      GYM.spots[a.i] = { act: my, x: spot.x, z: spot.z, yaw: spot.yaw, h: spot.h };
+      GYM.belts.push(belt);
+    }
     function officeInterior(a, hx, sx, y0) {
       var T = THREE, v = a.v, H = FH - 0.5, xout = hx - 0.3, parts = [], G = new T.Group(), R = seeded(a.i * 53 + 7), i, k;
       function X(xo) { return sx * xo; }
@@ -3594,6 +3664,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       v.robot = makeRobot(a); tower.add(v.robot);
       buildOffice(a, hx, hz, sx, y0);
       try { officeInterior(a, hx, sx, y0); } catch (e) { if (window.console) console.error('office', e); }
+      try { if (!a.annex) buildGym(a, hx, hz, sx, y0); } catch (e) { if (window.console) console.error('gym', e); }
       v.beamMat = new THREE.MeshBasicMaterial({ color: 0xff5a5f, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false });
       v.beam = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 36, 8, 1, true), v.beamMat); v.beam.visible = false; tower.add(v.beam);
       var hitMat = new THREE.MeshBasicMaterial({ visible: false });
@@ -4580,7 +4651,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (WALK.on) { walkPtr('up', e); return; }
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
-      if (wasTap) { var ud = hit(e); if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
+      if (wasTap) { var ud = hit(e); if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.gym) { var ga0 = agentAt(ud.gym.fl); if (ga0) { enterWalk(ga0.id); setTimeout(function () { var F0 = GYM.floors[ud.gym.fl]; if (F0 && WALK.on) { var ge0 = F0.eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]; gymStart(ge0); } }, 400); } return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
     canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; wdrag = null; });
@@ -4770,6 +4841,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (camera.position.y < 4) camera.position.y = 4;
       camera.lookAt(cam.tx, cam.ty, cam.tz);
       if (WALK.on) walkUpdate(dt);
+      gymFrame(dt);
 
       var selIdx = selected ? byId(selected).i : -1;
       if (cam.r < 92) nearView = true; else if (cam.r > 118) nearView = false; if (window.__evrTest && window.__evrTest.seat) nearView = true; if (WALK.on) nearView = true;
@@ -4784,7 +4856,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
           else if (st === 'warning') { v.walk = true; v.timer = 5; }
           else { v.walk = false; v.timer = 6 + rnd() * 5; v.pose = ['look', 'think', 'stretch', 'rest', 'sip'][Math.floor(rnd() * 5)]; }
         }
-        var wantSeat = (st === 'working' || st === 'idle') && !a.annex, seatWalk = 0;
+        var gymWant = st === 'idle' && !a.annex && !sel && !greeting && clockT >= (v.sayUntil || 0) && !!GYM.spots[a.i] && (Math.sin(clockT * 0.045 + a.i * 1.9) > 0.15 || (window.__evrTest && window.__evrTest.gym));
+        var wantSeat = (st === 'working' || st === 'idle') && !a.annex && !gymWant && !((v.gymK || 0) > 0.01), seatWalk = 0;
         var dA = Math.atan2(Math.sin(a.deskAng - a.ang), Math.cos(a.deskAng - a.ang));
         if (wantSeat) {
           if (Math.abs(dA) > 0.05 && v.seat < 0.02) { a.ang += Math.sign(dA) * Math.min(Math.abs(dA), 0.6 * dt); seatWalk = 1; v.rad += (a.R - v.rad) * Math.min(1, dt * 3); }
@@ -4806,6 +4879,20 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         else if (v.vel > 0.02) { var pd = (Math.cos(v.pace || 0) >= 0 ? 1 : -1) * a.dir; yaw = Math.atan2(-pd * sz, pd * cx); }
         else if (working) yaw = Math.atan2(-cx, -sz);
         else yaw = Math.atan2(cx, sz);
+        v.gymK = Math.max(0, Math.min(1, (v.gymK || 0) + (gymWant && v.seat < 0.05 ? 0.3 : -0.6) * dt * ((window.__evrTest && window.__evrTest.gym) ? 6 : 1)));
+        rb.rotation.x = 0; v.gymAct = null;
+        if (v.gymK > 0.001 && GYM.spots[a.i]) {
+          var gs = GYM.spots[a.i], k3 = v.gymK * v.gymK * (3 - 2 * v.gymK);
+          rb.position.x += (gs.x - rb.position.x) * k3; rb.position.z += (gs.z - rb.position.z) * k3;
+          if (v.gymK < 0.999) { legW = 1; yaw = Math.atan2(gs.x - rb.position.x, gs.z - rb.position.z); if (Math.hypot(gs.x - rb.position.x, gs.z - rb.position.z) < 0.05) yaw = gs.yaw; }
+          else {
+            v.gymAct = gs.act; yaw = gs.yaw;
+            if (gs.act === 'run') { legW = 1.3; rb.position.y = a.y - 0.16 + gs.h + Math.abs(Math.sin(clockT * 9)) * 0.06; }
+            else if (gs.act === 'lift') { rb.position.set(gs.x + Math.sin(gs.yaw) * 1.8, a.y - 0.16 + gs.h + 0.2, gs.z + Math.cos(gs.yaw) * 1.8); rb.rotation.order = 'YXZ'; rb.rotation.x = -Math.PI / 2; }
+            else if (gs.act === 'mat') { rb.position.y = a.y - 0.16 + gs.h; legW = 0; }
+            else { rb.position.y = a.y - 0.16 - 0.35; }
+          }
+        }
         if (a.annex) { var an2 = a.annex, pa2 = an2.baseAng + Math.sin(v.pace || 0) * 0.6; rb.position.set(an2.x + Math.cos(pa2) * an2.r, a.y - 0.16 + (legW > 0.05 ? Math.abs(Math.sin(clockT * 7)) * 0.05 * legW : 0), an2.z + Math.sin(pa2) * an2.r); yaw = greeting ? Math.atan2(camP.x - rb.position.x, camP.z - rb.position.z) : Math.atan2(an2.x - rb.position.x, an2.z - rb.position.z); }
         var dyaw = yaw - rb.rotation.y; dyaw = Math.atan2(Math.sin(dyaw), Math.cos(dyaw)); rb.rotation.y += dyaw * Math.min(1, dt * 3);
         rb.rotation.z = st === 'error' ? Math.sin(clockT * 16) * 0.05 : 0;
@@ -4819,6 +4906,10 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         else if (working) {
           if (v.walk) { tLx = -Math.sin(clockT * 7) * 0.5 * Math.min(1, Math.max(v.vel / 0.2, 0.01)); tRx = -tLx; }
           else { tLx = -1.15 + Math.sin(tt * 6) * 0.12; tRx = -1.15 + Math.sin(tt * 6 + 2) * 0.12; tLz = -0.25; tRz = 0.25; }
+        } else if (v.gymAct === 'lift') { tLx = tRx = -Math.PI + 0.25 + Math.sin(clockT * 2.2) * 0.45; tLz = -0.35; tRz = 0.35;
+        } else if (v.gymAct === 'run') { tLx = -Math.sin(clockT * 9) * 0.8; tRx = -tLx; tLz = -0.15; tRz = 0.15;
+        } else if (v.gymAct === 'mat') { tLz = -2.7 + Math.sin(clockT * 0.9) * 0.25; tRz = 2.7 - Math.sin(clockT * 0.9) * 0.25;
+        } else if (v.gymAct === 'sit') { tLx = -0.5; tRx = -0.5; tLz = -0.2; tRz = 0.2;
         } else if (v.seat > 0.5 && v.pose === 'sip') { tRx = -2.15 + Math.sin(tt * 1.2) * 0.04; tRz = 0.2; tLx = -0.8; tLz = -0.12;
         } else if (v.seat > 0.5) { var ty = working ? -1.0 + Math.sin(tt * 7) * 0.07 : -0.75; tLx = ty; tRx = working ? -1.0 + Math.sin(tt * 7 + 2) * 0.07 : -0.75; tLz = -0.12; tRz = 0.12; }
         else if (v.pose === 'think') { tRx = -2.0; tRz = 0.35; }
@@ -4983,6 +5074,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     function wFloorOk(x, z, i) {
       if (Math.abs(x) > hxOf(i) - 0.8 || Math.abs(z) > hzOf(i) - 0.8 || Math.hypot(x, z) < 1.7) return false;
       var a = agentAt(i); if (a && !a.annex && Math.hypot(x - Math.cos(a.deskAng) * 7.05, z - Math.sin(a.deskAng) * 7.05) < 2.0) return false;
+      var GF = GYM.floors[i]; if (GF) for (var go = 0; go < GF.obs.length; go++) if (Math.hypot(x - GF.obs[go].x, z - GF.obs[go].z) < GF.obs[go].r) return false;
       return true;
     }
     function wAnnexZone(x, z) {
@@ -5005,6 +5097,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     function walkFloor(i, toAnnex, teleport) {
       i = Math.max(0, Math.min(N - 1, i)); if (!agentAt(i)) return false;
       if (WALK.route && !teleport) gpsStop();
+      if (WALK.act) { WALK.act = null; }
       WALK.fl = i; WALK.go = null; wMark.visible = false;
       if (toAnnex && annexW) {
         WALK.fl = annexW.fl; var dx = annexW.x - annexW.ex, dz = annexW.z - annexW.ez, dl = Math.hypot(dx, dz) || 1;
@@ -5017,7 +5110,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     function walkInfo() {
       var a = agentAt(WALK.fl), ppl = [], fy = WALK.ty - EYE;
       AGENTS.forEach(function (o) { var p = o.v.robot.position; if (Math.abs(p.y - fy) < 2.6) ppl.push({ x: p.x, z: p.z, id: o.id, st: o.status }); });
-      return { on: WALK.on, fl: WALK.fl, id: a && a.id, zone: WALK.zone, near: WALK.near ? WALK.near.id : null, x: WALK.x, z: WALK.z, y: WALK.y, yaw: WALK.yaw, pitch: WALK.pitch, hx: hxOf(WALK.fl), hz: hzOf(WALK.fl), desk: a && !a.annex ? { x: Math.cos(a.deskAng) * 7.05, z: Math.sin(a.deskAng) * 7.05 } : null, ann: annexW && WALK.fl === annexW.fl ? annexW : null, ppl: ppl, n: N, el: EL, gpsDone: !!WALK.gpsDone, gps: (function () { var R = WALK.route; if (!R) return null; var st = R.steps[R.i]; if (!st) return null; var ang = Math.atan2(st.z - WALK.z, st.x - WALK.x) - WALK.yaw; ang = Math.atan2(Math.sin(ang), Math.cos(ang)); return { id: R.id, name: R.a.name, label: WALK.riding ? 'Elevador en camino al piso ' + (WALK.fl + 1) : st.label, dist: gpsDist(), ang: ang, auto: R.auto, step: R.i, steps: R.steps.length, kind: st.kind }; })() };
+      return { on: WALK.on, fl: WALK.fl, id: a && a.id, zone: WALK.zone, near: WALK.near ? WALK.near.id : null, x: WALK.x, z: WALK.z, y: WALK.y, yaw: WALK.yaw, pitch: WALK.pitch, hx: hxOf(WALK.fl), hz: hzOf(WALK.fl), desk: a && !a.annex ? { x: Math.cos(a.deskAng) * 7.05, z: Math.sin(a.deskAng) * 7.05 } : null, ann: annexW && WALK.fl === annexW.fl ? annexW : null, ppl: ppl, n: N, el: EL, gpsDone: !!WALK.gpsDone, eq: (function () { if (WALK.act) return { kind: WALK.act.kind, label: WALK.act.label, active: true, text: gymSummary(WALK.act, Math.round(clockT - WALK.act.t0), false) }; var e = gymNear(); return e ? { kind: e.kind, label: e.label, active: false } : null; })(), gps: (function () { var R = WALK.route; if (!R) return null; var st = R.steps[R.i]; if (!st) return null; var ang = Math.atan2(st.z - WALK.z, st.x - WALK.x) - WALK.yaw; ang = Math.atan2(Math.sin(ang), Math.cos(ang)); return { id: R.id, name: R.a.name, label: WALK.riding ? 'Elevador en camino al piso ' + (WALK.fl + 1) : st.label, dist: gpsDist(), ang: ang, auto: R.auto, step: R.i, steps: R.steps.length, kind: st.kind }; })() };
     }
     function walkTalk(a) {
       if (!a) return;
@@ -5042,6 +5135,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (type === 'up') {
         var w = wdrag; if (!w || w.id !== e.pointerId) return; wdrag = null; if (w.moved > 6) return;
         var ud = hit(e); if (ud && ud.prop) { openProps(ud.prop.id); return; }
+        if (ud && ud.gym) { if (ud.gym.fl === WALK.fl && Math.hypot(ud.gym.x - WALK.x, ud.gym.z - WALK.z) < 6) { var ge = (GYM.floors[WALK.fl].eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]); gymStart(ge); } else { WALK.go = { x: ud.gym.x, z: ud.gym.z + (ud.gym.z > 0 ? -1.6 : 1.6) }; } return; }
         if (ud && ud.agent && !ud.floorHit) { walkTalk(ud.agent); return; }
         if (!walkGoto(e) && ud && ud.agent && ud.agent.i !== WALK.fl) walkTalk(ud.agent);
       }
@@ -5051,6 +5145,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       var k = (e.key || '').toLowerCase();
       if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].indexOf(k) > -1) { WALK.keys[k] = true; WALK.go = null; wMark.visible = false; if (k !== 'shift') { e.preventDefault(); e.stopPropagation(); } return; }
       if (k === 'e') { if (WALK.near) walkTalk(WALK.near); e.preventDefault(); e.stopPropagation(); return; }
+      if (k === 'q') { if (WALK.act) gymStop(); else gymStart(gymNear()); e.preventDefault(); e.stopPropagation(); return; }
       if (k === 'r' || k === 'pageup') { walkFloor(WALK.fl + 1); e.preventDefault(); e.stopPropagation(); return; }
       if (k === 'f' || k === 'pagedown') { walkFloor(WALK.fl - 1); e.preventDefault(); e.stopPropagation(); return; }
       if (k === 'escape') { e.preventDefault(); e.stopPropagation(); exitWalk(); }
@@ -5138,8 +5233,61 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       var last = pts[pts.length - 1]; gpBeam.visible = pts.length > 1; gpBeam.position.set(last.x, fy + 2.5, last.z); gpBeam.material.opacity = 0.3 + 0.12 * Math.sin(clockT * 5);
       gpBeam.material.color.setHex(last.kind === 'elev' ? 0x5cffe6 : 0xffc94d);
     }
+    function gymFrame(dt) {
+      GYM.tvT -= dt; if (GYM.tvT <= 0) { GYM.tvT = 1; try { drawGymScreens(clockT); } catch (e) {} }
+      var anyRun = false;
+      Object.keys(GYM.floors).forEach(function (k) {
+        var F = GYM.floors[k], ag = agentAt(+k), userRun = WALK.on && WALK.act && WALK.act.kind === 'run' && WALK.fl === +k, agRun = ag && ag.v.gymAct === 'run';
+        if (userRun || agRun) { F.belt.material.map.offset.y -= dt * 1.6; anyRun = true; }
+        var lifting = (WALK.on && WALK.act && WALK.act.kind === 'lift' && WALK.fl === +k) || (ag && ag.v.gymAct === 'lift');
+        var ty = lifting ? F.barY - 0.5 * F.S + Math.max(0, Math.sin(clockT * 2.2)) * 0.55 * F.S : F.barY; F.bar.position.y += (ty - F.bar.position.y) * Math.min(1, dt * 6);
+      });
+    }
+    function gymNear() {
+      var F = GYM.floors[WALK.fl]; if (!F || WALK.zone !== 'torre') return null; var best = null, bd = 2.6;
+      F.eq.forEach(function (e) { var d = Math.hypot(e.x - WALK.x, e.z - WALK.z); if (d < bd) { bd = d; best = e; } }); return best;
+    }
+    function gymStart(e) {
+      if (!e) return false; var F = GYM.floors[WALK.fl]; if (!F) return false;
+      WALK.act = { kind: e.kind, label: e.label, t0: clockT, e: e, back: { x: WALK.x, z: WALK.z } }; WALK.go = null; WALK.route = null; WALK.keys = {}; wMark.visible = false;
+      var fw = Math.atan2(Math.cos(e.yaw), Math.sin(e.yaw));
+      if (e.kind === 'run') { WALK.yaw = fw; WALK.pitch = -0.05; }
+      else if (e.kind === 'mat') { WALK.yaw = fw; WALK.pitch = -0.4; }
+      else if (e.kind === 'lift') { WALK.yaw = fw; WALK.pitch = 1.25; }
+      else { WALK.yaw = Math.PI / 2; WALK.pitch = -0.02; }
+      toast(e.kind === 'run' ? '🏃 Caminadora encendida: 6 km/h' : e.kind === 'lift' ? '🏋 A levantar: cada subida cuenta' : e.kind === 'mat' ? '🧘 Estiramiento: respira profundo' : '🪑 Descansando: mira EVR TV');
+      return true;
+    }
+    function gymStop() { if (!WALK.act) return; var A = WALK.act, sec = Math.round(clockT - A.t0); WALK.act = null; if (A.back) { WALK.x = A.back.x; WALK.z = A.back.z; } WALK.pitch = -0.06; toast(gymSummary(A, sec, true)); }
+    function gymSummary(A, sec, done) {
+      var mm = String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+      if (A.kind === 'run') return (done ? '✅ ' : '🏃 ') + 'Caminadora · ' + mm + ' · ' + (sec * 6 / 3600).toFixed(2) + ' km · ' + Math.round(sec * 0.13) + ' kcal';
+      if (A.kind === 'lift') return (done ? '✅ ' : '🏋 ') + 'Pesas · ' + mm + ' · ' + Math.floor(sec / 2.86) + ' repeticiones · ' + Math.round(sec * 0.1) + ' kcal';
+      if (A.kind === 'mat') return (done ? '✅ ' : '🧘 ') + 'Estiramiento · ' + mm + ' · ' + Math.round(sec * 0.05) + ' kcal';
+      return (done ? '✅ ' : '🪑 ') + 'Descanso · ' + mm + ' · EVR TV con el estado de la torre';
+    }
     function walkUpdate(dt) {
       var K = WALK.keys, f = 0, s = 0, turn = 0;
+      if (WALK.act) {
+        var A = WALK.act, e = A.e, fy0 = floorTop() + 0.1;
+        if (K.w || K.a || K.s || K.d || K.arrowup || K.arrowdown || Math.abs(WALK.jx) + Math.abs(WALK.jy) > 0.3) { gymStop(); }
+        else {
+          var px = e.x, pz = e.z, ey = fy0 + EYE, bob = 0;
+          if (A.kind === 'run') { ey = fy0 + 0.5 + EYE; bob = Math.abs(Math.sin(clockT * 9)) * 0.12; }
+          else if (A.kind === 'lift') { ey = fy0 + 0.75; px = e.x - Math.sin(e.yaw) * 0.35; pz = e.z - Math.cos(e.yaw) * 0.35; }
+          else if (A.kind === 'mat') { ey = fy0 + 1.6 + Math.sin(clockT * 0.9) * 0.25; }
+          else { ey = fy0 + 2.3; }
+          WALK.x = px; WALK.z = pz; WALK.y += (ey + bob - WALK.y) * Math.min(1, dt * 5);
+          var cy0 = Math.cos(WALK.yaw), sy0 = Math.sin(WALK.yaw), cp0 = Math.cos(WALK.pitch);
+          camera.position.set(WALK.x, WALK.y, WALK.z); camera.lookAt(WALK.x + cy0 * cp0, WALK.y + Math.sin(WALK.pitch), WALK.z + sy0 * cp0);
+          if (A.kind === 'lift') { var Fq = GYM.floors[WALK.fl]; if (Fq) camera.lookAt(Fq.bar.position.x, Fq.bar.position.y + 0.1, Fq.bar.position.z); }
+          var wantFov0 = camera.aspect < 0.8 ? 80 : 68; if (Math.abs(camera.fov - wantFov0) > 0.1) { camera.fov = wantFov0; camera.updateProjectionMatrix(); }
+          cam.gtx = cam.tx = WALK.x; cam.gtz = cam.tz = WALK.z; cam.gty = cam.ty = WALK.y; cam.gr = cam.r = 3; cam.follow = null; cam.gph = null;
+          elevG.visible = WALK.zone === 'torre'; gpsDraw();
+          WALK.nearT -= dt; if (WALK.nearT <= 0) { WALK.nearT = 0.5; WALK.near = null; walkHud(walkInfo()); }
+          return;
+        }
+      }
       if (K.w || K.arrowup) f += 1; if (K.s || K.arrowdown) f -= 1; if (K.a) s -= 1; if (K.d) s += 1; if (K.arrowleft) turn -= 1; if (K.arrowright) turn += 1;
       f -= WALK.jy; s += WALK.jx; if (Math.abs(WALK.jx) > 0.6 && Math.abs(WALK.jy) < 0.5) { turn += WALK.jx * 0.9; s *= 0.4; }
       if (window.__evrTest && window.__evrTest.walkF) f += window.__evrTest.walkF;
@@ -5189,7 +5337,10 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         if (o.face) { var fa = AGENTS.filter(function (x) { return x.id === o.face; })[0]; if (fa) { var sp = standPoint(fa); WALK.x = sp.x; WALK.z = sp.z; walkHeight(); WALK.y = WALK.ty; var rp = fa.v.robot.position; WALK.yaw = Math.atan2(rp.z - WALK.z, rp.x - WALK.x); WALK.pitch = -0.12; fa.v.lastGreet = -99; greetAgent(fa); } }
       },
       walkStep: function (d) { var ok = walkFloor(WALK.fl + d); return ok; },
-      gpsTo: gpsTo, gpsStop: gpsStop, gpsDebug: function () { return { n: gpPts.count, vis: gpPts.visible, beam: gpBeam.visible, y0: gpPos[0], ty: WALK.ty, el: elevG.visible, ey: elevG.position.y }; }, gpsAuto: function (on) { if (WALK.route) WALK.route.auto = !!on; WALK.nearT = 0; return !!WALK.route; },
+      gpsTo: gpsTo, gpsStop: gpsStop,
+      gymToggle: function () { if (WALK.act) { gymStop(); return false; } return gymStart(gymNear()); },
+      gymInfo: function () { var out = {}; Object.keys(GYM.floors).forEach(function (k) { out[k] = GYM.floors[k].eq.length; }); var using = AGENTS.filter(function (a) { return a.v.gymAct; }).map(function (a) { return a.id + ':' + a.v.gymAct; }); return { floors: Object.keys(GYM.floors).length, using: using, act: WALK.act ? WALK.act.kind : null }; },
+      gymGo: function (kind) { var F = GYM.floors[WALK.fl]; if (!F) return false; var e = F.eq.filter(function (q) { return q.kind === kind; })[0]; if (!e) return false; WALK.x = e.x + 0.01; WALK.z = e.z + (e.z > 0 ? -1.8 : 1.8); return gymStart(e); }, gpsDebug: function () { return { n: gpPts.count, vis: gpPts.visible, beam: gpBeam.visible, y0: gpPos[0], ty: WALK.ty, el: elevG.visible, ey: elevG.position.y }; }, gpsAuto: function (on) { if (WALK.route) WALK.route.auto = !!on; WALK.nearT = 0; return !!WALK.route; },
       walkFloor: function (i, ann) { return walkFloor(i, ann, false); },
       walkAnnex: function () { if (!annexW) return false; if (WALK.fl === annexW.fl && WALK.zone !== 'torre') return walkFloor(annexW.fl, false, true); return walkFloor(annexW.fl, true, false); },
       walkMove: function (jx, jy) { WALK.jx = jx || 0; WALK.jy = jy || 0; },

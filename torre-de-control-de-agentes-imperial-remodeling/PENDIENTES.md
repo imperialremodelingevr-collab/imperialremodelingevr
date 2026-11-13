@@ -99,4 +99,9 @@
   - Cada casa antes del MLS muestra «🔔 Antes del MLS · subasta <fecha> (en N días)».
   - «⬆ Importar lista CSV» sirve para las listas de PropStream u otras; el agente las investiga primero.
   - PropStream es de pago ($99, $199 o $699 al mes). El agente no entra con contraseñas: si te suscribes, exportas el CSV y lo subes a la torre.
+- [x] Zona de bienestar en cada piso: caminadora con cinta animada y consola «EVR FIT», banco de pesas con rack, barra y mancuernas, estera de yoga con pelota, dos sillones, mesa, planta y EVR TV con el estado de la torre en vivo.
+  - En modo Caminar te acercas y usas «🏃 Usar la caminadora / 🏋 Pesas / 🧘 Estirarte / 🪑 Sentarte» (o la tecla Q). Cuenta tiempo, km, repeticiones y kcal; para salir, «⏹ Terminar» o caminas.
+  - Tocar el equipo desde la torre te lleva a ese piso a usarlo. Jarvis: «quiero hacer pesas», «a correr», «siéntate».
+  - Los agentes «en espera» toman descansos solos: corren, hacen pesas, se estiran o se sientan a ver la TV.
+- [ ] REVISAR: la tarea «Ili calls to calendar» (desactivada) tiene una llave de Bland.ai escrita en sus instrucciones. Revocarla en Bland.ai y quitarla de la tarea.
 - [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.
