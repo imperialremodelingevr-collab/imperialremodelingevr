@@ -263,6 +263,13 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .walkmap { position: absolute; left: 12px; bottom: 74px; width: 200px; height: 150px; z-index: 9; background: rgba(5, 10, 16, 0.82); border: 1px solid rgba(92, 255, 230, 0.45); }
 .walkhint { position: absolute; left: 50%; top: 118px; transform: translateX(-50%); z-index: 9; padding: 6px 12px; background: rgba(5, 10, 16, 0.85); color: #cfeff8; font-size: 12px; border: 1px solid rgba(92, 255, 230, 0.35); max-width: calc(100% - 24px); text-align: center; transition: opacity 1.2s; }
 .walkhint.fade { opacity: 0; pointer-events: none; }
+.quotecard { position: absolute; left: 50%; top: 64px; transform: translateX(-50%); z-index: 12; width: min(560px, calc(100% - 24px)); padding: 12px 40px 12px 16px; background: linear-gradient(135deg, rgba(40, 30, 6, 0.95), rgba(8, 16, 26, 0.95)); border: 1px solid #c9a84c; box-shadow: 0 0 30px rgba(201, 168, 76, 0.35); color: #fff4d6; transition: opacity .9s, transform .9s; }
+.quotecard[hidden] { display: none; }
+.quotecard.out { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+.quotecard b { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #ffc94d; margin-bottom: 4px; }
+.quotecard p { margin: 0; font-size: 15px; line-height: 1.45; }
+.quotecard button { position: absolute; top: 6px; right: 6px; }
+@media (max-width: 860px) { .quotecard { top: 52px; } .quotecard p { font-size: 14px; } }
 .pai { margin: 10px 0; padding: 10px 12px; border: 1px solid rgba(92, 255, 230, 0.4); background: rgba(92, 255, 230, 0.05); }
 .pai h4 { margin: 0 0 6px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #5cffe6; }
 .pai .row { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 4px 0; }
@@ -645,6 +652,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   <div class="walkpad" id="walkPad" hidden aria-hidden="true"><div class="knob" id="walkKnob"></div></div>
   <canvas class="walkmap" id="walkMap" width="200" height="150" hidden aria-label="Plano del piso"></canvas>
   <div class="walkhint" id="walkHint" hidden></div>
+  <div class="quotecard" id="quoteCard" hidden role="status" aria-live="polite"><b>Frase del día</b><p></p><button class="btn" type="button" aria-label="Cerrar frase" onclick="this.parentNode.hidden=true">×</button></div>
   <div class="walkgps" id="walkGps" hidden role="group" aria-label="GPS interior"><select id="wkDest" aria-label="Destino del GPS"></select><button class="btn primary" id="wkGo" type="button">Llévame</button><i class="garrow" id="wkArrow" hidden aria-hidden="true">➤</i><span class="gtxt" id="wkGpsTxt">Elige a quién visitar</span></div>
   <section class="wscreen" id="walkScreen" hidden aria-live="polite" aria-label="Pantalla del agente"></section>
   <section class="hpip" id="hpip" hidden aria-label="Control con las manos"><div class="hv"><video id="hVid" playsinline muted></video><canvas id="hCan" width="320" height="240"></canvas></div><div class="hm"><span id="hMsg">Iniciando cámara…</span><button id="hOff" type="button">Apagar</button></div><div class="hh" id="hHelp"></div></section>
@@ -760,6 +768,57 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
 
   /* ---------- Utilidades ---------- */
   var toastT;
+
+  /* ---------- Frase motivacional de crecimiento: una del día y otra en cada apertura ---------- */
+  var QUOTES = [
+    'Cada casa que hoy ves vieja es una oportunidad que mañana alguien va a pagar bien. Míralas con ojos de dueño.',
+    'El que construye todos los días, aunque sea un ladrillo, termina con un edificio. Hoy pon tu ladrillo.',
+    'No esperes a tener todo listo: los negocios grandes empiezan con una llamada valiente.',
+    'Tu empresa crece al ritmo de tus decisiones. Decide rápido, corrige rápido, avanza siempre.',
+    'Las oportunidades no se encuentran, se buscan: una dirección más, una oferta más, un sí más cerca.',
+    'Disciplina es hacer lo que toca aunque nadie esté mirando. Hoy es día de disciplina.',
+    'Una buena compra se gana en la oferta, no en la venta. Negocia con números, no con miedo.',
+    'Lo que hoy te cuesta trabajo, en un año será tu experiencia. Sigue.',
+    'El cliente feliz trae al siguiente cliente. Haz el trabajo como si fuera tu propia casa.',
+    'Crecer duele un poco y quedarse igual duele más. Escoge crecer.',
+    'Los inversionistas no compran casas: compran el potencial que otros no ven.',
+    'Primero el sistema, luego la escala. Tus agentes ya trabajan: tú enfócate en decidir.',
+    'Cada no te acerca a un sí. Sigue tocando puertas.',
+    'Tu reputación es el activo que más se revaloriza. Cuídala en cada detalle.',
+    'Hoy no tienes que hacerlo perfecto, tienes que hacerlo mejor que ayer.',
+    'Las grandes obras se planean en papel y se ganan en la constancia.',
+    'Un flip bien hecho son tres victorias: para el comprador, para el barrio y para tu empresa.',
+    'La suerte aparece cuando la preparación encuentra la oportunidad. Prepárate hoy.',
+    'Rodéate de gente que sume y de números que cuadren.',
+    'El miedo mira el riesgo; el empresario mira el margen. Calcula y actúa.',
+    'Tu visión es más grande que tus obstáculos. Sigue construyendo Imperial.',
+    'Quien controla su tiempo controla su crecimiento. Agenda primero lo que te hace crecer.',
+    'Una oferta enviada vale más que diez pensadas. Muévete.',
+    'Cada remodelación cuenta una historia: que la tuya sea de calidad y palabra cumplida.',
+    'No compites con otros contratistas, compites con la versión de ayer de tu empresa.',
+    'El dinero sigue al valor. Crea valor en cada casa que toques.',
+    'Hoy es buen día para aprender algo que mañana te haga ganar más.',
+    'Las bases firmes sostienen torres altas. Cuida tus bases: clientes, equipo y números.',
+    'Celebra los avances pequeños: son la prueba de que vas en camino.',
+    'Nesty, la torre ya está trabajando. Tu trabajo hoy es pensar en grande.'
+  ];
+  var RE_QUOTES = [
+    'En bienes raíces la ganancia se hace al comprar: busca el descuento, no la casa bonita.',
+    'Las casas que nadie quiere son las que más pagan: ahí está el margen.',
+    'Antes del MLS está el negocio; en el MLS está la competencia. Llega primero.',
+    'Un dueño con prisa y un comprador preparado: así nace un buen trato.',
+    'Ubicación, números y reparación: si los tres cuadran, no lo dudes.',
+    'Cada aviso de remate es una familia que necesita una salida digna; ofrecerla bien también es crecer.',
+    'El ARV manda: compra con el 70 % en la cabeza y la paciencia en el bolsillo.'
+  ];
+  function dayIndex() { var d = new Date(); return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(), 0, 0)) / 864e5); }
+  function quoteOfDay() { return QUOTES[dayIndex() % QUOTES.length]; }
+  var QUOTE_N = 0;
+  function quoteNow() { QUOTE_N++; return QUOTES[(dayIndex() * 7 + QUOTE_N * 11) % QUOTES.length]; }
+  function reQuote() { QUOTE_N++; return RE_QUOTES[(dayIndex() + QUOTE_N) % RE_QUOTES.length]; }
+  function showQuote(text, who) {
+    var el = $('#quoteCard'); if (!el) return; el.querySelector('b').textContent = who || 'Frase del día'; el.querySelector('p').textContent = text; el.hidden = false; el.classList.remove('out'); clearTimeout(showQuote.t); showQuote.t = setTimeout(function () { el.classList.add('out'); setTimeout(function () { el.hidden = true; }, 900); }, 12000);
+  }
   function toast(msg) {
     var el = $('#toast'); el.textContent = msg; el.classList.add('on');
     clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove('on'); }, 2800);
@@ -1124,7 +1183,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function jarvisBrief(auto) {
     var quiet = PREFS.jarvis === false, r = quiet ? jarvisReport() : jarvisOpen(false), sn = sinceText(), N = AGENTS.length, work = AGENTS.filter(function (a) { return a.status === 'working'; }).length;
     VOICE.briefed = true;
-    var txt = 'Bienvenido, Nesty. ' + work + ' de ' + N + ' agentes están trabajando. ' + sn.text + ' ' + (r.watch.length ? 'Tienes ' + r.watch.length + (r.watch.length === 1 ? ' asunto' : ' asuntos') + ' que requieren atención; te los muestro en la torre.' : 'No hay nada urgente.');
+    var qd = quoteOfDay(); showQuote(qd, '💡 Frase del día · Jarvis');
+    var txt = 'Bienvenido, Nesty. Frase del día: ' + qd + ' ' + work + ' de ' + N + ' agentes están trabajando. ' + sn.text + ' ' + (r.watch.length ? 'Tienes ' + r.watch.length + (r.watch.length === 1 ? ' asunto' : ' asuntos') + ' que requieren atención; te los muestro en la torre.' : 'No hay nada urgente.');
     PREFS.snap = sn.snap; PREFS.lastSeen = Date.now(); savePrefs();
     var an = $('#jaAns'); if (an && !quiet) { an.hidden = false; an.textContent = 'Jarvis: ' + txt; }
     voiceSay(null, txt, function () { if (r.watch.length && !quiet && !$('#jarvis').hidden) jarvisTour(true); });
@@ -1144,7 +1204,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
   function jarvisGreet(r) {
     var h = new Date().getHours(), hi = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches', w = r.watch || [];
-    return hi + ', Nesty. Aquí estoy. ' + (w.length ? (w.length === 1 ? 'Una cosa requiere tu atención: ' : w.length + ' cosas requieren tu atención. La primera: ') + w[0].t + ' ' : 'Todo marcha bien en la torre. ') + '¿En qué te ayudo? Te escucho.';
+    var q = quoteNow(); showQuote(q, '💡 Jarvis para ti');
+    return hi + ', Nesty. ' + q + ' ' + (w.length ? (w.length === 1 ? 'Una cosa requiere tu atención: ' : w.length + ' cosas requieren tu atención. La primera: ') + w[0].t + ' ' : 'Todo marcha bien en la torre. ') + '¿En qué te ayudo? Te escucho.';
   }
   function jarvisWake() {
     unlockAudio(); try { if (TTS) TTS.resume(); } catch (e) {}
@@ -1252,6 +1313,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   setTimeout(function () { if (!VOICE.on && !VOICE.welcomed) voiceLine('Toca «Voz» para que los agentes te hablen y «Hablar» para darles órdenes con tu voz.', 'Torre'); }, 4500);
   if (TTS && TTS.addEventListener) TTS.addEventListener('voiceschanged', function () {});
   renderVoice();
+  setTimeout(function () { if (!VOICE.briefed) showQuote(quoteOfDay(), '💡 Frase del día'); }, 5200);
   if (window.__EVR_TEST__) window.__voiceTest = { callout: function (id) { var a = byId(id); return a ? callout(a) : false; }, report: function () { return jarvisReport(); }, ask: jarvisAsk, open: jarvisOpen, cmd: function (t) { return voiceCommand(normV(t)); }, heard: heard, help: voiceHelp, agent: findAgentV, state: function () { return { on: VOICE.on, aw: !!VOICE.awaiting, always: VOICE.always, listening: VOICE.listening, micOk: VOICE.micOk, blocked: VOICE.micBlocked }; } };
 
   /* ---------- Vista simplificada: respaldo si el 3D no puede mantenerse ---------- */
@@ -3503,7 +3565,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       g.fillStyle = '#ffc94d'; g.font = '700 30px sans-serif'; g.textAlign = 'left'; g.fillText('EVR TV', 20, 42); g.fillStyle = '#9fd8f5'; g.font = '500 20px sans-serif'; g.fillText(new Date().toLocaleTimeString('es-US', { hour: '2-digit', minute: '2-digit' }), W - 110, 40);
       g.fillStyle = '#ffffff'; g.font = '600 26px sans-serif'; g.fillText('Agentes trabajando: ' + work + ' de ' + AGENTS.length, 20, 100); g.fillText('En descanso: ' + idle, 20, 140); g.fillStyle = al ? '#ff8a7a' : '#7dffb0'; g.fillText(al ? al + ' necesitan ayuda' : 'Todo en orden', 20, 180);
       var rx = reactor && reactor.info ? reactor.info() : null; g.fillStyle = '#ffd27a'; g.font = '500 22px sans-serif'; g.fillText(rx ? '☢ Reactor ' + rx.power + '% · ' + rx.nodes + ' nodos encendidos' : '☢ Reactor en línea', 20, 222);
-      var tick = ['Toma agua y estírate 🧘', 'Caminadora: 10 min = más energía ⚡', 'Hey bro, buen trabajo hoy 💪', 'Nesty: revisa la bandeja cuando puedas 📬'], tk = tick[Math.floor(t / 6) % tick.length]; g.fillStyle = 'rgba(92,255,230,.15)'; g.fillRect(0, 244, W, 44); g.fillStyle = '#bffcf0'; g.font = '500 22px sans-serif'; g.fillText(tk, 20 - ((t * 40) % 40), 274);
+      var tick = ['💡 ' + quoteOfDay(), 'Toma agua y estírate 🧘', 'Caminadora: 10 min = más energía ⚡', 'Hey bro, buen trabajo hoy 💪', 'Nesty: revisa la bandeja cuando puedas 📬'], tk = tick[Math.floor(t / 6) % tick.length]; g.fillStyle = 'rgba(92,255,230,.15)'; g.fillRect(0, 244, W, 44); g.fillStyle = '#bffcf0'; g.font = '500 22px sans-serif'; g.fillText(tk, 20 - ((t * 40) % 40), 274);
       GYM.tvTex.needsUpdate = true;
       var c = GYM.consoleCanvas.getContext('2d'), U = WALK && WALK.act ? WALK.act : null, sec = U ? Math.floor(clockT - U.t0) : 0;
       c.fillStyle = '#04121c'; c.fillRect(0, 0, 256, 128); c.strokeStyle = '#5cffe6'; c.lineWidth = 4; c.strokeRect(2, 2, 252, 124); c.fillStyle = '#5cffe6'; c.font = '700 22px monospace'; c.textAlign = 'center'; c.fillText('EVR FIT', 128, 30);
@@ -4767,6 +4829,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       else if (st === 'warning') v.sayText = hi + ' Soy ' + a.name + '. Voy un poco lento, pero sigo trabajando.';
       else if (st === 'working') { v.sayText = hi + ' Soy ' + a.name + '. Ahora estoy ' + (act.indexOf('ando') > -1 || act.indexOf('iendo') > -1 ? act : 'con: ' + act) + '.'; }
       else v.sayText = hi + ' Soy ' + a.name + '. No tengo pendientes, avísame si me necesitas.';
+      if (a.id === 'oport' && st !== 'error') { var rq = reQuote(); v.sayText += ' ' + rq; showQuote(rq, '🏠 Oportunidades: frase de bienes raíces'); }
       v.sayUntil = clockT + 5; if (st !== 'error') v.greetEnd = clockT + 4.5;
       if (st !== 'error' && !JT.on) voiceSay(a, agentBrief(a).speech, null, false, true);
     }

@@ -103,5 +103,10 @@
   - En modo Caminar te acercas y usas «🏃 Usar la caminadora / 🏋 Pesas / 🧘 Estirarte / 🪑 Sentarte» (o la tecla Q). Cuenta tiempo, km, repeticiones y kcal; para salir, «⏹ Terminar» o caminas.
   - Tocar el equipo desde la torre te lleva a ese piso a usarlo. Jarvis: «quiero hacer pesas», «a correr», «siéntate».
   - Los agentes «en espera» toman descansos solos: corren, hacen pesas, se estiran o se sientan a ver la TV.
+- [x] Frase motivacional de crecimiento:
+  - Una frase del día cambia cada día; Jarvis la dice al darte la bienvenida y aparece en una tarjeta dorada.
+  - Cada vez que abres a Jarvis te dice otra frase.
+  - El agente de Oportunidades agrega una frase de bienes raíces al saludarte.
+  - La EVR TV de cada piso muestra la frase del día.
 - [ ] REVISAR: la tarea «Ili calls to calendar» (desactivada) tiene una llave de Bland.ai escrita en sus instrucciones. Revocarla en Bland.ai y quitarla de la tarea.
 - [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.
