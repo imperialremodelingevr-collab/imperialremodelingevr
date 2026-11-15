@@ -9,3 +9,7 @@ _extract*
 _gen*
 _fix*
 .env*
+!.env.agent.example
+*.db
+__pycache__/
+*.pyc

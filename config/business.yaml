@@ -1,0 +1,29 @@
+# Configuración del negocio — Imperial Remodeling EVR
+negocio:
+  nombre: "Imperial Remodeling EVR"
+  descripcion: >
+    Empresa de remodelación residencial y comercial ubicada en Las Vegas, NV.
+    Servicios: remodelación de cocinas (gabinetes, encimeras de cuarzo, islas),
+    remodelación de baños (duchas de vidrio, vanidades, azulejos), instalación de
+    pisos (madera, laminado, cerámica), pintura exterior e interior, y proyectos
+    comerciales (restaurantes, oficinas). Trabajo de alta calidad, puntual y con
+    materiales premium.
+  horario: "Lunes a Viernes 8am–6pm, Sábados 9am–3pm (hora de Las Vegas, PT)"
+  telefono_negocio: ""
+  sitio_web: "https://imperialremodelingevr.com"
+  area_servicio: "Las Vegas, Henderson, North Las Vegas y alrededores (Nevada)"
+
+agente:
+  nombre: "Sofia"
+  tono: "profesional pero cálido y accesible"
+  casos_de_uso:
+    - "Responder preguntas frecuentes sobre servicios y precios"
+    - "Agendar citas de estimación gratuita"
+    - "Registrar y dar seguimiento a leads / prospectos"
+    - "Enviar recordatorios de citas"
+    - "Alertar sobre trabajos y clientes potenciales"
+
+metadata:
+  creado: "2026-11-15"
+  proveedor: "zernio"
+  version: "2.0"
