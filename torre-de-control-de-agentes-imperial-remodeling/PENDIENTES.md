@@ -134,6 +134,12 @@
 - [x] **Voz de hombre más natural**: Jarvis elige la mejor voz de hombre en español (prefiere las «Natural/Online/Mejorada»); cada especialidad tiene su propia voz cuando el equipo trae varias, y su propio ritmo y tono. Selector «Voz de Jarvis» en Sistema y comando «cambia la voz».
   - Las palabras se marcan mientras habla, en la burbuja de voz y en el recuadro donde aparece la respuesta (Jarvis, pantallas de agentes, Coach y Laboratorio).
   - Las voces dependen del navegador: en la computadora, Microsoft Edge trae voces naturales de hombre (Jorge, Gerardo, Alonso); en iPhone se descarga «Jorge (mejorada)» en Ajustes › Accesibilidad › Contenido leído › Voces.
+- [x] **Oficina Postal** (piso 13 de la torre): agente nuevo que recibe el correo y lo filtra. Botón «📮 Postal», tocar la oficina o decirle a Jarvis «oficina postal» / «dónde está mi NEO».
+  - En 3D: pared de casilleros con cartas de colores (rojo urgente, dorado clientes, azul informativo), mesa de clasificación con cajas urgente/clientes/basura, la caja del robot NEO sobre una tarima, y un tablero con los contadores del día y el estado de NEO (se lee dentro y desde afuera).
+  - Panel: seguimiento diario del robot NEO (estado, fecha de entrega, último correo de 1X, borrador para preguntar la fecha); lo que llegó; «Para atender primero» con resumen, por qué está arriba y borrador de respuesta (copiar, reescribir con tu tono, abrir en Gmail, marcar atendido); lo que se tiró para que lo revises; reglas y objetivos que le enseñas.
+  - Solo lectura: Gmail se lee, nunca se envía, borra, archiva ni etiqueta; los borradores viven en la Torre y los envías tú.
+  - Corre solo a las 6:40 a. m. y 3:40 p. m. (Chicago) dentro de esta sesión de Claude Code, que es la que tiene Gmail conectado. Las rutinas que crea Claude no pueden llevar Gmail; si quieres que corra aparte, créala en Rutinas de claude.ai con Gmail conectado y pega el texto de la tarea «Oficina Postal EVR».
+  - Primera revisión real (15-nov): 50 correos, 2 asuntos urgentes (cierre de 3112 Parkside Dr a más tardar el 24-nov y un 2º aviso de biBERK), 3 posibles trabajos de Nextdoor, NEO sin fecha de entrega.
 
   - Es guía general, no consejo médico.
 - [ ] REVISAR: la tarea «Ili calls to calendar» (desactivada) tiene una llave de Bland.ai escrita en sus instrucciones. Revocarla en Bland.ai y quitarla de la tarea.

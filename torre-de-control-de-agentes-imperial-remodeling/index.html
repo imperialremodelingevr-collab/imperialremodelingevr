@@ -281,6 +281,19 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .drhint { position: absolute; left: 50%; top: 158px; transform: translateX(-50%); z-index: 9; padding: 6px 12px; background: rgba(5, 10, 16, 0.85); color: #f6d9ff; font-size: 12px; border: 1px solid rgba(255, 61, 240, 0.35); max-width: calc(100% - 24px); text-align: center; transition: opacity 1.2s; }
 .drhint.fade { opacity: 0; pointer-events: none; }
 
+.coachp.postp { border-color: rgba(255, 158, 207, 0.55); box-shadow: 0 0 50px rgba(255, 158, 207, 0.16); }
+.postp header { background: linear-gradient(90deg, rgba(255, 158, 207, 0.16), transparent); border-bottom-color: rgba(255, 158, 207, 0.3); }
+.postp .ccard h3 { color: #ff9ecf; }
+.postp .neo { border-left: 3px solid #ffc94d; padding: 8px 12px; background: rgba(255, 201, 77, 0.08); } .postp .neo[data-s="fecha"], .postp .neo[data-s="envio"], .postp .neo[data-s="entrega"] { border-left-color: #3ddc84; background: rgba(61, 220, 132, 0.09); }
+.postp .neo b { font-size: 15px; } .postp .neo p { margin: 4px 0 0; }
+.postp .chips { display: flex; flex-wrap: wrap; gap: 6px; } .postp .chip { padding: 5px 10px; border: 1px solid; font-size: 12px; } .postp .chip b { font-size: 16px; margin-right: 4px; }
+.postp .mi { border: 1px solid rgba(92, 200, 255, 0.3); border-left-width: 3px; padding: 8px 10px; margin-top: 8px; background: rgba(10, 22, 34, 0.7); } .postp .mi[data-c="urgente"] { border-left-color: #ff5a5f; } .postp .mi[data-c="cliente"] { border-left-color: #ffc94d; } .postp .mi[data-c="importante"] { border-left-color: #5cc8ff; } .postp .mi.done { opacity: .45; }
+.postp .mi h4 { margin: 0 0 2px; font-size: 13px; } .postp .mi .meta { font-size: 11px; opacity: .72; } .postp .mi p { margin: 4px 0; font-size: 12.5px; }
+.postp details { margin-top: 6px; } .postp summary { cursor: pointer; color: #ffd0e8; font-size: 12px; }
+.postp pre.draft { white-space: pre-wrap; font: inherit; font-size: 12.5px; border-left: 2px solid #ff9ecf; padding: 6px 10px; background: rgba(255, 158, 207, 0.07); margin: 6px 0; }
+.postp .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; } .postp .junk li { font-size: 12px; opacity: .85; }
+.postp textarea { width: 100%; min-height: 70px; background: #07141f; color: #fff; border: 1px solid rgba(255, 158, 207, 0.4); padding: 6px; font: inherit; font-size: 12.5px; resize: vertical; }
+
 .kara .kwd { opacity: .55; transition: opacity .12s, background-color .12s; border-radius: 3px; }
 .kara .kwd.kd { opacity: 1; }
 .kara .kwd.kw { opacity: 1; color: #fff; background: rgba(255, 201, 77, 0.4); box-shadow: 0 0 0 2px rgba(255, 201, 77, 0.4); }
@@ -548,6 +561,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <button class="btn extra" id="btnTour" type="button">Recorrido: apagado</button>
       <button class="btn" id="btnWalk" type="button" title="Recorre a pie cada piso de la torre y la nave anexo">🚶 Caminar</button>
       <button class="btn" id="btnDrone" type="button" title="Monta el dron EVR: vuela por la ciudad, dispara a los drones de práctica y mira la guerra entre planetas">🚁 Dron</button>
+      <button class="btn" id="btnPost" type="button" title="Oficina Postal: tu correo filtrado, borradores de respuesta y el seguimiento del robot NEO">📮 Postal</button>
       <button class="btn" id="btnLab" type="button" title="Laboratorio EVR: arma y repara agentes, propone automatizaciones y trae noticias de IA y economía">🧪 Lab</button>
       <button class="btn" id="btnCoach" type="button" title="Torre Bio-Fit: rutina, dieta, tratamiento y seguimiento">🧬 Coach</button>
       <button class="btn" id="btnMore" type="button">Más herramientas</button>
@@ -729,6 +743,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   <section class="props" id="props" hidden aria-label="Propiedades y mapa"></section>
   <section class="coachp" id="coachP" hidden aria-label="Coach EVR: rutina y dieta"></section>
   <section class="coachp labp" id="labP" hidden aria-label="Laboratorio EVR: fábrica de agentes y noticias"></section>
+  <section class="coachp postp" id="postP" hidden aria-label="Oficina Postal: correo filtrado y seguimiento del robot NEO"></section>
   <div class="toast" id="toast" role="status"></div>
 </div>
 
@@ -740,6 +755,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
 
   var COL = { working: 0x5cc8ff, idle: 0x5d7389, warning: 0xffc857, error: 0xff5a5f };
   var LBL = { working: 'Trabajando', idle: 'En espera', warning: 'Atención', error: 'Con falla' };
+  var POST = { today: null, neo: null, rules: '', state: { done: {} }, sub: false, rew: {}, greeted: false };
   var CSSC = { working: '#5cc8ff', idle: '#5d7389', warning: '#ffc857', error: '#ff5a5f' };
 
   /* ---------- Los pisos de la torre. Cada agente real se enlaza por su id (ver agents/<id> en la base de datos) ---------- */
@@ -769,7 +785,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     { id: 'publica', name: 'Publicaciones', role: 'Planea, redacta y publica cada post, y vigila cuántos tokens gasta cada publicación.', status: 'working',
       acts: ['Redactando el texto de un post de Instagram', 'Programando la publicación de mañana', 'Eligiendo la mejor hora para publicar', 'Calculando los tokens gastados por post'] },
     { id: 'oport', name: 'Oportunidades', role: 'Busca casas para remodelar (fixer-upper) en McKinney, Plano y Frisco y calcula si convienen. Solo propone: tú decides.', status: 'working',
-      acts: ['Revisando listados de McKinney', 'Calculando costo de remodelación y margen de una casa', 'Comparando precio por pie cuadrado en Plano', 'Preparando la ficha de una propiedad candidata', 'Buscando casas que necesiten remodelación integral en Frisco'] }
+      acts: ['Revisando listados de McKinney', 'Calculando costo de remodelación y margen de una casa', 'Comparando precio por pie cuadrado en Plano', 'Preparando la ficha de una propiedad candidata', 'Buscando casas que necesiten remodelación integral en Frisco'] },
+    { id: 'postal', name: 'Oficina Postal', role: 'Recibe todo el correo: tira la basura, ordena lo importante (clientes y objetivos), redacta borradores de respuesta y cada día busca el aviso de entrega del robot NEO. Nunca envía: tú decides.', status: 'working',
+      acts: ['Clasificando el correo que llegó esta mañana', 'Tirando correos de publicidad a la basura', 'Redactando un borrador de respuesta para un cliente', 'Buscando el aviso de entrega del robot NEO', 'Poniendo arriba lo que necesita tu atención hoy'] }
   ];
   var t0 = Date.now(), N = AGENTS.length;
   AGENTS.forEach(function (a, i) {
@@ -791,7 +809,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     { id: 'l6', title: 'Recordatorios de pago a clientes', agent: 'cobros', every: 1440, at: t0 + 41 * 60000, done: false },
     { id: 'l7', title: 'Publicación programada de redes', agent: 'social', every: 1440, at: t0 + 58 * 60000, done: false },
     { id: 'l8', title: 'Resumen diario de proyectos', agent: 'reportes', every: 1440, at: t0 + 95 * 60000, done: false },
-    { id: 'l9', title: 'Buscar casas fixer-upper en McKinney, Plano y Frisco', agent: 'oport', every: 1440, at: t0 + 75 * 60000, done: false }
+    { id: 'l9', title: 'Buscar casas fixer-upper en McKinney, Plano y Frisco', agent: 'oport', every: 1440, at: t0 + 75 * 60000, done: false },
+    { id: 'l10', title: 'Filtrar el correo y buscar el aviso de entrega del robot NEO', agent: 'postal', every: 240, at: t0 + 21 * 60000, done: false }
   ];
   var INBOX = [
     { id: 'i1', agent: 'cotiz', title: 'Cotización de cocina: margen bajo', body: 'Cotizaciones propone $18,450 con gabinetes a medida. El margen quedó en 14%, por debajo de tu mínimo de 20%.', ok: 'Aprobar así', ask: 'Ajustar precio', hint: 'Qué debe cambiar (ej. subir 6% mano de obra)' },
@@ -945,7 +964,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     resenas:  { t: 3, e: '⭐', c: '#ffe066', hz: 880, vib: [220, 80, 80] },
     reportes: { t: 4, e: '📊', c: '#8fb4d6', hz: 400, vib: [500] },
     publica:  { t: 4, e: '📣', c: '#c39bff', hz: 1100, vib: [90, 60, 90] },
-    oport:    { t: 4, e: '🏠', c: '#6fe39a', hz: 700, vib: [180, 120, 180] }
+    oport:    { t: 4, e: '🏠', c: '#6fe39a', hz: 700, vib: [180, 120, 180] },
+    postal:   { t: 2, e: '📮', c: '#ff9ecf', hz: 960, vib: [180, 90, 180] }
   };
   function aid(a) { return AID[a.id] || { t: 4, e: '🔔', c: '#8fb4d6', hz: 800, vib: [200] }; }
   function byImportance(x, y) { var ix = aid(x), iy = aid(y), ex = x.status === 'error' ? 0 : 1, ey = y.status === 'error' ? 0 : 1; return (ix.t - iy.t) || (ex - ey) || ((x.errorAt || x.since || 0) - (y.errorAt || y.since || 0)); }
@@ -998,7 +1018,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   /* ---------- Voz: los agentes hablan y escuchan (el reconocimiento lo hace el navegador) ---------- */
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition, TTS = window.speechSynthesis || null;
   function normV(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); }
-  var VKEYS = { cotiz: ['cotizacion', 'cotizaciones'], cliente: ['cliente', 'atencion'], correo: ['correo', 'correos'], proyectos: ['proyectos', 'proyecto'], leads: ['prospectos', 'prospecto'], citas: ['calendario', 'citas', 'agenda'], social: ['comunidad', 'redes'], cobros: ['cobros', 'facturacion', 'factura', 'facturas'], resenas: ['resenas', 'resena'], reportes: ['reportes'], publica: ['publicaciones', 'publicacion'], oport: ['oportunidades', 'oportunidad', 'propiedades', 'casas'] };
+  var VKEYS = { cotiz: ['cotizacion', 'cotizaciones'], cliente: ['cliente', 'atencion'], correo: ['correo', 'correos'], proyectos: ['proyectos', 'proyecto'], leads: ['prospectos', 'prospecto'], citas: ['calendario', 'citas', 'agenda'], social: ['comunidad', 'redes'], cobros: ['cobros', 'facturacion', 'factura', 'facturas'], resenas: ['resenas', 'resena'], reportes: ['reportes'], publica: ['publicaciones', 'publicacion'], oport: ['oportunidades', 'oportunidad', 'propiedades', 'casas'], postal: ['oficina postal', 'postal', 'buzon', 'paqueteria'] };
   function findAgentV(n) { var pad = ' ' + n + ' ', hit = null; AGENTS.forEach(function (a) { (VKEYS[a.id] || []).forEach(function (w) { if (!hit && pad.indexOf(' ' + w + ' ') > -1) hit = a; }); }); return hit; }
   var voLineT = 0;
   function voiceLine(txt, who) { var el = $('#voLine'); if (!el) return; el.textContent = (who ? who + ': ' : '') + txt; el.classList.add('show'); clearTimeout(voLineT); voLineT = setTimeout(function () { el.classList.remove('show'); }, 9000); }
@@ -1009,7 +1029,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
   var VOZ = { pick: (function () { try { return localStorage.getItem('evr.voz') || ''; } catch (e) { return ''; } })() };
   /* estilo de voz por especialidad: [velocidad, tono] */
-  var VSTYLE = { jarvis: [1.0, 0.92], cotiz: [0.98, 0.9], cliente: [1.0, 0.96], correo: [1.02, 0.93], proyectos: [0.97, 0.88], leads: [1.05, 0.95], citas: [1.0, 0.96], social: [1.07, 1.0], cobros: [0.95, 0.86], resenas: [1.0, 0.94], reportes: [0.97, 0.9], publica: [1.05, 0.98], oport: [1.02, 0.9], coach: [1.06, 0.96], lab: [0.99, 0.9] };
+  var VSTYLE = { jarvis: [1.0, 0.92], cotiz: [0.98, 0.9], cliente: [1.0, 0.96], correo: [1.02, 0.93], proyectos: [0.97, 0.88], leads: [1.05, 0.95], citas: [1.0, 0.96], social: [1.07, 1.0], cobros: [0.95, 0.86], resenas: [1.0, 0.94], reportes: [0.97, 0.9], publica: [1.05, 0.98], oport: [1.02, 0.9], coach: [1.06, 0.96], lab: [0.99, 0.9], postal: [1.03, 0.94] };
   var MALE_RE = /jorge|diego|juan|pablo|[aá]lvaro|ra[uú]l|carlos|enrique|andr[eé]s|gerardo|tom[aá]s|alonso|mateo|emilio|jos[eé]|luciano|federico|arnau|dar[ií]o|gonzalo|manuel|ricardo|eddy|reed|rocko|grandpa|lorenzo|hombre|\bmale\b|masculin/i;
   var FEMALE_RE = /paulina|m[oó]nica|helena|laura|sabina|dalia|elvira|luc[ií]a|marisol|paloma|camila|female|mujer|conchita|pen[eé]lope|lupe|\bmia\b|ximena|renata|valentina|beatriz|esperanza|elena|isabela|salom[eé]|catalina|ang[eé]lica|\bflo\b|sandy|shelley|grandma|google espa[nñ]ol/i;
   function isMaleV(v) { return !!v && MALE_RE.test(v.name || '') && !FEMALE_RE.test(v.name || ''); }
@@ -1140,6 +1160,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (/\b(silencia|silencio|callate|calla)\b/.test(n)) { alerts().forEach(function (x) { x.acked = true; }); return 'Alarmas silenciadas.'; }
     if (/\b(aprueba|aprobar|acepta|aceptar)\b/.test(n)) { tab('inbox'); return 'Abrí la bandeja. Confirma con el botón de cada elemento; no envío nada sin tu toque.'; }
     if (/\b(cambia|cambiar|otra|siguiente)\b/.test(n) && /\bvoz\b/.test(n)) return cycleVoz();
+    if (/\b(oficina postal|buzon|robot neo|mi neo|el neo|neo)\b/.test(n) || /\bcorreos? (importantes?|urgentes?|de hoy)\b/.test(n)) { postLoad(); openPost(true); var cu = (POST.today && POST.today.counts) || {}; return 'Oficina postal. Sobre tu robot NEO: ' + neoLine() + '. ' + (POST.today ? 'Correos: ' + (cu.urgente || 0) + ' urgentes, ' + (cu.cliente || 0) + ' de clientes, ' + (cu.basura || 0) + ' tirados a la basura.' : 'Todavía no hay correo filtrado.'); }
     if (/\b(laboratorio|fabrica|ingeniero|taller)\b/.test(n)) { openLab(true); return 'Abrí el laboratorio: noticias, taller de robots y fábrica de agentes.'; }
     if (/\bnoticias?\b/.test(n)) { labLoad(); var na = labItems('ai').slice(0, 2), ne = labItems('eco').slice(0, 2); if (!na.length && !ne.length) return 'Todavía no hay noticias guardadas; el ingeniero las trae cada mañana a las 6:20.'; return 'Noticias de IA: ' + na.map(function (x) { return x.t; }).join('. ') + '. Economía: ' + ne.map(function (x) { return x.t; }).join('. ') + '.'; }
     if (/\b(dron|drone|drones)\b/.test(n)) { if (/\b(sal|salir|baja|bajar|bajame|deja|dejar|aterriza)\b/.test(n)) { exitDrone(); return 'Aterrizamos el dron.'; } enterDrone(); return 'Despegando el dron, Nesty. Vuela con W A S D y dispara con clic.'; }
@@ -1239,7 +1260,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       { name: 'exit_office', description: 'Sale de la oficina y vuelve a la vista de la torre.', execute: function () { exitOffice(); return 'Salí de la oficina'; } },
       { name: 'walk_floor', description: 'Activa el modo caminar en primera persona en el piso de un agente (o en la nave anexo de Oportunidades) para recorrerlo a pie; sin agente usa el seleccionado.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } } }, execute: function (i) { var a = (i && i.agent) ? need(i) : ((selected && byId(selected)) || byId('cotiz')); enterWalk(a.id); return 'Caminando por el piso de ' + a.name; } },
       { name: 'walk_gps', description: 'GPS interior: dentro del modo caminar, traza la ruta (elevador incluido) hasta un agente y te lleva caminando con él.', inputSchema: { type: 'object', properties: { agent: { type: 'string' } }, required: ['agent'] }, execute: function (i) { var a = need(i); if (!WALKING) enterWalk(byId('cotiz').id); if (scene3d) scene3d.gpsTo(a.id, true); return 'GPS en camino hacia ' + a.name; } },
-      { name: 'coach_today', description: 'Abre el Coach EVR (gimnasio del anexo) y devuelve la rutina, el menú y el agua de hoy si ya hay plan.', execute: function () { openCoach(true); var t = coachToday(); return t ? 'Hoy: ' + t.name + ' (' + t.ex.join(', ') + '). Menú: ' + t.menu.join(' | ') + '. ' + t.kcal + ' kcal, ' + t.prot + ' g proteína, ' + t.water + ' L agua.' : 'Aún no hay plan: pide a Nesty que llene sus datos en el panel del coach.'; } },
+      { name: 'neo_status', description: 'Dice en qué va el aviso de entrega del robot NEO según lo que la Oficina Postal encontró en el correo de Nesty (solo lectura).', execute: function () { postLoad(); return 'NEO: ' + neoLine() + (POST.neo && POST.neo.deliveryDate ? '. Fecha: ' + POST.neo.deliveryDate : '') + (POST.neo && POST.neo.checkedAt ? '. Última revisión ' + postAgo(POST.neo.checkedAt) : '') + '.'; } },
+      { name: 'mail_today', description: 'Resume el correo que la Oficina Postal filtró hoy: cuántos urgentes, de clientes y a la basura, y los 3 asuntos más importantes. No envía ni borra nada.', execute: function () { postLoad(); var t = POST.today; if (!t) return 'Todavía no hay correo filtrado.'; var c = t.counts || {}, tp = postItems(['urgente', 'cliente', 'importante']).sort(function (a, b) { return (b.prio || 0) - (a.prio || 0); }).slice(0, 3).map(function (x) { return x.subj; }); return (c.urgente || 0) + ' urgentes, ' + (c.cliente || 0) + ' de clientes, ' + (c.basura || 0) + ' a la basura. Primero: ' + (tp.join(' | ') || 'nada pendiente') + '.'; } },
+      { name: 'coach_today', description: 'Abre el Coach EVR (torre Bio-Fit) y devuelve la rutina, el menú y el agua de hoy si ya hay plan.', execute: function () { openCoach(true); var t = coachToday(); return t ? 'Hoy: ' + t.name + ' (' + t.ex.join(', ') + '). Menú: ' + t.menu.join(' | ') + '. ' + t.kcal + ' kcal, ' + t.prot + ' g proteína, ' + t.water + ' L agua.' : 'Aún no hay plan: pide a Nesty que llene sus datos en el panel del coach.'; } },
       { name: 'reactor_status', description: 'Estado del reactor de fusión IA que da energía a la ciudad: potencia, módulos armados por los bots y nodos de la red encendidos. Enfoca la cámara en el reactor.', execute: function () { if (scene3d && scene3d.focusReactor) scene3d.focusReactor(); return reactorText(); } },
       { name: 'exit_walk', description: 'Sale del modo caminar y vuelve a la vista de la torre.', execute: function () { exitWalk(); return 'Dejé de caminar'; } },
       { name: 'open_section', description: 'Abre una sección del panel: bandeja, tareas, obras, publicaciones, tokens, memoria, estructura, asistente o sistema.', inputSchema: { type: 'object', properties: { section: { type: 'string' } }, required: ['section'] }, execute: function (i) { var k = SECTIONS_TAB[normV(i && i.section)]; if (!k) throw new Error('Sección desconocida'); panelOpen = true; zen = false; applyUi(); tab(k); return 'Abrí ' + TAB_TITLES[k]; } },
@@ -1307,7 +1330,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     var quiet = PREFS.jarvis === false, r = quiet ? jarvisReport() : jarvisOpen(false), sn = sinceText(), N = AGENTS.length, work = AGENTS.filter(function (a) { return a.status === 'working'; }).length;
     VOICE.briefed = true;
     var qd = quoteOfDay(); showQuote(qd, '💡 Frase del día · Jarvis');
-    var txt = 'Bienvenido, Nesty. Frase del día: ' + qd + ' ' + work + ' de ' + N + ' agentes están trabajando. ' + sn.text + ' ' + (r.watch.length ? 'Tienes ' + r.watch.length + (r.watch.length === 1 ? ' asunto' : ' asuntos') + ' que requieren atención; te los muestro en la torre.' : 'No hay nada urgente.');
+    var txt = 'Bienvenido, Nesty. Frase del día: ' + qd + ' ' + work + ' de ' + N + ' agentes están trabajando. ' + sn.text + ' ' + (r.watch.length ? 'Tienes ' + r.watch.length + (r.watch.length === 1 ? ' asunto' : ' asuntos') + ' que requieren atención; te los muestro en la torre.' : 'No hay nada urgente.') + (POST.neo ? ' Sobre tu robot NEO: ' + neoLine() + '.' : '');
     PREFS.snap = sn.snap; PREFS.lastSeen = Date.now(); savePrefs();
     var an = $('#jaAns'); if (an && !quiet) { an.hidden = false; an.textContent = 'Jarvis: ' + txt; }
     voiceSay(null, txt, function () { if (r.watch.length && !quiet && !$('#jarvis').hidden) jarvisTour(true); });
@@ -1692,7 +1715,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     resenas: ['Conéctame a Google Business para pedir y contestar reseñas reales.', 'Ya estoy conectado; dime qué obras ya pueden pedir reseña.'],
     reportes: ['Aliméntame con datos reales de correo, calendario y cobros para el reporte diario.', 'Ya uso datos reales; dime qué números quieres ver primero.'],
     publica: ['Conéctame a Metricool para programar y medir las publicaciones.', 'Ya estoy conectado; dime qué días y horas prefieres publicar.'],
-    oport: ['Dame tu presupuesto máximo y tus zonas favoritas para filtrar mejor las casas.', 'Ya busco solo cada día; dime tu presupuesto máximo y zonas favoritas para afinar.']
+    oport: ['Dame tu presupuesto máximo y tus zonas favoritas para filtrar mejor las casas.', 'Ya busco solo cada día; dime tu presupuesto máximo y zonas favoritas para afinar.'],
+    postal: ['Conéctame a Gmail en solo lectura para filtrar tu correo; nunca envío ni borro nada sin tu «sí».', 'Ya leo tu correo en solo lectura; dime qué remitentes son VIP y cuáles tiro siempre a la basura.']
   };
   function agentBrief(a) {
     var mine = openTasks().filter(function (t) { return t.agent === a.id; }).length, rec = (INBOX || []).filter(function (x) { return x.agent === a.id; }).length, doing;
@@ -1769,7 +1793,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       '<div class="mine"><small>Próximas tareas</small>' + (mine.length ? '<ul>' + mine.map(function (t) { return '<li><time>' + clock(t.at) + '</time><span>' + esc(t.title) + '</span></li>'; }).join('') + '</ul>' : '<p>Sin tareas programadas.</p>') + '</div>' +
       '<form class="ask" data-cask="' + esc(a.id) + '" autocomplete="off"><input type="text" maxlength="160" placeholder="Pregúntale a ' + esc(a.name) + '…" aria-label="Pregúntale a ' + esc(a.name) + '"><button class="btn primary" type="submit">Preguntar</button></form>' + (AGENT_ANS[a.id] ? '<p class="aans">' + esc(AGENT_ANS[a.id]) + '</p>' : '') +
       '<form class="ask" data-cskill="' + esc(a.id) + '" autocomplete="off"><input type="text" maxlength="300" placeholder="Enséñale una skill o regla…" aria-label="Enseñar una skill a ' + esc(a.name) + '"><button class="btn" type="submit">Enseñar</button></form>' + (skillsOf(a.id).length ? '<p class="role">Skills aprendidas: ' + skillsOf(a.id).length + ' · última: ' + esc(skillsOf(a.id).slice(-1)[0].body.slice(0, 70)) + '</p>' : '') +
-      '<div class="btns"><button class="btn primary" data-cin type="button">Entrar a la oficina</button><button class="btn primary" data-cwalk type="button">Caminar por ' + (a.annex ? 'la nave' : 'este piso') + '</button>' + (a.id === 'oport' ? '<button class="btn primary" data-cprops type="button">Propiedades y mapa (' + PROPS.length + ')</button>' : '') + main + ((INBOX || []).some(function (x) { return x.agent === a.id; }) ? '<button class="btn primary" data-copen="inbox" type="button">Atender mis recados</button>' : '') + '<button class="btn" data-cadd type="button">Asignar tarea</button>' + (a.id === 'publica' ? '<button class="btn" data-copen="posts" type="button">Publicaciones</button><button class="btn" data-copen="tokens" type="button">Tokens</button>' : '') + '</div>');
+      '<div class="btns"><button class="btn primary" data-cin type="button">Entrar a la oficina</button><button class="btn primary" data-cwalk type="button">Caminar por ' + (a.annex ? 'la nave' : 'este piso') + '</button>' + (a.id === 'oport' ? '<button class="btn primary" data-cprops type="button">Propiedades y mapa (' + PROPS.length + ')</button>' : '') + (a.id === 'postal' ? '<button class="btn primary" data-cpost type="button">📮 Abrir el buzón y NEO</button>' : '') + main + ((INBOX || []).some(function (x) { return x.agent === a.id; }) ? '<button class="btn primary" data-copen="inbox" type="button">Atender mis recados</button>' : '') + '<button class="btn" data-cadd type="button">Asignar tarea</button>' + (a.id === 'publica' ? '<button class="btn" data-copen="posts" type="button">Publicaciones</button><button class="btn" data-copen="tokens" type="button">Tokens</button>' : '') + '</div>');
     var br = agentBrief(a), bd = c.querySelector('[data-dyn="bdo"]'), bi = c.querySelector('[data-dyn="bimp"]'); if (bd) bd.textContent = br.doing; if (bi) bi.innerHTML = br.improve.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
     var dA = c.querySelector('[data-dyn="act"]'); if (dA) dA.textContent = a.act; var dS = c.querySelector('[data-dyn="sig"]'); if (dS) dS.textContent = sig;
   }
@@ -1947,6 +1971,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     else if (b.hasAttribute('data-cprops')) openProps();
     else if (b.hasAttribute('data-cin')) enterOffice(a.id);
     else if (b.hasAttribute('data-cwalk')) enterWalk(a.id);
+    else if (b.hasAttribute('data-cpost')) openPost(false);
     else if (b.hasAttribute('data-cadd')) openForm(a.id);
     else if (b.dataset.copen) { panelOpen = true; zen = false; applyUi(); tab(b.dataset.copen); }
   });
@@ -2254,7 +2279,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     }
     setHtml(el, '<header><h2>🧬 Coach EVR · Torre Bio-Fit</h2><button class="btn" type="button" data-cfocus>Ver la torre Bio-Fit</button><button class="btn" type="button" data-cx2 aria-label="Cerrar">×</button></header><div class="cbody">' + body + '</div>');
   }
-  function openCoach(focus) { fitLoad(); if ($('#labP')) $('#labP').hidden = true; $('#coachP').hidden = false; renderCoach(); if (focus && scene3d && scene3d.focusCoach) scene3d.focusCoach(); var t = coachToday(); var msg = t ? 'Bienvenido a la torre Bio-Fit, Nesty. Hoy toca ' + t.name + '. Meta: ' + t.prot + ' gramos de proteína y ' + t.water + ' litros de agua. ¡Vamos!' : 'Bienvenido a la torre Bio-Fit, Nesty. Soy tu coach: dime tu objetivo y armo tu rutina, tu dieta y tu tratamiento.'; if (VOICE.on) voiceSay(null, msg); toast('🏋 Coach: ' + msg); }
+  function openCoach(focus) { fitLoad(); if ($('#labP')) $('#labP').hidden = true; if ($('#postP')) $('#postP').hidden = true; $('#coachP').hidden = false; renderCoach(); if (focus && scene3d && scene3d.focusCoach) scene3d.focusCoach(); var t = coachToday(); var msg = t ? 'Bienvenido a la torre Bio-Fit, Nesty. Hoy toca ' + t.name + '. Meta: ' + t.prot + ' gramos de proteína y ' + t.water + ' litros de agua. ¡Vamos!' : 'Bienvenido a la torre Bio-Fit, Nesty. Soy tu coach: dime tu objetivo y armo tu rutina, tu dieta y tu tratamiento.'; if (VOICE.on) voiceSay(null, msg); toast('🏋 Coach: ' + msg); }
   function closeCoach() { $('#coachP').hidden = true; }
   /* ---- Laboratorio EVR: fábrica de agentes, taller de reparación y noticias de IA y economía ---- */
   var LAB = { news: null, specs: [], sub: false, ans: '', diag: {}, busy: false };
@@ -2292,7 +2317,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       '<div class="ccard wide"><h3>Pregúntale al ingeniero</h3><form class="ask" data-lask autocomplete="off" style="display:flex;gap:6px"><input type="text" maxlength="300" placeholder="Ej. ¿Qué noticia de IA me sirve para cotizar más rápido?" style="flex:1" aria-label="Pregunta para el ingeniero"><button class="btn primary" type="submit">Preguntar</button></form>' + (LAB.ans ? '<p class="cans">' + esc(LAB.ans) + '</p>' : '') + '</div>';
     setHtml(el, '<header><h2>🧪 Laboratorio EVR · Fábrica de agentes</h2><button class="btn" type="button" data-lfocus>Ver el laboratorio</button><button class="btn" type="button" data-lx aria-label="Cerrar">×</button></header><div class="cbody">' + body + '</div>');
   }
-  function openLab(focus) { labLoad(); closeCoach(); $('#labP').hidden = false; renderLab(); if (focus && scene3d && scene3d.focusLab) scene3d.focusLab(); var a = labItems('ai')[0], e = labItems('eco')[0]; var msg = 'Bienvenido al laboratorio, Nesty. ' + (a ? 'En IA: ' + a.t + '. ' : '') + (e ? 'En economía: ' + e.t + '. ' : 'Cada mañana te traigo noticias de IA y economía. ') + 'Aquí armamos y reparamos a tus agentes.'; voiceSay({ id: 'lab', name: 'Ingeniero', i: 4 }, msg, null, true); }
+  function openLab(focus) { labLoad(); closeCoach(); if ($('#postP')) $('#postP').hidden = true; $('#labP').hidden = false; renderLab(); if (focus && scene3d && scene3d.focusLab) scene3d.focusLab(); var a = labItems('ai')[0], e = labItems('eco')[0]; var msg = 'Bienvenido al laboratorio, Nesty. ' + (a ? 'En IA: ' + a.t + '. ' : '') + (e ? 'En economía: ' + e.t + '. ' : 'Cada mañana te traigo noticias de IA y economía. ') + 'Aquí armamos y reparamos a tus agentes.'; voiceSay({ id: 'lab', name: 'Ingeniero', i: 4 }, msg, null, true); }
   function closeLab() { $('#labP').hidden = true; }
   function labCtx() { return AGENTS.map(function (a) { var tk = openTasks().filter(function (t) { return t.agent === a.id; }).length, rc = (INBOX || []).filter(function (x) { return x.agent === a.id; }).length; return a.name + ' (' + (a.role || a.id) + '; estado ' + (LBL[a.status] || a.status) + '; ' + tk + ' tareas abiertas; ' + rc + ' recados)'; }).join('\n'); }
   var LAB_RULES = 'Reglas de Imperial Remodeling: nunca enviar ni contestar a clientes o terceros sin el «sí» de Nesty; acceso de solo lectura a sus cuentas; nunca pedir ni escribir contraseñas, tokens o llaves; toda habilidad o conexión se verifica antes de activarla (origen, qué ejecuta, qué puede tocar, secretos y pruebas) y si algo falla no se activa.';
@@ -2330,6 +2355,77 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     SAMPLE('Eres el ingeniero del Laboratorio EVR de Imperial Remodeling: armas y reparas agentes de IA, propones automatizaciones y sigues las noticias de IA y economía. Hablas con Ernesto («Nesty») en español, claro y práctico, máximo 6 líneas. Noticias del día:\n' + (ctxN || '(sin noticias guardadas)') + '\nAgentes:\n' + labCtx() + '\n' + LAB_RULES + ' No des consejo de inversión personalizado. Pregunta: ' + q, { onText: function (o) { LAB.ans = o.text; var pa = $('#labP .cans:last-of-type'); if (pa && pa.closest('form') === null) { var all = $('#labP').querySelectorAll('.wide .cans'); if (all.length) all[all.length - 1].textContent = o.text; } } }).then(function (r) { LAB.ans = (r && r.text) || 'Sin respuesta ahora.'; renderLab(); if (VOICE.on) voiceSay({ id: 'lab', name: 'Ingeniero', i: 4 }, LAB.ans); }).catch(function () { LAB.ans = 'No pude consultar a Claude ahora.'; renderLab(); });
   });
   setTimeout(function () { labLoad(); }, 4000);
+
+  /* ---- Oficina Postal: correo filtrado, borradores y seguimiento diario del robot NEO (la tarea diaria lo llena; aquí solo se lee) ---- */
+  var NEO_LBL = { preorden: 'Preorden confirmada · aún sin fecha de entrega', fecha: 'Ya hay fecha estimada de entrega', envio: 'Tu NEO ya salió a envío', entrega: 'Entrega en camino: agenda la recepción', respuesta: '1X te respondió', sin_correo: 'No encuentro correos de 1X' };
+  function postLoad() {
+    if (POST.sub) return; POST.sub = true;
+    try { var L = JSON.parse(localStorage.getItem('evr.mail') || 'null'); if (L) { POST.today = L.today || null; POST.neo = L.neo || null; POST.rules = L.rules || ''; POST.state = L.state || { done: {} }; } } catch (e) {}
+    if (DB) { try { DB.collection('mail').onSnapshot(function (snap) { snap.docs.forEach(function (d) { var x = JSON.parse(JSON.stringify(d.data())); if (d.id === 'today') POST.today = x; else if (d.id === 'neo') POST.neo = x; else if (d.id === 'rules') POST.rules = x.text || ''; else if (d.id === 'state') POST.state = { done: x.done || {} }; }); try { localStorage.setItem('evr.mail', JSON.stringify({ today: POST.today, neo: POST.neo, rules: POST.rules, state: POST.state })); } catch (e) {} postToScene(); renderPost(); postGreetOnce(); }); } catch (e) {} }
+    postToScene();
+  }
+  function neoLine() { var n = POST.neo; if (!n) return 'Aún no he revisado el correo de NEO'; return n.headline || NEO_LBL[n.status] || 'Sin novedades de NEO'; }
+  function postItems(cats) { var t = POST.today; return (t && Array.isArray(t.items) ? t.items : []).filter(function (x) { return x && x.id && (!cats || cats.indexOf(x.cat) > -1); }); }
+  function postToScene() { if (scene3d && scene3d.postalSet) { var t = POST.today || {}, n = POST.neo || {}; scene3d.postalSet({ counts: t.counts || {}, neo: { s: n.status || '', l: neoLine(), d: n.deliveryDate || '' } }); } }
+  function postGreetOnce() {
+    if (POST.greeted || (!POST.today && !POST.neo)) return; POST.greeted = true;
+    setTimeout(function () { var u = (POST.today && POST.today.counts && POST.today.counts.urgente) || 0; toast('📮 ' + (u ? u + ' correo' + (u === 1 ? '' : 's') + ' urgente' + (u === 1 ? '' : 's') + ' · ' : '') + 'NEO: ' + neoLine()); }, 7000);
+  }
+  function postUrl(u, gm) { u = String(u || ''); return (gm ? /^https:\/\/mail\.google\.com\//i : /^https:\/\/[^\s"'<>]+$/i).test(u) ? u : ''; }
+  function postAgo(ms) { if (!ms) return ''; var m = Math.round((Date.now() - ms) / 60000); return m < 2 ? 'hace un momento' : m < 90 ? 'hace ' + m + ' min' : m < 2880 ? 'hace ' + Math.round(m / 60) + ' h' : 'hace ' + Math.round(m / 1440) + ' días'; }
+  function postItemHtml(it) {
+    var done = !!(POST.state.done || {})[it.id], draft = POST.rew[it.id] || it.draft || '', gm = postUrl(it.url, true);
+    return '<div class="mi' + (done ? ' done' : '') + '" data-c="' + esc(it.cat) + '"><h4>' + esc(it.subj || '(sin asunto)') + '</h4><div class="meta">' + esc(it.from || '') + (it.date ? ' · ' + esc(it.date) : '') + ' · prioridad ' + esc(it.prio || '') + '/5</div>' +
+      (it.why ? '<p><b>Por qué arriba:</b> ' + esc(it.why) + '</p>' : '') + (it.summary ? '<p>' + esc(it.summary) + '</p>' : '') +
+      (draft ? '<details' + (POST.rew[it.id] ? ' open' : '') + '><summary>✍ Borrador de respuesta (no enviado)</summary><pre class="draft">' + esc(draft) + '</pre><div class="row"><button class="btn" type="button" data-pcopy="' + esc(it.id) + '">Copiar</button><button class="btn" type="button" data-prew="' + esc(it.id) + '">✨ Reescribir con tu tono</button></div></details>' : '') +
+      '<div class="row">' + (gm ? '<a class="btn" href="' + esc(gm) + '" target="_blank" rel="noopener noreferrer">Abrir en Gmail</a>' : '') + '<button class="btn" type="button" data-pdone="' + esc(it.id) + '">' + (done ? 'Reabrir' : '✓ Ya lo atendí') + '</button></div></div>';
+  }
+  function renderPost() {
+    var el = $('#postP'); if (!el || el.hidden) return; var fe = document.activeElement; if (fe && fe.closest && fe.closest('#postP textarea')) return;
+    var n = POST.neo, t = POST.today, c = (t && t.counts) || {}, st = n && n.status || '', le = n && n.lastEmail, pn = n && n.publicNote;
+    var neo = '<div class="ccard wide"><h3>🤖 Robot NEO · seguimiento diario de la entrega</h3><div class="neo" data-s="' + esc(st) + '"><b>' + esc(neoLine()) + '</b>' + (n && n.detail ? '<p>' + esc(n.detail) + '</p>' : '<p class="note">La oficina busca cada día un correo de 1X con la fecha de entrega, el aviso de envío o la respuesta a tus preguntas.</p>') +
+      (n && n.deliveryDate ? '<p><b>Fecha de entrega:</b> ' + esc(n.deliveryDate) + '</p>' : '') +
+      (le ? '<p class="note">Último correo de 1X: ' + esc(le.from || '') + ' · ' + esc(le.date || '') + ' · ' + esc(le.subj || '') + (postUrl(le.url, true) ? ' · <a href="' + esc(postUrl(le.url, true)) + '" target="_blank" rel="noopener noreferrer">abrir en Gmail</a>' : '') + '</p>' : '') +
+      (pn && pn.t ? '<p class="note">Noticia pública (no es tu correo): ' + esc(pn.t) + (pn.src ? ' — ' + esc(pn.src) : '') + (postUrl(pn.url) ? ' · <a href="' + esc(postUrl(pn.url)) + '" target="_blank" rel="noopener noreferrer">fuente</a>' : '') + '</p>' : '') +
+      (n && n.checkedAt ? '<p class="note">Última revisión: ' + esc(postAgo(n.checkedAt)) + '</p>' : '') + '</div>' +
+      (n && n.draft ? '<details><summary>✍ Borrador para preguntarle a 1X la fecha (no enviado)</summary><pre class="draft">' + esc(n.draft) + '</pre><div class="row"><button class="btn" type="button" data-pcopy="neo">Copiar</button></div></details>' : '') +
+      '<p class="note">Tip: Gmail puede mandar los correos de 1X a Spam y yo no puedo ver ese buzón. Crea un filtro en Gmail: de @1x.tech → «Nunca enviar a spam».</p></div>';
+    var chips = '<div class="ccard"><h3>Lo que llegó' + (t && t.at ? ' · ' + esc(postAgo(t.at)) : '') + '</h3>' + (t ? '<div class="chips"><span class="chip" style="color:#ff5a5f"><b>' + (c.urgente || 0) + '</b>urgentes</span><span class="chip" style="color:#ffc94d"><b>' + (c.cliente || 0) + '</b>clientes</span><span class="chip" style="color:#5cc8ff"><b>' + (c.importante || 0) + '</b>importantes</span><span class="chip" style="color:#9aa7b3"><b>' + (c.info || 0) + '</b>informativos</span><span class="chip" style="color:#7a8591"><b>' + (c.basura || 0) + '</b>a la basura</span></div><p class="note">' + esc(t.scanned || 0) + ' correos revisados · ' + esc(t.window || 'últimas 48 h') + '. Nada se envía ni se borra: solo se ordena.</p>' + (t.summary ? '<p class="cans">' + esc(t.summary) + '</p>' : '') : '<p class="note">Aún no hay correo filtrado. La oficina trabaja varias veces al día; la primera revisión llena esta pantalla.</p>') + '</div>';
+    var top = postItems(['urgente', 'cliente', 'importante']).sort(function (a, b) { return (b.prio || 0) - (a.prio || 0); });
+    var first = '<div class="ccard"><h3>📌 Para atender primero (' + top.length + ')</h3>' + (top.length ? top.map(postItemHtml).join('') : '<p class="note">Nada pendiente por ahora.</p>') + '</div>';
+    var junk = (t && Array.isArray(t.discarded) ? t.discarded : []).slice(0, 25);
+    var jk = '<div class="ccard wide"><h3>🗑 Lo que tiré (revísalo si quieres)</h3>' + (junk.length ? '<details><summary>' + junk.length + ' correos descartados</summary><ul class="junk">' + junk.map(function (x) { return '<li>' + esc(x.from || '') + ' — ' + esc(x.subj || '') + (x.why ? ' <span class="note">(' + esc(x.why) + ')</span>' : '') + '</li>'; }).join('') + '</ul></details>' : '<p class="note">Nada descartado todavía.</p>') + '</div>';
+    var inf = postItems(['info']).slice(0, 10);
+    var infH = inf.length ? '<div class="ccard wide"><h3>ℹ️ Informativos (' + inf.length + ')</h3><ul class="junk">' + inf.map(function (x) { return '<li>' + esc(x.from || '') + ' — ' + esc(x.subj || '') + (x.summary ? ' <span class="note">· ' + esc(x.summary) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>' : '';
+    var rules = '<div class="ccard wide"><h3>🎯 Lo que le enseñas a la oficina</h3><textarea id="postRules" maxlength="1500" placeholder="Ej. Los correos de clientes de McKinney van primero. Todo lo de HOA y publicidad de proveedores va a la basura. Mi meta de este mes: cerrar 3 cocinas.">' + esc(POST.rules) + '</textarea><div class="row"><button class="btn primary" type="button" data-prules>Guardar reglas y objetivos</button></div><p class="note">La oficina lee esto en cada revisión. No guardes contraseñas ni claves aquí.</p></div>';
+    setHtml(el, '<header><h2>📮 Oficina Postal · correo filtrado y NEO</h2><button class="btn" type="button" data-pfocus>Ver la oficina</button><button class="btn" type="button" data-px aria-label="Cerrar">×</button></header><div class="cbody">' + neo + chips + first + jk + infH + rules + '</div>');
+  }
+  function openPost(focus) {
+    postLoad(); closeCoach(); if ($('#labP')) $('#labP').hidden = true; $('#postP').hidden = false; renderPost();
+    var u = (POST.today && POST.today.counts && POST.today.counts.urgente) || 0;
+    voiceSay({ id: 'postal', name: 'Oficina Postal', i: 12 }, 'Oficina postal. ' + (u ? 'Tienes ' + u + (u === 1 ? ' correo urgente. ' : ' correos urgentes. ') : '') + 'Sobre tu robot NEO: ' + neoLine() + '.', null, true);
+  }
+  function closePost() { $('#postP').hidden = true; }
+  function postCopy(text) {
+    function fallback() { var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} ta.remove(); toast(ok ? 'Borrador copiado. Pégalo en Gmail y envíalo tú.' : 'No pude copiar: selecciona el texto y cópialo.'); }
+    try { navigator.clipboard.writeText(text).then(function () { toast('Borrador copiado. Pégalo en Gmail y envíalo tú.'); }).catch(fallback); } catch (e) { fallback(); }
+  }
+  $('#btnPost').onclick = function () { stopTour(); openPost(true); };
+  $('#postP').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.hasAttribute('data-px')) { closePost(); return; }
+    if (b.hasAttribute('data-pfocus')) { closePost(); select('postal', true); return; }
+    if (b.hasAttribute('data-pcopy')) { var id = b.getAttribute('data-pcopy'), it = id === 'neo' ? null : postItems().filter(function (x) { return x.id === id; })[0]; postCopy(id === 'neo' ? (POST.neo && POST.neo.draft) || '' : POST.rew[id] || (it && it.draft) || ''); return; }
+    if (b.hasAttribute('data-pdone')) { var d = b.getAttribute('data-pdone'), m = Object.assign({}, POST.state.done || {}); if (m[d]) delete m[d]; else m[d] = Date.now(); var ks = Object.keys(m); if (ks.length > 150) ks.sort(function (x, y) { return m[x] - m[y]; }).slice(0, ks.length - 150).forEach(function (k) { delete m[k]; }); POST.state = { done: m }; try { localStorage.setItem('evr.mail', JSON.stringify({ today: POST.today, neo: POST.neo, rules: POST.rules, state: POST.state })); } catch (e2) {} if (DB) { try { DB.doc('mail/state').set({ done: m, updatedAt: Date.now() }).catch(fail); } catch (e3) {} } renderPost(); return; }
+    if (b.hasAttribute('data-prules')) { var tx = $('#postRules'); POST.rules = (tx ? tx.value : '').slice(0, 1500); try { localStorage.setItem('evr.mail', JSON.stringify({ today: POST.today, neo: POST.neo, rules: POST.rules, state: POST.state })); } catch (e4) {} if (DB) { try { DB.doc('mail/rules').set({ text: POST.rules, updatedAt: Date.now() }).catch(fail); } catch (e5) {} } toast('📮 Reglas guardadas. La oficina las usa en la próxima revisión.'); return; }
+    if (b.hasAttribute('data-prew')) {
+      var rid = b.getAttribute('data-prew'), ri = postItems().filter(function (x) { return x.id === rid; })[0]; if (!ri) return;
+      if (!SAMPLE) { toast('Aquí no puedo consultar a Claude.'); return; }
+      b.disabled = true; b.textContent = 'Reescribiendo…';
+      SAMPLE('Reescribe este borrador de respuesta de correo para Ernesto «Nesty» Vélez (Imperial Remodeling, remodelación en Dallas–Fort Worth). Tono: cálido, directo y profesional, frases cortas, sin exagerar. Conserva el idioma del borrador. NO inventes precios, fechas, compromisos ni datos que no estén en el borrador o en el contexto; si falta algo deja [entre corchetes]. No es para enviar solo: Nesty lo revisa. Responde SOLO con el texto del correo.\nReglas de Nesty: ' + (POST.rules || '(sin reglas)') + '\nContexto del correo recibido: ' + (ri.subj || '') + ' — ' + (ri.summary || '') + '\nBorrador actual:\n' + (POST.rew[rid] || ri.draft || ''), { modelTier: 'default' }).then(function (r) { POST.rew[rid] = ((r && r.text) || '').trim().slice(0, 1500) || POST.rew[rid]; renderPost(); }).catch(function () { b.disabled = false; b.textContent = '✨ Reescribir con tu tono'; toast('No pude consultar a Claude ahora.'); });
+    }
+  });
+  setTimeout(function () { postLoad(); }, 4500);
 
   /* ---- Dron EVR: montar, volar y disparar ---- */
   var DRONING = false;
@@ -2961,7 +3057,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   /* ---------- Estructura: agentes, grupos y base de datos ---------- */
   var GROUP_COLORS = { Cian: '#5cc8ff', Menta: '#7fe3c5', 'Ámbar': '#ffc857', Lavanda: '#b4a0ff', Rosa: '#ff8fb0', Gris: '#8fa6b8' };
   var GROUPS_DEFAULT = [
-    { name: 'Atención al cliente', desc: 'Primer contacto con clientes y prospectos', color: '#5cc8ff', order: 1, agents: ['cliente', 'correo', 'citas'] },
+    { name: 'Atención al cliente', desc: 'Primer contacto con clientes y prospectos', color: '#5cc8ff', order: 1, agents: ['cliente', 'correo', 'postal', 'citas'] },
     { name: 'Ventas y cobros', desc: 'Del prospecto a la cotización y el pago', color: '#7fe3c5', order: 2, agents: ['leads', 'cotiz', 'cobros', 'oport'] },
     { name: 'Operaciones de obra', desc: 'Seguimiento de obras, permisos y materiales', color: '#ffc857', order: 3, agents: ['proyectos'] },
     { name: 'Marketing y marca', desc: 'Publicaciones, comunidad y reputación', color: '#b4a0ff', order: 4, agents: ['publica', 'social', 'resenas'] },
@@ -3411,6 +3507,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       else if (id === 'social') { [[32, 64], [92, 34], [92, 94]].forEach(function (p) { g.beginPath(); g.arc(p[0], p[1], 13, 0, 7); g.stroke(); }); g.beginPath(); g.moveTo(44, 58); g.lineTo(80, 40); g.moveTo(44, 70); g.lineTo(80, 88); g.stroke(); }
       else if (id === 'cobros') { g.beginPath(); g.arc(64, 64, 44, 0, 7); g.stroke(); g.font = '700 58px "IBM Plex Mono", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('$', 64, 68); }
       else if (id === 'resenas') { g.beginPath(); for (var k = 0; k < 10; k++) { var ra = k % 2 ? 22 : 50, an = -Math.PI / 2 + k * Math.PI / 5; g.lineTo(64 + Math.cos(an) * ra, 68 + Math.sin(an) * ra); } g.closePath(); g.stroke(); }
+      else if (id === 'postal') { rr(26, 30, 76, 52, 22); g.stroke(); g.beginPath(); g.moveTo(40, 82); g.lineTo(40, 106); g.moveTo(88, 82); g.lineTo(88, 106); g.moveTo(38, 106); g.lineTo(90, 106); g.stroke(); rr(46, 46, 36, 6, 2); g.fill(); g.beginPath(); g.moveTo(88, 30); g.lineTo(88, 12); g.lineTo(106, 12); g.lineTo(106, 24); g.lineTo(88, 24); g.stroke(); }
       else { g.beginPath(); g.moveTo(20, 24); g.lineTo(20, 106); g.lineTo(108, 106); g.stroke(); g.fillRect(36, 70, 14, 30); g.fillRect(60, 48, 14, 52); g.fillRect(84, 30, 14, 70); }
       return new THREE.CanvasTexture(c);
     }
@@ -3470,6 +3567,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       else if (role === 'social') { add(darkM, [B(0.1, 0.18, 0.012, -0.35, top + 0.1, 0.42, 0), B(0.1, 0.03, 0.08, -0.35, top + 0.015, 0.4)]); add(gearM.pink, [B(0.08, 0.15, 0.004, -0.35, top + 0.1, 0.428), { g: new T.SphereGeometry(0.035, 10, 8), x: -0.52, y: top + 0.18, z: 0.42 }, { g: new T.SphereGeometry(0.03, 10, 8), x: -0.2, y: top + 0.25, z: 0.42 }]); }
       else if (role === 'cobros') { add(goldM, [C(0.07, 0.05, -0.3, top + 0.025, 0.42), C(0.07, 0.05, -0.3, top + 0.075, 0.42), C(0.07, 0.05, -0.3, top + 0.125, 0.42), C(0.07, 0.05, -0.15, top + 0.025, 0.46)]); add(gearM.paper, [B(0.08, 0.002, 0.3, -0.5, top + 0.01, 0.4, 0.2)]); }
       else if (role === 'resenas') { add(darkM, [C(0.1, 0.05, -0.35, top + 0.025, 0.42), C(0.03, 0.1, -0.35, top + 0.1, 0.42)]); add(goldM, [{ g: starGeo(0.07, 0.16, 0.03), x: -0.35, y: top + 0.3, z: 0.42 }]); }
+      else if (role === 'postal') { add(gearM.paper, [B(0.24, 0.03, 0.17, -0.42, top + 0.015, 0.42), B(0.24, 0.03, 0.17, -0.4, top + 0.045, 0.43, 0.2), B(0.24, 0.03, 0.17, -0.43, top + 0.075, 0.41, -0.15)]); add(goldM, [C(0.05, 0.07, -0.68, top + 0.035, 0.44)]); add(gearM.red, [C(0.05, 0.02, -0.68, top + 0.01, 0.44)]); }
       else if (role === 'reportes') { add(gearM.blue, [B(0.05, 0.12, 0.05, -0.5, top + 0.06, 0.42), B(0.05, 0.2, 0.05, -0.43, top + 0.1, 0.42)]); add(gearM.green, [B(0.05, 0.3, 0.05, -0.36, top + 0.15, 0.42), B(0.05, 0.17, 0.05, -0.29, top + 0.085, 0.42)]); add(gearM.paper, [B(0.3, 0.01, 0.1, -0.4, top + 0.005, 0.42)]); }
       else if (role === 'publica') { add(darkM, [B(0.2, 0.12, 0.1, -0.35, top + 0.2, 0.42), C(0.012, 0.18, -0.4, top + 0.09, 0.44), C(0.012, 0.18, -0.3, top + 0.09, 0.44), C(0.012, 0.18, -0.35, top + 0.09, 0.36)]); add(gearM.paper, [{ g: new T.CylinderGeometry(0.04, 0.04, 0.07, 12), x: -0.35, y: top + 0.2, z: 0.49, rx: Math.PI / 2 }]); }
       else if (role === 'oport') { add(gearM.paper, [B(0.28, 0.16, 0.22, -0.4, top + 0.08, 0.42)]); add(gearM.red, [{ g: new T.ConeGeometry(0.2, 0.12, 4), x: -0.4, y: top + 0.22, z: 0.42, ry: Math.PI / 4 }]); add(gearM.wood, [C(0.008, 0.26, -0.15, top + 0.13, 0.5)]); add(gearM.green, [B(0.1, 0.06, 0.008, -0.15, top + 0.26, 0.5)]); }
@@ -3938,7 +4036,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       var geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); geo.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3)); geo.setAttribute('color', new THREE.Float32BufferAttribute(C, 3)); geo.setIndex(I); return geo;
     }
     function seeded(seed) { var s0 = seed; return function () { s0 = (s0 * 9301 + 49297) % 233280; return s0 / 233280; }; }
-    var SCR_KIND = { cotiz: 'table', cliente: 'chat', correo: 'mail', proyectos: 'gantt', leads: 'funnel', citas: 'calendar', social: 'chat', cobros: 'table', resenas: 'stars', reportes: 'chart', publica: 'posts', oport: 'map' };
+    var SCR_KIND = { cotiz: 'table', cliente: 'chat', correo: 'mail', proyectos: 'gantt', leads: 'funnel', citas: 'calendar', social: 'chat', cobros: 'table', resenas: 'stars', reportes: 'chart', publica: 'posts', oport: 'map', postal: 'mail' };
     function screenTex(a, which) {
       var c = document.createElement('canvas'); c.width = 256; c.height = 160; var g = c.getContext('2d'), R = seeded(a.i * 37 + which * 11 + 3), kind = which === 0 ? (SCR_KIND[a.id] || 'chart') : which === 1 ? 'chart' : 'list', i, j;
       g.fillStyle = '#06121e'; g.fillRect(0, 0, 256, 160); g.fillStyle = '#0d2a40'; g.fillRect(0, 0, 256, 20); g.fillStyle = '#9fe0ff'; g.font = '600 12px sans-serif'; g.fillText(which === 0 ? a.name.toUpperCase().slice(0, 26) : which === 1 ? 'RESUMEN DEL DÍA' : 'ACTIVIDAD', 8, 14); g.fillStyle = '#ffc94d'; g.fillRect(236, 6, 10, 8);
@@ -4064,6 +4162,55 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       var clk = new T.Mesh(new T.CircleGeometry(0.32, 24), new T.MeshBasicMaterial({ map: new T.CanvasTexture(cc) })); clk.position.set(X(10.2), y0 + 3.5, -4.55); G.add(clk); v.dDetail.push(clk);
       tower.add(G); v.interiorG = G;
     }
+
+    /* ---- Oficina Postal: casilleros, mesa de clasificación, cajas de basura/urgente y el robot NEO esperando entrega ---- */
+    function buildPostal(a, hx, hz, sx, y0) {
+      var T = THREE, v = a.v, G = new T.Group(), parts = [], xout = hx - 0.3, R = seeded(77);
+      function X(xo) { return sx * xo; }
+      function box(xo, y, z, w, h, d, c, ry) { parts.push({ g: new T.BoxGeometry(1, 1, 1), x: X(xo), y: y0 + y, z: z, sx: w, sy: h, sz: d, ry: ry || 0, c: new T.Color(c) }); }
+      var wood = 0x6b4a2e, dark = 0x20262e, xw = xout - 0.3, k, j, cats = [0xff5a5f, 0xffc94d, 0x5cc8ff, 0x5cc8ff, 0xcfd6dd, 0xffc94d];
+      /* pared de casilleros: 6 columnas por 5 filas, con cartas de colores (rojo = urgente, dorado = clientes, azul = informativo) */
+      box(xw + 0.1, 1.7, 0, 0.1, 3.4, 5.0, 0x2b2118);
+      for (k = 0; k <= 6; k++) box(xw - 0.1, 1.7, -2.4 + k * 0.8, 0.5, 3.3, 0.05, wood);
+      for (k = 0; k <= 5; k++) box(xw - 0.1, 0.1 + k * 0.62, 0, 0.5, 0.05, 4.85, wood);
+      for (k = 0; k < 6; k++) for (j = 0; j < 5; j++) if (R() < 0.7) box(xw - 0.22, 0.43 + j * 0.62, -2.0 + k * 0.8, 0.28, 0.34, 0.5, cats[Math.floor(R() * cats.length)], (R() - 0.5) * 0.2);
+      /* mesa de clasificación */
+      box(7.0, 0.92, 3.1, 2.9, 0.1, 0.9, dark); box(7.0, 0.985, 3.1, 2.8, 0.03, 0.5, 0x2a3a4a);
+      [[5.7, 2.75], [5.7, 3.45], [8.3, 2.75], [8.3, 3.45]].forEach(function (q) { box(q[0], 0.45, q[1], 0.08, 0.9, 0.08, 0x9aa7b3); });
+      for (k = 0; k < 6; k++) box(5.9 + k * 0.42, 1.03, 3.05 + (R() - 0.5) * 0.15, 0.26, 0.03, 0.18, cats[k % cats.length], (R() - 0.5) * 0.4);
+      /* cajas: urgente (rojo), clientes (dorado), basura (gris con tapa) */
+      [[8.9, 0xff5a5f], [9.5, 0xffc94d], [10.1, 0x56606b]].forEach(function (q) { box(q[0], 0.35, 3.15, 0.5, 0.7, 0.5, 0x2a3038); box(q[0], 0.72, 3.15, 0.54, 0.06, 0.54, q[1]); });
+      /* caja del robot NEO (color Tan) con su cinta y etiqueta, sobre una tarima */
+      box(5.0, 0.07, 1.7, 1.2, 0.14, 1.0, 0x8a6a3a); box(5.0, 1.07, 1.7, 0.82, 1.7, 0.62, 0xd9c19a); box(5.0, 1.07, 1.7, 0.86, 0.12, 0.66, 0x8a6a3a); box(5.0, 1.07, 1.7, 0.12, 1.72, 0.66, 0x8a6a3a); box(4.69, 1.2, 1.7, 0.02, 0.42, 0.34, 0xf4f6f8);
+      var mesh = new T.Mesh(cgeo(parts), new T.MeshStandardMaterial({ vertexColors: true, roughness: 0.65, metalness: 0.08, emissive: 0x06090e, emissiveIntensity: 0.5 })); G.add(mesh); v.dDetail.push(mesh);
+      /* tablero: contadores del correo y estado del robot NEO (se lee dentro y desde afuera) */
+      var bc = document.createElement('canvas'); bc.width = 1024; bc.height = 256; var bg = bc.getContext('2d'), btex = new T.CanvasTexture(bc); btex.anisotropy = 4;
+      function chip(x, y, w, col, txt, n) { bg.fillStyle = col; bg.fillRect(x, y, w, 56); bg.fillStyle = '#10151c'; bg.font = '700 34px sans-serif'; bg.textAlign = 'left'; bg.fillText(String(n), x + 12, y + 40); bg.font = '600 17px sans-serif'; bg.fillText(txt, x + 12 + (String(n).length * 22), y + 36); }
+      function fit(t, w) { if (bg.measureText(t).width <= w) return t; while (t.length > 3 && bg.measureText(t + '…').width > w) t = t.slice(0, -1); return t + '…'; }
+      v.postalDraw = function (info) {
+        info = info || {}; var c = info.counts || {}, neo = info.neo || {};
+        bg.fillStyle = '#0a0f16'; bg.fillRect(0, 0, 1024, 256); bg.strokeStyle = '#ff9ecf'; bg.lineWidth = 6; bg.strokeRect(3, 3, 1018, 250);
+        bg.fillStyle = '#ffd9ec'; bg.font = '700 40px sans-serif'; bg.textAlign = 'left'; bg.fillText('📮 OFICINA POSTAL', 28, 58);
+        chip(28, 84, 214, '#ff5a5f', 'urgentes', c.urgente || 0); chip(254, 84, 214, '#ffc94d', 'clientes', c.cliente || 0); chip(480, 84, 214, '#5cc8ff', 'importantes', c.importante || 0); chip(706, 84, 290, '#9aa7b3', 'a la basura', c.basura || 0);
+        var ok = neo.s === 'fecha' || neo.s === 'envio' || neo.s === 'entrega';
+        bg.fillStyle = ok ? 'rgba(61,220,132,0.22)' : 'rgba(255,201,77,0.16)'; bg.fillRect(28, 158, 968, 74); bg.fillStyle = ok ? '#3ddc84' : '#ffc94d'; bg.fillRect(28, 158, 8, 74);
+        bg.fillStyle = '#fff6d9'; bg.font = '700 22px sans-serif'; bg.fillText('🤖 ROBOT NEO', 52, 188); bg.font = '600 26px sans-serif'; bg.fillStyle = '#ffffff'; bg.fillText(fit(neo.l || 'Aún no se ha revisado el correo de NEO', 640), 52, 220);
+        if (neo.d) { bg.textAlign = 'right'; bg.fillStyle = '#3ddc84'; bg.font = '700 26px sans-serif'; bg.fillText(fit(String(neo.d), 300), 980, 220); bg.textAlign = 'left'; }
+        btex.needsUpdate = true;
+      };
+      v.postalDraw({});
+      [[-1, 0], [1, Math.PI]].forEach(function (q) {
+        var pl = new T.Mesh(new T.PlaneGeometry(5.0, 1.25), new T.MeshBasicMaterial({ map: btex, side: T.FrontSide, fog: false })); pl.position.set(X(xw - 0.22 + (q[0] < 0 ? 0 : 0.40)), y0 + 3.95, 0); pl.rotation.y = q[0] < 0 ? -sx * Math.PI / 2 : sx * Math.PI / 2; G.add(pl); v.dDetail.push(pl);
+      });
+      /* aviso encima de la caja de NEO */
+      var nc = document.createElement('canvas'); nc.width = 256; nc.height = 96; var ng = nc.getContext('2d'); ng.fillStyle = 'rgba(10,15,22,0.9)'; ng.fillRect(0, 0, 256, 96); ng.strokeStyle = '#ffc94d'; ng.lineWidth = 4; ng.strokeRect(2, 2, 252, 92); ng.fillStyle = '#ffe08a'; ng.font = '700 38px sans-serif'; ng.textAlign = 'center'; ng.fillText('📦 NEO', 128, 42); ng.font = '500 22px sans-serif'; ng.fillStyle = '#fff'; ng.fillText('1X · esperando entrega', 128, 74);
+      var nlabel = new T.Sprite(new T.SpriteMaterial({ map: new T.CanvasTexture(nc), transparent: true, depthWrite: false })); nlabel.scale.set(1.9, 0.72, 1); nlabel.position.set(X(5.0), y0 + 2.5, 1.7); G.add(nlabel); v.dDetail.push(nlabel); v.postalLabel = nlabel;
+      /* cartas que flotan hacia los casilleros */
+      v.postalMail = []; for (k = 0; k < 4; k++) { var env = new T.Mesh(new T.BoxGeometry(0.34, 0.03, 0.24), new T.MeshBasicMaterial({ color: cats[k], fog: false })); G.add(env); v.postalMail.push({ m: env, ph: k * 1.7, x0: X(6.2), x1: X(xw - 0.5), z: -1.8 + k * 1.2 }); }
+      v.dDetail.push.apply(v.dDetail, v.postalMail.map(function (e) { return e.m; }));
+      var hb = new T.Mesh(new T.BoxGeometry(4.2, 3.6, 5.2), new T.MeshBasicMaterial({ visible: false })); hb.position.set(X(xw - 0.5), y0 + 1.8, 0); hb.userData.postal = true; G.add(hb); pickables.push(hb);
+      tower.add(G); v.postalG = G;
+    }
     function buildOffice(a, hx, hz, sx, y0) {
       var v = a.v, G = new THREE.Group(), H = FH - 0.5, xin = 3.8, xout = hx - 0.3, L = xout - xin, xc = sx * (xin + xout) / 2, gb = new BoxBuf(), fb = new BoxBuf(), gap = 2.8, pw = 4.6 - gap, cy = y0 + H / 2 + 0.1;
       gb.add(xc, cy, 4.6, L, H, 0.04, 0); gb.add(xc, cy, -4.6, L, H, 0.04, 0);
@@ -4153,6 +4300,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       buildOffice(a, hx, hz, sx, y0);
       try { officeInterior(a, hx, sx, y0); } catch (e) { if (window.console) console.error('office', e); }
       try { if (!a.annex) buildGym(a, hx, hz, sx, y0); } catch (e) { if (window.console) console.error('gym', e); }
+      try { if (a.id === 'postal') buildPostal(a, hx, hz, sx, y0); } catch (e) { if (window.console) console.error('postal', e); }
       v.beamMat = new THREE.MeshBasicMaterial({ color: 0xff5a5f, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false });
       v.beam = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 36, 8, 1, true), v.beamMat); v.beam.visible = false; tower.add(v.beam);
       var hitMat = new THREE.MeshBasicMaterial({ visible: false });
@@ -5616,7 +5764,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (WALK.on) { walkPtr('up', e); return; }
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
-      if (wasTap) { var ud = hit(e); if (ud && ud.drone) { enterDrone(); return; } if (ud && ud.lab) { openLab(false); return; } if (ud && ud.coach) { openCoach(true); return; } if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.gym) { var ga0 = agentAt(ud.gym.fl); if (ga0) { enterWalk(ga0.id); setTimeout(function () { var F0 = GYM.floors[ud.gym.fl]; if (F0 && WALK.on) { var ge0 = F0.eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]; gymStart(ge0); } }, 400); } return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
+      if (wasTap) { var ud = hit(e); if (ud && ud.drone) { enterDrone(); return; } if (ud && ud.lab) { openLab(false); return; } if (ud && ud.postal) { openPost(true); return; } if (ud && ud.coach) { openCoach(true); return; } if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.gym) { var ga0 = agentAt(ud.gym.fl); if (ga0) { enterWalk(ga0.id); setTimeout(function () { var F0 = GYM.floors[ud.gym.fl]; if (F0 && WALK.on) { var ge0 = F0.eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]; gymStart(ge0); } }, 400); } return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
     canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; wdrag = null; });
@@ -5808,6 +5956,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       camera.lookAt(cam.tx, cam.ty, cam.tz);
       if (WALK.on) walkUpdate(dt);
       if (drone) drone.update(dt, clockT);
+      try { var pa0 = byId('postal'); if (pa0 && pa0.v && pa0.v.postalMail && (nearView || selected === 'postal')) { pa0.v.postalMail.forEach(function (e) { var u = ((clockT * 0.22 + e.ph) % 1); e.m.position.set(e.x0 + (e.x1 - e.x0) * u, pa0.y + 1.4 + Math.sin(u * 3.14) * 1.1, e.z); e.m.rotation.y = u * 6; }); if (pa0.v.postalLabel) pa0.v.postalLabel.position.y = pa0.y + 2.5 + Math.sin(clockT * 2) * 0.06; } } catch (e) {}
       gymFrame(dt);
 
       var selIdx = selected ? byId(selected).i : -1;
@@ -6106,6 +6255,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         var w = wdrag; if (!w || w.id !== e.pointerId) return; wdrag = null; if (w.moved > 6) return;
         var ud = hit(e); if (ud && ud.prop) { openProps(ud.prop.id); return; }
         if (ud && ud.coach) { openCoach(false); return; }
+        if (ud && ud.postal) { openPost(false); return; }
         if (ud && ud.gym) { if (ud.gym.fl === WALK.fl && Math.hypot(ud.gym.x - WALK.x, ud.gym.z - WALK.z) < 6) { var ge = (GYM.floors[WALK.fl].eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]); gymStart(ge); } else { WALK.go = { x: ud.gym.x, z: ud.gym.z + (ud.gym.z > 0 ? -1.6 : 1.6) }; } return; }
         if (ud && ud.agent && !ud.floorHit) { walkTalk(ud.agent); return; }
         if (!walkGoto(e) && ud && ud.agent && ud.agent.i !== WALK.fl) walkTalk(ud.agent);
@@ -6381,6 +6531,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       focusCoach: function () { if (!fitTower) return false; cam.follow = null; cam.gtx = fitTower.pos.x; cam.gtz = fitTower.pos.z; cam.gty = 6; cam.gph = 1.2; cam.gr = window.innerWidth > 860 ? 40 : 56; cam.th = Math.atan2(-fitTower.pos.z, -fitTower.pos.x) + Math.PI + 0.35; return true; },
       focusFitTower: function () { if (!fitTower) return false; cam.follow = null; cam.gtx = fitTower.pos.x; cam.gtz = fitTower.pos.z; cam.gty = 30; cam.gph = 1.35; cam.gr = window.innerWidth > 860 ? 110 : 140; return true; },
       fitScan: function () { return fitTower ? fitTower.scan() : false; },
+      postalSet: function (info) { var a = byId('postal'); if (a && a.v && a.v.postalDraw) a.v.postalDraw(info); },
       focusLab: function () { if (!lab) return false; cam.follow = null; cam.gtx = lab.pos.x; cam.gtz = lab.pos.z; cam.gty = 7; cam.gph = 1.12; cam.gr = window.innerWidth > 860 ? 62 : 86; cam.th = Math.atan2(-lab.pos.z, -lab.pos.x) + 0.25; return true; },
       labNews: function (items, date) { if (lab) lab.setNews(items, date); },
       labSpec: function (n) { if (lab) lab.setSpec(n); },
