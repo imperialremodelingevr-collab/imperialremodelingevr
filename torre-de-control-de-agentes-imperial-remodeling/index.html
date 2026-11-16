@@ -281,6 +281,18 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .drhint { position: absolute; left: 50%; top: 158px; transform: translateX(-50%); z-index: 9; padding: 6px 12px; background: rgba(5, 10, 16, 0.85); color: #f6d9ff; font-size: 12px; border: 1px solid rgba(255, 61, 240, 0.35); max-width: calc(100% - 24px); text-align: center; transition: opacity 1.2s; }
 .drhint.fade { opacity: 0; pointer-events: none; }
 
+.jvscr { position: absolute; left: 50%; top: 150px; transform: translateX(-50%); width: min(640px, calc(100% - 32px)); z-index: 12; background: rgba(5, 10, 16, 0.92); border: 1px solid rgba(92, 200, 255, 0.5); box-shadow: 0 0 34px rgba(92, 200, 255, 0.2); padding: 10px 40px 12px 14px; }
+.jvscr[hidden], .micbanner[hidden], .lockscr[hidden] { display: none; }
+.jvscr .jvh { display: flex; align-items: center; gap: 8px; font: 600 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); } .jvscr .jporb { display: inline-block; width: 28px; height: 28px; flex: none; position: relative; } .jvscr .jporb canvas { width: 100%; height: 100%; display: block; }
+.jvscr .jvq { margin: 6px 0 2px; font-size: 12px; opacity: .72; } .jvscr .jvans { margin: 4px 0 0; font-size: 16px; line-height: 1.45; max-height: 36vh; overflow: auto; white-space: pre-wrap; } .jvscr #jvsX { position: absolute; right: 6px; top: 4px; padding: 0 9px; }
+.micbanner { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); z-index: 11; display: flex; max-width: calc(100% - 24px); background: rgba(5, 10, 16, 0.94); border: 1px solid rgba(255, 207, 90, 0.7); box-shadow: 0 0 24px rgba(255, 207, 90, 0.22); }
+.micbanner button { background: none; border: 0; color: #ffe9b0; font: 500 13px var(--mono); padding: 10px 14px; cursor: pointer; text-align: left; } .micbanner #micBannerX { padding: 10px 12px; opacity: .7; border-left: 1px solid rgba(255, 207, 90, 0.3); }
+.lockscr { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; background: rgba(3, 6, 10, 0.95); backdrop-filter: blur(10px); }
+.lockscr form { text-align: center; display: grid; gap: 10px; justify-items: center; padding: 20px; } .lockscr .lk canvas { width: 120px; height: 120px; } .lockscr h2 { margin: 0; font-size: 18px; letter-spacing: .14em; text-transform: uppercase; } .lockscr p { margin: 0; opacity: .8; }
+.lockscr input { width: 190px; text-align: center; font: 600 22px var(--mono); letter-spacing: .4em; background: #07141f; color: #fff; border: 1px solid rgba(92, 255, 230, 0.5); padding: 8px; }
+#voAlw.on { border-color: #3ddc84; color: #3ddc84; } #voAlw.warm { border-color: #ffcf5a; color: #ffcf5a; animation: blink 1.4s infinite; }
+@media (max-width: 860px) { .jvscr { top: 96px; padding-right: 36px; } .micbanner { bottom: 170px; } }
+
 .jorb .jo canvas.jp { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
 .jarvis header .jporb { display: inline-block; width: 30px; height: 30px; flex: none; position: relative; } .jporb canvas { width: 100%; height: 100%; display: block; }
 .jconn { margin: 10px 0 14px; padding: 10px 12px; border: 1px solid var(--line); background: rgba(7, 13, 21, 0.55); }
@@ -600,7 +612,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     <nav class="dock" id="dock" aria-label="Paneles ocultos"></nav>
     <button class="ico rdock" id="rosterDock" type="button" aria-label="Mostrar el directorio de pisos"></button>
     <button class="ico zenbtn" id="zenBtn" type="button" aria-label="Modo inmersivo (tecla H)" title="Modo inmersivo (H)"></button>
-    <div class="voice" id="voiceBox"><button class="btn" id="voTalk" type="button" title="Los agentes te hablan">Voz: no</button><button class="btn" id="voMic" type="button" title="Háblale a la torre">Hablar</button><button class="jorb" id="voJar" type="button" title="Jarvis, el agente principal" aria-label="Jarvis, el agente principal"><span class="jo" aria-hidden="true"><canvas class="jp" width="120" height="120"></canvas></span><em>Jarvis</em></button><span id="voLine" role="status" aria-live="polite"></span></div>
+    <div class="voice" id="voiceBox"><button class="btn" id="voTalk" type="button" title="Los agentes te hablan">Voz: no</button><button class="btn" id="voMic" type="button" title="Háblale a la torre">Hablar</button><button class="btn" id="voAlw" type="button" title="Jarvis siempre atento: di «Hola Jarvis» y tu orden">🎙 Atento: no</button><button class="jorb" id="voJar" type="button" title="Jarvis, el agente principal" aria-label="Jarvis, el agente principal"><span class="jo" aria-hidden="true"><canvas class="jp" width="120" height="120"></canvas></span><em>Jarvis</em></button><span id="voLine" role="status" aria-live="polite"></span></div>
     <section class="jarvis" id="jarvis" hidden role="dialog" aria-label="Informe de Jarvis"><header><i class="jporb" aria-hidden="true"><canvas class="jp" width="64" height="64"></canvas></i><div><b>Jarvis</b><p>Agente principal · piso Reportes</p></div><button class="btn" id="jaMini" type="button" aria-label="Minimizar a Jarvis" title="Minimizar">–</button><button class="btn" id="jaClose" type="button" aria-label="Cerrar informe">×</button></header><div class="jabody" id="jaBody"></div><form class="jaform" id="jaForm" autocomplete="off"><input id="jaIn" type="text" maxlength="300" placeholder="Pídele lo que quieras: estado, corrige facturación, crea una tarea…" aria-label="Orden para Jarvis"><button class="btn" id="jaMic" type="button" title="Hablar: tu voz se escribe aquí" aria-label="Hablar: tu voz se escribe en la barra"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><label class="jasend" title="Enviar a Jarvis apenas termines de hablar"><input type="checkbox" id="jaSend" checked> enviar al hablar</label><button class="btn primary" type="submit">Enviar</button></form><div class="jaans" id="jaAns" role="status" aria-live="polite" hidden></div><div class="jastop" id="jaStopBox" hidden><button class="btn" id="jaStop" type="button">Detener a Jarvis</button></div><footer><button class="btn primary" id="jaTour" type="button">Recorrer problemas</button><button class="btn" id="jaSpeak" type="button">Leer en voz alta</button><button class="btn" id="jaSee" type="button">Ver a Jarvis</button><button class="btn" id="jaRef" type="button">Actualizar</button><label class="jachk" title="Jarvis escucha todo el tiempo que estés en la torre; responde cuando dices «Jarvis»"><input type="checkbox" id="jaAlways"> Siempre atento</label><label class="jachk"><input type="checkbox" id="jaHands"> Manos libres</label><label class="jachk"><input type="checkbox" id="jaAuto"> Abrir al entrar</label></footer></section>
     <div class="score" id="score" title="Meteoritos capturados. Toca los que cruzan el cielo.">☄ 0</div>
     <div class="nogl" id="nogl" hidden>Tu navegador no pudo iniciar la vista 3D. La bandeja y las tareas siguen funcionando a la derecha.</div>
@@ -704,6 +716,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <p class="note" id="sysNote"></p>
       <div id="sysList"></div>
       <div class="jconn" id="jconnBox"></div>
+      <div class="jconn" id="secBox"></div>
       <p class="sec">Mejoras por sección</p>
       <form class="tform" id="impForm" autocomplete="off">
         <div class="two"><label>Sección<select id="imSec"></select></label><label>Mejora<input id="imTitle" type="text" maxlength="120" required></label></div>
@@ -752,6 +765,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   <section class="wscreen" id="walkScreen" hidden aria-live="polite" aria-label="Pantalla del agente"></section>
   <section class="hpip" id="hpip" hidden aria-label="Control con las manos"><div class="hv"><video id="hVid" playsinline muted></video><canvas id="hCan" width="320" height="240"></canvas></div><div class="hm"><span id="hMsg">Iniciando cámara…</span><button id="hOff" type="button">Apagar</button></div><div class="hh" id="hHelp"></div></section>
   <section class="props" id="props" hidden aria-label="Propiedades y mapa"></section>
+  <div class="jvscr" id="jvScreen" hidden role="status" aria-live="polite"><button class="btn" type="button" id="jvsX" aria-label="Cerrar">×</button><div class="jvh"><i class="jporb" aria-hidden="true"><canvas class="jp" width="64" height="64"></canvas></i><b id="jvsSt">Jarvis</b></div><p class="jvq" id="jvsQ"></p><p class="jvans" id="jvsA"></p></div>
+  <div class="micbanner" id="micBanner" hidden><button type="button" id="micBannerGo">🎙 Toca aquí una vez para activar el micrófono de Jarvis y di «Hola Jarvis»</button><button type="button" id="micBannerX" aria-label="Ocultar aviso">×</button></div>
+  <div class="lockscr" id="lockScr" hidden role="dialog" aria-modal="true" aria-label="Torre bloqueada"><form id="lockForm" autocomplete="off"><div class="lk"><canvas class="jp" width="120" height="120"></canvas></div><h2>Torre bloqueada</h2><p>Escribe tu código para abrirla.</p><input id="lockPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" aria-label="Código de la torre"><button class="btn primary" type="submit">Abrir</button><p id="lockMsg" class="note" role="alert"></p></form></div>
   <section class="coachp" id="coachP" hidden aria-label="Coach EVR: rutina y dieta"></section>
   <section class="coachp labp" id="labP" hidden aria-label="Laboratorio EVR: fábrica de agentes y noticias"></section>
   <section class="coachp postp" id="postP" hidden aria-label="Oficina Postal: correo filtrado y seguimiento del robot NEO"></section>
@@ -767,6 +783,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   var COL = { working: 0x5cc8ff, idle: 0x5d7389, warning: 0xffc857, error: 0xff5a5f };
   var LBL = { working: 'Trabajando', idle: 'En espera', warning: 'Atención', error: 'Con falla' };
   var JVP = { pulse: 0, e: 0, cvs: [] };
+  var JVS = { t: 0, on: false, hideT: null };
+  var LOCK = { on: false, last: Date.now(), tries: 0, until: 0, cfg: null };
+  var OWNER = { known: false, owner: true };
   var POST = { today: null, neo: null, rules: '', state: { done: {} }, sub: false, rew: {}, greeted: false };
   var CSSC = { working: '#5cc8ff', idle: '#5d7389', warning: '#ffc857', error: '#ff5a5f' };
 
@@ -1036,6 +1055,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   var voLineT = 0;
   function voiceLine(txt, who) { var el = $('#voLine'); if (!el) return; el.textContent = (who ? who + ': ' : '') + txt; el.classList.add('show'); clearTimeout(voLineT); voLineT = setTimeout(function () { el.classList.remove('show'); }, 9000); }
   function renderVoice() {
+    try { renderAlw(); } catch (e) {}
     var t = $('#voTalk'), m = $('#voMic'); if (!t || !m) return;
     t.textContent = 'Voz: ' + (VOICE.on ? 'sí' : 'no'); t.classList.toggle('on', VOICE.on);
     m.textContent = VOICE.listening ? 'Escuchando…' : 'Hablar'; m.classList.toggle('rec', VOICE.listening); m.title = VOICE.micBlocked ? 'Micrófono bloqueado: escribe tus órdenes en el cuadro de Jarvis' : 'Háblale a la torre';
@@ -1070,7 +1090,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function karaStart(text, who) {
     clearInterval(KARA.t); KARA.groups = []; var tt = text.trim();
     var vl = $('#voLine'); if (vl) KARA.groups.push({ el: vl, sp: karaWrap(vl, text, who ? '<b>' + esc(who) + ':</b> ' : ''), cur: -1 });
-    ['#jaAns', '#walkScreen .wsans', '#coachP .cans', '#labP .cans'].forEach(function (q) { [].forEach.call(document.querySelectorAll(q), function (el) { if (!el.closest('[hidden]') && el.textContent.trim() === tt) KARA.groups.push({ el: el, sp: karaWrap(el, text, ''), cur: -1 }); }); });
+    ['#jaAns', '#jvsA', '#walkScreen .wsans', '#coachP .cans', '#labP .cans'].forEach(function (q) { [].forEach.call(document.querySelectorAll(q), function (el) { if (!el.closest('[hidden]') && el.textContent.trim() === tt) KARA.groups.push({ el: el, sp: karaWrap(el, text, ''), cur: -1 }); }); });
   }
   function karaMark(g) {
     KARA.groups.forEach(function (G) {
@@ -1173,6 +1193,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (/\b(silencia|silencio|callate|calla)\b/.test(n)) { alerts().forEach(function (x) { x.acked = true; }); return 'Alarmas silenciadas.'; }
     if (/\b(aprueba|aprobar|acepta|aceptar)\b/.test(n)) { tab('inbox'); return 'Abrí la bandeja. Confirma con el botón de cada elemento; no envío nada sin tu toque.'; }
     if (/\b(cambia|cambiar|otra|siguiente)\b/.test(n) && /\bvoz\b/.test(n)) return cycleVoz();
+    if (/\bbloque(a|ar|ame)\b/.test(n) && /\b(torre|pantalla|todo)\b/.test(n)) { return lockOn() ? (setTimeout(function () { lockNow(''); }, 900), 'Torre bloqueada. Para abrirla escribe tu código.') : 'Primero crea tu código en Sistema, en Seguridad.'; }
+    if (/\b(quien|quienes)\b/.test(n) && /\b(acceso|entrar|entra|abrir|puede)\b/.test(n)) return 'El acceso a la torre lo controla claude.ai: déjala en «Solo yo» en el menú Compartir. Yo solo le hablo al dueño, y puedes poner un código de bloqueo en Sistema, en Seguridad.';
     if (/\bintegridad\b/.test(n)) { var au0 = jarvisIntegrity(), ba0 = au0.filter(function (x) { return !x.ok; }); return ba0.length ? 'Encontré ' + ba0.length + ' punto(s) por revisar: ' + ba0.map(function (x) { return x.t + ': ' + x.d; }).join('. ') : 'Mi integridad está completa: ' + au0.length + ' revisiones sin problemas.'; }
     if (/\b(conectores|conexiones)\b/.test(n)) return connStatusText();
     if (/\bmotor\b/.test(n) && /\b(local|claude|profundo|rapido|automatico)\b/.test(n)) { JENG.mode = /\blocal\b/.test(n) ? 'local' : /\bprofundo\b/.test(n) ? 'deep' : 'auto'; savePrefs(); return 'Listo, mi motor ahora es ' + ({ auto: 'Claude rápido', deep: 'Claude profundo', local: 'solo local, sin Claude' }[JENG.mode]) + '.'; }
@@ -1296,7 +1318,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       { name: 'run_system_check', description: 'Revisa la salud del sistema (base de datos, Claude, voz, micrófono, datos, errores) y devuelve los puntos con problemas.', execute: function () { return sysChecks().filter(function (c) { return c.st === 'bad' || c.st === 'warn'; }).map(function (c) { return c.t + ': ' + c.d; }).join(' | ') || 'Todo en orden'; } }
     ].concat(jarvisTools2());
   }
-  function chatShow(t) { var out = $('#jaAns'); out.hidden = false; out.textContent = t; out.scrollTop = out.scrollHeight; }
+  function chatShow(t) { var out = $('#jaAns'); out.hidden = false; out.textContent = t; out.scrollTop = out.scrollHeight; if (JVS.on && Date.now() - JVS.t < 40000) jvShow(null, String(t).replace(/^Jarvis:\s*/, ''), 'Jarvis'); }
 
   /* ---- Motor de Jarvis, conectores de solo lectura e integridad ---- */
   var JCONN = { mcp: null, ready: false, list: null, ok: {}, msg: {}, at: {}, busy: {}, audit: null,
@@ -1436,6 +1458,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   });
   setTimeout(jconnInit, 3500);
   function jarvisAsk(q) {
+    if (!ownerOk()) { chatShow('Jarvis solo atiende al dueño de la torre.'); return; }
     if (!SAMPLE || JENG.mode === 'local') { var la = jarvisLocalAnswer(q); chatShow('Jarvis: ' + la); voiceSay(null, la, null, false, true); return; }
     if (JCHAT.busy) { chatShow('Un momento, sigo con tu orden anterior.'); return; }
     var turns = JCHAT.turns.slice(-8); turns.push({ role: 'user', content: String(q).slice(0, 600) });
@@ -1554,33 +1577,40 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   setTimeout(function () { if (VOICE.on) jarvisBrief(true); else if (PREFS.jarvis !== false && !JA.shown) jarvisOpen(false); }, 3800);
   setInterval(function () { if (!$('#jarvis').hidden && !JT.on) jarvisRender(); }, 20000);
   function wantsLLM(n) { return !!SAMPLE && JENG.mode !== 'local' && (n.split(' ').length > 5 || /\b(crea|crear|agrega|agregar|anota|anotar|guarda|guardar|recuerdame|programa|programar|mejora|mejoras|porque|por que|puedes|quiero|necesito|dime|explica|explicame|ayudame|compara|resume|resumen de|cuanto|cuantos|cuantas|cual|cuales)\b/.test(n)); }
-  function heard(txt) { voiceLine(txt, 'Tú'); var r = wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (!r && (JENG.mode === 'local' || !SAMPLE)) r = jarvisLocalAnswer(txt); if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; } if (r) { voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } }
+  function heard(txt) {
+    voiceLine(txt, 'Tú'); if (!ownerOk()) { jvShow(txt, 'Jarvis solo atiende al dueño de la torre.', 'Acceso'); return; } if (LOCK.on) return; LOCK.last = Date.now(); jvShow(txt, 'Pensando…', 'Jarvis');
+    var r = wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (!r && (JENG.mode === 'local' || !SAMPLE)) r = jarvisLocalAnswer(txt);
+    if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; }
+    if (r) { jvShow(null, r, 'Jarvis'); voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } else jvShow(null, 'No entendí esa orden. Di «ayuda» para ver lo que puedo mostrarte, o dímelo con otras palabras.', 'Jarvis');
+  }
   function micPolicyBlocked() { try { var pp = document.permissionsPolicy || document.featurePolicy; return !!(pp && pp.allowsFeature && !pp.allowsFeature('microphone')); } catch (e) { return false; } }
   function micFallback() { var el = $('#jaAns'); if (!el) return; el.hidden = false; el.textContent = 'El micrófono está bloqueado aquí (el navegador o el marco de Claude no lo permite). Escribe tu orden en el cuadro de arriba. En el celular o en la computadora puedes dictar con el micrófono del teclado (celular) o con Windows+H / Fn Fn (Mac). Si quieres usar el micrófono directo, permítelo en el candado de la barra de direcciones y recarga.'; var i = $('#jaIn'); if (i) { try { i.focus(); } catch (e) {} } }
   function speechFinal(txt, mode) {
     var inp = $('#jaIn');
     if (mode === 'dictate') { if (inp) { inp.value = txt; try { inp.focus(); } catch (e) {} } return; }
     if (mode === 'wake') {
-      var has = /\bjarvis\b/.test(normV(txt)); if (!has && Date.now() > (VOICE.convUntil || 0)) return;
-      var rest = txt.replace(/\b(hey |oye |ok |okay )?jarvis[,.:!?]*\s*/i, '').trim(); VOICE.convUntil = Date.now() + 12000;
-      if (!rest) { voiceSay(null, 'Dime.', null, false, true); return; } heard(rest); return;
+      if (!ownerOk() || LOCK.on) return;
+      var WK = '(jarvis|yarvis|jarbis|harvis|jarvi|yarvi|jervis|charvis)', has = new RegExp('\\b' + WK + '\\b').test(normV(txt)); if (!has && Date.now() > (VOICE.convUntil || 0)) return;
+      var rest = txt.replace(new RegExp('\\b((hola|hey|oye|ok|okay|buenas|buenos d[ií]as|buenas tardes|buenas noches)[,\\s]+)?' + WK + '\\b[,.:!?]*\\s*', 'i'), '').trim(); VOICE.convUntil = Date.now() + 15000; LOCK.last = Date.now();
+      if (!rest || /^(hola|buenas|que tal|estas ahi|me escuchas|dime)[?!. ]*$/.test(normV(rest))) { jvShow('', 'Te escucho, Nesty. Dime qué quieres ver.', 'Jarvis · escuchando'); voiceSay(null, 'Hola Nesty, dime.', function () { VOICE.convUntil = Date.now() + 15000; if (VOICE.always && !VOICE.rec) startListen(12000, 'wake'); }, false, true); return; } heard(rest); return;
     }
     if (inp) inp.value = ''; heard(txt);
   }
   function startListen(ms, mode) {
+    if (!ownerOk() || LOCK.on) return false; var auto = !!VOICE.auto;
     if (micPolicyBlocked()) { VOICE.micBlocked = true; renderVoice(); jarvisOpen(false); micFallback(); return false; }
     if (!SR) { voiceLine('Este navegador no permite escuchar por voz. Usa Chrome, Edge o Safari.', 'Voz'); return false; }
     if (VOICE.rec) return true;
     VOICE.mode = mode || 'send';
     var r = new SR(); r.lang = 'es-US'; r.interimResults = true; r.maxAlternatives = 1; r.continuous = false;
-    r.onstart = function () { VOICE.listening = true; renderVoice(); };
+    r.onstart = function () { VOICE.listening = true; VOICE.needTap = false; renderVoice(); };
     r.onresult = function (e) {
       var txt = '', fin = false, i; for (i = e.resultIndex || 0; i < e.results.length; i++) { var a = e.results[i]; txt += (a[0] && a[0].transcript) || ''; if (a.isFinal !== false) fin = true; }
       txt = txt.trim(); if (!txt) return; var inp = $('#jaIn'); if (VOICE.mode !== 'wake' && inp) inp.value = txt;
       if (!fin) return; VOICE.micOk = true; savePrefs(); speechFinal(txt, VOICE.mode);
     };
-    r.onerror = function (e) { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { VOICE.micBlocked = true; VOICE.always = false; var al = $('#jaAlways'); if (al) al.checked = false; renderVoice(); jarvisOpen(false); micFallback(); } var m = { 'not-allowed': 'El micrófono está bloqueado en esta página.', 'service-not-allowed': 'Este marco no permite el micrófono.', 'no-speech': VOICE.mode === 'wake' ? '' : 'No te escuché. Inténtalo de nuevo.', 'audio-capture': 'No encuentro un micrófono.', 'network': 'Sin conexión para reconocer la voz.' }[e.error]; if (m) voiceLine(m, 'Voz'); };
-    r.onend = function () { VOICE.rec = null; VOICE.listening = false; clearTimeout(VOICE.lt); renderVoice(); };
+    r.onerror = function (e) { if (auto && (e.error === 'not-allowed' || e.error === 'service-not-allowed')) { VOICE.needTap = true; renderAlw(); micBannerUpdate(); return; } if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { VOICE.micBlocked = true; VOICE.always = false; var al = $('#jaAlways'); if (al) al.checked = false; renderVoice(); jarvisOpen(false); micFallback(); } var m = { 'not-allowed': 'El micrófono está bloqueado en esta página.', 'service-not-allowed': 'Este marco no permite el micrófono.', 'no-speech': VOICE.mode === 'wake' ? '' : 'No te escuché. Inténtalo de nuevo.', 'audio-capture': 'No encuentro un micrófono.', 'network': 'Sin conexión para reconocer la voz.' }[e.error]; if (m) voiceLine(m, 'Voz'); };
+    r.onend = function () { VOICE.rec = null; VOICE.listening = false; clearTimeout(VOICE.lt); renderVoice(); micBannerUpdate(); };
     try { r.start(); VOICE.rec = r; VOICE.lt = setTimeout(function () { try { r.stop(); } catch (e) {} }, ms || 9000); return true; } catch (e) { voiceLine('No pude abrir el micrófono.', 'Voz'); return false; }
   }
   function stopListen() { try { if (VOICE.rec) VOICE.rec.stop(); } catch (e) {} }
@@ -1591,15 +1621,85 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   };
   $('#voMic').onclick = function () { unlockAudio(); if (VOICE.listening) { stopListen(); return; } if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } startListen(9000); };
   $('#jaMic').onclick = function () { unlockAudio(); if (VOICE.listening) { stopListen(); return; } if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } var snd = $('#jaSend'); if (snd) { PREFS.send = snd.checked; savePrefs(); } startListen(14000, snd && snd.checked ? 'send' : 'dictate'); };
-  VOICE.always = PREFS.always === true && PREFS.mic === true; VOICE.convUntil = 0;
+  VOICE.always = PREFS.always !== false && PREFS.mic === true; VOICE.convUntil = 0;
   $('#jaAlways').checked = VOICE.always; $('#jaSend').checked = PREFS.send !== false;
   $('#jaSend').onchange = function () { PREFS.send = this.checked; savePrefs(); };
-  $('#jaAlways').onchange = function () {
-    PREFS.always = this.checked; VOICE.always = this.checked; savePrefs();
-    if (this.checked) { if (!SR) { toast('Este navegador no reconoce voz'); this.checked = false; VOICE.always = false; PREFS.always = false; savePrefs(); return; } unlockAudio(); if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } if (!startListen(30000, 'wake')) { this.checked = false; VOICE.always = false; return; } toast('Jarvis atento: di «Jarvis» y tu orden'); voiceLine('Estoy atento. Di «Jarvis» y tu orden.', 'Jarvis'); }
-    else stopListen();
+  $('#jaAlways').onchange = function () { setAlways(this.checked); };
+
+  /* ---- Micrófono siempre atento, «Hola Jarvis», acceso solo del dueño y candado de la torre ---- */
+  function ownerOk() { return OWNER.owner !== false; }
+  function ownerInit() {
+    if (!(window.claude && window.claude.use)) return;
+    window.claude.use('user').then(function (u) {
+      if (!u) return; OWNER.known = true; try { OWNER.owner = !!u.isOwner(); } catch (e) { OWNER.known = false; }
+      if (!OWNER.owner) { VOICE.always = false; JCHAT.tools = false; stopListen(); try { if (TTS) TTS.cancel(); } catch (e) {} toast('Vista de invitado: Jarvis, el micrófono y las acciones son solo para el dueño de la torre.'); renderVoice(); }
+      renderAlw(); micBannerUpdate(); renderSec();
+    }).catch(function () {});
+  }
+  function jvShow(q, a, st) {
+    var el = $('#jvScreen'); if (!el) return; JVS.on = true; JVS.t = Date.now(); el.hidden = false;
+    if (q != null) $('#jvsQ').textContent = q ? 'Tú: ' + q : '';
+    if (a != null) { var an = $('#jvsA'); an.textContent = a; an.scrollTop = an.scrollHeight; }
+    if (st) $('#jvsSt').textContent = st; clearTimeout(JVS.hideT); JVS.hideT = setTimeout(jvIdle, 6000);
+  }
+  function jvIdle() { var el = $('#jvScreen'); if (!el || el.hidden) return; if ((TTS && TTS.speaking) || VOICE.listening || JCHAT.busy || Date.now() - JVS.t < 16000) { JVS.hideT = setTimeout(jvIdle, 4000); return; } el.hidden = true; JVS.on = false; }
+  $('#jvsX').onclick = function () { $('#jvScreen').hidden = true; JVS.on = false; };
+  function renderAlw() { var b = $('#voAlw'); if (!b) return; var on = !!VOICE.always && ownerOk(); b.textContent = '🎙 Atento: ' + (on ? 'sí' : 'no'); b.classList.toggle('on', on && !VOICE.needTap); b.classList.toggle('warm', on && !!VOICE.needTap); b.hidden = !SR || !ownerOk(); }
+  var micBannerOff = false;
+  function micBannerUpdate() { var el = $('#micBanner'); if (!el) return; var show = !micBannerOff && SR && ownerOk() && !LOCK.on && !micPolicyBlocked() && (!VOICE.always || VOICE.needTap) && !VOICE.rec; el.hidden = !show; }
+  function setAlways(on) {
+    if (on && !ownerOk()) { toast('El micrófono de Jarvis es solo para el dueño de la torre.'); on = false; }
+    if (on && LOCK.on) return;
+    PREFS.always = !!on; VOICE.always = !!on; savePrefs(); var al = $('#jaAlways'); if (al) al.checked = !!on;
+    if (on) {
+      if (!SR) { toast('Este navegador no reconoce voz: usa Chrome, Edge o Safari'); PREFS.always = false; VOICE.always = false; savePrefs(); if (al) al.checked = false; renderAlw(); return; }
+      unlockAudio(); if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } VOICE.needTap = false; VOICE.auto = false;
+      if (startListen(30000, 'wake')) { toast('🎙 Jarvis atento: di «Hola Jarvis» y lo que quieras ver'); voiceLine('Estoy atento. Di «Hola Jarvis».', 'Jarvis'); } else { PREFS.always = false; VOICE.always = false; savePrefs(); if (al) al.checked = false; }
+    } else stopListen();
+    renderAlw(); micBannerUpdate();
+  }
+  $('#voAlw').onclick = function () { setAlways(!VOICE.always); };
+  $('#micBannerGo').onclick = function () { VOICE.needTap = false; setAlways(true); };
+  $('#micBannerX').onclick = function () { micBannerOff = true; micBannerUpdate(); };
+  /* candado de la torre en este dispositivo */
+  function lockLoad() { try { LOCK.cfg = JSON.parse(localStorage.getItem('evr.lock') || 'null'); } catch (e) { LOCK.cfg = null; } }
+  function lockSave() { try { if (LOCK.cfg) localStorage.setItem('evr.lock', JSON.stringify(LOCK.cfg)); else localStorage.removeItem('evr.lock'); } catch (e) {} }
+  function lockHash(pin, salt) {
+    var s = salt + ':' + pin;
+    try { if (window.crypto && crypto.subtle && window.TextEncoder) return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (b) { return 's' + [].map.call(new Uint8Array(b), function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }); } catch (e) {}
+    var h = 5381, i; for (i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return Promise.resolve('x' + (h >>> 0).toString(16));
+  }
+  function lockOn() { return !!(LOCK.cfg && LOCK.cfg.hash); }
+  function lockNow(why) {
+    if (!lockOn()) return false; LOCK.on = true; stopListen(); try { if (TTS) TTS.cancel(); } catch (e) {}
+    $('#lockScr').hidden = false; $('#lockMsg').textContent = why || ''; var i = $('#lockPin'); if (i) { i.value = ''; setTimeout(function () { try { i.focus(); } catch (e) {} }, 120); } micBannerUpdate(); return true;
+  }
+  function lockOpen() { LOCK.on = false; LOCK.tries = 0; LOCK.last = Date.now(); $('#lockScr').hidden = true; toast('Torre abierta'); micBannerUpdate(); }
+  $('#lockForm').onsubmit = function (e) {
+    e.preventDefault(); var now = Date.now(); if (now < LOCK.until) { $('#lockMsg').textContent = 'Espera ' + Math.ceil((LOCK.until - now) / 1000) + ' s para volver a intentar.'; return; }
+    lockHash($('#lockPin').value, LOCK.cfg.salt).then(function (h) { if (h === LOCK.cfg.hash) lockOpen(); else { LOCK.tries++; $('#lockPin').value = ''; if (LOCK.tries >= 5) { LOCK.until = Date.now() + 30000; LOCK.tries = 0; $('#lockMsg').textContent = 'Código incorrecto. Espera 30 segundos.'; } else $('#lockMsg').textContent = 'Código incorrecto.'; } });
   };
-  setInterval(function () { if (VOICE.always && VOICE.micOk && !VOICE.rec && !VOICE.micBlocked && !document.hidden && !JCHAT.busy && !(TTS && TTS.speaking)) startListen(30000, 'wake'); }, 1500);
+  ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { document.addEventListener(ev, function () { if (!LOCK.on) LOCK.last = Date.now(); }, true); });
+  setInterval(function () { if (!LOCK.on && lockOn() && LOCK.cfg.idle > 0 && Date.now() - LOCK.last > LOCK.cfg.idle * 60000) lockNow('Se bloqueó por inactividad.'); }, 15000);
+  function renderSec() {
+    var el = $('#secBox'); if (!el || $('#sys').hidden) return; var st = OWNER.known ? (OWNER.owner ? 'Eres el dueño de esta torre.' : 'Estás viendo la torre como invitado.') : 'No pude confirmar quién eres en esta vista; el acceso lo decide claude.ai.';
+    var fe = document.activeElement; if (fe && fe.closest && fe.closest('#secBox') && (fe.tagName === 'INPUT' || fe.tagName === 'SELECT')) return;
+    setHtml(el, '<h4>Seguridad · quién entra y quién habla con Jarvis</h4>' +
+      '<div class="jrow"><b>Acceso a la torre</b><span class="can">Lo controla claude.ai: abre el menú <b>Compartir</b> de este artefacto y déjalo en «Solo yo». Si no lo compartiste, solo tú puedes abrir el enlace. No hay un código que yo pueda poner a esa puerta.</span></div>' +
+      '<div class="jrow"><b>Jarvis y el micrófono</b><span class="can">' + esc(st) + ' Si alguien más abre la torre, Jarvis no le responde, no escucha su micrófono y no ejecuta acciones.</span></div>' +
+      '<div class="jrow"><b>Candado en este dispositivo</b><span class="can">' + (lockOn() ? 'Activado: pide tu código al abrir' + (LOCK.cfg.idle ? ' y tras ' + LOCK.cfg.idle + ' min sin usar.' : '.') : 'Apagado. Sirve si alguien usa tu pantalla ya abierta; no sustituye el menú Compartir.') + '</span></div>' +
+      '<div class="jbtns"><input id="secPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="Código de 4 a 8 números" autocomplete="off" aria-label="Código nuevo" style="background:#07141f;color:#fff;border:1px solid rgba(92,255,230,.35);padding:6px"><select id="secIdle" aria-label="Bloquear tras"><option value="0">Solo al abrir</option><option value="5">y tras 5 min sin usar</option><option value="15">y tras 15 min sin usar</option><option value="30">y tras 30 min sin usar</option></select><button class="btn primary" type="button" data-secsave>Guardar código</button>' + (lockOn() ? '<button class="btn" type="button" data-seclock>Bloquear ahora</button><button class="btn" type="button" data-secoff>Quitar código</button>' : '') + '</div><p class="note" id="secMsg"></p>');
+    var sel = $('#secIdle'); if (sel && LOCK.cfg) sel.value = String(LOCK.cfg.idle || 0);
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('#secBox button'); if (!b) return; var msg = $('#secMsg');
+    if (b.hasAttribute('data-secsave')) { var pin = ($('#secPin').value || '').trim(); if (!/^\d{4,8}$/.test(pin)) { if (msg) msg.textContent = 'El código debe tener de 4 a 8 números.'; return; } var salt = String(Math.random()).slice(2, 12) + Date.now().toString(36), idle = +$('#secIdle').value || 0; lockHash(pin, salt).then(function (h) { LOCK.cfg = { salt: salt, hash: h, idle: idle }; lockSave(); LOCK.last = Date.now(); toast('🔒 Código guardado en este dispositivo'); renderSec(); }); return; }
+    if (b.hasAttribute('data-seclock')) { lockNow(''); return; }
+    if (b.hasAttribute('data-secoff')) { LOCK.cfg = null; lockSave(); toast('Código quitado'); renderSec(); }
+  });
+  lockLoad(); if (lockOn()) lockNow('');
+  setTimeout(ownerInit, 800); setTimeout(function () { renderAlw(); micBannerUpdate(); }, 2500);
+  setInterval(function () { if (VOICE.always && VOICE.micOk && !VOICE.rec && !VOICE.micBlocked && !VOICE.needTap && ownerOk() && !LOCK.on && !document.hidden && !JCHAT.busy && !(TTS && TTS.speaking)) { VOICE.auto = true; startListen(30000, 'wake'); VOICE.auto = false; } }, 1500);
   (function () { var m = 0; setInterval(function () { var o = $('#voJar'); if (!o || document.hidden) return; var sp = !!(TTS && TTS.speaking), t = Date.now() / 1000; var tg = sp ? 0.15 + 0.85 * Math.abs(Math.sin(t * 17) * Math.sin(t * 5.3 + 1)) : 0; m += (tg - m) * 0.55; o.style.setProperty('--m', m.toFixed(2)); }, 70); })();
   setInterval(function () { var o = $('#voJar'); if (!o) return; o.classList.toggle('talk', !!(TTS && TTS.speaking)); o.classList.toggle('listen', !!VOICE.listening); o.classList.toggle('alert', alerts().length > 0); o.classList.toggle('always', !!VOICE.always); }, 350);
 
@@ -3163,6 +3263,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     add(SAMPLE ? 'ok' : 'warn', 'Claude (Jarvis y asistente)', SAMPLE ? 'Listo para conversar.' : 'No disponible aquí; abre la torre dentro de claude.ai.');
     add(JCHAT.tools ? 'ok' : 'warn', 'Acciones de Jarvis', JCHAT.tools ? 'Jarvis puede enfocar agentes, reiniciarlos, crear tareas y anotar mejoras.' : 'Jarvis solo conversa; esta vista no le permite actuar.');
     add(JENG.mode === 'local' ? 'warn' : 'ok', 'Motor de Jarvis', JENG.mode === 'local' ? 'Modo solo local: Jarvis no usa Claude. Cámbialo abajo en «Jarvis · motor».' : (SAMPLE ? 'Claude (' + (JENG.mode === 'deep' ? 'profundo' : 'rápido con escalado automático') + ').' : 'Claude no disponible aquí; usa el motor local.'));
+    add(OWNER.known && !OWNER.owner ? 'warn' : 'ok', 'Acceso del dueño', OWNER.known ? (OWNER.owner ? 'Eres el dueño: Jarvis y el micrófono te atienden solo a ti.' : 'Vista de invitado: Jarvis y el micrófono están apagados para ti.') : 'No pude confirmar quién eres en esta vista; el acceso lo controla el menú Compartir de claude.ai.');
     add('ok', 'Conectores de Jarvis', 'Gmail, Google Calendar y Google Drive, solo lectura; se verifican al usarlos o con «Probar» abajo.');
     add(!TTS ? 'bad' : VDIAG.state === 'bad' ? 'bad' : VOICE.heard ? 'ok' : 'warn', 'Voz de los agentes', !TTS ? 'Este navegador no puede hablar. ' + voiceReason() : VDIAG.state === 'bad' ? VDIAG.last : VOICE.heard ? 'Funcionando. ' + voicesInfo().es + ' voz(es) en español.' : 'Toca «Probar voz» (el navegador exige un toque antes de hablar). ' + voiceReason());
     add(!SR ? 'warn' : (VOICE.micBlocked || micPolicyBlocked()) ? 'warn' : VOICE.micOk ? 'ok' : 'warn', 'Micrófono', !SR ? 'Este navegador no reconoce voz (usa Chrome, Edge o Safari). Puedes escribir o dictar con el teclado.' : (VOICE.micBlocked || micPolicyBlocked()) ? 'Bloqueado en este marco: escribe tus órdenes o dicta con el teclado.' : VOICE.micOk ? 'Funcionando.' : 'Sin probar: toca «Hablar».');
@@ -3179,7 +3280,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
   var STC = { ok: 'working', warn: 'warning', bad: 'error', idle: 'idle' };
   function renderSys() {
-    if ($('#sys').hidden) return; fillVoz(); renderJconn();
+    if ($('#sys').hidden) return; fillVoz(); renderJconn(); renderSec();
     var C = sysChecks(), bad = C.filter(function (c) { return c.st === 'bad'; }).length, warn = C.filter(function (c) { return c.st === 'warn'; }).length;
     $('#sysNote').textContent = bad ? bad + ' punto(s) con falla y ' + warn + ' por revisar.' : warn ? warn + ' punto(s) por revisar; lo demás está bien.' : 'Todo está en orden.';
     setHtml($('#sysList'), C.map(function (c) { return '<div class="sysrow"><i class="dot" data-s="' + STC[c.st] + '"></i><div><b>' + esc(c.t) + '</b><span>' + esc(c.d) + '</span></div></div>'; }).join(''));

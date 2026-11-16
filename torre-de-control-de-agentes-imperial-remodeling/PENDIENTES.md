@@ -152,3 +152,12 @@
   - Es guía general, no consejo médico.
 - [ ] REVISAR: la tarea «Ili calls to calendar» (desactivada) tiene una llave de Bland.ai escrita en sus instrucciones. Revocarla en Bland.ai y quitarla de la tarea.
 - [ ] Probar el modo Caminar en tu teléfono y decirme si la velocidad y el joystick se sienten cómodos.
+
+## «Hola Jarvis» · micrófono siempre atento · solo dueño · candado
+- Micrófono atento por defecto (botón «Atento: sí/no» en el panel de voz). Basta decir «Hola Jarvis» (acepta variantes: yarvis, jarbis…) y luego la orden; durante ~15 s de conversación no hace falta repetir el nombre.
+- Pantalla de Jarvis (`#jvScreen`): muestra lo que pediste y la respuesta con karaoke, y abre el piso/panel correspondiente.
+- Aviso «Toca aquí una vez» si el navegador aún no dio permiso de micrófono.
+- Solo el dueño: capacidad `user` (`isOwner()`); si no es el dueño, Jarvis y el micrófono quedan apagados.
+- Candado opcional en el dispositivo (Sistema › Seguridad): código 4–8 dígitos (solo huella SHA-256 con sal), bloqueo por inactividad, 5 intentos y espera de 30 s, voz «bloquea la torre».
+- Acceso real = menú Compartir de claude.ai en «Solo yo». El candado no lo reemplaza.
+- Probado con wake.js (23 comprobaciones) + regresión.
