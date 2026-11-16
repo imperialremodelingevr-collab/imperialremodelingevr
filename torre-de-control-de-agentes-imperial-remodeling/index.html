@@ -766,7 +766,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   <section class="hpip" id="hpip" hidden aria-label="Control con las manos"><div class="hv"><video id="hVid" playsinline muted></video><canvas id="hCan" width="320" height="240"></canvas></div><div class="hm"><span id="hMsg">Iniciando cámara…</span><button id="hOff" type="button">Apagar</button></div><div class="hh" id="hHelp"></div></section>
   <section class="props" id="props" hidden aria-label="Propiedades y mapa"></section>
   <div class="jvscr" id="jvScreen" hidden role="status" aria-live="polite"><button class="btn" type="button" id="jvsX" aria-label="Cerrar">×</button><div class="jvh"><i class="jporb" aria-hidden="true"><canvas class="jp" width="64" height="64"></canvas></i><b id="jvsSt">Jarvis</b></div><p class="jvq" id="jvsQ"></p><p class="jvans" id="jvsA"></p></div>
-  <div class="micbanner" id="micBanner" hidden><button type="button" id="micBannerGo">🎙 Toca aquí una vez para activar el micrófono de Jarvis y di «Hola Jarvis»</button><button type="button" id="micBannerX" aria-label="Ocultar aviso">×</button></div>
+  <div class="micbanner" id="micBanner" hidden><button type="button" id="micBannerGo">🎙 Toca aquí una vez para activar el micrófono de Jarvis y di «Hey Jarvis»</button><button type="button" id="micBannerX" aria-label="Ocultar aviso">×</button></div>
   <div class="lockscr" id="lockScr" hidden role="dialog" aria-modal="true" aria-label="Torre bloqueada"><form id="lockForm" autocomplete="off"><div class="lk"><canvas class="jp" width="120" height="120"></canvas></div><h2>Torre bloqueada</h2><p>Escribe tu código para abrirla.</p><input id="lockPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" aria-label="Código de la torre"><button class="btn primary" type="submit">Abrir</button><p id="lockMsg" class="note" role="alert"></p></form></div>
   <section class="coachp" id="coachP" hidden aria-label="Coach EVR: rutina y dieta"></section>
   <section class="coachp labp" id="labP" hidden aria-label="Laboratorio EVR: fábrica de agentes y noticias"></section>
@@ -1181,6 +1181,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (/\b(que haces|que hace|como mejoras|como mejorar|como mejoro|cuentame|como vas)\b/.test(n)) { var qa = findAgentV(n); if (qa) { select(qa.id); return agentBrief(qa).speech; } }
     if (/\b(informe|reporte del dia|jarvis|que mejoro|que falta|que debo mejorar|dime todo|que hay de nuevo)\b/.test(n)) { var jr = jarvisOpen(false); return jarvisSpeech(jr); }
     if (/\b(ayuda|comandos|que puedo decir)\b/.test(n)) return 'Puedes decir: estado, sube, baja, piso 5, habla con calendario, qué haces calendario, reinicia o corrige seguido del agente, pausa o reanuda un agente, abre la bandeja, tareas, obras o tokens, ver un agente, vista interior, torre completa, y silencia.';
+    if (/\b(que ha pasado|que paso|que ha ocurrido|ponme al dia|ponme al corriente|paso a paso|recorrido|todo lo que paso|todo lo que ha pasado|cuentame todo)\b/.test(n)) return '__walk';
     if (/\b(estado|resumen|que pasa|como va|informe|novedades)\b/.test(n)) return briefingText(false);
     if (/\b(reinicia|reiniciar|corrige|corregir|arregla|arreglar|soluciona|solucionar)\b/.test(n)) {
       var ag = findAgentV(n), tg = ag ? [ag] : alerts().filter(function (x) { return x.status === 'error'; });
@@ -1578,8 +1579,17 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   setInterval(function () { if (!$('#jarvis').hidden && !JT.on) jarvisRender(); }, 20000);
   function wantsLLM(n) { return !!SAMPLE && JENG.mode !== 'local' && (n.split(' ').length > 5 || /\b(crea|crear|agrega|agregar|anota|anotar|guarda|guardar|recuerdame|programa|programar|mejora|mejoras|porque|por que|puedes|quiero|necesito|dime|explica|explicame|ayudame|compara|resume|resumen de|cuanto|cuantos|cuantas|cual|cuales)\b/.test(n)); }
   function heard(txt) {
-    voiceLine(txt, 'Tú'); if (!ownerOk()) { jvShow(txt, 'Jarvis solo atiende al dueño de la torre.', 'Acceso'); return; } if (LOCK.on) return; LOCK.last = Date.now(); jvShow(txt, 'Pensando…', 'Jarvis');
-    var r = wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (!r && (JENG.mode === 'local' || !SAMPLE)) r = jarvisLocalAnswer(txt);
+    voiceLine(txt, 'Tú'); if (!ownerOk()) { jvShow(txt, 'Jarvis solo atiende al dueño de la torre.', 'Acceso'); return; } if (LOCK.on) return; LOCK.last = Date.now();
+    if (WALK.on) {
+      var wn = normV(txt);
+      if (/\b(para|parar|detente|basta|callate|silencio|alto|suficiente|termina|cancela)\b/.test(wn)) { walkStop(); var sm = 'De acuerdo, me detengo. Dime qué necesitas.'; jvShow(txt, sm, 'Jarvis'); voiceSay(null, sm, null, false, true); return; }
+      if (/\b(siguiente|sigue|continua|adelante|salta|saltalo|next)\b/.test(wn)) { try { TTS && TTS.cancel(); } catch (e) {} WALK.i++; walkNext(); return; }
+      if (/\b(repite|repitelo|otra vez|de nuevo)\b/.test(wn)) { try { TTS && TTS.cancel(); } catch (e) {} walkNext(); return; }
+      walkStop();
+    }
+    jvShow(txt, 'Pensando…', 'Jarvis');
+    var r = /\b(que ha pasado|que paso|que ha ocurrido|ponme al dia|ponme al corriente|paso a paso|recorrido|todo lo que paso|todo lo que ha pasado|cuentame todo)\b/.test(normV(txt)) ? '__walk' : wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (!r && (JENG.mode === 'local' || !SAMPLE)) r = jarvisLocalAnswer(txt);
+    if (r === '__walk') { walkStart(); return; }
     if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; }
     if (r) { jvShow(null, r, 'Jarvis'); voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } else jvShow(null, 'No entendí esa orden. Di «ayuda» para ver lo que puedo mostrarte, o dímelo con otras palabras.', 'Jarvis');
   }
@@ -1591,8 +1601,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (mode === 'wake') {
       if (!ownerOk() || LOCK.on) return;
       var WK = '(jarvis|yarvis|jarbis|harvis|jarvi|yarvi|jervis|charvis)', has = new RegExp('\\b' + WK + '\\b').test(normV(txt)); if (!has && Date.now() > (VOICE.convUntil || 0)) return;
-      var rest = txt.replace(new RegExp('\\b((hola|hey|oye|ok|okay|buenas|buenos d[ií]as|buenas tardes|buenas noches)[,\\s]+)?' + WK + '\\b[,.:!?]*\\s*', 'i'), '').trim(); VOICE.convUntil = Date.now() + 15000; LOCK.last = Date.now();
-      if (!rest || /^(hola|buenas|que tal|estas ahi|me escuchas|dime)[?!. ]*$/.test(normV(rest))) { jvShow('', 'Te escucho, Nesty. Dime qué quieres ver.', 'Jarvis · escuchando'); voiceSay(null, 'Hola Nesty, dime.', function () { VOICE.convUntil = Date.now() + 15000; if (VOICE.always && !VOICE.rec) startListen(12000, 'wake'); }, false, true); return; } heard(rest); return;
+      var rest = txt.replace(new RegExp('\\b((hola|hey|hei|ey|oye|ok|okay|buenas|buenos d[ií]as|buenas tardes|buenas noches)[,\\s]+)?' + WK + '\\b[,.:!?]*\\s*', 'i'), '').trim(); VOICE.convUntil = Date.now() + 15000; LOCK.last = Date.now();
+      if (!rest || /^(hola|hey|buenas|que tal|estas ahi|me escuchas|dime)[?!. ]*$/.test(normV(rest))) { jvShow('', 'Hey Nesty. Te cuento paso a paso lo que ha pasado en la torre…', 'Jarvis · escuchando'); voiceSay(null, 'Hey Nesty. Te cuento paso a paso lo que ha pasado en la torre.', function () { VOICE.convUntil = Date.now() + 15000; walkStart(); }, false, true); return; } heard(rest); return;
     }
     if (inp) inp.value = ''; heard(txt);
   }
@@ -1642,7 +1652,30 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (a != null) { var an = $('#jvsA'); an.textContent = a; an.scrollTop = an.scrollHeight; }
     if (st) $('#jvsSt').textContent = st; clearTimeout(JVS.hideT); JVS.hideT = setTimeout(jvIdle, 6000);
   }
-  function jvIdle() { var el = $('#jvScreen'); if (!el || el.hidden) return; if ((TTS && TTS.speaking) || VOICE.listening || JCHAT.busy || Date.now() - JVS.t < 16000) { JVS.hideT = setTimeout(jvIdle, 4000); return; } el.hidden = true; JVS.on = false; }
+  var WALK = { on: false, i: 0, steps: [], tok: 0 };
+  function tl(name, a) { try { var t = jarvisTools().filter(function (x) { return x.name === name; })[0]; if (!t) return ''; var r = t.execute(a || {}); return (r && typeof r.then === 'function') ? '' : String(r || ''); } catch (e) { return ''; } }
+  function walkSteps() {
+    var N = AGENTS.length, work = AGENTS.filter(function (a) { return a.status === 'working'; }), al = alerts(), st = [];
+    st.push({ t: 'Panorama', x: work.length + ' de ' + N + ' agentes están trabajando ahora. ' + (al.length ? al.length + (al.length === 1 ? ' necesita' : ' necesitan') + ' tu ayuda.' : 'No hay alertas.') });
+    try { var sn = sinceText(); if (sn && sn.text) st.push({ t: 'Desde tu última visita', x: sn.text }); } catch (e) {}
+    if (al.length) st.push({ t: 'Alertas', x: al.map(function (a) { return a.name + (a.msg ? ': ' + a.msg : ''); }).join('. ') });
+    var m = tl('mail_today'); if (m) st.push({ t: 'Oficina Postal', x: m + (POST && POST.neo ? ' Sobre tu robot NEO: ' + neoLine() + '.' : '') });
+    var nw = tl('lab_news'); if (nw) st.push({ t: 'Laboratorio y noticias', x: nw.split('\n').slice(0, 4).join('. ') });
+    var pend = (TASKS || []).filter(function (t) { return !t.done; }), bi = (INBOX || []).length;
+    st.push({ t: 'Tareas y bandeja', x: pend.length + ' tareas pendientes' + (pend.length ? ', la primera: ' + (pend[0].title || pend[0].t || 'sin título') : '') + '. ' + bi + ' elementos en la bandeja.' });
+    try { var pp = pendingProps().length; if (pp) st.push({ t: 'Oportunidades', x: pp + ' propiedades esperan que confirmes si son reales y están off-market.' }); } catch (e) {}
+    return st;
+  }
+  function walkStop(silent) { WALK.on = false; WALK.tok++; if (!silent) { try { TTS && TTS.cancel(); } catch (e) {} } }
+  function walkNext() {
+    if (!WALK.on) return; var my = ++WALK.tok;
+    if (WALK.i >= WALK.steps.length) { WALK.on = false; var end = 'Eso es todo, Nesty. ¿Quieres que profundice en algo? Dime un agente o un tema, o di «repite» para empezar de nuevo.'; jvShow('', end, 'Jarvis · fin del recorrido'); voiceSay(null, end, function () { VOICE.convUntil = Date.now() + 15000; if (VOICE.always && !VOICE.rec) startListen(12000, 'wake'); }); return; }
+    var s = WALK.steps[WALK.i], n = WALK.i + 1, tot = WALK.steps.length, spoken = !!(VOICE.on && TTS);
+    jvShow('', s.t + '\n' + s.x, 'Paso ' + n + ' de ' + tot + ' · di «siguiente», «repite» o «para»'); JVS.t = Date.now();
+    voiceSay(null, 'Paso ' + n + '. ' + s.t + '. ' + s.x, function () { if (!WALK.on || WALK.tok !== my) return; WALK.i++; setTimeout(function () { if (WALK.on && WALK.tok === my) walkNext(); }, spoken ? 700 : Math.min(12000, 2500 + s.x.length * 45)); }, false, true);
+  }
+  function walkStart() { walkStop(true); WALK.steps = walkSteps(); WALK.i = 0; WALK.on = true; LOCK.last = Date.now(); walkNext(); }
+  function jvIdle() { var el = $('#jvScreen'); if (!el || el.hidden) return; if (WALK.on || (TTS && TTS.speaking) || VOICE.listening || JCHAT.busy || Date.now() - JVS.t < 16000) { JVS.hideT = setTimeout(jvIdle, 4000); return; } el.hidden = true; JVS.on = false; }
   $('#jvsX').onclick = function () { $('#jvScreen').hidden = true; JVS.on = false; };
   function renderAlw() { var b = $('#voAlw'); if (!b) return; var on = !!VOICE.always && ownerOk(); b.textContent = '🎙 Atento: ' + (on ? 'sí' : 'no'); b.classList.toggle('on', on && !VOICE.needTap); b.classList.toggle('warm', on && !!VOICE.needTap); b.hidden = !SR || !ownerOk(); }
   var micBannerOff = false;
@@ -1654,7 +1687,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (on) {
       if (!SR) { toast('Este navegador no reconoce voz: usa Chrome, Edge o Safari'); PREFS.always = false; VOICE.always = false; savePrefs(); if (al) al.checked = false; renderAlw(); return; }
       unlockAudio(); if (!VOICE.on) { VOICE.on = true; savePrefs(); renderVoice(); } VOICE.needTap = false; VOICE.auto = false;
-      if (startListen(30000, 'wake')) { toast('🎙 Jarvis atento: di «Hola Jarvis» y lo que quieras ver'); voiceLine('Estoy atento. Di «Hola Jarvis».', 'Jarvis'); } else { PREFS.always = false; VOICE.always = false; savePrefs(); if (al) al.checked = false; }
+      if (startListen(30000, 'wake')) { toast('🎙 Jarvis atento: di «Hey Jarvis» y te cuento todo lo que pasó en la torre'); voiceLine('Estoy atento. Di «Hey Jarvis».', 'Jarvis'); } else { PREFS.always = false; VOICE.always = false; savePrefs(); if (al) al.checked = false; }
     } else stopListen();
     renderAlw(); micBannerUpdate();
   }

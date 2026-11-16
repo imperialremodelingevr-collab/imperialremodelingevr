@@ -161,3 +161,9 @@
 - Candado opcional en el dispositivo (Sistema › Seguridad): código 4–8 dígitos (solo huella SHA-256 con sal), bloqueo por inactividad, 5 intentos y espera de 30 s, voz «bloquea la torre».
 - Acceso real = menú Compartir de claude.ai en «Solo yo». El candado no lo reemplaza.
 - Probado con wake.js (23 comprobaciones) + regresión.
+
+## «Hey Jarvis» · recorrido paso a paso
+- Palabra clave cambiada a **«Hey Jarvis»** (también acepta «Hola Jarvis», «Oye Jarvis» y variantes de pronunciación).
+- Decir solo «Hey Jarvis» inicia una conversación: Jarvis saluda y narra, paso a paso, todo lo que ha pasado en la torre (panorama de agentes, desde tu última visita, alertas, Oficina Postal y NEO, Laboratorio y noticias, tareas y bandeja, oportunidades). Cada paso se muestra en la pantalla de Jarvis con karaoke.
+- Durante el recorrido: «siguiente» salta, «repite» repite el paso, «para» lo detiene; cualquier otra pregunta lo detiene y se responde. También se activa con «qué ha pasado», «ponme al día», «paso a paso».
+- Probado con wake.js (recorrido completo, siguiente, repite, para, reinicio) + regresión.
