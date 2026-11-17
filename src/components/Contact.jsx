@@ -21,7 +21,7 @@ export default function Contact() {
   const { lang } = useLanguage()
   const { t } = useT()
   const [status, setStatus] = useState('idle')
-  const [form, setForm] = useState({ name: '', phone: '', email: '', service: '', message: '' })
+  const [form, setForm] = useState({ name: '', phone: '', email: '', service: '', message: '', website: '' })
 
   const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -38,7 +38,7 @@ export default function Contact() {
       if (!res.ok) throw new Error('fail')
       setStatus('success')
       track('generate_lead', { service: form.service, lang })
-      setForm({ name: '', phone: '', email: '', service: '', message: '' })
+      setForm({ name: '', phone: '', email: '', service: '', message: '', website: '' })
     } catch {
       setStatus('error')
     }
@@ -72,17 +72,17 @@ export default function Contact() {
           <div className="row-2">
             <div className="field">
               <label>{t('fName')}</label>
-              <input type="text" name="name" value={form.name} onChange={onChange} required />
+              <input type="text" name="name" value={form.name} onChange={onChange} required maxLength={80} autoComplete="name" />
             </div>
             <div className="field">
               <label>{t('fPhone')}</label>
-              <input type="tel" name="phone" value={form.phone} onChange={onChange} required />
+              <input type="tel" name="phone" value={form.phone} onChange={onChange} required maxLength={30} autoComplete="tel" />
             </div>
           </div>
           <div className="row-2">
             <div className="field">
               <label>{t('fEmail')}</label>
-              <input type="email" name="email" value={form.email} onChange={onChange} required />
+              <input type="email" name="email" value={form.email} onChange={onChange} required maxLength={120} autoComplete="email" />
             </div>
             <div className="field">
               <label>{t('fService')}</label>
@@ -98,7 +98,8 @@ export default function Contact() {
           </div>
           <div className="field">
             <label>{t('fMsg')}</label>
-            <textarea name="message" rows={3} value={form.message} onChange={onChange} required />
+            <textarea name="message" rows={3} value={form.message} onChange={onChange} required maxLength={2000} />
+            <input type="text" name="website" value={form.website} onChange={onChange} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} />
           </div>
           <button
             type="submit"

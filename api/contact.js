@@ -4,6 +4,42 @@ import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+// ---- Seguridad del formulario -------------------------------------------------
+const MAX = { name: 80, email: 120, phone: 30, service: 40, message: 2000, lang: 2 }
+const SERVICES = ['Kitchen', 'Bathroom', 'Epoxy', 'Electrical', 'Plumbing', 'Painting', 'Other']
+const EMAIL_RE = /^[^\s@<>"',;:]+@[^\s@<>"',;:]+\.[^\s@<>"',;:]{2,}$/
+const PHONE_RE = /^[0-9+()\-.\s]{7,30}$/
+// Orígenes permitidos (producción + vista previa de Vercel). Se pueden añadir más con ALLOWED_ORIGINS="https://a.com,https://b.com"
+const ALLOWED = new Set(
+  ['https://www.imperialremodelingevr.com', 'https://imperialremodelingevr.com']
+    .concat((process.env.ALLOWED_ORIGINS || '').split(',').map((x) => x.trim()).filter(Boolean)),
+)
+// Límite de peticiones por IP (por instancia; para un límite global usa también Vercel Firewall > Rate limiting)
+const WINDOW_MS = 10 * 60 * 1000
+const MAX_PER_WINDOW = 5
+const hits = new Map()
+
+function clientIp(req) {
+  const xf = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim()
+  return xf || req.socket?.remoteAddress || 'unknown'
+}
+
+function rateLimited(ip) {
+  const now = Date.now()
+  for (const [k, v] of hits) if (now - v.t > WINDOW_MS) hits.delete(k)
+  const cur = hits.get(ip)
+  if (!cur) {
+    hits.set(ip, { t: now, n: 1 })
+    return false
+  }
+  cur.n += 1
+  return cur.n > MAX_PER_WINDOW
+}
+
+// Quita saltos de línea y caracteres de control (evita inyección en asuntos de correo y logs)
+const oneLine = (v, max) => String(v ?? '').replace(/[\u0000-\u001f\u007f]+/g, ' ').trim().slice(0, max)
+const text = (v, max) => String(v ?? '').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '').trim().slice(0, max)
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, '&amp;')
@@ -102,8 +138,27 @@ function buildConfirmationEmail({ nombre, servicio, mensaje, lang, logoHtml }) {
 }
 
 export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store')
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+
   if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST')
     return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  // Solo aceptamos peticiones que vengan de nuestro propio sitio (frena el uso desde otras páginas/scripts)
+  const origin = req.headers.origin
+  if (origin && !ALLOWED.has(origin) && !/^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin)) {
+    return res.status(403).json({ error: 'Forbidden' })
+  }
+  if (!String(req.headers['content-type'] || '').startsWith('application/json')) {
+    return res.status(415).json({ error: 'Unsupported media type' })
+  }
+
+  if (rateLimited(clientIp(req))) {
+    res.setHeader('Retry-After', String(Math.ceil(WINDOW_MS / 1000)))
+    console.warn('[security] rate limit', { ip: clientIp(req) })
+    return res.status(429).json({ error: 'Too many requests' })
   }
 
   if (!process.env.RESEND_API_KEY) {
@@ -114,10 +169,29 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: 'Contact email addresses not configured' })
   }
 
-  const { name, email, phone, service, message, lang = 'en', attribution = {}, page = '' } = req.body || {}
+  const body = req.body && typeof req.body === 'object' ? req.body : {}
+
+  // Trampa para robots: el campo "website" está oculto para personas; si viene lleno, fingimos éxito y no enviamos nada
+  if (body.website) {
+    console.warn('[security] honeypot', { ip: clientIp(req) })
+    return res.status(200).json({ success: true })
+  }
+
+  const name = oneLine(body.name, MAX.name)
+  const email = oneLine(body.email, MAX.email).toLowerCase()
+  const phone = oneLine(body.phone, MAX.phone)
+  const service = oneLine(body.service, MAX.service)
+  const message = text(body.message, MAX.message)
+  const lang = body.lang === 'es' ? 'es' : 'en'
+  const attribution = body.attribution && typeof body.attribution === 'object' ? body.attribution : {}
+  const page = oneLine(body.page, 160)
 
   if (!name || !email || !phone || !service || !message) {
     return res.status(400).json({ error: 'Missing required fields' })
+  }
+  if (!EMAIL_RE.test(email) || !PHONE_RE.test(phone) || !SERVICES.includes(service)) {
+    console.warn('[security] validación fallida', { ip: clientIp(req) })
+    return res.status(400).json({ error: 'Invalid fields' })
   }
 
   const logoPath = path.join(process.cwd(), 'public', 'logo.png')
@@ -136,10 +210,10 @@ export default async function handler(req, res) {
   const servicio = escapeHtml(service)
   const mensaje = escapeHtml(message).replace(/\n/g, '<br>')
   // Fuente del contacto (para saber que plataforma trae clientes)
-  const clip = (v) => escapeHtml(String(v || '').slice(0, 160))
+  const clip = (v) => escapeHtml(oneLine(typeof v === 'string' ? v : '', 160))
   let referrerHost = ''
   try {
-    referrerHost = attribution.referrer ? new URL(attribution.referrer).hostname.replace(/^www\./, '') : ''
+    referrerHost = typeof attribution.referrer === 'string' && attribution.referrer ? new URL(attribution.referrer).hostname.replace(/^www\./, '') : ''
   } catch (e) {
     referrerHost = ''
   }
@@ -201,7 +275,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true })
   } catch (error) {
-    console.error('Resend error:', error)
+    console.error('Resend error:', error?.name || 'error', error?.statusCode || '')
     return res.status(500).json({ error: 'Failed to send email' })
   }
 }

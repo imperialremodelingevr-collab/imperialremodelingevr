@@ -42,7 +42,7 @@ Layout, colors, and typography were ported from a bundled HTML export (kept in g
 
 1. Push to GitHub
 2. Import on [vercel.com](https://vercel.com)
-3. Set env vars: `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`
+3. Set env vars: `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` (opcional: `ALLOWED_ORIGINS` con dominios extra separados por coma). Nunca pongas claves en el código ni en variables `VITE_*`: esas se publican en el navegador.
 
 ```bash
 git add .

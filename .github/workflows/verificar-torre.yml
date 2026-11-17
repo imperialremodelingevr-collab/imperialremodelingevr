@@ -4,6 +4,8 @@ on:
     paths: ['torre-de-control-de-agentes-imperial-remodeling/**']
   pull_request:
     paths: ['torre-de-control-de-agentes-imperial-remodeling/**']
+permissions:
+  contents: read
 jobs:
   verificar:
     runs-on: ubuntu-latest

@@ -16,3 +16,11 @@ Antes de usarlo, TODOS los agentes (y quien lo instale) verifican, en este orden
 - **Pendiente (recomendado):** añadir verificación de integridad (SRI) a three.js desde el CDN con el hash verificado; esa red estaba bloqueada en la auditoría, por eso no se puso a ciegas.
 - **Acceso a la base de datos:** la torre es privada; solo quien tú compartas puede ver/editar. Comparte únicamente con personas de confianza.
 - **Token de Telegram:** quedó expuesto en un chat; cambiarlo con `/revoke` en @BotFather y guardar el nuevo solo como variable del entorno.
+
+## Revisión de seguridad del 17-nov-2026 (sitio web + API de contacto + torre)
+- **Corregido en el sitio** (`vercel.json`): cabeceras HSTS (HTTPS forzado), CSP, X-Frame-Options, nosniff, Referrer-Policy y Permissions-Policy. Verificado en navegador: todas las páginas cargan y no hay violaciones de CSP.
+- **Corregido en `api/contact.js`**: validación en el servidor (largos, correo, teléfono, servicio de una lista), solo acepta JSON y solo desde el propio sitio, límite de 5 envíos por IP cada 10 min (429), campo trampa para robots, sin saltos de línea en asuntos (inyección de cabeceras), HTML escapado, errores sin datos personales en los registros. 17 pruebas pasan.
+- **Corregido en dependencias**: `npm audit` pasó de 8 vulnerabilidades a 0 (Vite y react-router-dom 7.18.5). No había paquetes sin uso.
+- **GitHub Actions**: el flujo ahora tiene `permissions: contents: read`.
+- **Sin secretos**: ni en los archivos, ni en el build, ni en los 81 commits del historial (patrones de claves de Resend, Stripe, AWS, Google, GitHub, Slack y Telegram).
+- **Pendiente (lo hace el dueño)**: ver el informe de la revisión: hacer privado el repositorio, cambiar el token de Telegram, revocar la llave de Bland.ai y activar el límite de peticiones global en Vercel.
