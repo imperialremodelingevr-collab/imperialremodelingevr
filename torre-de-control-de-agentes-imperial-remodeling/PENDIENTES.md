@@ -167,3 +167,8 @@
 - Decir solo «Hey Jarvis» inicia una conversación: Jarvis saluda y narra, paso a paso, todo lo que ha pasado en la torre (panorama de agentes, desde tu última visita, alertas, Oficina Postal y NEO, Laboratorio y noticias, tareas y bandeja, oportunidades). Cada paso se muestra en la pantalla de Jarvis con karaoke.
 - Durante el recorrido: «siguiente» salta, «repite» repite el paso, «para» lo detiene; cualquier otra pregunta lo detiene y se responde. También se activa con «qué ha pasado», «ponme al día», «paso a paso».
 - Probado con wake.js (recorrido completo, siguiente, repite, para, reinicio) + regresión.
+
+## DUET · el agente que resume y entrega toda la ciudad
+- Tarea programada «DUET EVR» (8:27 a. m. y 5:27 p. m., hora de Chicago): lee la base de la torre (agentes, correo y NEO, obras, tareas y recados, oportunidades, Lab y Coach), escribe un solo documento `duet/today` y manda un resumen corto al teléfono.
+- En la torre: caja «DUET · resumen de la ciudad» en Sistema; Jarvis lo lee por voz con «dime lo de DUET» o «resumen del día»; y el recorrido de «Hey Jarvis» empieza con el resumen de DUET.
+- Solo lee y escribe `duet/today`; no envía nada a nadie. Probado con `pruebas`-equivalente duet.js (caja, XSS, voz, recorrido).

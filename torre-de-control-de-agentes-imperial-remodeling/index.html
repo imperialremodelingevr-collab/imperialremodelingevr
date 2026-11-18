@@ -715,6 +715,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <p class="note" id="sysVozNote"></p>
       <p class="note" id="sysNote"></p>
       <div id="sysList"></div>
+      <div class="jconn" id="duetBox"></div>
       <div class="jconn" id="jconnBox"></div>
       <div class="jconn" id="secBox"></div>
       <p class="sec">Mejoras por sección</p>
@@ -1182,6 +1183,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (/\b(informe|reporte del dia|jarvis|que mejoro|que falta|que debo mejorar|dime todo|que hay de nuevo)\b/.test(n)) { var jr = jarvisOpen(false); return jarvisSpeech(jr); }
     if (/\b(ayuda|comandos|que puedo decir)\b/.test(n)) return 'Puedes decir: estado, sube, baja, piso 5, habla con calendario, qué haces calendario, reinicia o corrige seguido del agente, pausa o reanuda un agente, abre la bandeja, tareas, obras o tokens, ver un agente, vista interior, torre completa, y silencia.';
     if (/\b(que ha pasado|que paso|que ha ocurrido|ponme al dia|ponme al corriente|paso a paso|recorrido|todo lo que paso|todo lo que ha pasado|cuentame todo)\b/.test(n)) return '__walk';
+    if (/\b(duet|resumen del dia|resumen de hoy|lo de la ciudad)\b/.test(n)) return duetSpeech() || 'DUET todavía no ha entregado su primer resumen. Llega en su próxima corrida de la mañana o de la tarde.';
     if (/\b(estado|resumen|que pasa|como va|informe|novedades)\b/.test(n)) return briefingText(false);
     if (/\b(reinicia|reiniciar|corrige|corregir|arregla|arreglar|soluciona|solucionar)\b/.test(n)) {
       var ag = findAgentV(n), tg = ag ? [ag] : alerts().filter(function (x) { return x.status === 'error'; });
@@ -1588,7 +1590,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       walkStop();
     }
     jvShow(txt, 'Pensando…', 'Jarvis');
-    var r = /\b(que ha pasado|que paso|que ha ocurrido|ponme al dia|ponme al corriente|paso a paso|recorrido|todo lo que paso|todo lo que ha pasado|cuentame todo)\b/.test(normV(txt)) ? '__walk' : wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (!r && (JENG.mode === 'local' || !SAMPLE)) r = jarvisLocalAnswer(txt);
+    var r = /\b(duet|resumen del dia|resumen de hoy)\b/.test(normV(txt)) ? voiceCommand(normV(txt)) : /\b(que ha pasado|que paso|que ha ocurrido|ponme al dia|ponme al corriente|paso a paso|recorrido|todo lo que paso|todo lo que ha pasado|cuentame todo)\b/.test(normV(txt)) ? '__walk' : wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (!r && (JENG.mode === 'local' || !SAMPLE)) r = jarvisLocalAnswer(txt);
     if (r === '__walk') { walkStart(); return; }
     if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; }
     if (r) { jvShow(null, r, 'Jarvis'); voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } else jvShow(null, 'No entendí esa orden. Di «ayuda» para ver lo que puedo mostrarte, o dímelo con otras palabras.', 'Jarvis');
@@ -1656,6 +1658,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function tl(name, a) { try { var t = jarvisTools().filter(function (x) { return x.name === name; })[0]; if (!t) return ''; var r = t.execute(a || {}); return (r && typeof r.then === 'function') ? '' : String(r || ''); } catch (e) { return ''; } }
   function walkSteps() {
     var N = AGENTS.length, work = AGENTS.filter(function (a) { return a.status === 'working'; }), al = alerts(), st = [];
+    var dsp = duetSpeech(); if (dsp) st.push({ t: 'Resumen de DUET', x: dsp });
     st.push({ t: 'Panorama', x: work.length + ' de ' + N + ' agentes están trabajando ahora. ' + (al.length ? al.length + (al.length === 1 ? ' necesita' : ' necesitan') + ' tu ayuda.' : 'No hay alertas.') });
     try { var sn = sinceText(); if (sn && sn.text) st.push({ t: 'Desde tu última visita', x: sn.text }); } catch (e) {}
     if (al.length) st.push({ t: 'Alertas', x: al.map(function (a) { return a.name + (a.msg ? ': ' + a.msg : ''); }).join('. ') });
@@ -1714,6 +1717,23 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   };
   ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { document.addEventListener(ev, function () { if (!LOCK.on) LOCK.last = Date.now(); }, true); });
   setInterval(function () { if (!LOCK.on && lockOn() && LOCK.cfg.idle > 0 && Date.now() - LOCK.last > LOCK.cfg.idle * 60000) lockNow('Se bloqueó por inactividad.'); }, 15000);
+  /* ---- DUET: el agente que cada mañana y tarde resume y entrega todo lo de la ciudad de la torre ---- */
+  var DUET = { doc: null, sub: false };
+  function duetLoad() {
+    if (DUET.sub) return; DUET.sub = true;
+    try { var L = JSON.parse(localStorage.getItem('evr.duet') || 'null'); if (L && L.headline) DUET.doc = L; } catch (e) {}
+    if (DB) { try { DB.collection('duet').onSnapshot(function (snap) { snap.docs.forEach(function (d) { if (d.id === 'today') { DUET.doc = JSON.parse(JSON.stringify(d.data())); try { localStorage.setItem('evr.duet', JSON.stringify(DUET.doc)); } catch (e) {} } }); renderDuet(); }); } catch (e) {} }
+    renderDuet();
+  }
+  function duetSpeech() { var d = DUET.doc; return d && d.headline ? String(d.speech || d.headline) : ''; }
+  function renderDuet() {
+    var el = $('#duetBox'); if (!el || $('#sys').hidden) return; var d = DUET.doc;
+    if (!d || !d.headline) { setHtml(el, '<h4>DUET · resumen de la ciudad</h4><div class="jrow"><b>Sin entrega todavía</b><span class="can">DUET entrega su primer resumen en su próxima corrida (mañana y tarde). Dile a Jarvis «dime lo de DUET» para oírlo cuando llegue.</span></div>'); return; }
+    var when = d.at ? new Date(d.at).toLocaleString('es-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }) : '';
+    var secs = (Array.isArray(d.sections) ? d.sections : []).slice(0, 8).map(function (x) { var it = (Array.isArray(x.items) ? x.items : []).slice(0, 4).map(function (y) { return '· ' + esc(String(y).slice(0, 160)); }).join('<br>'); return '<div class="jrow"><b>' + esc(String(x.t || '').slice(0, 60)) + '</b><span class="can">' + it + '</span></div>'; }).join('');
+    var nx = (Array.isArray(d.next) ? d.next : []).slice(0, 4).map(function (y) { return '<li>' + esc(String(y).slice(0, 160)) + '</li>'; }).join('');
+    setHtml(el, '<h4>DUET · resumen de la ciudad' + (when ? ' · ' + esc(when) : '') + '</h4><div class="jrow"><b>' + esc(String(d.headline).slice(0, 160)) + '</b></div>' + secs + (nx ? '<div class="jrow"><b>Lo que sigue</b><span class="can"><ul style="margin:4px 0 0 16px;padding:0">' + nx + '</ul></span></div>' : ''));
+  }
   function renderSec() {
     var el = $('#secBox'); if (!el || $('#sys').hidden) return; var st = OWNER.known ? (OWNER.owner ? 'Eres el dueño de esta torre.' : 'Estás viendo la torre como invitado.') : 'No pude confirmar quién eres en esta vista; el acceso lo decide claude.ai.';
     var fe = document.activeElement; if (fe && fe.closest && fe.closest('#secBox') && (fe.tagName === 'INPUT' || fe.tagName === 'SELECT')) return;
@@ -1731,7 +1751,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (b.hasAttribute('data-secoff')) { LOCK.cfg = null; lockSave(); toast('Código quitado'); renderSec(); }
   });
   lockLoad(); if (lockOn()) lockNow('');
-  setTimeout(ownerInit, 800); setTimeout(function () { renderAlw(); micBannerUpdate(); }, 2500);
+  setTimeout(duetLoad, 1200); setTimeout(ownerInit, 800); setTimeout(function () { renderAlw(); micBannerUpdate(); }, 2500);
   setInterval(function () { if (VOICE.always && VOICE.micOk && !VOICE.rec && !VOICE.micBlocked && !VOICE.needTap && ownerOk() && !LOCK.on && !document.hidden && !JCHAT.busy && !(TTS && TTS.speaking)) { VOICE.auto = true; startListen(30000, 'wake'); VOICE.auto = false; } }, 1500);
   (function () { var m = 0; setInterval(function () { var o = $('#voJar'); if (!o || document.hidden) return; var sp = !!(TTS && TTS.speaking), t = Date.now() / 1000; var tg = sp ? 0.15 + 0.85 * Math.abs(Math.sin(t * 17) * Math.sin(t * 5.3 + 1)) : 0; m += (tg - m) * 0.55; o.style.setProperty('--m', m.toFixed(2)); }, 70); })();
   setInterval(function () { var o = $('#voJar'); if (!o) return; o.classList.toggle('talk', !!(TTS && TTS.speaking)); o.classList.toggle('listen', !!VOICE.listening); o.classList.toggle('alert', alerts().length > 0); o.classList.toggle('always', !!VOICE.always); }, 350);
@@ -3313,7 +3333,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   }
   var STC = { ok: 'working', warn: 'warning', bad: 'error', idle: 'idle' };
   function renderSys() {
-    if ($('#sys').hidden) return; fillVoz(); renderJconn(); renderSec();
+    if ($('#sys').hidden) return; fillVoz(); renderDuet(); renderJconn(); renderSec();
     var C = sysChecks(), bad = C.filter(function (c) { return c.st === 'bad'; }).length, warn = C.filter(function (c) { return c.st === 'warn'; }).length;
     $('#sysNote').textContent = bad ? bad + ' punto(s) con falla y ' + warn + ' por revisar.' : warn ? warn + ' punto(s) por revisar; lo demás está bien.' : 'Todo está en orden.';
     setHtml($('#sysList'), C.map(function (c) { return '<div class="sysrow"><i class="dot" data-s="' + STC[c.st] + '"></i><div><b>' + esc(c.t) + '</b><span>' + esc(c.d) + '</span></div></div>'; }).join(''));
