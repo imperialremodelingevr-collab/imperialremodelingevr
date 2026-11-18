@@ -49,3 +49,12 @@ git add .
 git commit -m "feat: React port of original Imperial Remodeling site"
 git push origin main
 ```
+
+## Rendimiento (17-nov-2026)
+- Imágenes en WebP (58% menos peso); los originales jpg/png se conservan por si se necesitan (OG, íconos).
+- Fuentes alojadas en el sitio (`public/fonts`, solo latín y fuentes variables; sin Google Fonts).
+- Código dividido por página (`React.lazy`) con esqueleto de carga (`PageSkeleton`).
+- Google Analytics (si hay `VITE_GA_ID`) se carga después de que la página termina de cargar.
+- Videos con `preload="metadata"` y póster WebP.
+- Caché larga en `/assets` y `/fonts` (inmutables) y 30 días en imágenes, videos y audio (`vercel.json`).
+- Medido con Chromium en móvil, red 3G rápida y CPU 4× más lenta (mediana de 3): transferencia 1873 → 948 KB, LCP 2392 → 1764 ms.

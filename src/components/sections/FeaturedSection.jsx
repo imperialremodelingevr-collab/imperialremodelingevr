@@ -18,14 +18,14 @@ export default function FeaturedSection() {
         <div className="feature-media reveal in">
           <div
             className="fm-main"
-            style={{ backgroundImage: 'url("/images/kitchen-white.jpg")' }}
+            style={{ backgroundImage: 'url("/images/kitchen-white.webp")' }}
           >
             <span className="fm-tag">{t('featTag')}</span>
           </div>
           <div className="fm-thumbs">
-            <div className="fm-th" style={{ backgroundImage: 'url("/images/1d35663b-cf8e-471c-b3e1-6657e58d7d05.jpg")' }} />
-            <div className="fm-th" style={{ backgroundImage: 'url("/images/0afb5b75-9406-48fd-abd0-eb19dd1ace16.jpg")' }} />
-            <div className="fm-th" style={{ backgroundImage: 'url("/images/575d937b-40e8-4221-ba31-4831e235dcf5.jpg")' }} />
+            <div className="fm-th" style={{ backgroundImage: 'url("/images/1d35663b-cf8e-471c-b3e1-6657e58d7d05.webp")' }} />
+            <div className="fm-th" style={{ backgroundImage: 'url("/images/0afb5b75-9406-48fd-abd0-eb19dd1ace16.webp")' }} />
+            <div className="fm-th" style={{ backgroundImage: 'url("/images/575d937b-40e8-4221-ba31-4831e235dcf5.webp")' }} />
           </div>
         </div>
         <div className="feature-copy">

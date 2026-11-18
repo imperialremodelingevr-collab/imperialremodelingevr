@@ -6,5 +6,6 @@ import imageManifest from './imageManifest'
  */
 export function img(id) {
   const ext = imageManifest[id] || 'jpg'
-  return `/images/${id}.${ext}`
+  // jpg/png se sirven como WebP (más ligero); otros formatos quedan igual
+  return `/images/${id}.${ext === 'jpg' || ext === 'png' ? 'webp' : ext}`
 }

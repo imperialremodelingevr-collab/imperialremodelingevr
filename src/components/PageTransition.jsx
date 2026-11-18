@@ -20,7 +20,7 @@ export default function PageTransition({ children }) {
     <>
       {!expanded && (
       <div key={'c' + pathname} className="page-curtain" aria-hidden="true">
-        <img src="/images/logo-imperial-light.png" alt="" />
+        <img src="/images/logo-imperial-light.webp" alt="" />
       </div>
       )}
       <main key={pathname} className={`page-enter${expanded ? ' from-card' : ''}`}>

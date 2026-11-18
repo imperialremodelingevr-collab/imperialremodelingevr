@@ -37,10 +37,16 @@ export function initAnalytics() {
   window.gtag = function () {
     window.dataLayer.push(arguments)
   }
-  const s = document.createElement('script')
-  s.async = true
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`
-  document.head.appendChild(s)
+  // El script de Google se pide DESPUÉS de que la página cargó y el navegador está libre (no compite con el contenido)
+  const load = () => {
+    const s = document.createElement('script')
+    s.async = true
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`
+    document.head.appendChild(s)
+  }
+  const later = () => ('requestIdleCallback' in window ? window.requestIdleCallback(load, { timeout: 4000 }) : setTimeout(load, 2000))
+  if (document.readyState === 'complete') later()
+  else window.addEventListener('load', later, { once: true })
   window.gtag('js', new Date())
   window.gtag('config', GA_ID, { anonymize_ip: true, send_page_view: false })
 }

@@ -44,7 +44,7 @@ html, body { background: var(--lx-bg); color: var(--lx-text); }
 /* ---------- Logo SIEMPRE detras de todo ---------- */
 .logo-watermark {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background: url('/images/logo-imperial-black.png') center / min(80vw, 820px) auto no-repeat;
+  background: url('/images/logo-imperial-black.webp') center / min(80vw, 820px) auto no-repeat;
   opacity: .075;
   animation: wmFloat 16s ease-in-out infinite alternate;
 }

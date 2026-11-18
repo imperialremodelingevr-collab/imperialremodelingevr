@@ -22,8 +22,8 @@ export default function PageHero({ eyebrowKey, titleKey, subKey, image, video })
             loop
             playsInline
             autoPlay={!reduce()}
-            preload="auto"
-            poster={`/videos/${video}.jpg`}
+            preload="metadata"
+            poster={`/videos/${video}.webp`}
             aria-hidden="true"
             ref={(el) => {
               if (el) {

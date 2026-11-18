@@ -2,10 +2,10 @@ import { useT } from '../../hooks/useT'
 import Mask from '../Mask'
 
 const PHOTOS = [
-  { cls: 'a', img: '/images/kitchen-white.jpg', capKey: 'aboutCap1' },
-  { cls: 'b', img: '/images/1d35663b-cf8e-471c-b3e1-6657e58d7d05.jpg', capKey: 'aboutCap2' },
-  { cls: 'c', img: '/images/b64ab3f5-d981-4561-9a69-b96aa9604813.jpg', capKey: 'aboutCap3' },
-  { cls: 'd epoxy-art', img: '/images/1d35663b-cf8e-471c-b3e1-6657e58d7d05.jpg', capKey: 'aboutCap4' },
+  { cls: 'a', img: '/images/kitchen-white.webp', capKey: 'aboutCap1' },
+  { cls: 'b', img: '/images/1d35663b-cf8e-471c-b3e1-6657e58d7d05.webp', capKey: 'aboutCap2' },
+  { cls: 'c', img: '/images/b64ab3f5-d981-4561-9a69-b96aa9604813.webp', capKey: 'aboutCap3' },
+  { cls: 'd epoxy-art', img: '/images/1d35663b-cf8e-471c-b3e1-6657e58d7d05.webp', capKey: 'aboutCap4' },
 ]
 
 const PILLARS = [
@@ -46,7 +46,7 @@ export default function AboutSection() {
           <p>{t('aboutP2')}</p>
 
           <figure className="about-founder">
-            <img src="/images/ernesto.jpg" alt={t('founderName')} loading="lazy" />
+            <img src="/images/ernesto.webp" alt={t('founderName')} loading="lazy" />
             <figcaption>
               <strong>{t('founderName')}</strong>
               <span>{t('founderRole')}</span>

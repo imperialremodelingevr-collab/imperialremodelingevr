@@ -1,0 +1,13 @@
+/* Esqueleto de carga */
+.skel { min-height: 70vh; padding: 0 0 48px; }
+.skel-hero { height: 38vh; min-height: 220px; background: #ecebe6; }
+.skel-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; padding: 32px 5vw 0; }
+.skel-card { height: 220px; border-radius: 4px; background: #ecebe6; }
+.skel-hero, .skel-card { position: relative; overflow: hidden; }
+.skel-hero::after, .skel-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+  transform: translateX(-100%); animation: skel-shimmer 1.4s infinite;
+}
+@keyframes skel-shimmer { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .skel-hero::after, .skel-card::after { animation: none; } }

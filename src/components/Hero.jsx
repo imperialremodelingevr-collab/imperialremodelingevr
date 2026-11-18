@@ -123,8 +123,8 @@ export default function Hero() {
           playsInline
           autoPlay={!reduce}
           loop
-          preload="auto"
-          poster="/videos/hero-kitchen.jpg"
+          preload="metadata"
+          poster="/videos/hero-kitchen.webp"
           aria-hidden="true"
         >
           <source src="/videos/hero-kitchen-m.mp4" type="video/mp4" media="(max-aspect-ratio: 1/1)" />
@@ -137,7 +137,7 @@ export default function Hero() {
 
       <div className="hv-content on">
         <h1 className="hv-logo-wrap">
-          <img className="hv-logo" src="/images/logo-imperial-dark.png" alt="Imperial Remodeling EVR" />
+          <img className="hv-logo" src="/images/logo-imperial-dark.webp" alt="Imperial Remodeling EVR" />
         </h1>
         <div className="hv-cta">
           <button type="button" className="btn-primary" onClick={() => navigate('/contact')}>
