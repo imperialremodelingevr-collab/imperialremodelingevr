@@ -172,3 +172,10 @@
 - Tarea programada «DUET EVR» (8:27 a. m. y 5:27 p. m., hora de Chicago): lee la base de la torre (agentes, correo y NEO, obras, tareas y recados, oportunidades, Lab y Coach), escribe un solo documento `duet/today` y manda un resumen corto al teléfono.
 - En la torre: caja «DUET · resumen de la ciudad» en Sistema; Jarvis lo lee por voz con «dime lo de DUET» o «resumen del día»; y el recorrido de «Hey Jarvis» empieza con el resumen de DUET.
 - Solo lee y escribe `duet/today`; no envía nada a nadie. Probado con `pruebas`-equivalente duet.js (caja, XSS, voz, recorrido).
+
+## Agentic OS · todo lo de Claude y los agentes en un solo lugar
+- Botón **🧠 Agentic OS** (y voz: «Hey Jarvis, abre Agentic OS»): panel con salud del sistema, los 13 pisos (estado, última acción, tareas y recados), rutinas de Claude (horario, modelo, última y próxima corrida, en pausa o con falla), conexiones MCP (solo lectura), motor de Jarvis y modelos, consumo de tokens, skills enseñadas y el último resumen de DUET.
+- Tarea programada **«Agentic OS EVR»** (6:53 a. m. y 4:53 p. m. Chicago): lee la lista de tareas programadas (solo metadatos, sin prompts ni claves) y escribe `os/inventory`.
+- El recorrido de «Hey Jarvis» incluye un paso de Agentic OS; Jarvis tiene la herramienta `open_agentic_os`.
+- Probado con `os.js` (13 comprobaciones: panel, rutinas con falla y en pausa, XSS, voz, cierre al abrir otro panel, recorrido).
+- Pendiente por decidir: hacerlo un piso 14 en 3D (hoy es un panel; un piso nuevo toca el conteo de 13 agentes en todo el código y las pruebas).
