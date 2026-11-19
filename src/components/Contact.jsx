@@ -112,7 +112,7 @@ export default function Contact() {
         </form>
 
         <div className="contact-info">
-          <a href="tel:2145171951" className="contact-cta-phone">
+          <a href="tel:+12145171951" className="contact-cta-phone">
             <div>
               <div className="l">{t('ciPhoneLab')}</div>
               <div className="num">{PHONE}</div>
