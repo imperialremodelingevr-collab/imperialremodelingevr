@@ -304,6 +304,14 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .jconn .jaud { margin: 8px 0 0; padding: 0; list-style: none; } .jconn .jaud li { display: flex; gap: 8px; } .jconn .jaud i { font-style: normal; flex: none; width: 16px; } .jconn .jaud .ko { color: #ff9aa0; }
 
 .enback { position: absolute; left: 50%; bottom: 112px; transform: translateX(-50%); z-index: 12; border-color: rgba(255, 201, 77, 0.7) !important; }
+.coachp.bitp { border-color: rgba(120, 255, 170, 0.6); box-shadow: 0 0 50px rgba(120, 255, 170, 0.16); }
+.bitp header { background: linear-gradient(90deg, rgba(120, 255, 170, 0.16), transparent); border-bottom-color: rgba(120, 255, 170, 0.35); }
+.bitp .ccard h3 { color: #9dffc8; }
+.bitp .bchip.on { background: rgba(255, 255, 255, 0.14); } .bitp .bchip small { margin-left: 4px; }
+.bitp .bform { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; margin-top: 10px; } .bitp .bform textarea { grid-column: 1 / -1; }
+.bitp .bsheet { overflow: auto; max-height: 46vh; } .bitp table { width: 100%; border-collapse: collapse; font-size: 12px; } .bitp th { position: sticky; top: 0; background: #0b1520; text-align: left; padding: 4px 6px; color: #9dffc8; } .bitp td { padding: 2px 3px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); } .bitp td input, .bitp td select { width: 100%; min-width: 70px; background: transparent; color: #e8f2f8; border: 1px solid transparent; padding: 3px 4px; font: inherit; } .bitp td input:focus, .bitp td select:focus { border-color: #9dffc8; background: rgba(255, 255, 255, 0.05); } .bitp tfoot td { padding: 6px; }
+.bitp .bstep { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07); font-size: 13px; } .bitp .bstep > b { min-width: 118px; }
+.bitp .bbar { height: 8px; background: rgba(255, 255, 255, 0.08); border-radius: 4px; overflow: hidden; margin: 8px 0 2px; } .bitp .bbar i { display: block; height: 100%; }
 .coachp.enp { border-color: rgba(255, 201, 77, 0.6); box-shadow: 0 0 50px rgba(255, 201, 77, 0.18); }
 .enp header { background: linear-gradient(90deg, rgba(255, 201, 77, 0.16), transparent); border-bottom-color: rgba(255, 201, 77, 0.35); }
 .enp .ccard h3 { color: #ffd27a; }
@@ -600,6 +608,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <button class="btn" id="btnDrone" type="button" title="Monta el dron EVR: vuela por la ciudad, dispara a los drones de práctica y mira la guerra entre planetas">🚁 Dron</button>
       <button class="btn" id="btnPost" type="button" title="Oficina Postal: tu correo filtrado, borradores de respuesta y el seguimiento del robot NEO">📮 Postal</button>
       <button class="btn" id="btnOS" type="button" title="Agentic OS: todo lo de Claude y los agentes en un solo lugar (pisos, rutinas, conexiones, modelos, tokens y skills)">🧠 Agentic OS</button>
+      <button class="btn" id="btnBit" type="button" title="Bitácora de propiedades: cada casa que compras, con croquis, gastos, materiales, personas y días en una hoja que escribes o dictas">📒 Bitácora</button>
       <button class="btn" id="btnLab" type="button" title="Laboratorio EVR: arma y repara agentes, propone automatizaciones y trae noticias de IA y economía">🧪 Lab</button>
       <button class="btn" id="btnCoach" type="button" title="Torre Bio-Fit: rutina, dieta, tratamiento y seguimiento">🧬 Coach</button>
       <button class="btn" id="btnMore" type="button">Más herramientas</button>
@@ -789,6 +798,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   <section class="coachp" id="coachP" hidden aria-label="Coach EVR: rutina y dieta"></section>
   <section class="coachp labp" id="labP" hidden aria-label="Laboratorio EVR: fábrica de agentes y noticias"></section>
   <button class="btn enback" id="enBack" type="button" hidden>⚡ Volver al panel de energía</button>
+  <section class="coachp bitp" id="bitP" hidden aria-label="Bitácora de propiedades: casas, croquis, gastos, materiales, personas y días"></section>
   <section class="coachp enp" id="enP" hidden aria-label="Energía hacia los agentes: línea subterránea, subestación y futuro"></section>
   <section class="coachp osp" id="osP" hidden aria-label="Agentic OS: inventario de Claude y de los agentes de la torre"></section>
   <section class="coachp postp" id="postP" hidden aria-label="Oficina Postal: correo filtrado y seguimiento del robot NEO"></section>
@@ -1402,6 +1412,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       jtc('list_inbox', 'Lista los recados de la bandeja (solo títulos y agente). No puede aprobar ni rechazar nada: eso lo hace el dueño.', null, function () { var rc = INBOX || []; return rc.length ? rc.map(function (x) { return x.title + ' (' + ((byId(x.agent) || {}).name || x.agent) + ')'; }).join('\n') : 'No hay recados pendientes.'; }),
       jtc('search_memory', 'Busca en las notas de la memoria de la torre (reglas, procesos, clientes, decisiones).', OBJ({ query: { type: 'string' } }, ['query']), function (i) { var q = normV(i && i.query), w = q.split(' ').filter(function (x) { return x.length > 3; }), r = (MEMORY || []).filter(function (m) { var h = normV(m.title + ' ' + m.body); return w.some(function (x) { return h.indexOf(x) > -1; }); }).slice(0, 5); return r.length ? r.map(function (m) { return m.title + ': ' + String(m.body).slice(0, 220); }).join('\n') : 'No encontré notas sobre eso en la memoria.'; }),
       jtc('open_post_office', 'Abre la Oficina Postal (correo filtrado y seguimiento del robot NEO).', null, function () { openPost(true); return 'Oficina Postal abierta. NEO: ' + neoLine(); }),
+      jtc('open_bitacora', 'Abre la Bitácora de propiedades: cada casa comprada con su croquis, gastos, materiales, personas y días.', null, function () { openBit(true); return bitAllText(); }),
       jtc('open_energy', 'Abre el panel Energía → Agentes: la línea subterránea, la subestación, el riser por piso y las suposiciones del futuro.', null, function () { openEnergy(0, true); return energyText(); }),
       jtc('open_agentic_os', 'Abre Agentic OS: pisos, rutinas de Claude, conexiones, modelos, tokens y skills en un solo panel.', null, function () { openOS(true); return osHealth(); }),
       jtc('open_lab', 'Abre el Laboratorio EVR (noticias de IA y economía, taller de robots y fábrica de agentes).', null, function () { openLab(true); return 'Laboratorio abierto.'; }),
@@ -1614,7 +1625,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       walkStop();
     }
     jvShow(txt, 'Pensando…', 'Jarvis');
-    var r = /\b(duet|resumen del dia|resumen de hoy|agentic os|agentic|como llega la energia|linea de energia|energia de los agentes|futuro de la energia|subestacion)\b/.test(normV(txt)) ? voiceCommand(normV(txt)) : /\b(que ha pasado|que paso|que ha ocurrido|ponme al dia|ponme al corriente|paso a paso|recorrido|todo lo que paso|todo lo que ha pasado|cuentame todo)\b/.test(normV(txt)) ? '__walk' : wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (!r && (JENG.mode === 'local' || !SAMPLE)) r = jarvisLocalAnswer(txt);
+    var r = /\b(bitacora|landership|parkside|park slate|parkslate|mis casas)\b/.test(normV(txt)) ? bitVoice(txt) : /\b(duet|resumen del dia|resumen de hoy|agentic os|agentic|como llega la energia|linea de energia|energia de los agentes|futuro de la energia|subestacion)\b/.test(normV(txt)) ? voiceCommand(normV(txt)) : /\b(que ha pasado|que paso|que ha ocurrido|ponme al dia|ponme al corriente|paso a paso|recorrido|todo lo que paso|todo lo que ha pasado|cuentame todo)\b/.test(normV(txt)) ? '__walk' : wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (!r && (JENG.mode === 'local' || !SAMPLE)) r = jarvisLocalAnswer(txt);
     if (r === '__walk') { walkStart(); return; }
     if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; }
     if (r) { jvShow(null, r, 'Jarvis'); voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } else jvShow(null, 'No entendí esa orden. Di «ayuda» para ver lo que puedo mostrarte, o dímelo con otras palabras.', 'Jarvis');
@@ -1623,6 +1634,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function micFallback() { var el = $('#jaAns'); if (!el) return; el.hidden = false; el.textContent = 'El micrófono está bloqueado aquí (el navegador o el marco de Claude no lo permite). Escribe tu orden en el cuadro de arriba. En el celular o en la computadora puedes dictar con el micrófono del teclado (celular) o con Windows+H / Fn Fn (Mac). Si quieres usar el micrófono directo, permítelo en el candado de la barra de direcciones y recarga.'; var i = $('#jaIn'); if (i) { try { i.focus(); } catch (e) {} } }
   function speechFinal(txt, mode) {
     var inp = $('#jaIn');
+    if (mode === 'dictate' && BIT.dict) { BIT.dict = false; var bi = $('#bitQuick'); if (bi) bi.value = txt; var dd = bitParse(txt, BIT.sel); BIT.draft = dd; BIT.tab = 'bitacora'; BIT.msg = 'Escuché: «' + txt.slice(0, 120) + '». Revisa y toca «Guardar».'; if (dd.prop) BIT.sel = dd.prop; renderBit(); return; }
     if (mode === 'dictate') { if (inp) { inp.value = txt; try { inp.focus(); } catch (e) {} } return; }
     if (mode === 'wake') {
       if (!ownerOk() || LOCK.on) return;
@@ -1683,6 +1695,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function walkSteps() {
     var N = AGENTS.length, work = AGENTS.filter(function (a) { return a.status === 'working'; }), al = alerts(), st = [];
     var dsp = duetSpeech(); if (dsp) st.push({ t: 'Resumen de DUET', x: dsp });
+    if (BIT.props.length) st.push({ t: 'Bitácora de propiedades', x: bitAllText().replace(/^Bitácora de propiedades\. /, '') });
     st.push({ t: 'Energía de los agentes', x: energyText().replace(/ Para el futuro, di «futuro de la energía»\./, '') });
     st.push({ t: 'Agentic OS', x: osHealth().replace(/^Agentic OS\. /, '') });
     st.push({ t: 'Panorama', x: work.length + ' de ' + N + ' agentes están trabajando ahora. ' + (al.length ? al.length + (al.length === 1 ? ' necesita' : ' necesitan') + ' tu ayuda.' : 'No hay alertas.') });
@@ -1743,6 +1756,189 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   };
   ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { document.addEventListener(ev, function () { if (!LOCK.on) LOCK.last = Date.now(); }, true); });
   setInterval(function () { if (!LOCK.on && lockOn() && LOCK.cfg.idle > 0 && Date.now() - LOCK.last > LOCK.cfg.idle * 60000) lockNow('Se bloqueó por inactividad.'); }, 15000);
+  /* ---- Bitácora de propiedades: croquis, gastos, materiales, personas y días de cada casa, en una hoja que se escribe o se dicta ---- */
+  var BIT = { props: [], log: [], sel: null, tab: 'resumen', sub: false, dict: false, ftype: '', lastId: '', draft: null, pen: { c: '#5cffe6', w: 3, erase: false }, msg: '' };
+  var BTYPES = { gasto: 'Gasto', material: 'Material', mano: 'Mano de obra', dia: 'Día de trabajo', hito: 'Paso / hito', nota: 'Nota' };
+  var BSTAT = { comprada: ['Comprada', '#ffc94d'], 'en obra': ['En obra', '#ff9a4d'], terminada: ['Remodelada', '#5cffe6'], 'en venta': ['En venta', '#8fb4ff'], vendida: ['Vendida', '#5cffb0'] };
+  function bitToday() { var d = new Date(), z = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()); }
+  function bitMoney(n) { n = +n || 0; return (n < 0 ? '-$' : '$') + Math.abs(Math.round(n * 100) / 100).toLocaleString('en-US', { maximumFractionDigits: 2 }); }
+  function bitCache() { try { localStorage.setItem('evr.bit', JSON.stringify({ props: BIT.props, log: BIT.log.slice(-600) })); } catch (e) {} }
+  function bitLoad() {
+    if (BIT.sub) return; BIT.sub = true;
+    try { var L = JSON.parse(localStorage.getItem('evr.bit') || 'null'); if (L) { BIT.props = Array.isArray(L.props) ? L.props : []; BIT.log = Array.isArray(L.log) ? L.log : []; } } catch (e) {}
+    if (DB) {
+      try { DB.collection('bit_props').onSnapshot(function (snap) { BIT.props = snap.docs.map(function (d) { var x = JSON.parse(JSON.stringify(d.data())); x.id = d.id; return x; }).sort(function (a, b) { return (a.order || 0) - (b.order || 0) || (a.createdAt || 0) - (b.createdAt || 0); }); if (!BIT.sel || !bitProp(BIT.sel)) BIT.sel = BIT.props[0] ? BIT.props[0].id : null; bitCache(); bitToScene(); renderBit(); }); } catch (e) {}
+      try { DB.collection('bit_log').onSnapshot(function (snap) { BIT.log = snap.docs.map(function (d) { var x = JSON.parse(JSON.stringify(d.data())); x.id = d.id; return x; }).sort(function (a, b) { return String(a.date || '').localeCompare(String(b.date || '')) || (a.createdAt || 0) - (b.createdAt || 0); }); bitCache(); renderBit(); }); } catch (e) {}
+    }
+    if (!BIT.sel && BIT.props[0]) BIT.sel = BIT.props[0].id;
+  }
+  function bitProp(id) { return BIT.props.filter(function (p) { return p.id === id; })[0] || null; }
+  function bitId(pre) { return pre + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+  function bitWrite(coll, id, data, del) {
+    if (!ownerOk()) { toast('La bitácora es solo para el dueño de la torre.'); return false; }
+    var list = coll === 'bit_props' ? BIT.props : BIT.log, i, found = -1; for (i = 0; i < list.length; i++) if (list[i].id === id) found = i;
+    if (del) { if (found > -1) list.splice(found, 1); } else { var rec = JSON.parse(JSON.stringify(data)); rec.id = id; if (found > -1) list[found] = rec; else list.push(rec); }
+    bitCache();
+    if (DB) { try { var r = DB.collection(coll).doc(id); (del ? r.delete() : r.set(data)).catch(function () { toast('No pude guardar en la base: revisa tu conexión.'); }); } catch (e) {} }
+    return true;
+  }
+  function bitStats(pid) {
+    var L = BIT.log.filter(function (x) { return x.prop === pid; }), P = bitProp(pid) || {}, t = { spent: 0, by: {}, mats: {}, people: {}, days: {}, n: L.length, last: '' };
+    L.forEach(function (x) {
+      var a = +x.amount || 0; t.spent += a; t.by[x.type] = (t.by[x.type] || 0) + a; if (x.date > t.last) t.last = x.date;
+      if (x.type === 'material') { var k = String(x.desc || 'sin nombre').toLowerCase().trim(); var m = t.mats[k] || (t.mats[k] = { name: x.desc || 'sin nombre', qty: 0, unit: x.unit || '', amount: 0 }); m.qty += +x.qty || 0; m.amount += a; if (x.unit) m.unit = x.unit; }
+      if (x.who) { String(x.who).split(/\s*(?:,| y )\s*/).filter(Boolean).forEach(function (w) { var k = w.toLowerCase(); var q = t.people[k] || (t.people[k] = { name: w, hours: 0, amount: 0, days: {} }); q.hours += (+x.hours || 0); q.amount += a / (String(x.who).split(/\s*(?:,| y )\s*/).filter(Boolean).length || 1); if (x.date) q.days[x.date] = 1; }); }
+      if ((x.type === 'dia' || x.type === 'mano') && x.date) t.days[x.date] = 1;
+    });
+    t.nDays = Object.keys(t.days).length; t.budget = +P.budget || 0; t.price = +P.price || 0; t.arv = +P.arv || 0;
+    var since = P.buyDate ? Math.max(0, Math.round((Date.now() - new Date(P.buyDate + 'T12:00:00').getTime()) / 86400000)) : null; t.since = since;
+    t.total = t.spent + t.price; t.profit = t.arv ? t.arv * 0.91 - t.total : null;
+    return t;
+  }
+  function bitSummaryText(pid) {
+    var P = bitProp(pid); if (!P) return 'No encuentro esa propiedad en la bitácora.'; var s = bitStats(pid), st = (BSTAT[P.status] || [P.status])[0];
+    return P.addr + ': ' + st.toLowerCase() + '. ' + (s.n ? 'Llevas ' + bitMoney(s.spent) + ' gastados en ' + s.n + ' registros' + (s.nDays ? ', ' + s.nDays + ' días de trabajo' : '') + (Object.keys(s.people).length ? ' y ' + Object.keys(s.people).length + ' personas' : '') + (s.budget ? '; de un presupuesto de ' + bitMoney(s.budget) + ' te quedan ' + bitMoney(s.budget - s.spent) : '') + '.' : 'Todavía no hay registros: dime qué anotar.');
+  }
+  function bitAllText() { if (!BIT.props.length) return 'La bitácora no tiene propiedades todavía.'; return 'Bitácora de propiedades. ' + BIT.props.map(function (p) { return bitSummaryText(p.id); }).join(' '); }
+  /* analizador de texto escrito o dictado -> registro */
+  function bitParse(txt, hint) {
+    var raw = String(txt || '').trim(), n = normV(raw), d = { prop: hint || BIT.sel, type: 'nota', date: bitToday(), desc: raw.slice(0, 160), who: '', qty: '', unit: '', hours: '', amount: '' };
+    BIT.props.forEach(function (p) { var key = normV(String(p.addr || '').replace(/^\d+\s*/, '')).split(' ')[0]; var al = (p.alias || '').split(',').map(function (a) { return normV(a.trim()); }).filter(Boolean); if ((key && key.length > 3 && n.indexOf(key) > -1) || al.some(function (a) { return n.indexOf(a) > -1; })) d.prop = p.id; });
+    if (/\bayer\b/.test(n)) { var y = new Date(Date.now() - 86400000), z = function (v) { return (v < 10 ? '0' : '') + v; }; d.date = y.getFullYear() + '-' + z(y.getMonth() + 1) + '-' + z(y.getDate()); }
+    var m = raw.match(/\$\s?([\d][\d,]*(?:\.\d+)?)/) || n.match(/(?:por|costo|costaron|cost[oó]|gaste|gast[eé]|pague|pag[uú]e|total|de)\s+([\d][\d,]*(?:\.\d+)?)\s*(?:dolares|dolar|usd|dls|pesos)?/) || n.match(/([\d][\d,]*(?:\.\d+)?)\s*(?:dolares|dolar|usd|dls)/);
+    if (m) d.amount = parseFloat(String(m[1]).replace(/,/g, ''));
+    var h = n.match(/(\d+(?:\.\d+)?)\s*horas?/); if (h) d.hours = parseFloat(h[1]);
+    var q = n.match(/(\d+(?:\.\d+)?)\s*(galones?|galon|sacos?|bolsas?|pies|hojas?|cajas?|piezas?|unidades?|rollos?|paquetes?|metros?)\b/); if (q) { d.qty = parseFloat(q[1]); d.unit = q[2]; }
+    var w = raw.match(/\b(?:a|con|trabaj[oó]|trabajaron|pagu[eé] a|pago a)\s+((?:[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)(?:\s+(?:y|,)\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*)/); if (w) d.who = w[1];
+    var pr = n.match(/(?:pague|pago|le pague) (?:a )?(plomero|electricista|pintor|carpintero|ayudante|contratista|jardinero|limpieza)/); if (pr && !d.who) d.who = pr[1];
+    if (/\b(hito|termine|termino|terminamos|empece|empezamos|inicio|iniciamos|inspeccion|permiso|cierre|entrega|firmamos|listo)\b/.test(n) && !d.amount) d.type = 'hito';
+    else if (/\b(galon|galones|pintura|tile|azulejo|piso|madera|clavos|cemento|gabinetes?|material|materiales|saco|sacos|bolsas?|drywall|lamina|home depot|lowes|lowe s|ferreteria|tornillos|caulk|grifo|lavabo|inodoro|ventana)\b/.test(n) && /\b(compre|compramos|compra|material|materiales|gaste|pague|costo)\b/.test(n)) d.type = 'material';
+    else if (/\b(horas|trabajo|trabajaron|plomero|electricista|pintor|carpintero|ayudante|contratista|mano de obra|jornal)\b/.test(n) || d.who) d.type = (/\b(dia|hoy trabajo|trabajaron)\b/.test(n) && !d.amount) ? 'dia' : 'mano';
+    else if (d.amount) d.type = 'gasto';
+    return d;
+  }
+  function bitAddEntry(d) {
+    var rec = { prop: d.prop, type: d.type || 'nota', date: d.date || bitToday(), desc: String(d.desc || '').slice(0, 200), who: String(d.who || '').slice(0, 80), qty: d.qty === '' ? '' : +d.qty || '', unit: String(d.unit || '').slice(0, 20), hours: d.hours === '' ? '' : +d.hours || '', amount: d.amount === '' ? '' : +d.amount || 0, createdAt: Date.now() };
+    var id = bitId('l'); if (!bitProp(rec.prop)) { toast('Primero elige la propiedad.'); return null; }
+    if (!bitWrite('bit_log', id, rec)) return null; BIT.lastId = id; return rec;
+  }
+  function bitVoice(txt) {
+    bitLoad(); var n = normV(txt);
+    if (/\b(borra|elimina|quita|deshaz|deshacer)\b.*\b(ultimo|ultima|eso)\b/.test(n) && BIT.lastId) { var id = BIT.lastId; BIT.lastId = ''; bitWrite('bit_log', id, null, true); renderBit(); return 'Listo, borré lo último que anoté en la bitácora.'; }
+    if (/\b(resumen|como va|cuanto|cuantos|gastado|llevo|estado)\b/.test(n) && !/\b(anota|apunta|registra|agrega)\b/.test(n)) {
+      var hit = null; BIT.props.forEach(function (p) { var k = normV(String(p.addr || '').replace(/^\d+\s*/, '')).split(' ')[0]; if (k && k.length > 3 && n.indexOf(k) > -1) hit = p; }); openBit(true); return hit ? bitSummaryText(hit.id) : bitAllText();
+    }
+    if (/\b(anota|apunta|registra|agrega|anotame|compre|compramos|gaste|gastamos|pague|pagamos|trabajaron|termine|terminamos|empezamos)\b/.test(n)) {
+      var d = bitParse(txt); if (!d.prop) return 'Primero crea una propiedad en la bitácora para poder anotar.'; var rec = bitAddEntry(d); if (!rec) return 'No pude anotarlo.'; openBit(true); BIT.sel = d.prop; BIT.tab = 'bitacora'; renderBit();
+      var P = bitProp(d.prop); return 'Anoté en ' + (P ? P.addr : 'la propiedad') + ': ' + (BTYPES[rec.type] || 'nota').toLowerCase() + (rec.amount ? ' de ' + bitMoney(rec.amount) : '') + (rec.desc ? ', ' + rec.desc.slice(0, 60) : '') + '. Di «borra lo último de la bitácora» para deshacerlo.';
+    }
+    openBit(true); return bitAllText();
+  }
+  function bitToScene() { if (scene3d && scene3d.bitSet) scene3d.bitSet(BIT.props.map(function (p) { return { id: p.id, addr: p.addr, status: p.status }; })); }
+  function bitCSV(pid) {
+    var rows = [['Propiedad', 'Fecha', 'Tipo', 'Descripción', 'Persona', 'Cantidad', 'Unidad', 'Horas', 'Monto']];
+    BIT.log.filter(function (x) { return !pid || x.prop === pid; }).forEach(function (x) { var P = bitProp(x.prop) || {}; rows.push([P.addr || '', x.date || '', BTYPES[x.type] || x.type, x.desc || '', x.who || '', x.qty === '' || x.qty == null ? '' : x.qty, x.unit || '', x.hours === '' || x.hours == null ? '' : x.hours, x.amount === '' || x.amount == null ? '' : x.amount]); });
+    return '﻿' + rows.map(function (r) { return r.map(function (c) { c = String(c == null ? '' : c); return /[",\n;\t]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(','); }).join('\r\n');
+  }
+  function bitDownload(pid) {
+    var csv = bitCSV(pid), P = pid ? bitProp(pid) : null, name = 'bitacora-' + (P ? String(P.addr).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') : 'todas') + '-' + bitToday() + '.csv';
+    function fallback() { try { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = name; document.body.appendChild(a); a.click(); a.remove(); toast('Hoja descargada: ábrela con Excel'); } catch (e) { toast('No se pudo descargar aquí'); } }
+    if (window.claude && window.claude.use) window.claude.use('downloads').then(function (d) { if (!d) return fallback(); d.save({ filename: name, data: csv }).then(function () { toast('Hoja descargada: ábrela con Excel'); }).catch(function (e) { if (e && e.code === 'declined') toast('Cancelaste la descarga'); else fallback(); }); }).catch(fallback); else fallback();
+  }
+  function bitTSV(pid) { return BIT.log.filter(function (x) { return !pid || x.prop === pid; }).map(function (x) { return [x.date || '', BTYPES[x.type] || x.type, x.desc || '', x.who || '', x.qty || '', x.unit || '', x.hours || '', x.amount || ''].join('\t'); }).join('\n'); }
+  function bitImport(pid, text) {
+    var n = 0, typeOf = function (s) { s = normV(s); for (var k in BTYPES) if (normV(BTYPES[k]) === s || k === s) return k; if (/mano|obra|persona/.test(s)) return 'mano'; if (/dia/.test(s)) return 'dia'; if (/hito|paso/.test(s)) return 'hito'; if (/mat/.test(s)) return 'material'; if (/nota/.test(s)) return 'nota'; return 'gasto'; };
+    String(text || '').split(/\r?\n/).slice(0, 250).forEach(function (line) { var c = line.split('\t'); if (c.length < 3) c = line.split(';'); if (c.length < 3) return; if (/^\s*fecha\b/i.test(c[0])) return; var dt = /^\d{4}-\d{2}-\d{2}$/.test(c[0].trim()) ? c[0].trim() : (function () { var m = c[0].trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/); if (!m) return bitToday(); var y = +m[3] < 100 ? 2000 + +m[3] : +m[3]; return y + '-' + ('0' + m[1]).slice(-2) + '-' + ('0' + m[2]).slice(-2); })(); if (bitAddEntry({ prop: pid, type: typeOf(c[1] || ''), date: dt, desc: c[2] || '', who: c[3] || '', qty: parseFloat(c[4]) || '', unit: c[5] || '', hours: parseFloat(c[6]) || '', amount: parseFloat(String(c[7] || '').replace(/[$,]/g, '')) || '' })) n++; });
+    return n;
+  }
+  function bitPlanSvg(rooms) {
+    var R = String(rooms || '').split(/\r?\n/).map(function (l) { var m = l.match(/^\s*(.+?)\s+(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)/); return m ? { n: m[1], w: +m[2], h: +m[3] } : null; }).filter(Boolean).slice(0, 14); if (!R.length) return '';
+    var S = 9, x = 8, y = 8, rowH = 0, W = 520, out = '';
+    R.forEach(function (r) { var w = r.w * S, h = r.h * S; if (x + w > W) { x = 8; y += rowH + 8; rowH = 0; } out += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="rgba(92,255,230,.08)" stroke="#5cffe6"/><text x="' + (x + 5) + '" y="' + (y + 15) + '" fill="#e8f2f8" font-size="12">' + esc(r.n) + '</text><text x="' + (x + 5) + '" y="' + (y + 29) + '" fill="#9bb3c4" font-size="10">' + r.w + '×' + r.h + ' pies</text>'; rowH = Math.max(rowH, h); x += w + 8; });
+    return '<svg viewBox="0 0 ' + W + ' ' + (y + rowH + 10) + '" style="width:100%;max-width:520px;background:#050a10;border:1px solid rgba(255,255,255,.1)">' + out + '</svg>';
+  }
+  function renderBit() {
+    var el = $('#bitP'); if (!el || el.hidden) return; var fe = document.activeElement; if (fe && fe.closest && fe.closest('#bitP') && (fe.tagName === 'INPUT' || fe.tagName === 'TEXTAREA' || fe.tagName === 'SELECT') && fe.id !== 'bitQuick') { if (BIT.tab !== 'resumen') return; }
+    var P = bitProp(BIT.sel), chips = BIT.props.map(function (p) { var st = BSTAT[p.status] || [p.status, '#9bb3c4']; return '<button class="btn bchip' + (p.id === BIT.sel ? ' on' : '') + '" type="button" data-bsel="' + esc(p.id) + '" style="border-color:' + st[1] + '">' + esc(p.addr) + ' <small style="color:' + st[1] + '">' + esc(st[0]) + '</small></button>'; }).join('') + '<button class="btn" type="button" data-bnew>＋ Propiedad</button>';
+    var tabs = [['resumen', 'Resumen'], ['bitacora', 'Bitácora'], ['hoja', 'Hoja'], ['croquis', 'Croquis'], ['datos', 'Datos']].map(function (t) { return '<button class="btn' + (BIT.tab === t[0] ? ' primary' : '') + '" type="button" data-btab="' + t[0] + '">' + t[1] + '</button>'; }).join('');
+    var body = '';
+    if (!P) body = '<div class="ccard wide"><p class="note">Todavía no hay propiedades. Toca «＋ Propiedad» para crear la primera (por ejemplo «2405 Landership, Plano»).</p></div>';
+    else if (BIT.tab === 'resumen') {
+      var s = bitStats(P.id), by = Object.keys(s.by).map(function (k) { return '<div class="osrow"><b style="min-width:130px">' + esc(BTYPES[k] || k) + '</b><span class="osm">' + bitMoney(s.by[k]) + '</span></div>'; }).join('') || '<p class="note">Sin gastos todavía.</p>';
+      var mats = Object.keys(s.mats).map(function (k) { var m = s.mats[k]; return '<div class="osrow"><b style="min-width:150px">' + esc(m.name) + '</b><span class="osm">' + (m.qty ? m.qty + ' ' + esc(m.unit) + ' · ' : '') + bitMoney(m.amount) + '</span></div>'; }).join('') || '<p class="note">Sin materiales anotados.</p>';
+      var ppl = Object.keys(s.people).map(function (k) { var q = s.people[k]; return '<div class="osrow"><b style="min-width:130px">' + esc(q.name) + '</b><span class="osm">' + Object.keys(q.days).length + ' días' + (q.hours ? ' · ' + q.hours + ' h' : '') + (q.amount ? ' · ' + bitMoney(q.amount) : '') + '</span></div>'; }).join('') || '<p class="note">Sin personas anotadas.</p>';
+      var rem = s.budget ? '<div class="bbar"><i style="width:' + Math.min(100, Math.round(s.spent / s.budget * 100)) + '%;background:' + (s.spent > s.budget ? '#ff5a5f' : '#5cffe6') + '"></i></div><p class="note">' + Math.round(s.spent / s.budget * 100) + '% del presupuesto de ' + bitMoney(s.budget) + ' · te quedan ' + bitMoney(s.budget - s.spent) + '</p>' : '<p class="note">Pon un presupuesto en «Datos» para ver cuánto te queda.</p>';
+      body = '<div class="ccard wide"><h3>' + esc(P.addr) + (P.city ? ', ' + esc(P.city) : '') + '</h3><div class="chips"><span class="chip"><b>' + bitMoney(s.spent) + '</b>gastado</span><span class="chip"><b>' + s.n + '</b>registros</span><span class="chip"><b>' + s.nDays + '</b>días de trabajo</span><span class="chip"><b>' + Object.keys(s.people).length + '</b>personas</span>' + (s.since != null ? '<span class="chip"><b>' + s.since + '</b>días desde la compra</span>' : '') + '</div>' + rem + (s.price ? '<p class="note">Compra ' + bitMoney(s.price) + ' + remodelación ' + bitMoney(s.spent) + ' = <b>' + bitMoney(s.total) + '</b>' + (s.arv ? ' · Valor después de remodelar (estimado) ' + bitMoney(s.arv) + ' · ganancia estimada ' + bitMoney(s.profit) + ' (descontando ~9% de venta)' : '') + '</p>' : '') + '</div>' +
+        '<div class="ccard"><h3>En qué se fue el dinero</h3>' + by + '</div><div class="ccard"><h3>Materiales</h3>' + mats + '</div><div class="ccard"><h3>Personas que trabajan</h3>' + ppl + '</div><div class="ccard"><h3>Últimos pasos</h3>' + (BIT.log.filter(function (x) { return x.prop === P.id; }).slice(-5).reverse().map(function (x) { return '<div class="osrow"><b style="min-width:86px">' + esc(x.date) + '</b><span class="osm">' + esc(BTYPES[x.type] || x.type) + ' · ' + esc(String(x.desc || '').slice(0, 70)) + (x.amount ? ' · ' + bitMoney(x.amount) : '') + '</span></div>'; }).join('') || '<p class="note">Aún no hay pasos.</p>') + '</div>';
+    } else if (BIT.tab === 'bitacora') {
+      var dft = BIT.draft || { type: 'gasto', date: bitToday(), desc: '', who: '', qty: '', unit: '', hours: '', amount: '' };
+      var form = '<div class="ccard wide"><h3>Anotar un paso</h3><form data-bquick class="ask" autocomplete="off" style="display:flex;gap:6px"><input id="bitQuick" type="text" maxlength="300" placeholder="Escríbelo o dícelo: «hoy compré 6 galones de pintura por 240 dólares»" style="flex:1" aria-label="Anotar en la bitácora"><button class="btn" type="button" data-bmic title="Dictar">🎙</button><button class="btn primary" type="submit">Entender</button></form>' + (BIT.msg ? '<p class="note">' + esc(BIT.msg) + '</p>' : '') +
+        '<form data-bform class="bform" autocomplete="off"><select name="type">' + Object.keys(BTYPES).map(function (k) { return '<option value="' + k + '"' + (dft.type === k ? ' selected' : '') + '>' + BTYPES[k] + '</option>'; }).join('') + '</select><input name="date" type="date" value="' + esc(dft.date) + '"><input name="desc" type="text" maxlength="200" placeholder="Descripción" value="' + esc(dft.desc) + '"><input name="who" type="text" maxlength="80" placeholder="Persona(s)" value="' + esc(dft.who) + '"><input name="qty" type="number" step="any" placeholder="Cant." value="' + esc(dft.qty) + '"><input name="unit" type="text" maxlength="20" placeholder="Unidad" value="' + esc(dft.unit) + '"><input name="hours" type="number" step="any" placeholder="Horas" value="' + esc(dft.hours) + '"><input name="amount" type="number" step="any" placeholder="Monto $" value="' + esc(dft.amount) + '"><button class="btn primary" type="submit">Guardar</button></form></div>';
+      var items = BIT.log.filter(function (x) { return x.prop === P.id; }).slice().reverse().slice(0, 80).map(function (x) { var icon = { gasto: '💵', material: '🧱', mano: '👷', dia: '📅', hito: '🏁', nota: '📝' }[x.type] || '•'; return '<div class="bstep"><b>' + icon + ' ' + esc(x.date) + '</b><span>' + esc(BTYPES[x.type] || x.type) + (x.desc ? ' · ' + esc(x.desc) : '') + (x.who ? ' · ' + esc(x.who) : '') + (x.qty ? ' · ' + esc(x.qty) + ' ' + esc(x.unit || '') : '') + (x.hours ? ' · ' + esc(x.hours) + ' h' : '') + (x.amount ? ' · <b>' + bitMoney(x.amount) + '</b>' : '') + '</span></div>'; }).join('') || '<p class="note">Aún no hay pasos: anota el primero arriba.</p>';
+      body = form + '<div class="ccard wide"><h3>Paso a paso · ' + esc(P.addr) + '</h3>' + items + '</div>';
+    } else if (BIT.tab === 'hoja') {
+      var rows = BIT.log.filter(function (x) { return x.prop === P.id && (!BIT.ftype || x.type === BIT.ftype); }), tot = 0; rows.forEach(function (x) { tot += +x.amount || 0; });
+      var tr = rows.slice(-300).map(function (x) { return '<tr data-brow="' + esc(x.id) + '"><td><input data-bf="date" type="date" value="' + esc(x.date) + '"></td><td><select data-bf="type">' + Object.keys(BTYPES).map(function (k) { return '<option value="' + k + '"' + (x.type === k ? ' selected' : '') + '>' + BTYPES[k] + '</option>'; }).join('') + '</select></td><td><input data-bf="desc" type="text" value="' + esc(x.desc) + '"></td><td><input data-bf="who" type="text" value="' + esc(x.who) + '"></td><td><input data-bf="qty" type="number" step="any" value="' + esc(x.qty) + '"></td><td><input data-bf="unit" type="text" value="' + esc(x.unit) + '"></td><td><input data-bf="hours" type="number" step="any" value="' + esc(x.hours) + '"></td><td><input data-bf="amount" type="number" step="any" value="' + esc(x.amount) + '"></td><td><button class="btn" type="button" data-bdel="' + esc(x.id) + '" aria-label="Borrar fila">×</button></td></tr>'; }).join('');
+      body = '<div class="ccard wide"><h3>Hoja de ' + esc(P.addr) + '</h3><div class="row" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"><select id="bitFT"><option value="">Todos los tipos</option>' + Object.keys(BTYPES).map(function (k) { return '<option value="' + k + '"' + (BIT.ftype === k ? ' selected' : '') + '>' + BTYPES[k] + '</option>'; }).join('') + '</select><button class="btn" type="button" data-brow-add>＋ Fila</button><button class="btn primary" type="button" data-bcsv>⬇ Descargar para Excel</button><button class="btn" type="button" data-bcsv-all>⬇ Todas las casas</button><button class="btn" type="button" data-bcopy>Copiar para pegar en Excel</button></div><div class="bsheet"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Persona</th><th>Cant.</th><th>Unidad</th><th>Horas</th><th>Monto</th><th></th></tr></thead><tbody>' + (tr || '<tr><td colspan="9" class="note">Sin filas todavía.</td></tr>') + '</tbody><tfoot><tr><td colspan="7"><b>Total' + (BIT.ftype ? ' (' + esc(BTYPES[BIT.ftype]) + ')' : '') + '</b></td><td><b>' + bitMoney(tot) + '</b></td><td></td></tr></tfoot></table></div><details><summary>Pegar filas desde Excel</summary><p class="note">Columnas en este orden: Fecha, Tipo, Descripción, Persona, Cantidad, Unidad, Horas, Monto.</p><textarea id="bitPaste" rows="4" placeholder="2026-11-20&#9;Material&#9;Pintura blanca&#9;&#9;6&#9;galones&#9;&#9;240"></textarea><div class="row"><button class="btn primary" type="button" data-bpaste>Agregar filas</button></div></details></div>';
+    } else if (BIT.tab === 'croquis') {
+      var plan = bitPlanSvg(P.rooms);
+      body = '<div class="ccard wide"><h3>Croquis a mano · ' + esc(P.addr) + '</h3><div class="row" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><button class="btn" type="button" data-bpen="#5cffe6">Cian</button><button class="btn" type="button" data-bpen="#ffc94d">Oro</button><button class="btn" type="button" data-bpen="#ff7a7a">Rojo</button><button class="btn" type="button" data-bpen="#ffffff">Blanco</button><button class="btn" type="button" data-bpen="erase">Borrador</button><button class="btn" type="button" data-bclear>Limpiar</button><button class="btn primary" type="button" data-bsave-sk>Guardar croquis</button></div><canvas id="bitCv" width="560" height="340" style="width:100%;max-width:560px;background:#050a10;border:1px solid rgba(255,255,255,.14);touch-action:none;cursor:crosshair"></canvas><p class="note">Dibuja con el dedo o el ratón: sala, cocina, baños, lo que vas a cambiar. Guarda cuando termines.</p></div>' +
+        '<div class="ccard wide"><h3>Cuartos y medidas (plano automático)</h3><textarea id="bitRooms" rows="5" maxlength="900" placeholder="Una línea por cuarto, con medidas en pies:&#10;Cocina 12x14&#10;Sala 16x18&#10;Baño principal 8x10">' + esc(P.rooms || '') + '</textarea><div class="row"><button class="btn primary" type="button" data-brooms>Guardar y dibujar plano</button></div>' + plan + '</div>';
+    } else {
+      body = '<div class="ccard wide"><h3>Datos de la propiedad</h3><form data-bprop class="bform" autocomplete="off"><input name="addr" type="text" maxlength="90" placeholder="Dirección" value="' + esc(P.addr) + '"><input name="city" type="text" maxlength="40" placeholder="Ciudad" value="' + esc(P.city || '') + '"><select name="status">' + Object.keys(BSTAT).map(function (k) { return '<option value="' + k + '"' + (P.status === k ? ' selected' : '') + '>' + BSTAT[k][0] + '</option>'; }).join('') + '</select><input name="buyDate" type="date" value="' + esc(P.buyDate || '') + '" title="Fecha de compra"><input name="price" type="number" step="any" placeholder="Precio de compra $" value="' + esc(P.price || '') + '"><input name="budget" type="number" step="any" placeholder="Presupuesto remodelación $" value="' + esc(P.budget || '') + '"><input name="arv" type="number" step="any" placeholder="Valor después de remodelar $" value="' + esc(P.arv || '') + '"><input name="alias" type="text" maxlength="80" placeholder="Otros nombres al dictar (coma)" value="' + esc(P.alias || '') + '"><textarea name="notes" rows="3" maxlength="600" placeholder="Notas">' + esc(P.notes || '') + '</textarea><button class="btn primary" type="submit">Guardar datos</button><button class="btn" type="button" data-bdelprop>Borrar propiedad y su bitácora</button></form></div>';
+    }
+    setHtml(el, '<header><h2>📒 Bitácora de propiedades · mis casas</h2><button class="btn" type="button" data-bfocus>Ver el edificio</button><button class="btn" type="button" data-bx aria-label="Cerrar">×</button></header><div class="cbody"><div class="ccard wide"><div class="row" style="display:flex;gap:6px;flex-wrap:wrap">' + chips + '</div></div><div class="ccard wide"><div class="row" style="display:flex;gap:6px;flex-wrap:wrap">' + tabs + '</div></div>' + body + '</div>');
+    if (P && BIT.tab === 'croquis') bitCanvas(P);
+  }
+  function bitCanvas(P) {
+    var cv = $('#bitCv'); if (!cv) return; var g = cv.getContext('2d'); g.fillStyle = '#050a10'; g.fillRect(0, 0, cv.width, cv.height); g.strokeStyle = 'rgba(92,255,230,.07)'; g.lineWidth = 1; for (var x = 0; x < cv.width; x += 20) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, cv.height); g.stroke(); } for (var y = 0; y < cv.height; y += 20) { g.beginPath(); g.moveTo(0, y); g.lineTo(cv.width, y); g.stroke(); }
+    function pt(e) { var r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height }; }
+    var drawing = false, last = null;
+    function paint() { if (P.sketch) { var im = new Image(); im.onload = function () { g.drawImage(im, 0, 0, cv.width, cv.height); }; im.src = P.sketch; } } paint();
+    cv.onpointerdown = function (e) { drawing = true; last = pt(e); try { cv.setPointerCapture(e.pointerId); } catch (er) {} };
+    cv.onpointermove = function (e) { if (!drawing) return; var p = pt(e); g.lineCap = 'round'; g.lineJoin = 'round'; if (BIT.pen.erase) { g.globalCompositeOperation = 'destination-out'; g.lineWidth = 16; } else { g.globalCompositeOperation = 'source-over'; g.strokeStyle = BIT.pen.c; g.lineWidth = BIT.pen.w; } g.beginPath(); g.moveTo(last.x, last.y); g.lineTo(p.x, p.y); g.stroke(); g.globalCompositeOperation = 'source-over'; last = p; };
+    cv.onpointerup = cv.onpointercancel = function () { drawing = false; };
+  }
+  function bitSaveSketch() {
+    var P = bitProp(BIT.sel), cv = $('#bitCv'); if (!P || !cv) return; var out = document.createElement('canvas'); out.width = cv.width; out.height = cv.height; var g = out.getContext('2d'); g.fillStyle = '#050a10'; g.fillRect(0, 0, out.width, out.height); g.drawImage(cv, 0, 0);
+    var url = out.toDataURL('image/png'); if (url.length > 200000) url = out.toDataURL('image/jpeg', 0.6);
+    var rec = JSON.parse(JSON.stringify(P)); delete rec.id; rec.sketch = url; rec.updatedAt = Date.now(); if (bitWrite('bit_props', P.id, rec)) toast('Croquis guardado');
+  }
+  function openBit(silent) { bitLoad(); closeCoach(); ['labP', 'postP'].forEach(function (i) { var e = $('#' + i); if (e) e.hidden = true; }); $('#bitP').hidden = false; if (!BIT.sel && BIT.props[0]) BIT.sel = BIT.props[0].id; renderBit(); if (scene3d && scene3d.focusBit) scene3d.focusBit(); if (!silent) voiceSay(null, bitAllText(), null, true); }
+  function closeBit() { $('#bitP').hidden = true; }
+  $('#btnBit').onclick = function () { stopTour(); openBit(); };
+  $('#bitP').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.hasAttribute('data-bx')) { closeBit(); return; }
+    if (b.hasAttribute('data-bfocus')) { closeBit(); if (scene3d && scene3d.focusBit) scene3d.focusBit(); return; }
+    if (b.hasAttribute('data-bsel')) { BIT.sel = b.getAttribute('data-bsel'); BIT.draft = null; BIT.msg = ''; renderBit(); return; }
+    if (b.hasAttribute('data-btab')) { BIT.tab = b.getAttribute('data-btab'); renderBit(); return; }
+    if (b.hasAttribute('data-bnew')) { var id = bitId('p'); if (bitWrite('bit_props', id, { addr: 'Nueva propiedad', city: 'Plano', status: 'comprada', order: BIT.props.length + 1, createdAt: Date.now() })) { BIT.sel = id; BIT.tab = 'datos'; renderBit(); } return; }
+    if (b.hasAttribute('data-bmic')) { if (!SR) { toast('Este navegador no reconoce voz: escribe la nota.'); return; } BIT.dict = true; unlockAudio(); if (!startListen(15000, 'dictate')) { BIT.dict = false; toast('No pude abrir el micrófono.'); } else toast('🎙 Te escucho: di qué anotar'); return; }
+    if (b.hasAttribute('data-bpen')) { var v = b.getAttribute('data-bpen'); BIT.pen = v === 'erase' ? { c: BIT.pen.c, w: 3, erase: true } : { c: v, w: 3, erase: false }; return; }
+    if (b.hasAttribute('data-bclear')) { var cv = $('#bitCv'); if (cv) { var g = cv.getContext('2d'); g.clearRect(0, 0, cv.width, cv.height); g.fillStyle = '#050a10'; g.fillRect(0, 0, cv.width, cv.height); } var P0 = bitProp(BIT.sel); if (P0) P0.sketch = ''; return; }
+    if (b.hasAttribute('data-bsave-sk')) { bitSaveSketch(); return; }
+    if (b.hasAttribute('data-brooms')) { var Pr = bitProp(BIT.sel), ta = $('#bitRooms'); if (Pr && ta) { var rec = JSON.parse(JSON.stringify(Pr)); delete rec.id; rec.rooms = ta.value.slice(0, 900); if (bitWrite('bit_props', Pr.id, rec)) { Pr.rooms = rec.rooms; renderBit(); } } return; }
+    if (b.hasAttribute('data-bdel')) { bitWrite('bit_log', b.getAttribute('data-bdel'), null, true); renderBit(); return; }
+    if (b.hasAttribute('data-brow-add')) { var P1 = bitProp(BIT.sel); if (P1) { bitAddEntry({ prop: P1.id, type: 'gasto', date: bitToday(), desc: '', amount: '' }); renderBit(); } return; }
+    if (b.hasAttribute('data-bcsv')) { bitDownload(BIT.sel); return; }
+    if (b.hasAttribute('data-bcsv-all')) { bitDownload(''); return; }
+    if (b.hasAttribute('data-bcopy')) { var tsv = bitTSV(BIT.sel); try { navigator.clipboard.writeText(tsv).then(function () { toast('Copiado: pégalo en Excel'); }).catch(function () { toast('No pude copiar aquí: usa «Descargar para Excel»'); }); } catch (er) { toast('No pude copiar aquí: usa «Descargar para Excel»'); } return; }
+    if (b.hasAttribute('data-bpaste')) { var tp = $('#bitPaste'); var nn = tp ? bitImport(BIT.sel, tp.value) : 0; toast(nn ? 'Agregué ' + nn + ' filas' : 'No encontré filas válidas'); if (tp) tp.value = ''; renderBit(); return; }
+    if (b.hasAttribute('data-bdelprop')) { var Pd = bitProp(BIT.sel); if (Pd && window.confirm('¿Borrar ' + Pd.addr + ' y todos sus registros?')) { BIT.log.filter(function (x) { return x.prop === Pd.id; }).forEach(function (x) { bitWrite('bit_log', x.id, null, true); }); bitWrite('bit_props', Pd.id, null, true); BIT.sel = BIT.props[0] ? BIT.props[0].id : null; bitToScene(); renderBit(); } return; }
+  });
+  $('#bitP').addEventListener('submit', function (e) {
+    e.preventDefault(); var f = e.target;
+    if (f.hasAttribute('data-bquick')) { var inp = $('#bitQuick'), txt = inp ? inp.value.trim() : ''; if (!txt) return; var d = bitParse(txt, BIT.sel); BIT.draft = d; BIT.msg = 'Entendí esto: revisa los campos y toca «Guardar».'; if (d.prop && d.prop !== BIT.sel) BIT.sel = d.prop; renderBit(); return; }
+    if (f.hasAttribute('data-bform')) { var fd = new FormData(f), d2 = { prop: BIT.sel }; fd.forEach(function (v, k) { d2[k] = v; }); if (bitAddEntry(d2)) { BIT.draft = null; BIT.msg = 'Guardado.'; renderBit(); } return; }
+    if (f.hasAttribute('data-bprop')) { var P = bitProp(BIT.sel); if (!P) return; var fd2 = new FormData(f), rec = JSON.parse(JSON.stringify(P)); delete rec.id; fd2.forEach(function (v, k) { rec[k] = (k === 'price' || k === 'budget' || k === 'arv') ? (v === '' ? '' : +v) : String(v); }); rec.updatedAt = Date.now(); if (bitWrite('bit_props', P.id, rec)) { bitToScene(); toast('Datos guardados'); renderBit(); } return; }
+  });
+  $('#bitP').addEventListener('change', function (e) {
+    var t = e.target; if (t.id === 'bitFT') { BIT.ftype = t.value; renderBit(); return; }
+    var bf = t.getAttribute && t.getAttribute('data-bf'); if (!bf) return; var tr = t.closest('tr'), id = tr && tr.getAttribute('data-brow'); var x = BIT.log.filter(function (r) { return r.id === id; })[0]; if (!x) return;
+    var rec = JSON.parse(JSON.stringify(x)); delete rec.id; rec[bf] = (bf === 'qty' || bf === 'hours' || bf === 'amount') ? (t.value === '' ? '' : +t.value) : t.value; bitWrite('bit_log', id, rec); setTimeout(renderBit, 50);
+  });
+  setTimeout(bitLoad, 1500);
   /* ---- Energía → Agentes: la línea subterránea, la subestación y las suposiciones del futuro ---- */
   var FUT = [
     { y: 'Hoy · 2026', t: 'tendencia actual', h: 'Energía firme para la IA', x: 'Las empresas de IA necesitan energía las 24 horas. Ya se firman acuerdos con plantas nucleares y con microrreactores modulares (SMR) para centros de datos, y se prueban cables superconductores en redes eléctricas.' },
@@ -2717,7 +2913,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     setHtml(el, '<header><h2>🧬 Coach EVR · Torre Bio-Fit</h2><button class="btn" type="button" data-cfocus>Ver la torre Bio-Fit</button><button class="btn" type="button" data-cx2 aria-label="Cerrar">×</button></header><div class="cbody">' + body + '</div>');
   }
   function openCoach(focus) { fitLoad(); if ($('#labP')) $('#labP').hidden = true; if ($('#postP')) $('#postP').hidden = true; $('#coachP').hidden = false; renderCoach(); if (focus && scene3d && scene3d.focusCoach) scene3d.focusCoach(); var t = coachToday(); var msg = t ? 'Bienvenido a la torre Bio-Fit, Nesty. Hoy toca ' + t.name + '. Meta: ' + t.prot + ' gramos de proteína y ' + t.water + ' litros de agua. ¡Vamos!' : 'Bienvenido a la torre Bio-Fit, Nesty. Soy tu coach: dime tu objetivo y armo tu rutina, tu dieta y tu tratamiento.'; if (VOICE.on) voiceSay(null, msg); toast('🏋 Coach: ' + msg); }
-  function closeCoach() { $('#coachP').hidden = true; var o = $('#osP'); if (o) o.hidden = true; var en = $('#enP'); if (en) en.hidden = true; var eb = $('#enBack'); if (eb) eb.hidden = true; }
+  function closeCoach() { $('#coachP').hidden = true; var o = $('#osP'); if (o) o.hidden = true; var en = $('#enP'); if (en) en.hidden = true; var eb = $('#enBack'); if (eb) eb.hidden = true; var bp = $('#bitP'); if (bp) bp.hidden = true; }
   /* ---- Laboratorio EVR: fábrica de agentes, taller de reparación y noticias de IA y economía ---- */
   var LAB = { news: null, specs: [], sub: false, ans: '', diag: {}, busy: false };
   function labLoad() {
@@ -5436,8 +5632,69 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         return { x: o.x, z: o.z, y: y, r: r, ph: ph, th: OUTA + 0.55 };
       }
       function einfo() { var kw = 0, rows = AGENTS.map(function (a) { var k = a.status === 'working' ? 140 : a.status === 'error' ? 15 : a.status === 'warning' ? 90 : 40; kw += k; return { id: a.id, name: a.name, status: a.status, kw: k }; }); return { power: Math.round(power), mw: +(power / 100 * 4).toFixed(2), kw: kw, rows: rows, lengthM: Math.round(CLEN), axis: axX ? 'x' : 'z' }; }
-      return { update: update, info: info, energy: energy, einfo: einfo, pos: { x: RX, z: RZ }, boost: function () { buildT = 0.999; return true; } };
+      return { update: update, info: info, energy: energy, einfo: einfo, sub: ew(SSX, 0), axis: axX ? 'x' : 'z', pos: { x: RX, z: RZ }, boost: function () { buildT = 0.999; return true; } };
     })(); } catch (rxErr) { reactor = null; if (window.console) console.warn('reactor', rxErr); }
+
+    /* ---- Edificio redondo de la BITÁCORA DE PROPIEDADES, en el centro de la ciudad ---- */
+    var bita = null; try { bita = (function () {
+      var T3 = THREE, R = 9.5, padP = (nave && nave.padPos) || [], best = null, bd = 1e9, sb = reactor && reactor.sub ? reactor.sub : null, axisX = reactor && reactor.axis ? reactor.axis === 'x' : true;
+      for (var rr = 40; rr <= 110; rr += 3) for (var k = 0; k < 72; k++) {
+        var a0 = k * 5 * Math.PI / 180, x0 = Math.cos(a0) * rr, z0 = Math.sin(a0) * rr, ok = true;
+        for (var bi = 0; ok && bi < BLDS.length; bi++) { var b0 = BLDS[bi], ddx = Math.max(Math.abs(x0 - b0.x) - b0.w / 2, 0), ddz = Math.max(Math.abs(z0 - b0.z) - b0.d / 2, 0); if (Math.hypot(ddx, ddz) < R + 9) ok = false; }
+        if (ok && annex && Math.hypot(x0 - annex.pos.x, z0 - annex.pos.z) < 42) ok = false;
+        if (ok && sb && Math.hypot(x0 - sb.x, z0 - sb.z) < 26) ok = false;
+        if (ok && (axisX ? Math.abs(z0) : Math.abs(x0)) < 19) ok = false;
+        for (var pq = 0; ok && pq < padP.length; pq++) if (Math.hypot(x0 - padP[pq].x, z0 - padP[pq].z) < 26) ok = false;
+        if (ok && rr < bd) { best = { x: x0, z: z0 }; bd = rr; }
+      }
+      if (!best) best = { x: axisX ? 0 : 70, z: axisX ? 70 : 0 };
+      var BX = best.x, BZ = best.z, G = new T3.Group(); G.position.set(BX, 0, BZ); G.rotation.y = Math.atan2(-BX, -BZ); scene.add(G);
+      function addM(c, o) { return new T3.MeshBasicMaterial({ color: c, transparent: true, opacity: o == null ? 0.8 : o, blending: T3.AdditiveBlending, depthWrite: false, side: T3.DoubleSide, fog: false }); }
+      var hullM = new T3.MeshStandardMaterial({ color: 0x18242f, roughness: 0.35, metalness: 0.8, emissive: 0x0b2234, emissiveIntensity: 0.6 });
+      var goldM = new T3.MeshStandardMaterial({ color: 0xc9a84c, roughness: 0.3, metalness: 0.8, emissive: 0x3a2e0c, emissiveIntensity: 0.6 });
+      var glassM = new T3.MeshStandardMaterial({ color: 0x7fe0ff, roughness: 0.1, metalness: 0.3, transparent: true, opacity: 0.22, emissive: 0x0a3a4a, emissiveIntensity: 0.5, side: T3.DoubleSide });
+      var plinth = new T3.Mesh(new T3.CylinderGeometry(R + 2.4, R + 3.2, 0.9, 56), hullM); plinth.position.y = 0.45; G.add(plinth);
+      var ringP = new T3.Mesh(new T3.TorusGeometry(R + 2.7, 0.12, 6, 96), addM(0xffc94d, 0.9)); ringP.rotation.x = Math.PI / 2; ringP.position.y = 0.95; G.add(ringP);
+      var FL = 3, FHt = 4.2;
+      for (var f = 0; f < FL; f++) {
+        var y0 = 0.9 + f * FHt, wall = new T3.Mesh(new T3.CylinderGeometry(R, R, FHt, 48, 1, true), glassM); wall.position.y = y0 + FHt / 2; G.add(wall);
+        var slab = new T3.Mesh(new T3.CylinderGeometry(R + 0.3, R + 0.3, 0.3, 48), hullM); slab.position.y = y0; G.add(slab);
+        var band = new T3.Mesh(new T3.TorusGeometry(R + 0.3, 0.09, 6, 96), addM(f % 2 ? 0x5cffe6 : 0xffc94d, 0.85)); band.rotation.x = Math.PI / 2; band.position.y = y0 + 0.2; G.add(band);
+        for (var wq = 0; wq < 22; wq++) { var wa = wq / 22 * Math.PI * 2, wl = new T3.Mesh(new T3.BoxGeometry(0.16, FHt, 0.16), goldM); wl.position.set(Math.cos(wa) * R, y0 + FHt / 2, Math.sin(wa) * R); G.add(wl); }
+        for (var lq = 0; lq < 12; lq++) { var la = (lq + f * 0.5) / 12 * Math.PI * 2 + 0.2, lm = new T3.Mesh(new T3.PlaneGeometry(1.3, 0.9), new T3.MeshBasicMaterial({ color: 0xffe9a8, transparent: true, opacity: 0.55, side: T3.DoubleSide, fog: false })); lm.position.set(Math.cos(la) * (R - 0.4), y0 + 2.1, Math.sin(la) * (R - 0.4)); lm.rotation.y = -la + Math.PI / 2; G.add(lm); }
+      }
+      var topY = 0.9 + FL * FHt;
+      var dome = new T3.Mesh(new T3.SphereGeometry(R, 40, 16, 0, Math.PI * 2, 0, Math.PI / 2), addM(0x7fe0ff, 0.13)); dome.position.y = topY; G.add(dome);
+      var domeE = new T3.LineSegments(new T3.EdgesGeometry(new T3.SphereGeometry(R + 0.03, 16, 6, 0, Math.PI * 2, 0, Math.PI / 2)), new T3.LineBasicMaterial({ color: 0x9fe8ff, transparent: true, opacity: 0.55 })); domeE.position.y = topY; G.add(domeE);
+      var core = new T3.Mesh(new T3.CylinderGeometry(1.6, 1.9, topY + 3, 16, 1, true), addM(0x5cffe6, 0.28)); core.position.y = (topY + 3) / 2; G.add(core);
+      var coreIn = new T3.Mesh(new T3.CylinderGeometry(0.45, 0.45, topY + 6, 8, 1, true), addM(0xffffff, 0.55)); coreIn.position.y = (topY + 6) / 2; G.add(coreIn);
+      /* casa holográfica giratoria sobre la cúpula: es el símbolo de la bitácora */
+      var holo = new T3.Group(); holo.position.y = topY + R * 0.55 + 6; G.add(holo);
+      var hb = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(5.2, 3, 4.2)), new T3.LineBasicMaterial({ color: 0x9fe8ff })); hb.position.y = 1.5; holo.add(hb);
+      var hr = new T3.Mesh(new T3.ConeGeometry(4.2, 2.6, 4), addM(0xffc94d, 0.5)); hr.position.y = 4.3; hr.rotation.y = Math.PI / 4; holo.add(hr); var hre = new T3.LineSegments(new T3.EdgesGeometry(new T3.ConeGeometry(4.2, 2.6, 4)), new T3.LineBasicMaterial({ color: 0xffc94d })); hre.position.y = 4.3; hre.rotation.y = Math.PI / 4; holo.add(hre);
+      var hdoor = new T3.Mesh(new T3.PlaneGeometry(1, 1.8), addM(0x5cffe6, 0.55)); hdoor.position.set(0, 0.9, 2.11); holo.add(hdoor);
+      var holoGlow = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0x7fe0ff, transparent: true, opacity: 0.5, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); holoGlow.scale.set(16, 16, 1); holoGlow.position.y = 3; holo.add(holoGlow);
+      var sc = document.createElement('canvas'); sc.width = 768; sc.height = 192; var sg2 = sc.getContext('2d'); sg2.textAlign = 'center'; sg2.fillStyle = '#fff2c4'; sg2.shadowColor = '#ffc94d'; sg2.shadowBlur = 18; sg2.font = '700 56px sans-serif'; sg2.fillText('📒 BITÁCORA EVR', 384, 84); sg2.font = '500 32px sans-serif'; sg2.fillText('mis casas · gastos · días · personas', 384, 140);
+      var sign = new T3.Sprite(new T3.SpriteMaterial({ map: new T3.CanvasTexture(sc), transparent: true, depthWrite: false, fog: false })); sign.scale.set(20, 5, 1); sign.position.y = topY + R * 0.55 + 14; G.add(sign);
+      var hit = new T3.Mesh(new T3.CylinderGeometry(R + 3, R + 3, topY + 4, 14), new T3.MeshBasicMaterial({ visible: false })); hit.position.y = (topY + 4) / 2; hit.userData.bita = true; G.add(hit); pickables.push(hit);
+      /* una casita en su pedestal por cada propiedad (hasta 8), con su dirección */
+      var minis = new T3.Group(); G.add(minis); var ST = { comprada: 0xffc94d, 'en obra': 0xff9a4d, terminada: 0x5cffe6, 'en venta': 0x8fb4ff, vendida: 0x5cffb0 };
+      function setProps(list) {
+        while (minis.children.length) { var ch = minis.children.pop(); ch.traverse(function (o) { if (o.material && o.material.map && o.material.map.dispose) o.material.map.dispose(); }); minis.remove(ch); }
+        (list || []).slice(0, 8).forEach(function (p, i) {
+          var a = Math.PI * 0.2 + i / 8 * Math.PI * 1.6 + Math.PI * 0.5, rx = Math.cos(a) * (R + 7.4), rz = Math.sin(a) * (R + 7.4), c = ST[p.status] || 0x9bb3c4, g = new T3.Group(); g.position.set(rx, 0, rz); g.rotation.y = -a + Math.PI / 2;
+          var pad = new T3.Mesh(new T3.CylinderGeometry(2.6, 2.9, 0.5, 20), hullM); pad.position.y = 0.25; g.add(pad);
+          var body = new T3.Mesh(new T3.BoxGeometry(2.6, 1.7, 2.1), new T3.MeshStandardMaterial({ color: c, roughness: 0.4, metalness: 0.3, emissive: c, emissiveIntensity: 0.35 })); body.position.y = 1.35; g.add(body);
+          var roof = new T3.Mesh(new T3.ConeGeometry(2.4, 1.3, 4), new T3.MeshStandardMaterial({ color: 0x23323f, roughness: 0.4, metalness: 0.6 })); roof.position.y = 2.85; roof.rotation.y = Math.PI / 4; g.add(roof);
+          var gl = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: c, transparent: true, opacity: 0.55, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); gl.scale.set(6, 6, 1); gl.position.y = 2; g.add(gl);
+          var cv = document.createElement('canvas'); cv.width = 384; cv.height = 96; var cg = cv.getContext('2d'); cg.textAlign = 'center'; cg.fillStyle = '#ffffff'; cg.shadowColor = '#000'; cg.shadowBlur = 6; cg.font = '700 40px sans-serif'; cg.fillText(String(p.addr || '').slice(0, 20), 192, 56); cg.fillStyle = '#' + ('000000' + c.toString(16)).slice(-6); cg.font = '500 26px sans-serif'; cg.fillText(({ comprada: 'Comprada', 'en obra': 'En obra', terminada: 'Remodelada', 'en venta': 'En venta', vendida: 'Vendida' })[p.status] || '', 192, 88);
+          var lb = new T3.Sprite(new T3.SpriteMaterial({ map: new T3.CanvasTexture(cv), transparent: true, depthWrite: false, fog: false })); lb.scale.set(8, 2, 1); lb.position.y = 5; g.add(lb);
+          minis.add(g);
+        });
+      }
+      function update(dt, t, tier) { holo.rotation.y += dt * 0.5; holo.position.y += Math.sin(t * 1.4) * 0.004; holoGlow.material.opacity = 0.4 + 0.15 * Math.sin(t * 2.2); core.material.opacity = 0.2 + 0.12 * Math.sin(t * 3); ringP.material.opacity = 0.6 + 0.3 * Math.sin(t * 2); domeE.material.opacity = 0.4 + 0.15 * Math.sin(t); }
+      return { update: update, setProps: setProps, pos: { x: BX, z: BZ }, topY: topY, info: function () { return { x: BX, z: BZ, slots: minis.children.length }; } };
+    })(); } catch (bitErr) { bita = null; if (window.console) console.warn('bitacora 3d', bitErr); }
 
     /* ---- Tercera torre: BIO·FIT EVR, la torre del Coach (gimnasio, recuperación y seguimiento) ---- */
     var fitTower = null; try { fitTower = (function () {
@@ -6276,7 +6533,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (WALK.on) { walkPtr('up', e); return; }
       var wasTap = drag && drag.moved < 6 && Object.keys(ptrs).length === 1;
       delete ptrs[e.pointerId]; pinch = 0;
-      if (wasTap) { var ud = hit(e); if (ud && ud.drone) { enterDrone(); return; } if (ud && ud.lab) { openLab(false); return; } if (ud && ud.postal) { openPost(true); return; } if (ud && ud.coach) { openCoach(true); return; } if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.gym) { var ga0 = agentAt(ud.gym.fl); if (ga0) { enterWalk(ga0.id); setTimeout(function () { var F0 = GYM.floors[ud.gym.fl]; if (F0 && WALK.on) { var ge0 = F0.eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]; gymStart(ge0); } }, 400); } return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
+      if (wasTap) { var ud = hit(e); if (ud && ud.drone) { enterDrone(); return; } if (ud && ud.lab) { openLab(false); return; } if (ud && ud.postal) { openPost(true); return; } if (ud && ud.bita) { openBit(false); return; } if (ud && ud.coach) { openCoach(true); return; } if (ud && ud.reactor) { reactorTap(); return; } if (ud && ud.gym) { var ga0 = agentAt(ud.gym.fl); if (ga0) { enterWalk(ga0.id); setTimeout(function () { var F0 = GYM.floors[ud.gym.fl]; if (F0 && WALK.on) { var ge0 = F0.eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]; gymStart(ge0); } }, 400); } return; } if (ud && ud.prop) { openProps(ud.prop.id); return; } if (ud && ud.jarvis) { if (!$('#jarvis').hidden && !$('#jarvis').classList.contains('mini')) jarvisClose(); else jarvisWake(); return; } if (ud && ud.agent && window.innerWidth > 860) jarvisMini(true); if (ud && ud.agent && !ud.floorHit) { enterWalk(ud.agent.id, false, true); } else if (ud && ud.agent) select(ud.agent.id); else if (ud && ud.project) selectProject(ud.project.id); else if (ud && ud.meteor) captureMeteor(ud.meteor); else if (ud && ud.planet) selectPlanet(ud.planet.id); else if (selected || selectedProject || selectedPlanet) deselect(); }
       if (!Object.keys(ptrs).length) drag = null;
     });
     canvas.addEventListener('pointercancel', function (e) { delete ptrs[e.pointerId]; drag = null; wdrag = null; });
@@ -6675,6 +6932,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       if (annex) annex.update(clockT, dt, tier);
       if (nave) nave.update(dt, clockT, tier);
       if (reactor) reactor.update(dt, clockT, tier);
+      if (bita) bita.update(dt, clockT, tier);
       if (fitTower) fitTower.update(dt === 0 ? 0 : clockT, dt, tier);
       if (war) war.update(dt, clockT, tier);
       if (lab) lab.update(clockT, dt, tier);
@@ -6768,6 +7026,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         var ud = hit(e); if (ud && ud.prop) { openProps(ud.prop.id); return; }
         if (ud && ud.coach) { openCoach(false); return; }
         if (ud && ud.postal) { openPost(false); return; }
+        if (ud && ud.bita) { openBit(false); return; }
         if (ud && ud.gym) { if (ud.gym.fl === WALK.fl && Math.hypot(ud.gym.x - WALK.x, ud.gym.z - WALK.z) < 6) { var ge = (GYM.floors[WALK.fl].eq.filter(function (q) { return q.x === ud.gym.x && q.z === ud.gym.z; })[0]); gymStart(ge); } else { WALK.go = { x: ud.gym.x, z: ud.gym.z + (ud.gym.z > 0 ? -1.6 : 1.6) }; } return; }
         if (ud && ud.agent && !ud.floorHit) { walkTalk(ud.agent); return; }
         if (!walkGoto(e) && ud && ud.agent && ud.agent.i !== WALK.fl) walkTalk(ud.agent);
@@ -7058,6 +7317,9 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       focusWar: function () { if (!war) return false; if (bgMode !== 'espacio') setBg('espacio'); var c = war.center().multiplyScalar(0.45); cam.follow = null; cam.gtx = c.x; cam.gtz = c.z; cam.gty = c.y; cam.th = Math.atan2(c.z, c.x) + Math.PI; cam.gph = 1.95; cam.gr = 120; return true; },
       coachInfo: function () { return fitTower ? fitTower.info() : null; },
       reactorBoost: function () { return reactor ? reactor.boost() : false; },
+      bitSet: function (l) { if (bita) bita.setProps(l); },
+      bitInfo: function () { return bita ? bita.info() : null; },
+      focusBit: function () { if (!bita) return false; cam.follow = null; cam.gtx = bita.pos.x; cam.gtz = bita.pos.z; cam.gty = 14; cam.gph = 1.12; cam.gr = window.innerWidth > 860 ? 84 : 112; cam.th = Math.atan2(bita.pos.z, bita.pos.x) + 0.5; return true; },
       energyInfo: function () { return reactor && reactor.einfo ? reactor.einfo() : null; },
       focusEnergy: function (step) { if (!reactor || !reactor.energy) return false; var e = reactor.energy(step | 0); cam.follow = null; cam.gtx = e.x; cam.gtz = e.z; cam.gty = e.y; cam.gph = e.ph; cam.gr = e.r * (window.innerWidth > 860 ? 1 : 1.35); cam.th = e.th; return true; },
       focusReactor: function () { if (!reactor) return false; cam.follow = null; cam.gtx = reactor.pos.x; cam.gtz = reactor.pos.z; cam.gty = 10; cam.gph = 1.18; cam.gr = window.innerWidth > 860 ? 80 : 105; cam.th = Math.atan2(reactor.pos.z, reactor.pos.x) + Math.PI - 0.45; return true; },

@@ -187,3 +187,11 @@
 - Botón **⚡ Energía → Agentes**: panel con la producción simulada (MW) y el consumo por piso (kW), el camino de la energía en 5 pasos con botones «Ver» que acercan la cámara (reactor, línea, subestación, riser, cima; el panel se esconde y aparece «Volver al panel de energía») y las **suposiciones del futuro** (hoy, 2030, 2035–2040, 2045, 2050+, cada una marcada como tendencia, suposición o especulación).
 - Voz: «Hey Jarvis, cómo llega la energía a los agentes», «futuro de la energía»; herramienta `open_energy`; el recorrido de «Hey Jarvis» tiene un paso de energía.
 - Probado con `energy.js` (18 comprobaciones) + regresión. Las cifras de MW y kW son simuladas.
+
+## Bitácora de propiedades · edificio redondo en el centro de la ciudad
+- Edificio redondo de vidrio (3 pisos, cúpula y una casa holográfica que gira) en la ciudad, con una casita por propiedad y su dirección; se toca para abrir la bitácora. Botón **📒 Bitácora** y voz.
+- Propiedades iniciales: **2405 Landership** (Remodelada) y **3112 Parkside Dr** (Comprada; dictada como «Park Slate», anotada como Parkside Dr como en los correos del título).
+- Por propiedad: **Resumen** (gastado, días de trabajo, personas, materiales, presupuesto vs gastado, compra + remodelación y ganancia estimada), **Bitácora** (paso a paso; se escribe, se dicta con 🎙 o se dice a Jarvis), **Hoja** (tabla editable tipo Excel con total; descargar `.csv` para Excel, copiar/pegar desde Excel), **Croquis** (dibujo a mano con dedo/ratón y plano automático desde «Cocina 12x14») y **Datos** (estado, fecha y precio de compra, presupuesto, valor después de remodelar).
+- Voz: «Hey Jarvis, anota en la bitácora de Landership que pagué 300 dólares a Juan por 6 horas de plomería»; «resumen de Parkside»; «borra lo último de la bitácora».
+- Guardado en la base de la torre: colecciones `bit_props` y `bit_log`. Solo el dueño escribe.
+- Probado con `bit.js` (19 comprobaciones).
