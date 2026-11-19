@@ -23,10 +23,9 @@ export default function Footer() {
               <a className="soc" href="https://www.tiktok.com/@ernestovelez2021" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.3 7.3a5.3 5.3 0 01-3.6-1.46 5.3 5.3 0 01-1.42-2.64h-2.98v12.06a2.42 2.42 0 11-2.42-2.42c.25 0 .5.04.73.11V9.92a5.45 5.45 0 00-.73-.05A5.45 5.45 0 1014.3 15.3l.0-6.06a8.2 8.2 0 005 1.7V7.3z" /></svg>
               </a>
-              <span className="soc soc-soon" aria-label="YouTube coming soon">
+              <a className="soc" href="https://www.youtube.com/@ImperialRemodelingEVR/shorts" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 00-1.77-1.77C19.3 5.13 12 5.13 12 5.13s-7.3 0-8.83.4A2.5 2.5 0 001.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 001.77 1.77c1.53.4 8.83.4 8.83.4s7.3 0 8.83-.4a2.5 2.5 0 001.77-1.77C23 15.2 23 12 23 12zM9.75 15.02V8.98L15.5 12l-5.75 3.02z" /></svg>
-                <span className="soon">{t('ftrSoon')}</span>
-              </span>
+              </a>
             </div>
           </div>
         </div>
@@ -42,7 +41,7 @@ export default function Footer() {
 
         <div className="fcol fcontact">
           <div className="fcol-h">{t('ftrReach')}</div>
-          <a href="tel:2145171951" className="fbig">214-517-1951</a>
+          <a href="tel:+12145171951" className="fbig">214-517-1951</a>
           <a href="mailto:velez@imperialremodelingevr.com">velez@imperialremodelingevr.com</a>
           <div className="fmeta">{t('ftrHours')}</div>
           <div className="fmeta fdot">{t('ftrOpen')}</div>
