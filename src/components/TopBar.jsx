@@ -9,7 +9,7 @@ export default function TopBar() {
 
   return (
     <div className="top-bar">
-      <a href="tel:2145171951" className="phone">
+      <a href="tel:+12145171951" className="phone">
         <span className="t">{t('callNow')}</span>
         <strong>{PHONE}</strong>
       </a>
