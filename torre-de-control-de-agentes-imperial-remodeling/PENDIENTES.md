@@ -180,3 +180,10 @@
 - El recorrido de «Hey Jarvis» incluye un paso de Agentic OS; Jarvis tiene la herramienta `open_agentic_os`.
 - Probado con `os.js` (13 comprobaciones: panel, rutinas con falla y en pausa, XSS, voz, cierre al abrir otro panel, recorrido).
 - Pendiente por decidir: hacerlo un piso 14 en 3D (hoy es un panel; un piso nuevo toca el conteo de 13 agentes en todo el código y las pruebas).
+
+## Energía → Agentes: la línea ya no vuela por el aire
+- Se quitó el conducto aéreo (82 m de alto). Ahora la energía va por una **línea superconductora subterránea bajo vidrio**: sale del núcleo del reactor, cruza la calzada, rodea la ciudad por fuera y entra por la avenida más cercana (363 m en la ciudad actual), con abrazaderas doradas cada 9 m, estaciones de empalme con baliza y pulsos de energía y de datos.
+- **Subestación criogénica** junto a la torre (transformadores, tanques criogénicos con vapor y 8 celdas de estado sólido que se encienden según la potencia) y un **riser** vertical con un **breaker por piso**: cada punto cambia de color según el estado del agente (cian trabajando, ámbar atención, rojo falla).
+- Botón **⚡ Energía → Agentes**: panel con la producción simulada (MW) y el consumo por piso (kW), el camino de la energía en 5 pasos con botones «Ver» que acercan la cámara (reactor, línea, subestación, riser, cima; el panel se esconde y aparece «Volver al panel de energía») y las **suposiciones del futuro** (hoy, 2030, 2035–2040, 2045, 2050+, cada una marcada como tendencia, suposición o especulación).
+- Voz: «Hey Jarvis, cómo llega la energía a los agentes», «futuro de la energía»; herramienta `open_energy`; el recorrido de «Hey Jarvis» tiene un paso de energía.
+- Probado con `energy.js` (18 comprobaciones) + regresión. Las cifras de MW y kW son simuladas.

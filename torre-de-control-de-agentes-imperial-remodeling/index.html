@@ -303,6 +303,15 @@ input[type="search"], .tform input[type="number"], .tbar2 input { width: 100%; b
 .jconn .jbtns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; } .jconn details { margin-top: 8px; font-size: 12px; } .jconn summary { cursor: pointer; color: #bfeaff; } .jconn li { margin: 3px 0; font-size: 12px; }
 .jconn .jaud { margin: 8px 0 0; padding: 0; list-style: none; } .jconn .jaud li { display: flex; gap: 8px; } .jconn .jaud i { font-style: normal; flex: none; width: 16px; } .jconn .jaud .ko { color: #ff9aa0; }
 
+.enback { position: absolute; left: 50%; bottom: 112px; transform: translateX(-50%); z-index: 12; border-color: rgba(255, 201, 77, 0.7) !important; }
+.coachp.enp { border-color: rgba(255, 201, 77, 0.6); box-shadow: 0 0 50px rgba(255, 201, 77, 0.18); }
+.enp header { background: linear-gradient(90deg, rgba(255, 201, 77, 0.16), transparent); border-bottom-color: rgba(255, 201, 77, 0.35); }
+.enp .ccard h3 { color: #ffd27a; }
+.enp .erow { display: grid; grid-template-columns: 132px 1fr 64px; gap: 8px; align-items: center; padding: 3px 0; font-size: 12px; }
+.enp .ebar { height: 8px; background: rgba(255, 255, 255, 0.08); border-radius: 4px; overflow: hidden; } .enp .ebar i { display: block; height: 100%; border-radius: 4px; }
+.enp .estep { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07); font-size: 13px; } .enp .estep b { color: #ffd27a; min-width: 22px; } .enp .estep .btn { margin-left: auto; white-space: nowrap; }
+.enp .efut { border-left: 3px solid #5cffe6; padding: 6px 12px; margin: 8px 0; background: rgba(92, 255, 230, 0.06); } .enp .efut[data-t="suposición"] { border-left-color: #ffc94d; background: rgba(255, 201, 77, 0.07); } .enp .efut[data-t="especulación"] { border-left-color: #c9a8ff; background: rgba(201, 168, 255, 0.08); }
+.enp .efut b { font-size: 14px; } .enp .etag { font-size: 11px; opacity: 0.85; margin-left: 6px; }
 .coachp.osp { border-color: rgba(143, 123, 255, 0.6); box-shadow: 0 0 50px rgba(143, 123, 255, 0.2); }
 .osp header { background: linear-gradient(90deg, rgba(143, 123, 255, 0.18), transparent); border-bottom-color: rgba(143, 123, 255, 0.35); }
 .osp .ccard h3 { color: #b6a9ff; }
@@ -601,6 +610,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       <button class="btn extra" id="btnMap" type="button">Mapa de la ciudad</button>
       <button class="btn extra" id="btnSky" type="button">Mirar al cielo</button>
       <button class="btn extra" id="btnReactor" type="button">☢ Reactor de energía</button>
+      <button class="btn extra" id="btnEnergy" type="button" title="Cómo llega la energía a los agentes y cómo podría ser en el futuro">⚡ Energía → Agentes</button>
       <button class="btn extra" id="btnInside" type="button">Vista interior</button>
       <button class="btn extra" id="btnQuality" type="button">Calidad: automática</button>
       <button class="btn extra" id="btnRestart3d" type="button">Reiniciar vista 3D</button>
@@ -778,6 +788,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   <div class="lockscr" id="lockScr" hidden role="dialog" aria-modal="true" aria-label="Torre bloqueada"><form id="lockForm" autocomplete="off"><div class="lk"><canvas class="jp" width="120" height="120"></canvas></div><h2>Torre bloqueada</h2><p>Escribe tu código para abrirla.</p><input id="lockPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" aria-label="Código de la torre"><button class="btn primary" type="submit">Abrir</button><p id="lockMsg" class="note" role="alert"></p></form></div>
   <section class="coachp" id="coachP" hidden aria-label="Coach EVR: rutina y dieta"></section>
   <section class="coachp labp" id="labP" hidden aria-label="Laboratorio EVR: fábrica de agentes y noticias"></section>
+  <button class="btn enback" id="enBack" type="button" hidden>⚡ Volver al panel de energía</button>
+  <section class="coachp enp" id="enP" hidden aria-label="Energía hacia los agentes: línea subterránea, subestación y futuro"></section>
   <section class="coachp osp" id="osP" hidden aria-label="Agentic OS: inventario de Claude y de los agentes de la torre"></section>
   <section class="coachp postp" id="postP" hidden aria-label="Oficina Postal: correo filtrado y seguimiento del robot NEO"></section>
   <div class="toast" id="toast" role="status"></div>
@@ -1191,6 +1203,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     if (/\b(informe|reporte del dia|jarvis|que mejoro|que falta|que debo mejorar|dime todo|que hay de nuevo)\b/.test(n)) { var jr = jarvisOpen(false); return jarvisSpeech(jr); }
     if (/\b(ayuda|comandos|que puedo decir)\b/.test(n)) return 'Puedes decir: estado, sube, baja, piso 5, habla con calendario, qué haces calendario, reinicia o corrige seguido del agente, pausa o reanuda un agente, abre la bandeja, tareas, obras o tokens, ver un agente, vista interior, torre completa, y silencia.';
     if (/\b(que ha pasado|que paso|que ha ocurrido|ponme al dia|ponme al corriente|paso a paso|recorrido|todo lo que paso|todo lo que ha pasado|cuentame todo)\b/.test(n)) return '__walk';
+    if (/\b(como llega la energia|linea de energia|energia de los agentes|energia a los agentes|futuro de la energia|subestacion|riser)\b/.test(n)) { openEnergy(0, true); return /futuro/.test(n) ? energyFuture() : energyText(); }
     if (/\b(agentic os|agentic|sistema operativo de agentes|sistema de agentes)\b/.test(n)) { openOS(true); return osHealth(); }
     if (/\b(duet|resumen del dia|resumen de hoy|lo de la ciudad)\b/.test(n)) return duetSpeech() || 'DUET todavía no ha entregado su primer resumen. Llega en su próxima corrida de la mañana o de la tarde.';
     if (/\b(estado|resumen|que pasa|como va|informe|novedades)\b/.test(n)) return briefingText(false);
@@ -1389,6 +1402,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       jtc('list_inbox', 'Lista los recados de la bandeja (solo títulos y agente). No puede aprobar ni rechazar nada: eso lo hace el dueño.', null, function () { var rc = INBOX || []; return rc.length ? rc.map(function (x) { return x.title + ' (' + ((byId(x.agent) || {}).name || x.agent) + ')'; }).join('\n') : 'No hay recados pendientes.'; }),
       jtc('search_memory', 'Busca en las notas de la memoria de la torre (reglas, procesos, clientes, decisiones).', OBJ({ query: { type: 'string' } }, ['query']), function (i) { var q = normV(i && i.query), w = q.split(' ').filter(function (x) { return x.length > 3; }), r = (MEMORY || []).filter(function (m) { var h = normV(m.title + ' ' + m.body); return w.some(function (x) { return h.indexOf(x) > -1; }); }).slice(0, 5); return r.length ? r.map(function (m) { return m.title + ': ' + String(m.body).slice(0, 220); }).join('\n') : 'No encontré notas sobre eso en la memoria.'; }),
       jtc('open_post_office', 'Abre la Oficina Postal (correo filtrado y seguimiento del robot NEO).', null, function () { openPost(true); return 'Oficina Postal abierta. NEO: ' + neoLine(); }),
+      jtc('open_energy', 'Abre el panel Energía → Agentes: la línea subterránea, la subestación, el riser por piso y las suposiciones del futuro.', null, function () { openEnergy(0, true); return energyText(); }),
       jtc('open_agentic_os', 'Abre Agentic OS: pisos, rutinas de Claude, conexiones, modelos, tokens y skills en un solo panel.', null, function () { openOS(true); return osHealth(); }),
       jtc('open_lab', 'Abre el Laboratorio EVR (noticias de IA y economía, taller de robots y fábrica de agentes).', null, function () { openLab(true); return 'Laboratorio abierto.'; }),
       jtc('lab_news', 'Devuelve las noticias de IA y de economía que trajo el laboratorio hoy.', null, function () { labLoad(); var a = labItems('ai').slice(0, 3), e = labItems('eco').slice(0, 3); if (!a.length && !e.length) return 'Todavía no hay noticias guardadas.'; return 'IA: ' + (a.map(function (x) { return x.t; }).join(' | ') || '—') + '. Economía: ' + (e.map(function (x) { return x.t; }).join(' | ') || '—') + '.'; }),
@@ -1600,7 +1614,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       walkStop();
     }
     jvShow(txt, 'Pensando…', 'Jarvis');
-    var r = /\b(duet|resumen del dia|resumen de hoy|agentic os|agentic)\b/.test(normV(txt)) ? voiceCommand(normV(txt)) : /\b(que ha pasado|que paso|que ha ocurrido|ponme al dia|ponme al corriente|paso a paso|recorrido|todo lo que paso|todo lo que ha pasado|cuentame todo)\b/.test(normV(txt)) ? '__walk' : wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (!r && (JENG.mode === 'local' || !SAMPLE)) r = jarvisLocalAnswer(txt);
+    var r = /\b(duet|resumen del dia|resumen de hoy|agentic os|agentic|como llega la energia|linea de energia|energia de los agentes|futuro de la energia|subestacion)\b/.test(normV(txt)) ? voiceCommand(normV(txt)) : /\b(que ha pasado|que paso|que ha ocurrido|ponme al dia|ponme al corriente|paso a paso|recorrido|todo lo que paso|todo lo que ha pasado|cuentame todo)\b/.test(normV(txt)) ? '__walk' : wantsLLM(normV(txt)) ? '__ask' : voiceCommand(normV(txt)); if (!r && (JENG.mode === 'local' || !SAMPLE)) r = jarvisLocalAnswer(txt);
     if (r === '__walk') { walkStart(); return; }
     if (r === '__ask') { jarvisOpen(false); $('#jaAns').hidden = false; jarvisAsk(txt); return; }
     if (r) { jvShow(null, r, 'Jarvis'); voiceSay(null, r); var an = $('#jaAns'); if (an && !$('#jarvis').hidden) { an.hidden = false; an.textContent = 'Jarvis: ' + r; } } else jvShow(null, 'No entendí esa orden. Di «ayuda» para ver lo que puedo mostrarte, o dímelo con otras palabras.', 'Jarvis');
@@ -1669,6 +1683,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   function walkSteps() {
     var N = AGENTS.length, work = AGENTS.filter(function (a) { return a.status === 'working'; }), al = alerts(), st = [];
     var dsp = duetSpeech(); if (dsp) st.push({ t: 'Resumen de DUET', x: dsp });
+    st.push({ t: 'Energía de los agentes', x: energyText().replace(/ Para el futuro, di «futuro de la energía»\./, '') });
     st.push({ t: 'Agentic OS', x: osHealth().replace(/^Agentic OS\. /, '') });
     st.push({ t: 'Panorama', x: work.length + ' de ' + N + ' agentes están trabajando ahora. ' + (al.length ? al.length + (al.length === 1 ? ' necesita' : ' necesitan') + ' tu ayuda.' : 'No hay alertas.') });
     try { var sn = sinceText(); if (sn && sn.text) st.push({ t: 'Desde tu última visita', x: sn.text }); } catch (e) {}
@@ -1728,6 +1743,37 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
   };
   ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { document.addEventListener(ev, function () { if (!LOCK.on) LOCK.last = Date.now(); }, true); });
   setInterval(function () { if (!LOCK.on && lockOn() && LOCK.cfg.idle > 0 && Date.now() - LOCK.last > LOCK.cfg.idle * 60000) lockNow('Se bloqueó por inactividad.'); }, 15000);
+  /* ---- Energía → Agentes: la línea subterránea, la subestación y las suposiciones del futuro ---- */
+  var FUT = [
+    { y: 'Hoy · 2026', t: 'tendencia actual', h: 'Energía firme para la IA', x: 'Las empresas de IA necesitan energía las 24 horas. Ya se firman acuerdos con plantas nucleares y con microrreactores modulares (SMR) para centros de datos, y se prueban cables superconductores en redes eléctricas.' },
+    { y: 'Hacia 2030', t: 'tendencia actual', h: 'Reactor pequeño junto al centro de datos', x: 'Microrreactores pegados al centro de datos, baterías de estado sólido como colchón y refrigeración líquida directa al chip. Los agentes empiezan a medirse en vatios por tarea.' },
+    { y: '2035 – 2040', t: 'suposición', h: 'Fusión de demostración y líneas superconductoras', x: 'Primeras plantas de fusión de demostración conectadas a la red (varias empresas apuntan a esa década, sin garantía). Líneas superconductoras enterradas con nitrógeno líquido y redes de corriente continua dentro del edificio, como la de esta ciudad.' },
+    { y: 'Hacia 2045', t: 'suposición', h: 'Presupuesto de energía por piso', x: 'Cada agente planea su trabajo según la energía disponible: lo pesado corre cuando sobra energía limpia y lo urgente tiene reserva garantizada. Cada piso tendría su presupuesto de energía, como hoy tiene presupuesto de tokens.' },
+    { y: '2050 en adelante', t: 'especulación', h: 'Ciudades nodo y energía casi sin costo', x: 'Ciudades que comparten reactores, energía por tarea casi sin costo y transmisión inalámbrica solo para drones y robots cercanos. Lo grande seguiría yendo por cable, porque es más eficiente.' }
+  ];
+  function energyText() {
+    var e = scene3d && scene3d.energyInfo && scene3d.energyInfo(); if (!e) return 'La línea de energía no está disponible en esta vista.';
+    return 'La energía ya no viaja por el aire: va por una línea superconductora enterrada bajo vidrio, de ' + e.lengthM + ' metros, desde el reactor hasta la subestación criogénica de la torre, y de ahí sube por una columna con un breaker en cada piso. Ahora el reactor da ' + e.mw + ' megavatios simulados, al ' + e.power + '% de potencia, y los agentes consumen ' + e.kw + ' kilovatios. Para el futuro, di «futuro de la energía».';
+  }
+  function energyFuture() { return 'Estas son suposiciones, no promesas. ' + FUT.slice(1).map(function (f) { return f.y + ': ' + f.h + '. '; }).join('') + 'Abre el panel de energía para ver el detalle.'; }
+  function renderEnergy() {
+    var el = $('#enP'); if (!el || el.hidden) return; var e = scene3d && scene3d.energyInfo && scene3d.energyInfo();
+    var live = '<div class="ccard wide"><h3>En vivo · simulación</h3>' + (e ? '<p class="cans">Reactor: <b>' + e.mw + ' MW</b> de 4 MW (' + e.power + '% de potencia) · Los agentes consumen <b>' + e.kw + ' kW</b> · Línea enterrada de <b>' + e.lengthM + ' m</b></p>' + e.rows.map(function (r) { var col = r.status === 'working' ? '#5cffe6' : r.status === 'error' ? '#ff5a5f' : r.status === 'warning' ? '#ffc94d' : '#6f8799'; return '<div class="erow"><span>' + esc(r.name) + '</span><span class="ebar"><i style="width:' + Math.round(r.kw / 140 * 100) + '%;background:' + col + '"></i></span><span>' + (+r.kw || 0) + ' kW</span></div>'; }).join('') + '<p class="note">Cifras simuladas: trabajando 140 kW, atención 90 kW, en espera 40 kW, con falla 15 kW.</p>' : '<p class="note">Esta vista no tiene la escena 3D.</p>') + '</div>';
+    function step(n, t, d, btn, st) { return '<div class="estep"><b>' + n + '</b><span><b style="min-width:0;color:#e8f2f8">' + esc(t) + '</b><br>' + esc(d) + '</span><button class="btn" type="button" data-enstep="' + st + '">' + esc(btn) + '</button></div>'; }
+    var way = '<div class="ccard wide"><h3>El camino de la energía · tócalo para verlo en la ciudad</h3>' +
+      step(1, 'Núcleo: reactor de fusión IA', 'Genera la energía de toda la ciudad. Su potencia sube con los agentes que trabajan.', 'Ver el reactor', 'r') +
+      step(2, 'Línea subterránea bajo vidrio', 'Superconductor enterrado, con abrazaderas doradas cada 9 m y estaciones de empalme. No vuela por el aire: no lo toca el viento, la lluvia ni los drones.', 'Ver la línea', 0) +
+      step(3, 'Subestación criogénica', 'Baja el voltaje, enfría la línea y guarda energía en 8 celdas de estado sólido que se encienden según la potencia.', 'Ver la subestación', 1) +
+      step(4, 'Riser de la torre', 'Columna vertical con un breaker por piso. Cada punto cambia de color según el agente: cian trabajando, ámbar atención, rojo falla.', 'Ver el riser', 2) +
+      step(5, 'Breaker de cada piso', 'Cada piso toma solo lo que necesita; si uno falla, se aísla sin apagar a los demás.', 'Ver arriba', 3) + '</div>';
+    var fut = '<div class="ccard wide"><h3>Suposiciones del futuro</h3>' + FUT.map(function (f) { return '<div class="efut" data-t="' + esc(f.t) + '"><b>' + esc(f.y) + ' · ' + esc(f.h) + '</b><span class="etag">(' + esc(f.t) + ')</span><br>' + esc(f.x) + '</div>'; }).join('') + '<p class="note">Lo del futuro son suposiciones para imaginar la ciudad, no promesas ni datos de ingeniería. Los megavatios y kilovatios de esta pantalla son simulados.</p></div>';
+    setHtml(el, '<header><h2>⚡ Energía → Agentes · cómo llega y cómo podría ser</h2><button class="btn" type="button" data-enx aria-label="Cerrar">×</button></header><div class="cbody">' + live + way + fut + '</div>');
+  }
+  function openEnergy(step, silent) { closeCoach(); if ($('#labP')) $('#labP').hidden = true; if ($('#postP')) $('#postP').hidden = true; $('#enP').hidden = false; $('#enBack').hidden = true; renderEnergy(); if (scene3d && scene3d.focusEnergy) scene3d.focusEnergy(step || 0); if (!silent) voiceSay(null, energyText(), null, true); }
+  $('#btnEnergy').onclick = function () { stopTour(); openEnergy(0); };
+  $('#enP').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; if (b.hasAttribute('data-enx')) { $('#enP').hidden = true; $('#enBack').hidden = true; return; } if (b.hasAttribute('data-enstep')) { var v = b.getAttribute('data-enstep'); $('#enP').hidden = true; $('#enBack').hidden = false; if (v === 'r') { if (scene3d && scene3d.focusReactor) scene3d.focusReactor(); } else if (scene3d && scene3d.focusEnergy) scene3d.focusEnergy(+v); } });
+  $('#enBack').onclick = function () { $('#enP').hidden = false; $('#enBack').hidden = true; renderEnergy(); };
+  setInterval(function () { var en = $('#enP'); if (en && !en.hidden) renderEnergy(); }, 3000);
   /* ---- Agentic OS: todo lo de Claude y los agentes en un solo lugar ---- */
   var OSX = { inv: null, sub: false };
   function osLoad() {
@@ -2671,7 +2717,7 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
     setHtml(el, '<header><h2>🧬 Coach EVR · Torre Bio-Fit</h2><button class="btn" type="button" data-cfocus>Ver la torre Bio-Fit</button><button class="btn" type="button" data-cx2 aria-label="Cerrar">×</button></header><div class="cbody">' + body + '</div>');
   }
   function openCoach(focus) { fitLoad(); if ($('#labP')) $('#labP').hidden = true; if ($('#postP')) $('#postP').hidden = true; $('#coachP').hidden = false; renderCoach(); if (focus && scene3d && scene3d.focusCoach) scene3d.focusCoach(); var t = coachToday(); var msg = t ? 'Bienvenido a la torre Bio-Fit, Nesty. Hoy toca ' + t.name + '. Meta: ' + t.prot + ' gramos de proteína y ' + t.water + ' litros de agua. ¡Vamos!' : 'Bienvenido a la torre Bio-Fit, Nesty. Soy tu coach: dime tu objetivo y armo tu rutina, tu dieta y tu tratamiento.'; if (VOICE.on) voiceSay(null, msg); toast('🏋 Coach: ' + msg); }
-  function closeCoach() { $('#coachP').hidden = true; var o = $('#osP'); if (o) o.hidden = true; }
+  function closeCoach() { $('#coachP').hidden = true; var o = $('#osP'); if (o) o.hidden = true; var en = $('#enP'); if (en) en.hidden = true; var eb = $('#enBack'); if (eb) eb.hidden = true; }
   /* ---- Laboratorio EVR: fábrica de agentes, taller de reparación y noticias de IA y economía ---- */
   var LAB = { news: null, specs: [], sub: false, ans: '', diag: {}, busy: false };
   function labLoad() {
@@ -5298,14 +5344,46 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         zone.add(b); return { g: b, torch: torch, ph: i * 1.7, r: 3.6 + (i % 2) * 0.8, h: 2.5 + i * 1.6 };
       }
       for (var bq = 0; bq < 4; bq++) bots.push(makeBot(bq));
-      /* conducto de energía elevado hasta la torre (nave) con pulsos */
-      var tgt = new T3.Vector3(-RX, 0, -RZ).normalize(), endP = new T3.Vector3(tgt.x * 0.0, 0, 0), towerEdge = new T3.Vector3(-RX, 0, -RZ).setLength(Math.hypot(RX, RZ) - 22);
-      var c0 = new T3.Vector3(-3, 9, 0), c3 = towerEdge.clone().setY(4.5), mid = c0.clone().lerp(c3, 0.5).setY(82);
-      var curve = new T3.CatmullRomCurve3([c0, c0.clone().lerp(c3, 0.15).setY(60), mid, c0.clone().lerp(c3, 0.85).setY(62), c3]);
-      var CPTS = curve.getSpacedPoints(240); var conduit = new T3.Mesh(new T3.TubeGeometry(curve, 80, 0.35, 8, false), addM(0x5cffe6, 0.35)); G.add(conduit);
-      var conduitCore = new T3.Mesh(new T3.TubeGeometry(curve, 80, 0.12, 6, false), addM(0xffffff, 0.6)); G.add(conduitCore);
-      var pulses = []; for (var pp = 0; pp < 8; pp++) { var ps = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: pp % 2 ? 0xffc94d : 0x9fe8ff, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); ps.scale.set(3, 3, 1); G.add(ps); pulses.push({ s: ps, u: pp / 8 }); }
-      for (var py = 1; py < 4; py++) { var pt = curve.getPoint(py / 4), pyl = new T3.Mesh(new T3.CylinderGeometry(0.4, 0.7, pt.y, 8), hullM); pyl.position.set(pt.x, pt.y / 2, pt.z); G.add(pyl); }
+      /* LÍNEA DE ENERGÍA SUBTERRÁNEA bajo vidrio: ya no vuela por el aire. Sale del núcleo, cruza la calzada, rodea la ciudad por fuera y entra por la avenida hasta la subestación criogénica; de ahí sube por el «riser» de la torre hasta el breaker de cada piso. */
+      var axX = Math.abs(RZ) < Math.abs(RX), sgn = axX ? (RX >= 0 ? 1 : -1) : (RZ >= 0 ? 1 : -1);
+      var hA0 = axX ? 14.4 : 10.4, RISE = hA0 + 1.9, SSX = hA0 + 13, RC = LIM + 6, aR = Math.atan2(RZ, RX), aT = axX ? (sgn > 0 ? 0 : Math.PI) : (sgn > 0 ? Math.PI / 2 : -Math.PI / 2), dA = aT - aR;
+      while (dA > Math.PI) dA -= Math.PI * 2; while (dA < -Math.PI) dA += Math.PI * 2;
+      function W2L(x, y, z) { return new T3.Vector3(x - RX, y, z - RZ); }
+      var LY = 0.85, inw = new T3.Vector3(-RX, 0, -RZ).normalize(), eC = Math.hypot(RX, RZ) - RC, lp = [W2L(RX - 3, LY, RZ), W2L(RX + inw.x * 20, LY, RZ + inw.z * 20), W2L(RX + inw.x * eC, LY, RZ + inw.z * eC)];
+      for (var as = 1, asN = Math.max(2, Math.ceil(Math.abs(dA) * RC / 14)); as <= asN; as++) { var aa = aR + dA * as / asN; lp.push(W2L(Math.cos(aa) * RC, LY, Math.sin(aa) * RC)); }
+      for (var wv = RC - 16; wv > SSX + 8; wv -= 22) lp.push(W2L(axX ? sgn * wv : 0, LY, axX ? 0 : sgn * wv));
+      lp.push(W2L(axX ? sgn * (SSX + 5) : 0, LY, axX ? 0 : sgn * (SSX + 5)));
+      var curve = new T3.CatmullRomCurve3(lp, false, 'centripetal'), CLEN = curve.getLength(), CPTS = curve.getSpacedPoints(700);
+      var conduit = new T3.Mesh(new T3.TubeGeometry(curve, 900, 0.95, 8, false), addM(0x5cffe6, 0.1)); G.add(conduit);
+      var casing = new T3.Mesh(new T3.TubeGeometry(curve, 900, 0.62, 8, false), new T3.MeshStandardMaterial({ color: 0x1a2733, roughness: 0.4, metalness: 0.8 })); G.add(casing);
+      var conduitCore = new T3.Mesh(new T3.TubeGeometry(curve, 900, 0.22, 6, false), addM(0xffffff, 0.6)); G.add(conduitCore);
+      /* abrazaderas criogénicas cada 9 m */
+      var clN = Math.max(8, Math.floor(CLEN / 9)), clM = new T3.InstancedMesh(new T3.TorusGeometry(0.95, 0.1, 6, 16), goldM2, clN), dmy = new T3.Object3D();
+      for (var cq = 0; cq < clN; cq++) { var cu = (cq + 0.5) / clN, cp = curve.getPointAt(cu), ct = curve.getTangentAt(cu); dmy.position.copy(cp); dmy.lookAt(cp.x + ct.x, cp.y + ct.y, cp.z + ct.z); dmy.updateMatrix(); clM.setMatrixAt(cq, dmy.matrix); }
+      G.add(clM);
+      /* estaciones de empalme con baliza, cada ~90 m */
+      var hubs = []; for (var hq = 1, hN = Math.max(2, Math.floor(CLEN / 90)); hq <= hN; hq++) { var hp2 = curve.getPointAt(hq / (hN + 1)); var hexp = new T3.Mesh(new T3.CylinderGeometry(2.6, 3, 0.5, 6), hullM); hexp.position.set(hp2.x, 0.25, hp2.z); G.add(hexp); var hbc = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xffc94d, transparent: true, opacity: 0.6, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); hbc.scale.set(5, 5, 1); hbc.position.set(hp2.x, 2, hp2.z); G.add(hbc); hubs.push({ sp: hbc, ph: hq * 1.3 }); }
+      /* pulsos: energía (cian y oro) y paquetes de datos (blancos) viajando por la línea */
+      var pulses = []; for (var pp = 0; pp < 28; pp++) { var pdat = pp % 4 === 3, ps = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: pdat ? 0xffffff : pp % 2 ? 0xffc94d : 0x9fe8ff, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); ps.scale.set(pdat ? 1.3 : 2.4, pdat ? 1.3 : 2.4, 1); G.add(ps); pulses.push({ s: ps, u: pp / 28 }); }
+      /* subestación criogénica + riser de la torre (grupo en coordenadas del mundo, con +x hacia afuera de la torre) */
+      var RG = new T3.Group(); RG.rotation.y = axX ? (sgn > 0 ? 0 : Math.PI) : (sgn > 0 ? -Math.PI / 2 : Math.PI / 2); scene.add(RG);
+      var ssPad = new T3.Mesh(new T3.CylinderGeometry(7.2, 7.8, 0.5, 6), hullM); ssPad.position.set(SSX, 0.25, 0); RG.add(ssPad);
+      var ssRing = new T3.Mesh(new T3.TorusGeometry(6.6, 0.1, 6, 6), addM(0x5cffe6, 0.9)); ssRing.rotation.x = Math.PI / 2; ssRing.position.set(SSX, 0.6, 0); RG.add(ssRing);
+      [-3.2, 0, 3.2].forEach(function (zz) { var tr = new T3.Mesh(new T3.CylinderGeometry(1.1, 1.3, 4.2, 12), plateM); tr.position.set(SSX + 2.4, 2.6, zz); RG.add(tr); var trg = new T3.Mesh(new T3.TorusGeometry(1.25, 0.09, 6, 20), addM(0xffc94d, 0.95)); trg.rotation.x = Math.PI / 2; trg.position.set(SSX + 2.4, 3.6, zz); RG.add(trg); });
+      var vap = []; [-2.6, 2.6].forEach(function (zz, vi) { var ct2 = new T3.Mesh(new T3.CylinderGeometry(1.45, 1.45, 6.2, 16), new T3.MeshStandardMaterial({ color: 0xe8f2f8, roughness: 0.25, metalness: 0.6, emissive: 0x16303f, emissiveIntensity: 0.5 })); ct2.position.set(SSX - 2.6, 3.6, zz); RG.add(ct2); for (var vs = 0; vs < 3; vs++) { var vsp = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0xbfeeff, transparent: true, opacity: 0.25, depthWrite: false, fog: false })); RG.add(vsp); vap.push({ s: vsp, x: SSX - 2.6, z: zz, t: vs * 1.4 + vi * 0.7 }); } });
+      var cells = []; for (var cc = 0; cc < 8; cc++) { var cm = new T3.Mesh(new T3.BoxGeometry(1, 1.7, 2.4), new T3.MeshBasicMaterial({ color: 0x1b2a38, fog: false })); cm.position.set(SSX + 4.4 + (cc % 2) * 1.15, 1.35, -4.2 + Math.floor(cc / 2) * 2.8); RG.add(cm); cells.push(cm); }
+      var lc = document.createElement('canvas'); lc.width = 768; lc.height = 192; var lg = lc.getContext('2d'); lg.textAlign = 'center'; lg.fillStyle = '#d6fbff'; lg.shadowColor = '#5cffe6'; lg.shadowBlur = 18; lg.font = '700 46px sans-serif'; lg.fillText('SUBESTACIÓN CRIOGÉNICA', 384, 80); lg.font = '500 32px sans-serif'; lg.fillText('línea superconductora subterránea → torre IA', 384, 132);
+      var lsp = new T3.Sprite(new T3.SpriteMaterial({ map: new T3.CanvasTexture(lc), transparent: true, depthWrite: false, fog: false })); lsp.scale.set(15, 3.75, 1); lsp.position.set(SSX, 11, 0); RG.add(lsp);
+      var linkC = new T3.CatmullRomCurve3([new T3.Vector3(SSX - 5, LY, 0), new T3.Vector3((SSX + RISE) / 2, LY, 0), new T3.Vector3(RISE, LY, 0)]); RG.add(new T3.Mesh(new T3.TubeGeometry(linkC, 20, 0.3, 6, false), addM(0x5cffe6, 0.75)));
+      var NF = AGENTS.length, TOPy = 3.2 + NF * 5.4 + 3; var riser = new T3.Mesh(new T3.CylinderGeometry(0.5, 0.5, TOPy, 10, 1, true), addM(0x5cffe6, 0.3)); riser.position.set(RISE, TOPy / 2, 0); RG.add(riser);
+      var riserCore = new T3.Mesh(new T3.CylinderGeometry(0.16, 0.16, TOPy, 6, 1, true), addM(0xffffff, 0.7)); riserCore.position.set(RISE, TOPy / 2, 0); RG.add(riserCore);
+      var rise = []; for (var rq = 0; rq < 10; rq++) { var rs = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: rq % 2 ? 0xffc94d : 0x9fe8ff, transparent: true, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); rs.scale.set(2.2, 2.2, 1); RG.add(rs); rise.push({ s: rs, u: rq / 10 }); }
+      var pods = []; for (var fi = 0; fi < NF; fi++) { var fy = 3.2 + fi * 5.4 + 2.7, ftier = Math.min(2, Math.floor(fi * 3 / NF)), fhx = (axX ? [14.4, 12.8, 11.2] : [10.4, 9.2, 8.0])[ftier];
+        var stub = new T3.Mesh(new T3.BoxGeometry(RISE - fhx - 0.2, 0.14, 0.14), addM(0x5cffe6, 0.55)); stub.position.set((RISE + fhx + 0.2) / 2, fy, 0); RG.add(stub);
+        var pm = new T3.Mesh(new T3.SphereGeometry(0.55, 12, 8), new T3.MeshBasicMaterial({ color: 0x5cffe6, fog: false })); pm.position.set(RISE, fy, 0); RG.add(pm);
+        var pg = new T3.Sprite(new T3.SpriteMaterial({ map: GLOW, color: 0x5cffe6, transparent: true, opacity: 0.5, depthWrite: false, blending: T3.AdditiveBlending, fog: false })); pg.scale.set(4.6, 4.6, 1); pg.position.set(RISE, fy, 0); RG.add(pg); pods.push({ m: pm, gl: pg, i: fi }); }
+      function ew(w, lat) { return axX ? { x: sgn * w, z: lat } : { x: lat, z: sgn * w }; }
+      var OUTA = axX ? (sgn > 0 ? 0 : Math.PI) : (sgn > 0 ? Math.PI / 2 : -Math.PI / 2);
       /* letrero */
       var sc = document.createElement('canvas'); sc.width = 768; sc.height = 192; var sg = sc.getContext('2d'); sg.textAlign = 'center'; sg.fillStyle = '#fff2c4'; sg.shadowColor = '#ffb066'; sg.shadowBlur = 20; sg.font = '700 60px sans-serif'; sg.fillText('☢ REACTOR DE FUSIÓN IA', 384, 78); sg.font = '500 36px sans-serif'; sg.fillStyle = '#bfeaff'; sg.fillText('EVR · energía de la ciudad · zona de bots', 384, 140);
       var sign = new T3.Sprite(new T3.SpriteMaterial({ map: new T3.CanvasTexture(sc), transparent: true, depthWrite: false, fog: false })); sign.scale.set(24, 6, 1); sign.position.set(-3, 23, 0); G.add(sign);
@@ -5335,7 +5413,13 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         pillar.material.opacity = 0.12 + 0.2 * pk * (0.7 + 0.3 * Math.sin(t * 6));
         steam.forEach(function (sm) { sm.t += dt; var q = (sm.t % 6.6) / 6.6; sm.s.position.set(sm.x + Math.sin(sm.t * 0.4) * q * 2, 18 + q * 16, sm.z + Math.cos(sm.t * 0.3) * q * 2); var s2 = 4 + q * 12; sm.s.scale.set(s2, s2, 1); sm.s.material.opacity = tier >= 2 ? 0 : 0.3 * Math.sin(q * Math.PI); });
         pulses.forEach(function (p) { p.u += dt * (0.08 + 0.18 * pk); if (!(p.u >= 0)) p.u = 0; p.u = p.u % 1; var ix = Math.min(CPTS.length - 1, Math.floor(p.u * (CPTS.length - 1))); p.s.position.copy(CPTS[ix]); });
-        conduit.material.opacity = 0.22 + 0.2 * pk;
+        conduit.material.opacity = 0.07 + 0.09 * pk; conduitCore.material.opacity = 0.35 + 0.4 * pk;
+        hubs.forEach(function (h) { h.sp.material.opacity = 0.25 + 0.5 * Math.max(0, Math.sin(t * 2 + h.ph)); });
+        rise.forEach(function (r) { r.u = (r.u + dt * (0.1 + 0.2 * pk)) % 1; r.s.position.set(RISE, 1 + r.u * (TOPy - 1), 0); });
+        pods.forEach(function (q) { var a = AGENTS[q.i], st = a ? a.status : 'idle', k = st === 'working' ? 1 : st === 'error' ? 0.3 : st === 'warning' ? 0.65 : 0.3, col = st === 'error' ? 0xff5a5f : st === 'warning' ? 0xffc94d : 0x5cffe6; q.m.material.color.setHex(col); q.gl.material.color.setHex(col); q.gl.material.opacity = (0.2 + 0.6 * k) * (0.85 + 0.15 * Math.sin(t * 5 + q.i)); });
+        var lc2 = Math.round(pk * cells.length); cells.forEach(function (c, i) { c.material.color.setHex(i < lc2 ? 0x5cffe6 : 0x1b2a38); });
+        vap.forEach(function (v) { v.t += dt; var q = (v.t % 4) / 4; v.s.position.set(v.x + Math.sin(v.t) * 0.4, 6.8 + q * 5, v.z); var s3 = 1.6 + q * 4; v.s.scale.set(s3, s3, 1); v.s.material.opacity = tier >= 2 ? 0 : 0.28 * Math.sin(q * Math.PI); });
+        ssRing.material.opacity = 0.6 + 0.3 * Math.sin(t * 3);
         /* obra: el módulo crece; al terminar se enciende un nodo más de la red */
         buildT += dt * (0.025 + 0.05 * pk) * ((window.__evrTest && window.__evrTest.liftSpeed) || 1);
         if (buildT >= 1) { buildT = 0; built++; try { localStorage.setItem('evr.reactor', String(built)); } catch (e) {} refreshNodes(); if (window.__evrLog && Math.random() < 0.5) window.__evrLog('☢ Los bots terminaron un módulo del reactor · red de energía: ' + lit() + ' nodos', 'reportes'); }
@@ -5346,7 +5430,13 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
         ringS.material.opacity = 0.6 + 0.3 * Math.sin(t * 2);
       }
       function info() { var work = AGENTS.filter(function (a) { return a.status === 'working'; }).length; return { x: RX, z: RZ, power: Math.round(power), built: built, nodes: lit(), totalNodes: nodeObjs.length, working: work, total: AGENTS.length, progress: Math.round(buildT * 100) }; }
-      return { update: update, info: info, pos: { x: RX, z: RZ }, boost: function () { buildT = 0.999; return true; } };
+      function energy(step) {
+        var o = ew(0, 0), y = 3, r = 110, ph = 1.1, w = (SSX + RC) / 2;
+        if (step === 1) { o = ew(SSX, 0); y = 3; r = 34; ph = 1.15; } else if (step === 2) { o = ew(RISE, 0); y = 36; r = 62; ph = 1.25; } else if (step === 3) { o = ew(RISE, 0); y = 70; r = 38; ph = 1.0; } else { o = ew(w * 0.9, 0); y = 8; r = 150; ph = 1.02; }
+        return { x: o.x, z: o.z, y: y, r: r, ph: ph, th: OUTA + 0.55 };
+      }
+      function einfo() { var kw = 0, rows = AGENTS.map(function (a) { var k = a.status === 'working' ? 140 : a.status === 'error' ? 15 : a.status === 'warning' ? 90 : 40; kw += k; return { id: a.id, name: a.name, status: a.status, kw: k }; }); return { power: Math.round(power), mw: +(power / 100 * 4).toFixed(2), kw: kw, rows: rows, lengthM: Math.round(CLEN), axis: axX ? 'x' : 'z' }; }
+      return { update: update, info: info, energy: energy, einfo: einfo, pos: { x: RX, z: RZ }, boost: function () { buildT = 0.999; return true; } };
     })(); } catch (rxErr) { reactor = null; if (window.console) console.warn('reactor', rxErr); }
 
     /* ---- Tercera torre: BIO·FIT EVR, la torre del Coach (gimnasio, recuperación y seguimiento) ---- */
@@ -6968,6 +7058,8 @@ details.done > summary { cursor: pointer; margin-top: 16px; font: 500 10.5px/1.3
       focusWar: function () { if (!war) return false; if (bgMode !== 'espacio') setBg('espacio'); var c = war.center().multiplyScalar(0.45); cam.follow = null; cam.gtx = c.x; cam.gtz = c.z; cam.gty = c.y; cam.th = Math.atan2(c.z, c.x) + Math.PI; cam.gph = 1.95; cam.gr = 120; return true; },
       coachInfo: function () { return fitTower ? fitTower.info() : null; },
       reactorBoost: function () { return reactor ? reactor.boost() : false; },
+      energyInfo: function () { return reactor && reactor.einfo ? reactor.einfo() : null; },
+      focusEnergy: function (step) { if (!reactor || !reactor.energy) return false; var e = reactor.energy(step | 0); cam.follow = null; cam.gtx = e.x; cam.gtz = e.z; cam.gty = e.y; cam.gph = e.ph; cam.gr = e.r * (window.innerWidth > 860 ? 1 : 1.35); cam.th = e.th; return true; },
       focusReactor: function () { if (!reactor) return false; cam.follow = null; cam.gtx = reactor.pos.x; cam.gtz = reactor.pos.z; cam.gty = 10; cam.gph = 1.18; cam.gr = window.innerWidth > 860 ? 80 : 105; cam.th = Math.atan2(reactor.pos.z, reactor.pos.x) + Math.PI - 0.45; return true; },
       launchNow: function () { return nave ? nave.launchNow() : false; },
       health: function () { return { tier: tier, cine: CINE.on, glLost: glLost, frameErrs: frameErrs }; },
