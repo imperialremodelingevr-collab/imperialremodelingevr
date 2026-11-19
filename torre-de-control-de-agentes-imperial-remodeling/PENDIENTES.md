@@ -195,3 +195,8 @@
 - Voz: «Hey Jarvis, anota en la bitácora de Landership que pagué 300 dólares a Juan por 6 horas de plomería»; «resumen de Parkside»; «borra lo último de la bitácora».
 - Guardado en la base de la torre: colecciones `bit_props` y `bit_log`. Solo el dueño escribe.
 - Probado con `bit.js` (19 comprobaciones).
+
+### Bitácora · verificación de todos los botones (v62)
+- Se probaron los 36 puntos de `bitall.js`: abrir/cerrar, ver el edificio, elegir casa, 5 pestañas, ＋ Propiedad, guardar datos, escribir/dictar/guardar pasos, **✎ modificar** y cancelar, × borrar, **＋ Marcar hoy como día de trabajo**, hoja (filtro, ＋ Fila, editar celdas, × fila, descargar `.csv`, todas las casas, copiar, pegar desde Excel), croquis (colores, borrador, guardar, limpiar, cuartos y plano), resumen con varios días, voz, borrar propiedad con confirmación, volver a abrir (persistencia) e invitado sin permiso de escribir.
+- **Fallo real encontrado y arreglado:** con Jarvis en modo «atento», el botón 🎙 de dictado no hacía nada (el texto se ignoraba). Ahora detiene la escucha atenta, dicta y la devuelve.
+- Nuevo: ✎ para modificar cualquier paso en la Bitácora, botón de «día de trabajo de hoy», y límite de tamaño del croquis para que quepa en la base.
